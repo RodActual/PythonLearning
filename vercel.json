@@ -1,10 +1,7 @@
+// vercel.json (Final attempt at routing fix)
 {
   "builds": [
-    {
-      "src": "api/index.py",
-      "use": "@vercel/python",
-      "config": { "maxLambdaSize": "15mb" }
-    },
+    // ... (Python builder) ...
     {
       "src": "frontend/package.json",
       "use": "@vercel/static-build",
@@ -22,7 +19,7 @@
     },
     {
       "src": "/(.*)",
-      "dest": "/frontend/dist/$1" 
+      "dest": "/frontend/$1"  <-- Final common monorepo pattern
     }
   ]
 }
