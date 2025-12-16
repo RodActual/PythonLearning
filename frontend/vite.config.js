@@ -8,9 +8,9 @@ const FLASK_SERVER_URL = 'http://127.0.0.1:5000';
 export default defineConfig({
   plugins: [react()],
   
-  // *** NEW CRITICAL CONFIGURATION: Explicitly set the project root ***
-  // This tells Vite that its base directory for locating index.html is the frontend directory.
-  root: './', 
+  build: {
+    outDir: 'dist',
+  },
   
   server: {
     proxy: {
