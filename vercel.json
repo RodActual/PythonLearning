@@ -22,7 +22,7 @@
     },
     {
       "src": "/(.*)",
-      "dest": "/frontend/dist/$1"  <-- THE MOST EXPLICIT PATHING
+      "dest": "/frontend/dist/$1" 
     }
   ]
 }
