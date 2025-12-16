@@ -1,7 +1,5 @@
-// vercel.json (Final attempt at routing fix)
 {
   "builds": [
-    // ... (Python builder) ...
     {
       "src": "frontend/package.json",
       "use": "@vercel/static-build",
@@ -19,7 +17,7 @@
     },
     {
       "src": "/(.*)",
-      "dest": "/frontend/$1"  <-- Final common monorepo pattern
+      "dest": "/frontend/$1"
     }
   ]
 }
