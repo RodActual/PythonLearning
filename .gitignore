@@ -1,0 +1,17 @@
+# Python environment
+.venv
+__pycache__
+*.pyc
+
+# Firebase private key (CRITICAL SECURITY)
+firebase_admin_key.json
+
+# Node modules
+frontend/node_modules
+frontend/dist
+
+# Local environment variables
+frontend/.env
+
+# Vercel build output
+.vercel
