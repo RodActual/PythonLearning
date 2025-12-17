@@ -1,40 +1,41 @@
 import React, { useState, useEffect } from 'react';
+import CodeSandbox from './CodeSandbox'; // Import the new component
 
-// Helper for code blocks
+// Helper for static code blocks (in text steps)
 const CodeBlock = ({ code }) => (
   <pre className="code-block"><code>{code}</code></pre>
 );
 
 function StepView({ lesson, stepIndex, onNext, onPrev, onBackToMenu, onRestart }) {
   const [selectedOption, setSelectedOption] = useState(null);
-  const [isCorrect, setIsCorrect] = useState(false);
+  const [isQuizCorrect, setIsQuizCorrect] = useState(false);
+  const [isCodePassed, setIsCodePassed] = useState(false);
   
   // 1. SAFETY CHECK: Check if the lesson is finished
   const isFinished = stepIndex >= lesson.steps.length;
-  // Only grab the step object if we aren't finished to avoid crashing
   const step = !isFinished ? lesson.steps[stepIndex] : null;
 
   // Reset local state when moving between steps
   useEffect(() => {
     setSelectedOption(null);
-    setIsCorrect(false);
+    setIsQuizCorrect(false);
+    setIsCodePassed(false);
   }, [stepIndex]);
 
   // Handle Quiz Logic
   const handleOptionClick = (option) => {
-    if (isCorrect) return; // Lock if already correct
+    if (isQuizCorrect) return;
 
     setSelectedOption(option);
     
-    // Robust comparison (trim whitespace, to string)
     if (option.toString().trim() === step.answer.toString().trim()) {
-      setIsCorrect(true);
+      setIsQuizCorrect(true);
     } else {
-      setIsCorrect(false);
+      setIsQuizCorrect(false);
     }
   };
 
-  // 2. RENDER COMPLETION SCREEN (If Finished)
+  // 2. RENDER COMPLETION SCREEN
   if (isFinished) {
     return (
       <div className="lesson-container completion-screen">
@@ -53,7 +54,13 @@ function StepView({ lesson, stepIndex, onNext, onPrev, onBackToMenu, onRestart }
     );
   }
 
-  // 3. RENDER NORMAL STEP (If Not Finished)
+  // Helper to determine if we can move to next step
+  const canProceed = 
+    step.type === 'text' || 
+    (step.type === 'quiz' && isQuizCorrect) || 
+    (step.type === 'code' && isCodePassed);
+
+  // 3. RENDER NORMAL STEP
   return (
     <div className="lesson-container">
       <div className="top-controls">
@@ -63,14 +70,18 @@ function StepView({ lesson, stepIndex, onNext, onPrev, onBackToMenu, onRestart }
 
       <h2>{lesson.title}</h2>
       <div className="step-content-box">
-        {/* Progress Text */}
         <p style={{ fontSize: '0.85rem', color: '#666', marginBottom: '10px' }}>
           Step {stepIndex + 1} of {lesson.steps.length}
         </p>
 
-        <h3>{step.type === 'quiz' ? 'Quiz Question' : step.heading || 'Instruction'}</h3>
+        {/* DYNAMIC HEADING */}
+        <h3>
+          {step.type === 'quiz' ? 'Quiz Question' : 
+           step.type === 'code' ? 'Coding Challenge' : 
+           step.heading || 'Instruction'}
+        </h3>
         
-        {/* TEXT CONTENT */}
+        {/* --- TYPE: TEXT --- */}
         {step.type === 'text' && (
           <div>
             <p>{step.content}</p>
@@ -78,7 +89,7 @@ function StepView({ lesson, stepIndex, onNext, onPrev, onBackToMenu, onRestart }
           </div>
         )}
 
-        {/* QUIZ CONTENT */}
+        {/* --- TYPE: QUIZ --- */}
         {step.type === 'quiz' && (
           <div className="quiz-section">
             <p className="question-text"><strong>{step.question}</strong></p>
@@ -86,14 +97,14 @@ function StepView({ lesson, stepIndex, onNext, onPrev, onBackToMenu, onRestart }
               {step.options.map((option, index) => {
                 let btnClass = "option-button";
                 if (selectedOption === option) {
-                   btnClass += (isCorrect && option === step.answer) ? " correct" : " incorrect";
+                   btnClass += (isQuizCorrect && option === step.answer) ? " correct" : " incorrect";
                 }
                 return (
                   <button 
                     key={index} 
                     className={btnClass} 
                     onClick={() => handleOptionClick(option)}
-                    disabled={isCorrect} // Disable clicks after correct answer
+                    disabled={isQuizCorrect}
                   >
                     {option}
                   </button>
@@ -102,6 +113,19 @@ function StepView({ lesson, stepIndex, onNext, onPrev, onBackToMenu, onRestart }
             </div>
           </div>
         )}
+
+        {/* --- TYPE: CODE SANDBOX --- */}
+        {step.type === 'code' && (
+          <div className="code-section">
+            <p><strong>Task:</strong> {step.instruction}</p>
+            <CodeSandbox 
+              initialCode={step.initial_code} 
+              expectedOutput={step.expected_output}
+              onPass={() => setIsCodePassed(true)}
+            />
+          </div>
+        )}
+
       </div>
 
       {/* FOOTER NAVIGATION */}
@@ -110,8 +134,8 @@ function StepView({ lesson, stepIndex, onNext, onPrev, onBackToMenu, onRestart }
           Previous
         </button>
         
-        {/* Show Next if it's text OR if quiz is answered correctly */}
-        {(step.type === 'text' || isCorrect) && (
+        {/* Show Next button only when allowed */}
+        {canProceed && (
           <button onClick={onNext} className="nav-button next">
             {stepIndex === lesson.steps.length - 1 ? "Finish Lesson" : "Next Step →"}
           </button>

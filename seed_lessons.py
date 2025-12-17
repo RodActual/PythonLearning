@@ -2,377 +2,114 @@ import firebase_admin
 from firebase_admin import credentials, firestore
 
 # 1. Setup Connection
-# Ensure this file is in the same folder as your key!
 if not firebase_admin._apps:
     cred = credentials.Certificate("firebase_admin_key.json")
     firebase_admin.initialize_app(cred)
 
 db = firestore.client()
 
-# 2. Comprehensive Curriculum Data
+# 2. Deep Dive Part 4: Lessons 10, 11, and 12
 lessons = [
-    {
-        "id": "lesson-01",
-        "title": "1. Introduction to Python",
-        "steps": [
-            {
-                "type": "text", 
-                "heading": "What is Python?",
-                "content": "Python is a high-level, interpreted programming language known for its simplicity and readability. It was created by Guido van Rossum and released in 1991. Unlike languages like C++ or Java, Python reads like English, making it perfect for beginners."
-            },
-            {
-                "type": "quiz", 
-                "question": "Which of these is a key feature of Python?", 
-                "options": ["It requires manual memory management", "It is hard to read", "It emphasizes code readability"], 
-                "answer": "It emphasizes code readability"
-            },
-            {
-                "type": "text", 
-                "heading": "Your First Program",
-                "content": "In Python, printing text to the screen is the first thing most people learn. We use the built-in `print()` function.",
-                "example_code": "print(\"Hello, World!\")"
-            },
-            {
-                "type": "quiz", 
-                "question": "What is the correct syntax to output text?", 
-                "options": ["echo 'Hello'", "print('Hello')", "console.log('Hello')"], 
-                "answer": "print('Hello')"
-            },
-            {
-                "type": "text", 
-                "heading": "Comments",
-                "content": "Comments are lines of code that Python ignores. They are used to explain what your code does. In Python, a comment starts with the `#` symbol.",
-                "example_code": "# This is a comment\nprint(\"This runs\") # This is also a comment"
-            }
-        ]
-    },
-    {
-        "id": "lesson-02",
-        "title": "2. Variables & Data Types",
-        "steps": [
-            {
-                "type": "text", 
-                "heading": "Variables",
-                "content": "A variable is like a box that holds data. You don't need to declare the type; just assign a value using the `=` sign.",
-                "example_code": "user_name = \"Alice\"\nuser_age = 25"
-            },
-            {
-                "type": "quiz", 
-                "question": "Which variable name is invalid in Python?", 
-                "options": ["my_var", "2variable", "_variable"], 
-                "answer": "2variable"
-            },
-            {
-                "type": "text", 
-                "heading": "Strings and Integers",
-                "content": "Text is called a 'String' (str) and must be inside quotes. Whole numbers are 'Integers' (int).",
-                "example_code": "name = \"Python\"  # String\nversion = 3       # Integer"
-            },
-            {
-                "type": "text", 
-                "heading": "Floats and Booleans",
-                "content": "Decimal numbers are called 'Floats'. True/False values are called 'Booleans'.",
-                "example_code": "price = 19.99     # Float\nis_active = True  # Boolean"
-            },
-            {
-                "type": "quiz", 
-                "question": "What is the data type of the value 3.14?", 
-                "options": ["Integer", "Float", "String"], 
-                "answer": "Float"
-            }
-        ]
-    },
-    {
-        "id": "lesson-03",
-        "title": "3. Control Flow (If/Else)",
-        "steps": [
-            {
-                "type": "text", 
-                "heading": "If Statements",
-                "content": "Control flow allows your program to make decisions. The `if` statement runs code only if a condition is true. Python uses **indentation** (whitespace) to define the block of code.",
-                "example_code": "if age >= 18:\n    print(\"You are an adult.\")"
-            },
-            {
-                "type": "quiz", 
-                "question": "What defines a block of code in Python?", 
-                "options": ["Curly braces {}", "Indentation", "Semicolons ;"], 
-                "answer": "Indentation"
-            },
-            {
-                "type": "text", 
-                "heading": "Else and Elif",
-                "content": "Use `else` to define what happens if the condition is false. Use `elif` (else if) to check multiple conditions.",
-                "example_code": "if score > 90:\n    print(\"A\")\nelif score > 80:\n    print(\"B\")\nelse:\n    print(\"C\")"
-            },
-            {
-                "type": "quiz", 
-                "question": "Which keyword handles the 'otherwise' condition?", 
-                "options": ["otherwise", "else", "stop"], 
-                "answer": "else"
-            }
-        ]
-    },
-    {
-        "id": "lesson-04",
-        "title": "4. Loops (Repetition)",
-        "steps": [
-            {
-                "type": "text", 
-                "heading": "For Loops",
-                "content": "A `for` loop is used to iterate over a sequence (like a list or a range of numbers).",
-                "example_code": "for i in range(5):\n    print(i)\n# Prints 0, 1, 2, 3, 4"
-            },
-            {
-                "type": "quiz", 
-                "question": "What does range(3) produce?", 
-                "options": ["1, 2, 3", "0, 1, 2", "0, 1, 2, 3"], 
-                "answer": "0, 1, 2"
-            },
-            {
-                "type": "text", 
-                "heading": "While Loops",
-                "content": "A `while` loop runs as long as a specific condition is True. Be careful not to create infinite loops!",
-                "example_code": "count = 0\nwhile count < 3:\n    print(count)\n    count += 1"
-            },
-            {
-                "type": "text", 
-                "heading": "Break and Continue",
-                "content": "`break` stops the loop entirely. `continue` skips the current iteration and jumps to the next one.",
-                "example_code": "for x in range(10):\n    if x == 5:\n        break\n    print(x)"
-            }
-        ]
-    },
-    {
-        "id": "lesson-05",
-        "title": "5. Functions",
-        "steps": [
-            {
-                "type": "text", 
-                "heading": "Defining Functions",
-                "content": "Functions are reusable blocks of code. Use the `def` keyword to create one.",
-                "example_code": "def greet():\n    print(\"Hello!\")"
-            },
-            {
-                "type": "text", 
-                "heading": "Arguments",
-                "content": "You can pass data into functions using arguments (parameters).",
-                "example_code": "def greet(name):\n    print(f\"Hello, {name}!\")\n\ngreet(\"Alice\")"
-            },
-            {
-                "type": "text", 
-                "heading": "Return Values",
-                "content": "Functions can send data back to the caller using the `return` keyword.",
-                "example_code": "def add(a, b):\n    return a + b\n\nresult = add(5, 3)"
-            },
-            {
-                "type": "quiz", 
-                "question": "What keyword sends data back from a function?", 
-                "options": ["output", "return", "send"], 
-                "answer": "return"
-            }
-        ]
-    },
-    {
-        "id": "lesson-06",
-        "title": "6. Lists",
-        "steps": [
-            {
-                "type": "text", 
-                "heading": "Creating Lists",
-                "content": "A list is an ordered collection of items. Lists are created using square brackets `[]`.",
-                "example_code": "fruits = [\"apple\", \"banana\", \"cherry\"]"
-            },
-            {
-                "type": "text", 
-                "heading": "Accessing Items",
-                "content": "You access items by their index. Python uses 0-based indexing.",
-                "example_code": "print(fruits[0]) # apple\nprint(fruits[1]) # banana"
-            },
-            {
-                "type": "quiz", 
-                "question": "If my_list = ['a', 'b', 'c'], what is my_list[1]?", 
-                "options": ["a", "b", "c"], 
-                "answer": "b"
-            },
-            {
-                "type": "text", 
-                "heading": "Modifying Lists",
-                "content": "Lists are mutable (changeable). You can add items with `.append()` and remove them with `.pop()`.",
-                "example_code": "fruits.append(\"orange\")\nfruits.remove(\"banana\")"
-            }
-        ]
-    },
-    {
-        "id": "lesson-07",
-        "title": "7. Dictionaries",
-        "steps": [
-            {
-                "type": "text", 
-                "heading": "Key-Value Pairs",
-                "content": "Dictionaries store data in `key: value` pairs. They are defined with curly braces `{}`.",
-                "example_code": "user = {\n  \"name\": \"John\",\n  \"age\": 30\n}"
-            },
-            {
-                "type": "text", 
-                "heading": "Accessing Values",
-                "content": "You access values by referring to their key name.",
-                "example_code": "print(user[\"name\"]) # Prints John"
-            },
-            {
-                "type": "quiz", 
-                "question": "How do you get the 'age' from 'user'?", 
-                "options": ["user.get(age)", "user['age']", "user(age)"], 
-                "answer": "user['age']"
-            },
-            {
-                "type": "text", 
-                "heading": "Adding Items",
-                "content": "To add a new item, just assign a value to a new key.",
-                "example_code": "user[\"city\"] = \"New York\""
-            }
-        ]
-    },
-    {
-        "id": "lesson-08",
-        "title": "8. Error Handling",
-        "steps": [
-            {
-                "type": "text", 
-                "heading": "Try and Except",
-                "content": "Errors crash your program. To prevent this, use `try` and `except` blocks to catch errors.",
-                "example_code": "try:\n    print(10 / 0)\nexcept ZeroDivisionError:\n    print(\"Cannot divide by zero\")"
-            },
-            {
-                "type": "quiz", 
-                "question": "Which block runs if an error occurs in the 'try' block?", 
-                "options": ["else", "except", "catch"], 
-                "answer": "except"
-            },
-            {
-                "type": "text", 
-                "heading": "Finally",
-                "content": "The `finally` block lets you execute code, regardless of the result of the try/except blocks.",
-                "example_code": "try:\n    f = open(\"demofile.txt\")\nfinally:\n    f.close()"
-            }
-        ]
-    },
-    {
-        "id": "lesson-09",
-        "title": "9. Modules",
-        "steps": [
-            {
-                "type": "text", 
-                "heading": "Importing Modules",
-                "content": "A module is a file containing a set of functions you can include in your application. Use the `import` keyword.",
-                "example_code": "import math\nprint(math.sqrt(16))"
-            },
-            {
-                "type": "text", 
-                "heading": "From ... Import",
-                "content": "You can import specific parts of a module to avoid typing the module name every time.",
-                "example_code": "from random import randint\nprint(randint(1, 10))"
-            },
-            {
-                "type": "quiz", 
-                "question": "Which keyword brings an external library into your code?", 
-                "options": ["include", "using", "import"], 
-                "answer": "import"
-            }
-        ]
-    },
+    # ================= LESSON 10: FILE I/O (13 Steps) =================
     {
         "id": "lesson-10",
         "title": "10. File I/O",
         "steps": [
-            {
-                "type": "text", 
-                "heading": "Opening Files",
-                "content": "The `open()` function takes two parameters; filename, and mode. Modes: 'r' (read), 'w' (write), 'a' (append).",
-                "example_code": "f = open(\"test.txt\", \"w\")"
-            },
-            {
-                "type": "text", 
-                "heading": "The 'With' Statement",
-                "content": "It is best practice to use `with` when opening files. It automatically closes the file for you, even if an error occurs.",
-                "example_code": "with open(\"test.txt\", \"r\") as f:\n    print(f.read())"
-            },
-            {
-                "type": "quiz", 
-                "question": "Which mode should you use to Write to a file?", 
-                "options": ["'r'", "'w'", "'x'"], 
-                "answer": "'w'"
-            }
+            { "type": "text", "heading": "Reading & Writing", "content": "Programs need to save data. Python uses the `open()` function to interact with files." },
+            { "type": "quiz", "question": "Practice 1: What does 'I/O' stand for?", "options": ["Input/Output", "Internal/Optional", "Integer/Object"], "answer": "Input/Output" },
+
+            { "type": "text", "heading": "Writing to Files", "content": "To create or overwrite a file, use mode `'w'` (write). Use `.write()` to put text inside." },
+            { "type": "code", "heading": "Practice 2: Coding", "instruction": "Open 'test.txt' in write mode and write 'Hello' to it.", "initial_code": "f = open('test.txt', 'w')\n# Write 'Hello' here\nf.write('Hello')\nf.close()\n\n# Verification (Do not change)\nprint(open('test.txt').read())", "expected_output": "Hello" },
+
+            { "type": "text", "heading": "Reading Files", "content": "Use mode `'r'` (read) to open a file. Use `.read()` to get the contents." },
+            { "type": "code", "heading": "Practice 3: Coding", "instruction": "Read the file 'note.txt' and print its content.", "initial_code": "# Setup (Creating the file for you)\nwith open('note.txt', 'w') as f: f.write('Secret Message')\n\n# Your Code:\nf = open('note.txt', 'r')\nprint(f.read())\nf.close()", "expected_output": "Secret Message" },
+
+            { "type": "quiz", "question": "Practice 4: What happens if you open a non-existent file in 'r' mode?", "options": ["It creates the file", "FileNotFoundError", "It returns None"], "answer": "FileNotFoundError" },
+
+            { "type": "text", "heading": "The 'With' Statement", "content": "Manually closing files with `.close()` is annoying. The `with` statement closes the file automatically." },
+            { "type": "code", "heading": "Practice 5: Coding", "instruction": "Rewrite this using 'with'.", "initial_code": "# OLD WAY:\n# f = open('log.txt', 'w')\n# f.write('Log Entry')\n# f.close()\n\n# NEW WAY:\nwith open('log.txt', 'w') as f:\n    f.write('Log Entry')\n\nprint(open('log.txt').read())", "expected_output": "Log Entry" },
+
+            { "type": "text", "heading": "Appending", "content": "Mode `'w'` deletes existing content. Mode `'a'` (append) adds to the end of the file." },
+            { "type": "code", "heading": "Practice 6: Coding", "instruction": "Append ' World' to the existing file.", "initial_code": "# Setup\nwith open('greet.txt', 'w') as f: f.write('Hello')\n\n# Your Code (Use mode 'a')\nwith open('greet.txt', 'a') as f:\n    f.write(' World')\n\nprint(open('greet.txt').read())", "expected_output": "Hello World" },
+
+            { "type": "quiz", "question": "Practice 7: Which mode allows reading AND writing?", "options": ["'r+'", "'rw'", "'x'"], "answer": "'r+'" },
+
+            { "type": "text", "heading": "Readlines", "content": "You can read a file line-by-line using `.readlines()` or by looping over the file object." },
+            { "type": "code", "heading": "Practice 8: Coding", "instruction": "Loop through the file and print each line.", "initial_code": "# Setup\nwith open('list.txt', 'w') as f: f.write('Line 1\\nLine 2')\n\nwith open('list.txt', 'r') as f:\n    for line in f:\n        print(line.strip())", "expected_output": "Line 1\nLine 2" },
+
+            { "type": "quiz", "question": "Final Quiz: Why is 'with' preferred over manual open/close?", "options": ["It runs faster", "It prevents file corruption errors", "It uses less memory"], "answer": "It prevents file corruption errors" }
         ]
     },
+
+    # ================= LESSON 11: CLASSES & OOP (14 Steps) =================
     {
         "id": "lesson-11",
         "title": "11. Classes & OOP",
         "steps": [
-            {
-                "type": "text", 
-                "heading": "Classes and Objects",
-                "content": "Python is an Object Oriented language. A Class is a blueprint for creating objects.",
-                "example_code": "class Dog:\n    def bark(self):\n        print(\"Woof!\")"
-            },
-            {
-                "type": "text", 
-                "heading": "The __init__ Function",
-                "content": "All classes have a function called `__init__()`, which is always executed when the class is being initiated (constructed).",
-                "example_code": "class Person:\n  def __init__(self, name):\n    self.name = name"
-            },
-            {
-                "type": "quiz", 
-                "question": "What is 'self' in Python classes?", 
-                "options": ["A keyword for loops", "A reference to the current instance of the class", "A global variable"], 
-                "answer": "A reference to the current instance of the class"
-            }
+            { "type": "text", "heading": "Object Oriented Programming", "content": "Everything in Python is an Object. OOP allows us to create our own data types called **Classes**." },
+            { "type": "quiz", "question": "Practice 1: A Class is like a...?", "options": ["Variable", "Blueprint", "List"], "answer": "Blueprint" },
+
+            { "type": "text", "heading": "Defining a Class", "content": "Use the `class` keyword. By convention, class names are Capitalized." },
+            { "type": "code", "heading": "Practice 2: Coding", "instruction": "Define a class named 'Cat' with a placeholder 'pass'.", "initial_code": "class Cat:\n    pass\n\nprint(Cat)", "expected_output": "<class '__main__.Cat'>" },
+
+            { "type": "text", "heading": "Creating Objects", "content": "An **Object** is an instance of a Class. You create one by calling the class like a function." },
+            { "type": "code", "heading": "Practice 3: Coding", "instruction": "Create an instance of Cat assigned to the variable 'kitty'.", "initial_code": "class Cat:\n    pass\n\nkitty = Cat()\nprint(type(kitty))", "expected_output": "<class '__main__.Cat'>" },
+
+            { "type": "text", "heading": "The __init__ Method", "content": "This special method sets up the object when it is created. It's often called the Constructor." },
+            { "type": "code", "heading": "Practice 4: Coding", "instruction": "Finish __init__ to set self.name = name.", "initial_code": "class Person:\n    def __init__(self, name):\n        self.name = name\n\np = Person('Alice')\nprint(p.name)", "expected_output": "Alice" },
+
+            { "type": "quiz", "question": "Practice 5: What is the first parameter of every method in a class?", "options": ["this", "self", "init"], "answer": "self" },
+
+            { "type": "text", "heading": "Methods", "content": "Methods are just functions that belong to an object." },
+            { "type": "code", "heading": "Practice 6: Coding", "instruction": "Add a method 'speak' that prints 'Woof'.", "initial_code": "class Dog:\n    def speak(self):\n        print('Woof')\n\nd = Dog()\nd.speak()", "expected_output": "Woof" },
+
+            { "type": "text", "heading": "Attributes", "content": "Variables inside an object are called Attributes. You access them using dot notation (`object.attribute`)." },
+            { "type": "code", "heading": "Practice 7: Coding", "instruction": "Create a Car with color 'Red'. Print the color.", "initial_code": "class Car:\n    def __init__(self, color):\n        self.color = color\n\nc = Car('Red')\nprint(c.color)", "expected_output": "Red" },
+
+            { "type": "quiz", "question": "Practice 8: Can different objects of the same class have different attribute values?", "options": ["Yes", "No, they share values"], "answer": "Yes" },
+
+            { "type": "code", "heading": "Practice 9: Coding", "instruction": "Create a 'Counter' class. The 'increment' method should add 1 to 'self.count'.", "initial_code": "class Counter:\n    def __init__(self):\n        self.count = 0\n    \n    def increment(self):\n        self.count += 1\n\nc = Counter()\nc.increment()\nprint(c.count)", "expected_output": "1" },
+
+            { "type": "quiz", "question": "Final Quiz: 'self' refers to...", "options": ["The Class itself", "The specific object instance", "The global scope"], "answer": "The specific object instance" }
         ]
     },
+
+    # ================= LESSON 12: CAPSTONE (10 Steps) =================
     {
         "id": "lesson-12",
-        "title": "12. Capstone Project",
+        "title": "12. Capstone: Inventory App",
         "steps": [
-            {
-                "type": "text", 
-                "heading": "Project: Inventory System",
-                "content": "Congratulations on making it to the end! We will combine variables, lists, dicts, and loops to make a simple inventory system."
-            },
-            {
-                "type": "text", 
-                "heading": "Step 1: Data Structure",
-                "content": "We need a way to store products. A list of dictionaries is perfect.",
-                "example_code": "inventory = [\n  {\"id\": 1, \"name\": \"Apple\", \"qty\": 10},\n  {\"id\": 2, \"name\": \"Banana\", \"qty\": 5}\n]"
-            },
-            {
-                "type": "text", 
-                "heading": "Step 2: The Function",
-                "content": "Let's make a function to display stock.",
-                "example_code": "def show_inventory():\n    for item in inventory:\n        print(f\"{item['name']}: {item['qty']}\")"
-            },
-            {
-                "type": "quiz", 
-                "question": "If we wanted to sell an Apple, how would we decrease the quantity?", 
-                "options": ["inventory[0]['qty'] -= 1", "inventory['Apple'] = 9", "inventory.remove('Apple')"], 
-                "answer": "inventory[0]['qty'] -= 1"
-            },
-            {
-                "type": "text", 
-                "heading": "Completion",
-                "content": "You have completed the Python Learning Path! You now understand the core building blocks of programming. Happy coding!"
-            }
+            { "type": "text", "heading": "Final Project", "content": "Welcome to the finish line! We will build a **Product Inventory System** using Classes, Lists, and Dictionaries." },
+
+            { "type": "text", "heading": "Step 1: The Product Class", "content": "First, we need a blueprint for a Product. It should have a name, price, and quantity." },
+            { "type": "code", "heading": "Task 1: Define Product", "instruction": "Create a Product class with __init__ that stores name, price, and qty.", "initial_code": "class Product:\n    def __init__(self, name, price, qty):\n        self.name = name\n        self.price = price\n        self.qty = qty\n\np = Product('Apple', 0.5, 10)\nprint(p.name)", "expected_output": "Apple" },
+
+            { "type": "text", "heading": "Step 2: Methods", "content": "We need to update stock when we make a sale." },
+            { "type": "code", "heading": "Task 2: Sell Method", "instruction": "Add a 'sell(amount)' method that subtracts amount from self.qty.", "initial_code": "class Product:\n    def __init__(self, name, qty):\n        self.name = name\n        self.qty = qty\n    \n    def sell(self, amount):\n        self.qty -= amount\n\np = Product('Apple', 10)\np.sell(3)\nprint(p.qty)", "expected_output": "7" },
+
+            { "type": "text", "heading": "Step 3: The Inventory", "content": "Now we need a place to store multiple products. A list works perfectly." },
+            { "type": "code", "heading": "Task 3: Inventory List", "instruction": "Create a list containing two Product objects: 'Laptop' (Qty 5) and 'Phone' (Qty 10). Print the name of the first one.", "initial_code": "class Product:\n    def __init__(self, name, qty):\n        self.name = name\n        self.qty = qty\n\n# Create list here\ninventory = [\n    Product('Laptop', 5),\n    Product('Phone', 10)\n]\n\nprint(inventory[0].name)", "expected_output": "Laptop" },
+
+            { "type": "text", "heading": "Step 4: Managing Inventory", "content": "Let's make a function to calculate the total value of our stock." },
+            { "type": "code", "heading": "Task 4: Total Value", "instruction": "Loop through the inventory. Multiply price * qty for each item and sum them up.", "initial_code": "class Product:\n    def __init__(self, price, qty):\n        self.price = price\n        self.qty = qty\n\ninventory = [\n    Product(100, 2),  # $200 total\n    Product(50, 4)    # $200 total\n]\n\ntotal_value = 0\nfor item in inventory:\n    total_value += item.price * item.qty\n\nprint(total_value)", "expected_output": "400" },
+
+            { "type": "text", "heading": "Step 5: Putting it together", "content": "You have just combined OOP, Lists, Loops, and Math. This is the foundation of almost every software application." },
+
+            { "type": "code", "heading": "Final Exam", "instruction": "Fix the bug! The loop should print the name of items with Qty < 5 (Low Stock).", "initial_code": "class Product:\n    def __init__(self, name, qty):\n        self.name = name\n        self.qty = qty\n\ninventory = [\n    Product('Paper', 50),\n    Product('Ink', 2)\n]\n\nfor item in inventory:\n    if item.qty < 5:\n        print(item.name)", "expected_output": "Ink" },
+
+            { "type": "quiz", "question": "Course Completion: How do you feel about Python?", "options": ["I'm ready to learn more!", "It's confusing but fun", "I'm a pro now"], "answer": "I'm ready to learn more!" }
         ]
     }
 ]
 
 def seed_data():
-    print("🚀 Seeding 12 Comprehensive Lessons...")
+    print("🚀 Seeding Deep Dive Part 4 (Lessons 10-12)...")
     for lesson in lessons:
         lesson_id = lesson["id"]
-        # .set() overwrites the document, ensuring old data is replaced
         db.collection("lessons").document(lesson_id).set(lesson)
         print(f"✅ Updated: {lesson['title']}")
     
-    print("\n✨ Database successfully updated with expanded curriculum!")
+    print("\n✨ CURRICULUM COMPLETE! All 12 lessons are now live.")
 
 if __name__ == "__main__":
     seed_data()
