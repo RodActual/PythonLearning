@@ -13,6 +13,7 @@ def initialize_firebase():
     Initializes Firebase using credentials from environment variables (Vercel) 
     or a local file (dev).
     """
+    # Check if firebase is already initialized to avoid errors on hot-reload
     if firebase_admin._apps:
         return firestore.client()
 
@@ -45,7 +46,7 @@ db = initialize_firebase()
 
 @app.route('/api/', methods=['GET'])
 def home():
-    """Health check endpoint to verify API and Firebase status."""
+    """Health check endpoint."""
     if not db:
         return jsonify({
             "status": "error",
@@ -60,29 +61,39 @@ def home():
 
 @app.route('/api/lessons', methods=['GET'])
 def get_lesson_list():
-    """Fetches a simplified list of all available lessons from Firestore."""
+    """Fetches a list of available lessons sorted by ID."""
     if not db:
         return jsonify({"status": "error", "message": "Database not initialized"}), 500
 
-    # Orders lessons by title; ensures the frontend gets a consistent list
-    lessons_ref = db.collection('lessons').order_by('title')
     try:
+        # Fetch all documents from the 'lessons' collection
+        lessons_ref = db.collection('lessons')
         docs = lessons_ref.stream()
         
         lessons_list = []
         for doc in docs:
             data = doc.to_dict()
+            
+            # Safe step counting
+            steps = data.get("steps", [])
+            step_count = len(steps) if isinstance(steps, list) else 0
+
             lessons_list.append({
                 "id": doc.id,
-                "title": data.get("title", "Untitled Lesson")
+                "title": data.get("title", "Untitled Lesson"),
+                "step_count": step_count 
             })
-            
+        
+        # Sort the list by ID (e.g., lesson-01, lesson-02) to ensure correct order
+        lessons_list.sort(key=lambda x: x['id'])
+
         return jsonify(lessons_list)
 
     except Exception as e:
+        print(f"❌ API CRASH in get_lesson_list: {e}")
         return jsonify({
             "status": "error", 
-            "message": f"Could not fetch lesson list from Firestore: {str(e)}"
+            "message": f"Could not fetch lesson list: {str(e)}"
         }), 500
 
 @app.route('/api/lesson/<lesson_id>', methods=['GET'])
@@ -91,8 +102,8 @@ def get_lesson_content(lesson_id):
     if not db:
         return jsonify({"status": "error", "message": "Database not initialized"}), 500
 
-    lesson_ref = db.collection('lessons').document(lesson_id)
     try:
+        lesson_ref = db.collection('lessons').document(lesson_id)
         doc = lesson_ref.get()
         
         if not doc.exists:
@@ -107,12 +118,13 @@ def get_lesson_content(lesson_id):
         return jsonify(lesson_data)
 
     except Exception as e:
+        print(f"❌ API CRASH in get_lesson_content: {e}")
         return jsonify({
             "status": "error", 
             "message": f"Could not fetch lesson content: {str(e)}"
         }), 500
 
-# --- Standard Vercel Entry Point ---
-# This allows the app to run locally for development
+# --- Local Development Entry Point ---
 if __name__ == '__main__':
+    # Run locally on port 5000 for Vite proxy to work
     app.run(debug=True, port=5000)

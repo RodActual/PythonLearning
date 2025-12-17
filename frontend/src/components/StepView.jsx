@@ -1,154 +1,124 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-// Helper component for clean code rendering
-const CodeBlock = ({ code }) => {
-  return (
-    <pre className="code-block">
-      <code>{code}</code>
-    </pre>
-  );
-};
+// Helper for code blocks
+const CodeBlock = ({ code }) => (
+  <pre className="code-block"><code>{code}</code></pre>
+);
 
-// Component to handle the interactive quiz logic
-const QuizStep = ({ step, onCorrect }) => {
-    const [selected, setSelected] = useState(null);
-    const [isSubmitted, setIsSubmitted] = useState(false);
-    const isCorrect = isSubmitted && (selected === step.correct_answer_index);
-
-    const handleSubmit = () => {
-        setIsSubmitted(true);
-        if (selected === step.correct_answer_index) {
-            // Immediately enable progression via parent component
-            onCorrect(); 
-        }
-    };
-
-    return (
-        <div className="quiz-section">
-            <p><strong>{step.question}</strong></p>
-            {step.example_code && <CodeBlock code={step.example_code} />}
-
-            <div className="quiz-options">
-                {step.options.map((option, index) => (
-                    <div key={index} className="quiz-option">
-                        <input
-                            type="radio"
-                            id={`option-${index}`}
-                            name="quiz"
-                            checked={selected === index}
-                            onChange={() => setSelected(index)}
-                            disabled={isSubmitted}
-                        />
-                        <label htmlFor={`option-${index}`}>{option}</label>
-                        {/* Feedback icons */}
-                        {isSubmitted && selected === index && (
-                            <span style={{ marginLeft: '10px' }}>
-                                {isCorrect ? '✅ Correct!' : '❌ Incorrect'}
-                            </span>
-                        )}
-                    </div>
-                ))}
-            </div>
-
-            {!isSubmitted ? (
-                <button onClick={handleSubmit} disabled={selected === null} className="primary-button">
-                    Submit Answer
-                </button>
-            ) : (
-                <div className="quiz-rationale" style={{ marginTop: '15px', padding: '10px', border: '1px solid #ddd' }}>
-                    <strong>Rationale:</strong> {step.rationale}
-                </div>
-            )}
-        </div>
-    );
-};
-
-const StepView = ({ lesson, stepIndex, onNext, onPrev, onBackToMenu, onRestart }) => {
-  if (!lesson || !lesson.steps) {
-    return <div>Loading lesson content...</div>;
-  }
-
-  const totalSteps = lesson.steps.length;
-  const step = lesson.steps[stepIndex];
-  const isFirstStep = stepIndex === 0;
-  const isLastStep = stepIndex === totalSteps - 1;
-
-  // State to track if the current quiz step has been successfully passed
-  const [quizPassed, setQuizPassed] = useState(step.type !== 'quiz');
+function StepView({ lesson, stepIndex, onNext, onPrev, onBackToMenu, onRestart }) {
+  const [selectedOption, setSelectedOption] = useState(null);
+  const [isCorrect, setIsCorrect] = useState(false);
   
-  // Reset quiz state when stepIndex changes
-  React.useEffect(() => {
-      setQuizPassed(step.type !== 'quiz');
-  }, [stepIndex, step.type]);
+  // 1. SAFETY CHECK: Check if the lesson is finished
+  const isFinished = stepIndex >= lesson.steps.length;
+  // Only grab the step object if we aren't finished to avoid crashing
+  const step = !isFinished ? lesson.steps[stepIndex] : null;
 
-  const handleQuizSuccess = () => {
-    setQuizPassed(true);
+  // Reset local state when moving between steps
+  useEffect(() => {
+    setSelectedOption(null);
+    setIsCorrect(false);
+  }, [stepIndex]);
+
+  // Handle Quiz Logic
+  const handleOptionClick = (option) => {
+    if (isCorrect) return; // Lock if already correct
+
+    setSelectedOption(option);
+    
+    // Robust comparison (trim whitespace, to string)
+    if (option.toString().trim() === step.answer.toString().trim()) {
+      setIsCorrect(true);
+    } else {
+      setIsCorrect(false);
+    }
   };
 
-  if (step.type === 'quiz') {
-      const quizComplete = quizPassed && isLastStep;
+  // 2. RENDER COMPLETION SCREEN (If Finished)
+  if (isFinished) {
+    return (
+      <div className="lesson-container completion-screen">
+        <div className="top-controls">
+          <button className="back-button" onClick={onBackToMenu}>← Back to Menu</button>
+        </div>
+        <div style={{ textAlign: 'center', padding: '40px 20px' }}>
+          <h2>🎉 Lesson Complete!</h2>
+          <p>You have successfully finished <strong>{lesson.title}</strong>.</p>
+          <div style={{ marginTop: '30px' }}>
+            <button onClick={onBackToMenu} className="nav-button next">Return to Lessons</button>
+            <button onClick={onRestart} className="restart-button" style={{ marginLeft: '10px' }}>Review Lesson</button>
+          </div>
+        </div>
+      </div>
+    );
   }
-  
+
+  // 3. RENDER NORMAL STEP (If Not Finished)
   return (
     <div className="lesson-container">
-      
       <div className="top-controls">
-        <button className="back-button" onClick={onBackToMenu}>← Back to Lessons</button>
-        <button className="restart-button" onClick={onRestart}>🔁 Restart Lesson</button>
+        <button className="back-button" onClick={onBackToMenu}>← Menu</button>
+        <button className="restart-button" onClick={onRestart}>🔁 Restart</button>
       </div>
 
       <h2>{lesson.title}</h2>
-      
       <div className="step-content-box">
-        <h3>{step.heading}</h3>
+        {/* Progress Text */}
+        <p style={{ fontSize: '0.85rem', color: '#666', marginBottom: '10px' }}>
+          Step {stepIndex + 1} of {lesson.steps.length}
+        </p>
+
+        <h3>{step.type === 'quiz' ? 'Quiz Question' : step.heading || 'Instruction'}</h3>
         
-        {step.type === 'quiz' ? (
-             <QuizStep step={step} onCorrect={handleQuizSuccess} />
-        ) : (
-            <>
-                <p>{step.content}</p>
-                {step.example_code && (
-                    <div className="code-section">
-                        <h4>Example Code:</h4>
-                        <CodeBlock code={step.example_code} />
-                    </div>
-                )}
-                {step.image_hint && <p style={{ fontSize: '0.8em', color: '#666' }}>Hint: {step.image_hint}</p>}
-                
-                {(step.ide_instruction || lesson.id === 'environment_setup') && (
-                    <div className="ide-instruction-box">
-                        <h4>🛠 Local IDE Task:</h4>
-                        <p>{step.ide_instruction || step.content}</p> 
-                    </div>
-                )}
-            </>
+        {/* TEXT CONTENT */}
+        {step.type === 'text' && (
+          <div>
+            <p>{step.content}</p>
+            {step.example_code && <CodeBlock code={step.example_code} />}
+          </div>
+        )}
+
+        {/* QUIZ CONTENT */}
+        {step.type === 'quiz' && (
+          <div className="quiz-section">
+            <p className="question-text"><strong>{step.question}</strong></p>
+            <div className="options-grid">
+              {step.options.map((option, index) => {
+                let btnClass = "option-button";
+                if (selectedOption === option) {
+                   btnClass += (isCorrect && option === step.answer) ? " correct" : " incorrect";
+                }
+                return (
+                  <button 
+                    key={index} 
+                    className={btnClass} 
+                    onClick={() => handleOptionClick(option)}
+                    disabled={isCorrect} // Disable clicks after correct answer
+                  >
+                    {option}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
         )}
       </div>
 
+      {/* FOOTER NAVIGATION */}
       <div className="lesson-nav-controls">
-        <button 
-          onClick={onPrev} 
-          disabled={isFirstStep}
-          className="nav-button prev"
-        >
+        <button onClick={onPrev} disabled={stepIndex === 0} className="nav-button prev">
           Previous
         </button>
         
-        <span className="step-counter">
-          Step {stepIndex + 1} of {totalSteps}
-        </span>
-        
-        <button 
-          onClick={onNext} 
-          // Disable next if it's a quiz step and the user hasn't passed it
-          disabled={step.type === 'quiz' && !quizPassed}
-          className={`nav-button ${isLastStep ? 'finish' : 'next'}`}
-        >
-          {isLastStep ? 'Finish Course' : 'Next Step →'}
-        </button>
+        {/* Show Next if it's text OR if quiz is answered correctly */}
+        {(step.type === 'text' || isCorrect) && (
+          <button onClick={onNext} className="nav-button next">
+            {stepIndex === lesson.steps.length - 1 ? "Finish Lesson" : "Next Step →"}
+          </button>
+        )}
       </div>
     </div>
   );
-};
+}
 
 export default StepView;

@@ -23,7 +23,7 @@ function App() {
     const progressRef = doc(db, USER_PROGRESS_COLLECTION, user.uid);
     const currentSavedStep = userProgress[lessonId] || 0;
     
-    // Only save if the step index is higher than the current saved value
+    // Always save if it's a higher step index (progress forward)
     if (stepIndex > currentSavedStep) {
         const newProgress = { 
             ...userProgress, 
@@ -39,7 +39,6 @@ function App() {
 
   // --- INITIAL DATA LOADING ---
   useEffect(() => {
-    // 1. Fetch Lesson List (from Vercel/Flask API)
     fetch('/api/lessons')
       .then(res => res.json())
       .then(data => setLessons(data))
@@ -54,7 +53,6 @@ function App() {
       setLoading(false);
       
       if (currentUser) {
-        // 2. Listen for real-time progress updates
         const progressRef = doc(db, USER_PROGRESS_COLLECTION, currentUser.uid);
         const unsubscribeProgress = onSnapshot(progressRef, (docSnap) => {
           if (docSnap.exists() && docSnap.data().completed_steps) {
@@ -67,7 +65,7 @@ function App() {
         return () => unsubscribeProgress(); 
       } else {
         setUserProgress({});
-        setCurrentLesson(null); // Clear view on logout
+        setCurrentLesson(null);
       }
     });
 
@@ -81,7 +79,7 @@ function App() {
     fetch(`/api/lesson/${lessonId}`)
       .then(res => res.json())
       .then(data => {
-        // Set current step to the last saved progress point, or 0
+        // Load saved progress. If undefined, start at 0.
         const initialStep = userProgress[lessonId] || 0; 
         
         setCurrentLesson({ id: lessonId, ...data });
@@ -92,15 +90,17 @@ function App() {
   
   const nextStep = () => {
     const totalSteps = currentLesson.steps.length;
+    
     if (currentStepIndex < totalSteps - 1) {
+      // Normal progression
       const nextIndex = currentStepIndex + 1;
       setCurrentStepIndex(nextIndex);
       saveProgress(currentLesson.id, nextIndex);
     } else {
-      // User finished the lesson
-      saveProgress(currentLesson.id, totalSteps); 
-      alert('Lesson Completed!');
-      setCurrentLesson(null); 
+      // Finished the lesson
+      const completionIndex = totalSteps; // Index = length means "done"
+      saveProgress(currentLesson.id, completionIndex); 
+      setCurrentStepIndex(completionIndex); // Triggers Completion Screen in StepView
     }
   };
 
@@ -111,10 +111,8 @@ function App() {
   };
   
   const handleRestart = () => {
-     if (window.confirm('Are you sure you want to restart this lesson? Your progress will be reset.')) {
+     if (window.confirm('Restart this lesson?')) {
         setCurrentStepIndex(0);
-        // Optional: Reset saved progress to 0 if they confirm a restart
-        saveProgress(currentLesson.id, 0); 
         window.scrollTo(0, 0); 
     }
   };
@@ -123,11 +121,7 @@ function App() {
       await signOut(auth);
   };
 
-  // --- RENDER ---
-  
-  if (loading) {
-    return <div className="loading-screen">Checking authentication status...</div>;
-  }
+  if (loading) return <div className="loading-screen">Loading...</div>;
 
   return (
     <div className="container">
@@ -135,14 +129,14 @@ function App() {
         <h1>🐍 Python Learning Path</h1>
         {user && (
             <div className="user-info">
-                <small>Welcome, {user.email}!</small>
+                <small>{user.email}</small>
                 <button onClick={handleLogout} className="logout-button">Log Out</button>
             </div>
         )}
       </header>
 
       {!user ? (
-        <AuthForm onLoginSuccess={() => { /* listener handles state */ }} />
+        <AuthForm onLoginSuccess={() => {}} />
       ) : (
         <div>
            {currentLesson ? (

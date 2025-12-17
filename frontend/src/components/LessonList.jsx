@@ -1,33 +1,44 @@
 import React from 'react';
 
 const LessonList = ({ lessons, onLoadLesson, userProgress }) => { 
-  if (lessons.length === 0) {
-    return <h2>Loading Available Lessons...</h2>;
+  if (!lessons || lessons.length === 0) {
+    return <div className="loading-state">Loading Available Lessons...</div>;
   }
 
   return (
-    <div>
+    <div className="lesson-list-container">
       <h2>Available Lessons</h2>
       <ul className="lesson-list">
         {lessons.map(lesson => {
-          const completedSteps = userProgress[lesson.id] || 0;
+          // Default to 0 if no progress saved
+          const progress = userProgress[lesson.id] || 0;
           
-          // Assuming lesson data includes total steps (handled by App.jsx fetching logic)
-          // For simplicity here, we'll just check if progress > 0
-          
-          let statusText = '';
-          if (completedSteps > 0) {
-            statusText = `⏳ In Progress`;
+          // Get total steps from the API data, or default to a safe number (e.g. 5) if missing
+          const totalSteps = lesson.step_count || 5; 
+
+          // Determine Status
+          let statusLabel = "🆕 Start";
+          let statusClass = "status-start";
+
+          if (progress >= totalSteps) {
+            statusLabel = "✅ Completed";
+            statusClass = "status-completed";
+          } else if (progress > 0) {
+            statusLabel = `⏳ Step ${progress} / ${totalSteps}`;
+            statusClass = "status-progress";
           }
 
           return (
             <li key={lesson.id} className="lesson-item">
-              <a href="#" onClick={() => onLoadLesson(lesson.id)}>
-                {lesson.title}
-              </a>
-              <span style={{ float: 'right', fontSize: '0.9em', color: statusText ? 'orange' : '#ccc' }}>
-                {statusText}
-              </span>
+              <button 
+                className="lesson-button" 
+                onClick={() => onLoadLesson(lesson.id)}
+              >
+                <span className="lesson-title">{lesson.title}</span>
+                <span className={`lesson-status ${statusClass}`}>
+                  {statusLabel}
+                </span>
+              </button>
             </li>
           );
         })}
