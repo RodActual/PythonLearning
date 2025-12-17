@@ -29,7 +29,7 @@ def initialize_firebase():
             print("Firebase initialized from local file.")
         
         else:
-            raise EnvironmentError("Firebase credentials not found.")
+            raise EnvironmentError("Firebase credentials not found. Check environment variables or local JSON file.")
 
         firebase_admin.initialize_app(cred)
         return firestore.client()
@@ -38,12 +38,14 @@ def initialize_firebase():
         print(f"Error initializing Firebase: {e}")
         return None
 
+# Initialize the database client
 db = initialize_firebase()
 
 # --- API Endpoints ---
 
-@app.route('/', methods=['GET'])
+@app.route('/api/', methods=['GET'])
 def home():
+    """Health check endpoint to verify API and Firebase status."""
     if not db:
         return jsonify({
             "status": "error",
@@ -56,12 +58,13 @@ def home():
         "database": "Connected to Firestore"
     })
 
-@app.route('/lessons', methods=['GET'])
+@app.route('/api/lessons', methods=['GET'])
 def get_lesson_list():
     """Fetches a simplified list of all available lessons from Firestore."""
     if not db:
         return jsonify({"status": "error", "message": "Database not initialized"}), 500
 
+    # Orders lessons by title; ensures the frontend gets a consistent list
     lessons_ref = db.collection('lessons').order_by('title')
     try:
         docs = lessons_ref.stream()
@@ -82,7 +85,7 @@ def get_lesson_list():
             "message": f"Could not fetch lesson list from Firestore: {str(e)}"
         }), 500
 
-@app.route('/lesson/<lesson_id>', methods=['GET'])
+@app.route('/api/lesson/<lesson_id>', methods=['GET'])
 def get_lesson_content(lesson_id):
     """Fetches the full steps and content for a specific lesson by ID."""
     if not db:
@@ -97,6 +100,7 @@ def get_lesson_content(lesson_id):
         
         lesson_data = doc.to_dict()
         
+        # Validation to ensure steps exist
         if 'steps' not in lesson_data:
              return jsonify({"status": "error", "message": "Lesson content is incomplete (missing 'steps')"}), 500
 
@@ -108,6 +112,7 @@ def get_lesson_content(lesson_id):
             "message": f"Could not fetch lesson content: {str(e)}"
         }), 500
 
+# --- Standard Vercel Entry Point ---
+# This allows the app to run locally for development
 if __name__ == '__main__':
-    # Run locally on port 5000 for Vite proxy to work
     app.run(debug=True, port=5000)
