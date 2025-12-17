@@ -67,6 +67,11 @@ const CodeSandbox = ({ initialCode, expectedOutput, onPass }) => {
             fontFamily: '"Fira code", "Fira Mono", monospace',
             fontSize: 14,
           }}
+          textareaClassName="code-input" // Add a class for CSS targeting
+          autoCapitalize="off"
+          autoComplete="off"
+          autoCorrect="off"
+          spellCheck="false"
         />
       </div>
 

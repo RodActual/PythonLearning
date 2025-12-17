@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import CodeSandbox from './CodeSandbox'; // Import the new component
+import Confetti from 'react-confetti'; // Import the confetti package
+import CodeSandbox from './CodeSandbox';
 
 // Helper for static code blocks (in text steps)
 const CodeBlock = ({ code }) => (
@@ -11,6 +12,22 @@ function StepView({ lesson, stepIndex, onNext, onPrev, onBackToMenu, onRestart }
   const [isQuizCorrect, setIsQuizCorrect] = useState(false);
   const [isCodePassed, setIsCodePassed] = useState(false);
   
+  // State to control window size for confetti
+  const [windowDimension, setWindowDimension] = useState({ 
+    width: window.innerWidth, 
+    height: window.innerHeight 
+  });
+
+  // Track window resize for accurate confetti bounds
+  const detectSize = () => {
+    setWindowDimension({ width: window.innerWidth, height: window.innerHeight });
+  }
+
+  useEffect(() => {
+    window.addEventListener('resize', detectSize);
+    return () => window.removeEventListener('resize', detectSize);
+  }, [windowDimension]);
+
   // 1. SAFETY CHECK: Check if the lesson is finished
   const isFinished = stepIndex >= lesson.steps.length;
   const step = !isFinished ? lesson.steps[stepIndex] : null;
@@ -39,11 +56,19 @@ function StepView({ lesson, stepIndex, onNext, onPrev, onBackToMenu, onRestart }
   if (isFinished) {
     return (
       <div className="lesson-container completion-screen">
+        {/* Render Confetti only when finished */}
+        <Confetti 
+          width={windowDimension.width} 
+          height={windowDimension.height} 
+          recycle={false} // Stops after one burst (set to true for infinite)
+          numberOfPieces={500}
+        />
+        
         <div className="top-controls">
           <button className="back-button" onClick={onBackToMenu}>← Back to Menu</button>
         </div>
-        <div style={{ textAlign: 'center', padding: '40px 20px' }}>
-          <h2>🎉 Lesson Complete!</h2>
+        <div style={{ textAlign: 'center', padding: '40px 20px', position: 'relative', zIndex: 1 }}>
+          <h2 style={{ fontSize: '2.5rem', marginBottom: '10px' }}>🎉 Lesson Complete!</h2>
           <p>You have successfully finished <strong>{lesson.title}</strong>.</p>
           <div style={{ marginTop: '30px' }}>
             <button onClick={onBackToMenu} className="nav-button next">Return to Lessons</button>
