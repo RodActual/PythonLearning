@@ -1,6 +1,6 @@
 import React from 'react';
 
-const LessonList = ({ lessons, onLoadLesson, userProgress }) => { 
+const LessonList = ({ lessons, onLoadLesson, userProgress, onResetLesson }) => { 
   if (!lessons || lessons.length === 0) {
     return <div className="loading-state">Loading Available Lessons...</div>;
   }
@@ -10,13 +10,9 @@ const LessonList = ({ lessons, onLoadLesson, userProgress }) => {
       <h2>Available Lessons</h2>
       <ul className="lesson-list">
         {lessons.map(lesson => {
-          // Default to 0 if no progress saved
           const progress = userProgress[lesson.id] || 0;
-          
-          // Get total steps from the API data, or default to a safe number (e.g. 5) if missing
           const totalSteps = lesson.step_count || 5; 
 
-          // Determine Status
           let statusLabel = "🆕 Start";
           let statusClass = "status-start";
 
@@ -30,15 +26,32 @@ const LessonList = ({ lessons, onLoadLesson, userProgress }) => {
 
           return (
             <li key={lesson.id} className="lesson-item">
-              <button 
-                className="lesson-button" 
-                onClick={() => onLoadLesson(lesson.id)}
-              >
-                <span className="lesson-title">{lesson.title}</span>
-                <span className={`lesson-status ${statusClass}`}>
-                  {statusLabel}
-                </span>
-              </button>
+              <div className="lesson-row">
+                {/* Main Lesson Button */}
+                <button 
+                  className="lesson-button" 
+                  onClick={() => onLoadLesson(lesson.id)}
+                >
+                  <span className="lesson-title">{lesson.title}</span>
+                  <span className={`lesson-status ${statusClass}`}>
+                    {statusLabel}
+                  </span>
+                </button>
+
+                {/* Individual Reset Button - Only shows if there is progress */}
+                {progress > 0 && (
+                  <button 
+                    className="reset-lesson-btn"
+                    title="Reset this lesson"
+                    onClick={(e) => {
+                      e.stopPropagation(); // Prevent opening the lesson
+                      onResetLesson(lesson.id);
+                    }}
+                  >
+                    ↺
+                  </button>
+                )}
+              </div>
             </li>
           );
         })}

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { onAuthStateChanged, signOut } from "firebase/auth";
-import { doc, setDoc, onSnapshot } from "firebase/firestore";
+import { doc, setDoc, updateDoc, deleteField, onSnapshot } from "firebase/firestore"; // Added updateDoc, deleteField
 import { auth, db } from './firebaseConfig'; 
 import LessonList from './components/LessonList';
 import StepView from './components/StepView';
@@ -19,23 +19,68 @@ function App() {
   // --- PROGRESS SAVING ---
   const saveProgress = useCallback((lessonId, stepIndex) => {
     if (!user || !db) return;
-
     const progressRef = doc(db, USER_PROGRESS_COLLECTION, user.uid);
-    const currentSavedStep = userProgress[lessonId] || 0;
     
-    // Always save if it's a higher step index (progress forward)
-    if (stepIndex > currentSavedStep) {
-        const newProgress = { 
-            ...userProgress, 
-            [lessonId]: stepIndex 
-        };
-        setUserProgress(newProgress);
-        
-        setDoc(progressRef, { completed_steps: newProgress }, { merge: true })
-            .catch(error => console.error("Error saving progress:", error));
-    }
+    // Optimistic UI update
+    const newProgress = { ...userProgress, [lessonId]: stepIndex };
+    setUserProgress(newProgress);
+    
+    // Save to Firestore (merge ensures we don't wipe other lessons)
+    setDoc(progressRef, { completed_steps: newProgress }, { merge: true })
+        .catch(error => console.error("Error saving progress:", error));
   }, [user, userProgress]);
 
+  // --- NEW: RESET SINGLE LESSON ---
+  const resetLessonProgress = async (lessonId) => {
+    if (!user || !db) return;
+    if (!window.confirm("Are you sure you want to reset your progress for this lesson?")) return;
+
+    try {
+      const progressRef = doc(db, USER_PROGRESS_COLLECTION, user.uid);
+      
+      // 1. Remove from local state immediately
+      const updatedProgress = { ...userProgress };
+      delete updatedProgress[lessonId];
+      setUserProgress(updatedProgress);
+
+      // 2. Remove from Firestore using deleteField()
+      // We target the specific key inside the 'completed_steps' map
+      await updateDoc(progressRef, {
+        [`completed_steps.${lessonId}`]: deleteField()
+      });
+      
+      // If currently viewing this lesson, reset view to start
+      if (currentLesson && currentLesson.id === lessonId) {
+        setCurrentStepIndex(0);
+      }
+    } catch (error) {
+      console.error("Error resetting lesson:", error);
+    }
+  };
+
+  // --- NEW: RESET ALL PROGRESS ---
+  const resetAllProgress = async () => {
+    if (!user || !db) return;
+    const confirmText = "⚠️ WARNING: This will permanently erase ALL your progress history.\n\nAre you sure?";
+    if (!window.confirm(confirmText)) return;
+
+    try {
+      const progressRef = doc(db, USER_PROGRESS_COLLECTION, user.uid);
+      
+      // 1. Clear local state
+      setUserProgress({});
+      
+      // 2. Clear Firestore (set completed_steps to empty object)
+      await setDoc(progressRef, { completed_steps: {} });
+
+      // If currently in a lesson, reset index
+      if (currentLesson) {
+        setCurrentStepIndex(0);
+      }
+    } catch (error) {
+      console.error("Error resetting all progress:", error);
+    }
+  };
 
   // --- INITIAL DATA LOADING ---
   useEffect(() => {
@@ -44,7 +89,6 @@ function App() {
       .then(data => setLessons(data))
       .catch(error => console.error("Failed to fetch lessons:", error));
   }, []);
-
 
   // --- AUTHENTICATION & PROGRESS LISTENER ---
   useEffect(() => {
@@ -60,28 +104,22 @@ function App() {
           } else {
             setUserProgress({});
           }
-        }, error => console.error("Error fetching progress:", error));
-        
+        });
         return () => unsubscribeProgress(); 
       } else {
         setUserProgress({});
         setCurrentLesson(null);
       }
     });
-
     return () => unsubscribeAuth();
   }, []); 
 
-
-  // --- NAVIGATION & STATE MANAGEMENT ---
-  
+  // --- NAVIGATION ---
   const loadLesson = (lessonId) => {
     fetch(`/api/lesson/${lessonId}`)
       .then(res => res.json())
       .then(data => {
-        // Load saved progress. If undefined, start at 0.
         const initialStep = userProgress[lessonId] || 0; 
-        
         setCurrentLesson({ id: lessonId, ...data });
         setCurrentStepIndex(initialStep);
       })
@@ -90,36 +128,30 @@ function App() {
   
   const nextStep = () => {
     const totalSteps = currentLesson.steps.length;
-    
     if (currentStepIndex < totalSteps - 1) {
-      // Normal progression
       const nextIndex = currentStepIndex + 1;
       setCurrentStepIndex(nextIndex);
       saveProgress(currentLesson.id, nextIndex);
     } else {
-      // Finished the lesson
-      const completionIndex = totalSteps; // Index = length means "done"
+      const completionIndex = totalSteps;
       saveProgress(currentLesson.id, completionIndex); 
-      setCurrentStepIndex(completionIndex); // Triggers Completion Screen in StepView
+      setCurrentStepIndex(completionIndex);
     }
   };
 
   const prevStep = () => {
-    if (currentStepIndex > 0) {
-      setCurrentStepIndex(prev => prev - 1);
-    }
+    if (currentStepIndex > 0) setCurrentStepIndex(prev => prev - 1);
   };
   
-  const handleRestart = () => {
+  // Local restart (doesn't wipe DB, just moves cursor)
+  const handleLocalRestart = () => {
      if (window.confirm('Restart this lesson?')) {
         setCurrentStepIndex(0);
         window.scrollTo(0, 0); 
     }
   };
   
-  const handleLogout = async () => {
-      await signOut(auth);
-  };
+  const handleLogout = async () => { await signOut(auth); };
 
   if (loading) return <div className="loading-screen">Loading...</div>;
 
@@ -130,6 +162,8 @@ function App() {
         {user && (
             <div className="user-info">
                 <small>{user.email}</small>
+                {/* NEW: RESET ALL BUTTON */}
+                <button onClick={resetAllProgress} className="reset-all-btn">Reset All Progress</button>
                 <button onClick={handleLogout} className="logout-button">Log Out</button>
             </div>
         )}
@@ -146,13 +180,15 @@ function App() {
               onNext={nextStep} 
               onPrev={prevStep} 
               onBackToMenu={() => setCurrentLesson(null)} 
-              onRestart={handleRestart}
+              onRestart={handleLocalRestart}
             />
           ) : (
             <LessonList 
               lessons={lessons} 
               onLoadLesson={loadLesson} 
               userProgress={userProgress}
+              // NEW: Pass the reset function down
+              onResetLesson={resetLessonProgress} 
             />
           )}
         </div>

@@ -385,3 +385,57 @@ body {
 .toggle-btn:hover {
   color: #2c5282;
 }
+
+/* --- Reset Controls --- */
+
+.reset-all-btn {
+  background-color: transparent;
+  color: #c53030;
+  border: 1px solid #c53030;
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-right: 10px; /* Space between Reset All and Logout */
+}
+
+.reset-all-btn:hover {
+  background-color: #fff5f5;
+  color: #9b2c2c;
+}
+
+/* Update Lesson Item Layout for side-by-side buttons */
+.lesson-row {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  background: white;
+}
+
+/* Adjust the main button to not take up 100% if reset is present */
+.lesson-button {
+  flex-grow: 1; /* Takes up all available space */
+  border-right: 1px solid transparent; /* default */
+}
+
+/* Small Reset Button Style */
+.reset-lesson-btn {
+  background: none;
+  border: none;
+  border-left: 1px solid #e2e8f0;
+  color: #718096;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0 15px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  transition: all 0.2s;
+  min-height: 54px; /* Matches the lesson button height */
+}
+
+.reset-lesson-btn:hover {
+  background-color: #fff5f5;
+  color: #e53e3e;
+}
