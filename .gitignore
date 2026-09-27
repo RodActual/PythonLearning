@@ -6,12 +6,16 @@ __pycache__
 # Firebase private key (CRITICAL SECURITY)
 firebase_admin_key.json
 
-# Node modules
+# Node modules and build output
 frontend/node_modules
 frontend/dist
 
+# Pyodide runtime, copied from node_modules on dev/build
+frontend/public/pyodide
+
 # Local environment variables
 frontend/.env
+frontend/.env.local
 
 # Vercel build output
 .vercel

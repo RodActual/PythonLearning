@@ -1,0 +1,3001 @@
+{
+  "units": [
+    {
+      "id": "foundations",
+      "title": "Foundations",
+      "icon": "🌱",
+      "description": "Print, variables, strings, decisions, and loops."
+    },
+    {
+      "id": "functions-data",
+      "title": "Functions & Data",
+      "icon": "🧰",
+      "description": "Reusable functions and Python's core collections."
+    },
+    {
+      "id": "robust-code",
+      "title": "Robust Code",
+      "icon": "🛡️",
+      "description": "Handle errors, use modules, work with files, and test your code."
+    },
+    {
+      "id": "objects",
+      "title": "Objects",
+      "icon": "🏗️",
+      "description": "Model real things with classes and inheritance."
+    },
+    {
+      "id": "toolkit",
+      "title": "Intermediate Toolkit",
+      "icon": "🚀",
+      "description": "JSON, dates, generators, and a final project."
+    }
+  ],
+  "lessons": [
+    {
+      "id": "lesson-01",
+      "title": "Introduction to Python",
+      "unit": "foundations",
+      "summary": "Print text, do math, and write comments.",
+      "steps": [
+        {
+          "type": "text",
+          "heading": "Welcome",
+          "content": "Python is a popular language known for being easy to read. It's used for Web Development, Data Science, and AI.",
+          "example_code": "print('Hello, Python!')"
+        },
+        {
+          "type": "quiz",
+          "question": "Python is an 'interpreted' language. What does that mean?",
+          "options": [
+            "It converts to binary before running",
+            "It runs line-by-line",
+            "It only runs on Windows"
+          ],
+          "answer": "It runs line-by-line",
+          "explanation": "An interpreter reads and runs your program one statement at a time, so there's no separate build step. (Python quietly compiles to bytecode behind the scenes, but you never have to.)",
+          "feedback": {
+            "It converts to binary before running": "That describes compiled languages like C, where you build a program before running it.",
+            "It only runs on Windows": "Python runs on Windows, macOS, Linux, and even inside this browser."
+          }
+        },
+        {
+          "type": "text",
+          "heading": "The Print Function",
+          "content": "To output text to the screen/console, we use `print()`. Text must be wrapped in quotes.",
+          "example_code": "print('Hello!')\nprint(\"Double quotes work too\")"
+        },
+        {
+          "type": "code",
+          "heading": "Your first print",
+          "instruction": "Print the phrase: Learning Python",
+          "initial_code": "# Use print()\n",
+          "expected_output": "Learning Python",
+          "hint": "Put the text in quotes inside the parentheses:\nprint('Learning Python')"
+        },
+        {
+          "type": "quiz",
+          "question": "Which syntax is correct?",
+          "options": [
+            "print 'Hello'",
+            "print(Hello)",
+            "print('Hello')"
+          ],
+          "answer": "print('Hello')",
+          "explanation": "print is a function, so it needs parentheses, and text needs quotes around it.",
+          "feedback": {
+            "print 'Hello'": "That worked in the old Python 2. Python 3 requires parentheses.",
+            "print(Hello)": "Without quotes, Python looks for a variable named Hello and raises a NameError."
+          }
+        },
+        {
+          "type": "text",
+          "heading": "Basic Math",
+          "content": "Python can act like a calculator. You can add (+), subtract (-), multiply (*), and divide (/).",
+          "example_code": "print(7 + 3)   # 10\nprint(7 - 3)   # 4\nprint(7 * 3)   # 21\nprint(7 / 2)   # 3.5"
+        },
+        {
+          "type": "code",
+          "heading": "Use Python as a calculator",
+          "instruction": "Calculate and print 10 plus 20.",
+          "initial_code": "# TODO: print the result of 10 plus 20\n",
+          "expected_output": "30",
+          "hint": "Put the math straight inside print():\nprint(10 + 20)"
+        },
+        {
+          "type": "quiz",
+          "question": "Which symbol is used for multiplication?",
+          "options": [
+            "x",
+            "*",
+            "#"
+          ],
+          "answer": "*",
+          "explanation": "Python uses * for multiplication. An x would be read as a variable name.",
+          "feedback": {
+            "x": "To Python, x is just a letter, usually a variable name.",
+            "#": "# starts a comment, so Python ignores the rest of the line."
+          }
+        },
+        {
+          "type": "text",
+          "heading": "Comments",
+          "content": "Comments start with `#`. Python ignores them. They are for humans to read.",
+          "example_code": "# This whole line is ignored\nprint('This runs')  # a comment can also end a line"
+        },
+        {
+          "type": "code",
+          "heading": "Comment out a line",
+          "instruction": "Comment out the second print so only Keep me is printed.",
+          "initial_code": "print('Keep me')\nprint('Delete me')",
+          "expected_output": "Keep me",
+          "hint": "Put # at the start of the second line:\n# print('Delete me')"
+        },
+        {
+          "type": "quiz",
+          "question": "Why do we use comments?",
+          "options": [
+            "To make code run faster",
+            "To explain code to others",
+            "To hide errors"
+          ],
+          "answer": "To explain code to others",
+          "explanation": "Comments are notes for people reading the code, including future you. Python skips them entirely.",
+          "feedback": {
+            "To make code run faster": "Python ignores comments, so they have no effect on speed.",
+            "To hide errors": "Commenting out broken code stops it running, but that isn't what comments are for."
+          }
+        },
+        {
+          "type": "text",
+          "heading": "Data Types Preview",
+          "content": "Text is called a 'String'. Numbers are 'Integers'. We will learn more about these soon.",
+          "example_code": "print('Hello')   # a string\nprint(42)        # an integer\nprint(3.14)      # a float (decimal number)"
+        },
+        {
+          "type": "quiz",
+          "question": "'Hello' is an example of which type?",
+          "options": [
+            "Integer",
+            "String",
+            "Boolean"
+          ],
+          "answer": "String",
+          "explanation": "Anything inside quotes is a string (str), even '42'.",
+          "feedback": {
+            "Integer": "Integers are whole numbers written without quotes, like 42.",
+            "Boolean": "Booleans are only True or False."
+          }
+        },
+        {
+          "type": "text",
+          "heading": "Syntax Errors",
+          "content": "If you forget a quote or parenthesis, Python will give you a 'SyntaxError'. Precision matters!",
+          "example_code": "print('Oops)     # SyntaxError: the quote never closes\nprint('Fixed')   # quotes and parentheses all match"
+        },
+        {
+          "type": "code",
+          "heading": "Fix the bug",
+          "instruction": "Fix the error in the code below so it runs.",
+          "initial_code": "print(\"Broken string)",
+          "expected_output": "Broken string",
+          "hint": "The text starts with a quote but never ends. Add the closing \" before the ):\nprint(\"Broken string\")"
+        },
+        {
+          "type": "quiz",
+          "code": "print('2' + '2')",
+          "question": "What does this code print?",
+          "options": [
+            "4",
+            "22",
+            "'22'"
+          ],
+          "answer": "22",
+          "explanation": "'2' and '2' are strings, so + joins them into '22' instead of adding. print shows text without the quotes.",
+          "feedback": {
+            "4": "That would happen with numbers: print(2 + 2). These are strings in quotes.",
+            "'22'": "print shows the text itself, without quotes."
+          }
+        },
+        {
+          "type": "quiz",
+          "question": "What is the file extension for Python files?",
+          "options": [
+            ".java",
+            ".py",
+            ".python"
+          ],
+          "answer": ".py",
+          "explanation": "Python files end in .py, like the main.py in the code editor.",
+          "feedback": {
+            ".java": "That's for Java files.",
+            ".python": "Close, but the standard extension is the short .py."
+          }
+        }
+      ]
+    },
+    {
+      "id": "lesson-02",
+      "title": "Variables & Types",
+      "unit": "foundations",
+      "summary": "Store values in variables and meet the basic types.",
+      "steps": [
+        {
+          "type": "text",
+          "heading": "What is a Variable?",
+          "content": "A variable is a container for storing data values. Think of it like a labeled box.",
+          "example_code": "points = 10\nname = 'Ada'\nprint(name, points)   # Ada 10"
+        },
+        {
+          "type": "quiz",
+          "question": "Which operator assigns a value to a variable?",
+          "options": [
+            "==",
+            ":",
+            "="
+          ],
+          "answer": "=",
+          "explanation": "= stores the value on the right in the name on the left. == compares two values.",
+          "feedback": {
+            "==": "== checks whether two values are equal. It doesn't store anything.",
+            ":": "Colons end lines like if and def. They don't assign values."
+          }
+        },
+        {
+          "type": "code",
+          "heading": "Make a variable",
+          "instruction": "Create a variable named 'points' and set it to 50. Then print it.",
+          "initial_code": "# Assign 50 to points\n\n# Print points",
+          "expected_output": "50",
+          "hint": "points = 50\nprint(points)"
+        },
+        {
+          "type": "text",
+          "heading": "Naming Rules",
+          "content": "Variable names cannot start with a number and cannot contain spaces. Use `snake_case` (words separated by underscores).",
+          "example_code": "player_name = 'Sam'   # good\nhigh_score = 99       # good\n# 2nd_place = 'Lee'   # invalid: starts with a number"
+        },
+        {
+          "type": "quiz",
+          "question": "Which variable name is INVALID?",
+          "options": [
+            "my_var",
+            "user1",
+            "1st_place"
+          ],
+          "answer": "1st_place",
+          "explanation": "Names can contain digits, but they can't start with one.",
+          "feedback": {
+            "my_var": "Letters and underscores are fine.",
+            "user1": "Digits are allowed after the first character."
+          }
+        },
+        {
+          "type": "text",
+          "heading": "Strings",
+          "content": "Strings are surrounded by either single quotes `'` or double quotes `\"`.",
+          "example_code": "greeting = 'Hi'\nreply = \"It's fine\"   # double quotes let you use ' inside"
+        },
+        {
+          "type": "code",
+          "heading": "Store a string",
+          "instruction": "Create a variable 'food' with the value \"Pizza\" and print it.",
+          "initial_code": "",
+          "expected_output": "Pizza",
+          "hint": "food = \"Pizza\"\nprint(food)"
+        },
+        {
+          "type": "quiz",
+          "question": "Can you mix quote types like 'Hello\"?",
+          "options": [
+            "Yes",
+            "No, they must match"
+          ],
+          "answer": "No, they must match",
+          "explanation": "A string must start and end with the same kind of quote, or Python can't tell where it ends.",
+          "feedback": {
+            "Yes": "Mixing them causes a SyntaxError because the string never closes."
+          }
+        },
+        {
+          "type": "text",
+          "heading": "Integers and Floats",
+          "content": "Integers are whole numbers (5). Floats are decimals (5.5).",
+          "example_code": "count = 5\nprice = 5.5\nprint(type(count))   # <class 'int'>\nprint(type(price))   # <class 'float'>"
+        },
+        {
+          "type": "quiz",
+          "code": "print(type(10.5))",
+          "question": "What does this code print?",
+          "options": [
+            "<class 'int'>",
+            "<class 'float'>",
+            "<class 'str'>"
+          ],
+          "answer": "<class 'float'>",
+          "explanation": "Any number with a decimal point is a float.",
+          "feedback": {
+            "<class 'int'>": "int is for whole numbers like 10.",
+            "<class 'str'>": "It would only be a str if it were in quotes."
+          }
+        },
+        {
+          "type": "code",
+          "heading": "Add two floats",
+          "instruction": "Add two float variables: x = 1.5, y = 2.5. Print the result.",
+          "initial_code": "x = 1.5\ny = 2.5\n# Print x + y",
+          "expected_output": "4.0",
+          "hint": "print(x + y)\nAdding two floats gives a float: 4.0"
+        },
+        {
+          "type": "text",
+          "heading": "Reassigning Variables",
+          "content": "You can change the value of a variable at any time.",
+          "example_code": "lives = 3\nlives = lives - 1\nprint(lives)   # 2"
+        },
+        {
+          "type": "code",
+          "heading": "Update a score",
+          "instruction": "Change 'score' from 10 to 20, then print it.",
+          "initial_code": "score = 10\n# Update score to 20\n\nprint(score)",
+          "expected_output": "20",
+          "hint": "Assign the variable again before the print:\nscore = 20"
+        },
+        {
+          "type": "quiz",
+          "question": "Python is 'Dynamically Typed'. What does this mean?",
+          "options": [
+            "You must declare types manually",
+            "Variables can change type",
+            "Variables cannot change"
+          ],
+          "answer": "Variables can change type",
+          "explanation": "A Python variable is just a name. It can point at a number now and a string later.",
+          "feedback": {
+            "You must declare types manually": "That's static typing, used by languages like Java.",
+            "Variables cannot change": "Variables can be reassigned at any time."
+          }
+        },
+        {
+          "type": "quiz",
+          "question": "How do you check a variable's type?",
+          "options": [
+            "check(x)",
+            "typeof(x)",
+            "type(x)"
+          ],
+          "answer": "type(x)",
+          "explanation": "type() is a built-in function that tells you the type of any value.",
+          "feedback": {
+            "check(x)": "There's no built-in check function.",
+            "typeof(x)": "That's JavaScript. Python uses type(x)."
+          }
+        }
+      ]
+    },
+    {
+      "id": "strings",
+      "title": "Strings & f‑strings",
+      "unit": "foundations",
+      "summary": "Slice, search, split, and format text.",
+      "steps": [
+        {
+          "type": "text",
+          "heading": "Strings are sequences",
+          "content": "A string is a sequence of characters, so you can index it just like a list and use `len()` on it.",
+          "example_code": "word = 'Python'\nprint(word[0])    # P\nprint(word[-1])   # n\nprint(len(word))  # 6"
+        },
+        {
+          "type": "quiz",
+          "code": "word = 'Python'\nprint(word[1])",
+          "question": "What does this code print?",
+          "options": [
+            "P",
+            "y",
+            "t"
+          ],
+          "answer": "y",
+          "explanation": "Index 1 is the second character, because counting starts at 0.",
+          "feedback": {
+            "P": "P is at index 0.",
+            "t": "t is at index 2."
+          }
+        },
+        {
+          "type": "text",
+          "heading": "Slicing",
+          "content": "`text[start:stop]` takes a slice from start up to, but not including, stop. Leave a side blank to go all the way to the start or end.",
+          "example_code": "word = 'Python'\nprint(word[0:3])   # Pyt\nprint(word[2:])    # thon\nprint(word[:2])    # Py"
+        },
+        {
+          "type": "code",
+          "heading": "Slice a string",
+          "instruction": "Print the first 4 characters of language using a slice.",
+          "initial_code": "language = 'JavaScript'\n# TODO: print the first 4 characters\n",
+          "expected_output": "Java",
+          "hint": "print(language[:4])\n(language[0:4] works too)"
+        },
+        {
+          "type": "quiz",
+          "code": "print('banana'[1:4])",
+          "question": "What does this code print?",
+          "options": [
+            "ban",
+            "ana",
+            "anan"
+          ],
+          "answer": "ana",
+          "explanation": "Indexes 1, 2 and 3 are a, n, a. The stop index 4 is left out.",
+          "feedback": {
+            "ban": "That's [0:3].",
+            "anan": "That would be [1:5]. The stop index isn't included."
+          }
+        },
+        {
+          "type": "text",
+          "heading": "String methods",
+          "content": "Strings come with built-in methods like `.upper()`, `.lower()`, `.strip()` and `.title()`. They return a **new** string; the original never changes.",
+          "example_code": "name = '  ada lovelace  '\nprint(name.strip())          # 'ada lovelace'\nprint(name.strip().title())  # 'Ada Lovelace'\nprint('hi'.upper())          # 'HI'"
+        },
+        {
+          "type": "code",
+          "heading": "Clean up a username",
+          "instruction": "The username has extra spaces and mixed case. Print it with the spaces removed, in lowercase.",
+          "initial_code": "username = '   PyCoder42  '\n# TODO: print username stripped and in lowercase\n",
+          "expected_output": "pycoder42",
+          "hint": "Chain the methods:\nprint(username.strip().lower())"
+        },
+        {
+          "type": "quiz",
+          "question": "Strings are immutable. What does that mean?",
+          "options": [
+            "You can't change a string in place; methods return new strings",
+            "Strings can't be printed",
+            "Strings can only hold letters"
+          ],
+          "answer": "You can't change a string in place; methods return new strings",
+          "explanation": "Immutable means the value can't change. name.upper() gives you a new string and leaves name as it was.",
+          "feedback": {
+            "Strings can't be printed": "Strings print fine.",
+            "Strings can only hold letters": "Strings can hold any characters: digits, spaces, even emoji."
+          }
+        },
+        {
+          "type": "text",
+          "heading": "Replace and search",
+          "content": "`.replace(old, new)` swaps text. The `in` operator checks whether one string contains another.",
+          "example_code": "msg = 'I like cats'\nprint(msg.replace('cats', 'dogs'))  # I like dogs\nprint('cat' in msg)                  # True"
+        },
+        {
+          "type": "code",
+          "heading": "Replace a word",
+          "instruction": "Replace 'bad' with 'good' in the sentence and print the result.",
+          "initial_code": "sentence = 'Today was a bad day'\n# TODO: print the sentence with 'bad' replaced by 'good'\n",
+          "expected_output": "Today was a good day",
+          "hint": "print(sentence.replace('bad', 'good'))"
+        },
+        {
+          "type": "text",
+          "heading": "Split and join",
+          "content": "`.split()` breaks a string into a list of pieces. `'separator'.join(list)` glues a list of strings back together.",
+          "example_code": "csv = 'red,green,blue'\ncolors = csv.split(',')\nprint(colors)              # ['red', 'green', 'blue']\nprint(' | '.join(colors))  # red | green | blue"
+        },
+        {
+          "type": "code",
+          "heading": "Split and join",
+          "instruction": "Split the sentence into words, then join them back together with dashes and print the result.",
+          "initial_code": "sentence = 'learn python every day'\n# TODO: split into words, join with '-', and print\n",
+          "expected_output": "learn-python-every-day",
+          "hint": "words = sentence.split()\nprint('-'.join(words))"
+        },
+        {
+          "type": "quiz",
+          "code": "print(len('a b c'.split()))",
+          "question": "What does this code print?",
+          "options": [
+            "3",
+            "5",
+            "1"
+          ],
+          "answer": "3",
+          "explanation": "split() with no argument splits on whitespace, giving ['a', 'b', 'c'], which has 3 items.",
+          "feedback": {
+            "5": "5 is the length of the string itself, spaces included.",
+            "1": "split() breaks the string at every space."
+          }
+        },
+        {
+          "type": "text",
+          "heading": "f-strings",
+          "content": "Put `f` before the opening quote and you can drop variables and expressions straight into `{ }`.",
+          "example_code": "name = 'Ada'\nage = 36\nprint(f'{name} is {age} years old')\nprint(f'Next year: {age + 1}')"
+        },
+        {
+          "type": "code",
+          "heading": "Your first f-string",
+          "instruction": "Use an f-string to print: Sam scored 42 points",
+          "initial_code": "player = 'Sam'\npoints = 42\n# TODO: print 'Sam scored 42 points' using an f-string\n",
+          "expected_output": "Sam scored 42 points",
+          "hint": "print(f'{player} scored {points} points')"
+        },
+        {
+          "type": "text",
+          "heading": "Formatting numbers",
+          "content": "Add a format spec after a colon inside the braces. `{price:.2f}` shows two decimal places and `{n:,}` adds thousands separators.",
+          "example_code": "price = 3.5\nprint(f'${price:.2f}')   # $3.50\nprint(f'{1234567:,}')    # 1,234,567"
+        },
+        {
+          "type": "code",
+          "heading": "Format money",
+          "instruction": "Print the total with exactly two decimal places: Total: $19.90",
+          "initial_code": "total = 19.9\n# TODO: print 'Total: $19.90' using an f-string with :.2f\n",
+          "expected_output": "Total: $19.90",
+          "hint": "print(f'Total: ${total:.2f}')"
+        },
+        {
+          "type": "quiz",
+          "code": "x = 7\nprint(f'{x} * 2 = {x * 2}')",
+          "question": "What does this code print?",
+          "options": [
+            "7 * 2 = 14",
+            "x * 2 = x * 2",
+            "{x} * 2 = {x * 2}"
+          ],
+          "answer": "7 * 2 = 14",
+          "explanation": "Everything inside { } is evaluated. The rest is printed as written.",
+          "feedback": {
+            "x * 2 = x * 2": "The braces tell Python to evaluate what's inside.",
+            "{x} * 2 = {x * 2}": "You'd get this without the f prefix, but the f is there."
+          }
+        },
+        {
+          "type": "code",
+          "heading": "Challenge: initials",
+          "instruction": "Print the initials of full_name in uppercase, with dots: A.L.",
+          "initial_code": "full_name = 'ada lovelace'\n# TODO: print the initials, like A.L.\n",
+          "expected_output": "A.L.",
+          "hint": "Split into words, then take the first letter of each:\nparts = full_name.split()\nfirst = parts[0][0].upper()"
+        },
+        {
+          "type": "quiz",
+          "question": "With name = 'Ada', which of these prints Hi, Ada! ?",
+          "options": [
+            "print(f'Hi, {name}!')",
+            "print('Hi, {name}!')",
+            "print(f'Hi, name!')"
+          ],
+          "answer": "print(f'Hi, {name}!')",
+          "explanation": "You need both the f prefix and the braces around the variable.",
+          "feedback": {
+            "print('Hi, {name}!')": "Without the f prefix, {name} is printed literally.",
+            "print(f'Hi, name!')": "Without braces, name is just ordinary text."
+          }
+        }
+      ]
+    },
+    {
+      "id": "lesson-03",
+      "title": "Logic (If/Else)",
+      "unit": "foundations",
+      "summary": "Make decisions with if, elif, else, and Booleans.",
+      "steps": [
+        {
+          "type": "text",
+          "heading": "Booleans",
+          "content": "Logic starts with True and False. These are called Booleans.",
+          "example_code": "is_raining = True\nprint(10 > 5)   # True\nprint(3 > 8)    # False"
+        },
+        {
+          "type": "quiz",
+          "code": "print(10 > 5)",
+          "question": "What does this code print?",
+          "options": [
+            "True",
+            "False",
+            "Error"
+          ],
+          "answer": "True",
+          "explanation": "Comparisons produce a Boolean. 10 is greater than 5, so the result is True.",
+          "feedback": {
+            "False": "10 really is bigger than 5.",
+            "Error": "Comparing two numbers is always allowed."
+          }
+        },
+        {
+          "type": "text",
+          "heading": "Comparison Operators",
+          "content": "We use `==` for equality, `!=` for not equal, `<` and `>` for less/greater than.",
+          "example_code": "print(5 == 5)   # True\nprint(5 != 3)   # True\nprint(2 < 1)    # False"
+        },
+        {
+          "type": "code",
+          "heading": "Check equality",
+          "instruction": "Print True if 5 equals 5 using the == operator.",
+          "initial_code": "# TODO: print whether 5 equals 5 using ==\n",
+          "expected_output": "True",
+          "hint": "print(5 == 5)\nprint shows the result of the comparison."
+        },
+        {
+          "type": "quiz",
+          "question": "What does '!=' mean?",
+          "options": [
+            "Equal",
+            "Not Equal",
+            "Assignment"
+          ],
+          "answer": "Not Equal",
+          "explanation": "!= means not equal. It's True when the two values are different.",
+          "feedback": {
+            "Equal": "Equal is ==.",
+            "Assignment": "Assignment is a single =."
+          }
+        },
+        {
+          "type": "text",
+          "heading": "The 'if' Statement",
+          "content": "Use `if` to run code ONLY when a condition is True. Indentation is required!",
+          "example_code": "temperature = 30\nif temperature > 25:\n    print('Wear shorts')"
+        },
+        {
+          "type": "code",
+          "heading": "Your first if",
+          "instruction": "Write an if statement: if 10 > 2, print 'Yes'.",
+          "initial_code": "if 10 > 2:\n    # Indent and print 'Yes'\n",
+          "expected_output": "Yes",
+          "hint": "Indent the print by 4 spaces under the if line:\nif 10 > 2:\n    print('Yes')"
+        },
+        {
+          "type": "quiz",
+          "question": "How many spaces is standard indentation?",
+          "options": [
+            "1",
+            "2",
+            "4"
+          ],
+          "answer": "4",
+          "explanation": "PEP 8, Python's style guide, uses 4 spaces per level. Python itself only needs the lines in a block to line up.",
+          "feedback": {
+            "1": "It would run, but 4 spaces is the standard style.",
+            "2": "It would run, but 4 spaces is the standard style."
+          }
+        },
+        {
+          "type": "text",
+          "heading": "The 'else' Statement",
+          "content": "`else` runs if the `if` condition was False.",
+          "example_code": "age = 12\nif age >= 18:\n    print('Adult')\nelse:\n    print('Minor')"
+        },
+        {
+          "type": "code",
+          "heading": "If / else",
+          "instruction": "Set x = 1. Write an if/else. If x > 5 print 'Big', else print 'Small'.",
+          "initial_code": "x = 1\n",
+          "expected_output": "Small",
+          "hint": "x = 1\nif x > 5:\n    print('Big')\nelse:\n    print('Small')"
+        },
+        {
+          "type": "text",
+          "heading": "The 'elif' Statement",
+          "content": "`elif` stands for 'Else If'. It allows you to check multiple conditions in a row.",
+          "example_code": "score = 85\nif score >= 90:\n    print('A')\nelif score >= 80:\n    print('B')\nelse:\n    print('C')"
+        },
+        {
+          "type": "code",
+          "heading": "Add an elif",
+          "instruction": "Check if age (15) is < 13 ('Child') or < 18 ('Teen'). Print 'Teen'.",
+          "initial_code": "age = 15\nif age < 13:\n    print('Child')\n# Add the elif here for < 18\n",
+          "expected_output": "Teen",
+          "hint": "Line elif up with if:\nelif age < 18:\n    print('Teen')"
+        },
+        {
+          "type": "quiz",
+          "question": "When does the 'else' block execute?",
+          "options": [
+            "Always",
+            "When if and elif are False",
+            "When if is True"
+          ],
+          "answer": "When if and elif are False",
+          "explanation": "else is the fallback. It runs only when every if and elif above it was False.",
+          "feedback": {
+            "Always": "else is skipped whenever an earlier branch runs.",
+            "When if is True": "When the if is True, its block runs and else is skipped."
+          }
+        },
+        {
+          "type": "text",
+          "heading": "Logical AND / OR",
+          "content": "`and` checks if BOTH are true. `or` checks if EITHER is true.",
+          "example_code": "has_ticket = True\nis_vip = False\nprint(has_ticket and is_vip)   # False\nprint(has_ticket or is_vip)    # True\nprint(not is_vip)              # True"
+        },
+        {
+          "type": "quiz",
+          "code": "print(True and False)",
+          "question": "What does this code print?",
+          "options": [
+            "True",
+            "False"
+          ],
+          "answer": "False",
+          "explanation": "and is True only when both sides are True. One side is False, so the result is False.",
+          "feedback": {
+            "True": "That would be the result of True or False."
+          }
+        },
+        {
+          "type": "quiz",
+          "question": "What symbol is missing? if x == 10_",
+          "options": [
+            ";",
+            ":",
+            "{"
+          ],
+          "answer": ":",
+          "explanation": "Lines that start a block (if, elif, else, for, while, def, class) end with a colon.",
+          "feedback": {
+            ";": "Python doesn't end lines with semicolons.",
+            "{": "Python uses indentation instead of curly braces."
+          }
+        }
+      ]
+    },
+    {
+      "id": "lesson-04",
+      "title": "Loops (Repetition)",
+      "unit": "foundations",
+      "summary": "Repeat work with for and while loops.",
+      "steps": [
+        {
+          "type": "text",
+          "heading": "The Power of Repetition",
+          "content": "Computers are great at doing the same thing over and over. In Python, we use **Loops** to repeat code.",
+          "example_code": "for i in range(3):\n    print('Hip hip hooray!')"
+        },
+        {
+          "type": "quiz",
+          "question": "Which keyword starts a loop for iterating over a sequence?",
+          "options": [
+            "loop",
+            "repeat",
+            "for"
+          ],
+          "answer": "for",
+          "explanation": "for loops over each item in a sequence. Python has no loop or repeat keyword.",
+          "feedback": {
+            "loop": "loop isn't a Python keyword.",
+            "repeat": "repeat isn't a Python keyword."
+          }
+        },
+        {
+          "type": "text",
+          "heading": "The For Loop",
+          "content": "A `for` loop iterates over a sequence (like a list or a string).",
+          "example_code": "for fruit in ['apple', 'banana']:\n    print(fruit)"
+        },
+        {
+          "type": "code",
+          "heading": "Repeat with range",
+          "instruction": "Write a loop that prints 'Hello' 3 times using range(3).",
+          "initial_code": "for i in range(3):\n    # print 'Hello' here\n    pass",
+          "expected_output": "Hello\nHello\nHello",
+          "hint": "Replace pass with the print, indented inside the loop:\nfor i in range(3):\n    print('Hello')"
+        },
+        {
+          "type": "text",
+          "heading": "The Range Function",
+          "content": "`range(5)` creates a sequence of numbers from 0 to 4 (5 is excluded).",
+          "example_code": "for n in range(2, 6):\n    print(n)      # 2, 3, 4, 5\n\nfor n in range(0, 10, 3):\n    print(n)      # 0, 3, 6, 9"
+        },
+        {
+          "type": "quiz",
+          "code": "for n in range(4):\n    pass\nprint(n)",
+          "question": "What does this code print?",
+          "options": [
+            "3",
+            "4",
+            "5"
+          ],
+          "answer": "3",
+          "explanation": "range(4) produces 0, 1, 2, 3. The stop value is never included, so the last value of n is 3.",
+          "feedback": {
+            "4": "The stop value is excluded, so 4 is never produced.",
+            "5": "range(4) stops before 4."
+          }
+        },
+        {
+          "type": "code",
+          "heading": "Count with a loop",
+          "instruction": "Print the numbers 0, 1, 2 using a for loop.",
+          "initial_code": "# TODO: use a for loop with range(3) to print 0, 1, 2\n",
+          "expected_output": "0\n1\n2",
+          "hint": "for num in range(3):\n    print(num)"
+        },
+        {
+          "type": "text",
+          "heading": "Looping Through Strings",
+          "content": "You can loop through text characters too!",
+          "example_code": "for ch in 'Hi!':\n    print(ch)"
+        },
+        {
+          "type": "code",
+          "heading": "Spell it out",
+          "instruction": "Loop through the string 'Code' and print each letter.",
+          "initial_code": "word = \"Code\"\n# TODO: loop through word and print each letter\n",
+          "expected_output": "C\no\nd\ne",
+          "hint": "for letter in word:\n    print(letter)"
+        },
+        {
+          "type": "text",
+          "heading": "The While Loop",
+          "content": "A `while` loop runs AS LONG AS a condition is True. Be careful of infinite loops!",
+          "example_code": "fuel = 3\nwhile fuel > 0:\n    print('Flying, fuel =', fuel)\n    fuel = fuel - 1\nprint('Landed')"
+        },
+        {
+          "type": "code",
+          "heading": "While loop",
+          "instruction": "Create a while loop that runs while x < 3. Print x and increment it.",
+          "initial_code": "x = 0\n# TODO: while x < 3, print x and add 1 to it\n",
+          "expected_output": "0\n1\n2",
+          "hint": "Both lines go inside the loop:\nwhile x < 3:\n    print(x)\n    x = x + 1"
+        },
+        {
+          "type": "quiz",
+          "question": "What happens if you forget to increment x in a while loop?",
+          "options": [
+            "The loop runs once",
+            "Infinite Loop (Crash)",
+            "Syntax Error"
+          ],
+          "answer": "Infinite Loop (Crash)",
+          "explanation": "If x never changes, x < 3 stays True forever, so the loop never ends. In this app, code is stopped after 10 seconds.",
+          "feedback": {
+            "The loop runs once": "The condition is checked before every round, and it stays True.",
+            "Syntax Error": "The code is valid. It just never stops."
+          }
+        },
+        {
+          "type": "text",
+          "heading": "Break and Continue",
+          "content": "`break` exits the loop immediately. `continue` skips to the next round.",
+          "example_code": "for n in range(6):\n    if n == 2:\n        continue   # skip 2\n    if n == 4:\n        break      # stop at 4\n    print(n)       # 0, 1, 3"
+        },
+        {
+          "type": "code",
+          "heading": "Break out early",
+          "instruction": "Stop the loop when i equals 2 using 'break'.",
+          "initial_code": "for i in range(5):\n    # TODO: stop the loop with 'break' when i equals 2\n    print(i)",
+          "expected_output": "0\n1",
+          "hint": "Put the check above the print, inside the loop:\n    if i == 2:\n        break"
+        },
+        {
+          "type": "quiz",
+          "question": "Which statement skips the rest of the loop body but keeps looping?",
+          "options": [
+            "break",
+            "skip",
+            "continue"
+          ],
+          "answer": "continue",
+          "explanation": "continue jumps to the next round. break leaves the loop entirely.",
+          "feedback": {
+            "break": "break exits the whole loop.",
+            "skip": "skip isn't a Python keyword."
+          }
+        }
+      ]
+    },
+    {
+      "id": "lesson-05",
+      "title": "Functions",
+      "unit": "functions-data",
+      "summary": "Write reusable functions with parameters and return values.",
+      "steps": [
+        {
+          "type": "text",
+          "heading": "Reusability",
+          "content": "Functions allow you to write code once and use it many times. It keeps code clean (DRY - Don't Repeat Yourself).",
+          "example_code": "def greet():\n    print('Welcome!')\n\ngreet()\ngreet()"
+        },
+        {
+          "type": "quiz",
+          "question": "Which keyword defines a function?",
+          "options": [
+            "func",
+            "def",
+            "function"
+          ],
+          "answer": "def",
+          "explanation": "def (short for define) creates a function.",
+          "feedback": {
+            "func": "That's Go's keyword.",
+            "function": "That's JavaScript's keyword."
+          }
+        },
+        {
+          "type": "code",
+          "heading": "Define and call",
+          "instruction": "Define a function named 'say_hi' that prints 'Hi'. Call it once.",
+          "initial_code": "def say_hi():\n    # print inside\n    pass\n\n# Call it here",
+          "expected_output": "Hi",
+          "hint": "def say_hi():\n    print('Hi')\n\nsay_hi()   # not indented"
+        },
+        {
+          "type": "text",
+          "heading": "Arguments (Parameters)",
+          "content": "You can pass data INTO a function using arguments.",
+          "example_code": "def greet(name):\n    print('Hello ' + name)\n\ngreet('Ada')\ngreet('Linus')"
+        },
+        {
+          "type": "code",
+          "heading": "Use a parameter",
+          "instruction": "Finish the function to print 'Hello ' followed by the name.",
+          "initial_code": "def greet(name):\n    # TODO: print 'Hello ' followed by name\n    pass\n\ngreet(\"Alice\")",
+          "expected_output": "Hello Alice",
+          "hint": "print('Hello ' + name)\nNote the space after Hello."
+        },
+        {
+          "type": "quiz",
+          "question": "Can a function accept multiple arguments?",
+          "options": [
+            "Yes, separated by commas",
+            "No, only one",
+            "Yes, separated by spaces"
+          ],
+          "answer": "Yes, separated by commas",
+          "explanation": "Separate parameters with commas: def add(a, b):",
+          "feedback": {
+            "No, only one": "Functions can take any number of arguments.",
+            "Yes, separated by spaces": "Commas separate arguments, not spaces."
+          }
+        },
+        {
+          "type": "text",
+          "heading": "The Return Statement",
+          "content": "Functions usually 'return' a value to be used later, rather than just printing it.",
+          "example_code": "def square(n):\n    return n * n\n\nresult = square(4)\nprint(result + 1)   # 17"
+        },
+        {
+          "type": "code",
+          "heading": "Return a value",
+          "instruction": "Make the function return 5 plus 5. Then print the result.",
+          "initial_code": "def get_ten():\n    # TODO: return 5 plus 5\n    pass\n\nprint(get_ten())",
+          "expected_output": "10",
+          "hint": "Replace pass with:\n    return 5 + 5"
+        },
+        {
+          "type": "quiz",
+          "code": "def f():\n    return 'first'\n    print('second')\n\nprint(f())",
+          "question": "What does this code print?",
+          "options": [
+            "first",
+            "second",
+            "Nothing"
+          ],
+          "answer": "first",
+          "explanation": "return ends the function immediately, so the print after it never runs.",
+          "feedback": {
+            "second": "That line comes after return, so it can never run.",
+            "Nothing": "print(f()) prints the value that f returned."
+          }
+        },
+        {
+          "type": "text",
+          "heading": "Scope",
+          "content": "Variables created INSIDE a function cannot be used outside of it. This is called 'Local Scope'.",
+          "example_code": "def make_secret():\n    secret = 42        # local to the function\n    return secret\n\nprint(make_secret())  # 42\n# print(secret)  would raise NameError"
+        },
+        {
+          "type": "code",
+          "heading": "Return from local scope",
+          "instruction": "Fix this code. 'x' is local, so we must return it to print it.",
+          "initial_code": "def my_func():\n    x = 100\n\nprint(my_func())",
+          "expected_output": "100",
+          "hint": "Add this as the last line of my_func:\n    return x"
+        },
+        {
+          "type": "quiz",
+          "question": "How do you call a function named start?",
+          "options": [
+            "start",
+            "start()",
+            "call start"
+          ],
+          "answer": "start()",
+          "explanation": "Parentheses call the function. Without them you only refer to it.",
+          "feedback": {
+            "start": "That refers to the function but doesn't run it.",
+            "call start": "Python has no call keyword."
+          }
+        }
+      ]
+    },
+    {
+      "id": "lesson-06",
+      "title": "Lists & Arrays",
+      "unit": "functions-data",
+      "summary": "Store ordered collections and change them.",
+      "steps": [
+        {
+          "type": "text",
+          "heading": "What is a List?",
+          "content": "A list is an ordered collection of items. In other languages, these are often called Arrays.",
+          "example_code": "scores = [90, 72, 85]\nprint(scores)"
+        },
+        {
+          "type": "quiz",
+          "question": "Which brackets are used for lists?",
+          "options": [
+            "( )",
+            "{ }",
+            "[ ]"
+          ],
+          "answer": "[ ]",
+          "explanation": "Square brackets make lists. Curly braces make dictionaries and sets, and parentheses make tuples.",
+          "feedback": {
+            "( )": "Parentheses create tuples.",
+            "{ }": "Curly braces create dictionaries and sets."
+          }
+        },
+        {
+          "type": "code",
+          "heading": "Make a list",
+          "instruction": "Create a list named 'nums' containing 1, 2, and 3. Print the list.",
+          "initial_code": "# TODO: create a list named 'nums' with 1, 2, and 3, then print it\n",
+          "expected_output": "[1, 2, 3]",
+          "hint": "nums = [1, 2, 3]\nprint(nums)"
+        },
+        {
+          "type": "text",
+          "heading": "Indexing",
+          "content": "We access items using their position (index). Python uses **0-based indexing** (the first item is 0).",
+          "example_code": "colors = ['red', 'green', 'blue']\nprint(colors[0])   # red\nprint(colors[2])   # blue"
+        },
+        {
+          "type": "quiz",
+          "code": "colors = ['red', 'blue']\nprint(colors[0])",
+          "question": "What does this code print?",
+          "options": [
+            "red",
+            "blue",
+            "error"
+          ],
+          "answer": "red",
+          "explanation": "Indexing starts at 0, so index 0 is the first item.",
+          "feedback": {
+            "blue": "'blue' is at index 1.",
+            "error": "Index 0 exists in any list that isn't empty."
+          }
+        },
+        {
+          "type": "code",
+          "heading": "Get the second item",
+          "instruction": "Print the SECOND item in the list.",
+          "initial_code": "letters = ['A', 'B', 'C']\n# TODO: print the second item\n",
+          "expected_output": "B",
+          "hint": "The second item is at index 1:\nprint(letters[1])"
+        },
+        {
+          "type": "text",
+          "heading": "Negative Indexing",
+          "content": "You can count from the end! `[-1]` is the last item, `[-2]` is the second to last.",
+          "example_code": "items = ['a', 'b', 'c']\nprint(items[-1])   # c\nprint(items[-2])   # b"
+        },
+        {
+          "type": "code",
+          "heading": "Get the last item",
+          "instruction": "Print the LAST item using negative indexing.",
+          "initial_code": "items = [10, 20, 30, 40]\n# TODO: print the last item using a negative index\n",
+          "expected_output": "40",
+          "hint": "items[-1] is always the last item:\nprint(items[-1])"
+        },
+        {
+          "type": "text",
+          "heading": "Modifying Lists",
+          "content": "Lists are mutable. You can change items, add new ones, or delete them.",
+          "example_code": "pets = ['cat', 'dog']\npets[1] = 'parrot'\nprint(pets)   # ['cat', 'parrot']"
+        },
+        {
+          "type": "code",
+          "heading": "Change an item",
+          "instruction": "Change the first item from 1 to 99. Print the list.",
+          "initial_code": "nums = [1, 2, 3]\n# TODO: change the first item to 99\n\nprint(nums)",
+          "expected_output": "[99, 2, 3]",
+          "hint": "nums[0] = 99"
+        },
+        {
+          "type": "text",
+          "heading": "Adding Items",
+          "content": "Use `.append(item)` to add to the end. Use `.insert(index, item)` to add to a specific spot.",
+          "example_code": "queue = ['Ann']\nqueue.append('Bo')\nqueue.insert(0, 'Cy')\nprint(queue)   # ['Cy', 'Ann', 'Bo']"
+        },
+        {
+          "type": "code",
+          "heading": "Append an item",
+          "instruction": "Add 'Yellow' to the end of the list using append.",
+          "initial_code": "colors = ['Red']\n# TODO: add 'Yellow' to the end with append\n\nprint(colors)",
+          "expected_output": "['Red', 'Yellow']",
+          "hint": "colors.append('Yellow')"
+        },
+        {
+          "type": "quiz",
+          "question": "How do you remove an item by its value?",
+          "options": [
+            ".delete()",
+            ".remove()",
+            ".pop()"
+          ],
+          "answer": ".remove()",
+          "explanation": ".remove(x) deletes the first item equal to x. .pop(i) removes by position.",
+          "feedback": {
+            ".delete()": "Lists have no .delete() method. (The del statement exists, but it works by index.)",
+            ".pop()": ".pop() removes by index, the last item by default, not by value."
+          }
+        },
+        {
+          "type": "text",
+          "heading": "List Length",
+          "content": "Use the `len()` function to find out how many items are in a list.",
+          "example_code": "names = ['Ann', 'Bo', 'Cy']\nprint(len(names))     # 3\nprint(len('hello'))   # 5, len works on strings too"
+        },
+        {
+          "type": "code",
+          "heading": "Count the items",
+          "instruction": "Print the number of items in the list.",
+          "initial_code": "data = [10, 20, 30, 40, 50]\n# TODO: print how many items are in data\n",
+          "expected_output": "5",
+          "hint": "print(len(data))"
+        },
+        {
+          "type": "quiz",
+          "question": "Can a list contain different data types, like [1, 'hello']?",
+          "options": [
+            "Yes",
+            "No"
+          ],
+          "answer": "Yes",
+          "explanation": "Lists can hold any mix of types, even other lists.",
+          "feedback": {
+            "No": "Python lists aren't limited to one type."
+          }
+        }
+      ]
+    },
+    {
+      "id": "lesson-07",
+      "title": "Dictionaries",
+      "unit": "functions-data",
+      "summary": "Look things up by key with dictionaries.",
+      "steps": [
+        {
+          "type": "text",
+          "heading": "Key-Value Pairs",
+          "content": "Dictionaries store data in pairs, like a real dictionary (Word: Definition). In Python, we use `{ key: value }`.",
+          "example_code": "person = {'name': 'Ada', 'age': 36}\nprint(person)"
+        },
+        {
+          "type": "quiz",
+          "question": "Which symbol is used for dictionaries?",
+          "options": [
+            "[]",
+            "{}",
+            "()"
+          ],
+          "answer": "{}",
+          "explanation": "Dictionaries use curly braces with key: value pairs inside.",
+          "feedback": {
+            "[]": "Square brackets are for lists.",
+            "()": "Parentheses are for tuples."
+          }
+        },
+        {
+          "type": "code",
+          "heading": "Build a dictionary",
+          "instruction": "Create a dictionary named 'car' with keys 'brand': 'Ford' and 'year': 2020. Print it.",
+          "initial_code": "# TODO: create a dictionary named 'car' with 'brand': 'Ford' and 'year': 2020, then print it\n",
+          "expected_output": "{'brand': 'Ford', 'year': 2020}",
+          "hint": "car = {'brand': 'Ford', 'year': 2020}\nprint(car)"
+        },
+        {
+          "type": "text",
+          "heading": "Accessing Values",
+          "content": "You cannot access items by index [0]. You must access them by their Key Name.",
+          "example_code": "person = {'name': 'Ada', 'age': 36}\nprint(person['name'])   # Ada"
+        },
+        {
+          "type": "code",
+          "heading": "Look up a key",
+          "instruction": "Print the value associated with the key 'name'.",
+          "initial_code": "user = {'id': 1, 'name': 'Alice'}\n# TODO: print the value for the key 'name'\n",
+          "expected_output": "Alice",
+          "hint": "print(user['name'])"
+        },
+        {
+          "type": "quiz",
+          "question": "What happens if you try to access a key that doesn't exist?",
+          "options": [
+            "It returns None",
+            "It creates the key",
+            "KeyError (Crash)"
+          ],
+          "answer": "KeyError (Crash)",
+          "explanation": "Using [] with a missing key raises KeyError. Use .get() when a key might be missing.",
+          "feedback": {
+            "It returns None": "That's what .get() does, not [].",
+            "It creates the key": "Only assignment creates keys. Reading never does."
+          }
+        },
+        {
+          "type": "text",
+          "heading": "The .get() Method",
+          "content": "To avoid crashing, use `.get()`. If the key is missing, it returns None instead of an error.",
+          "example_code": "settings = {'theme': 'dark'}\nprint(settings.get('font'))           # None\nprint(settings.get('font', 'Arial'))  # Arial (a default)"
+        },
+        {
+          "type": "code",
+          "heading": "Look up safely",
+          "instruction": "Use .get() to try to find 'age'. It should print None.",
+          "initial_code": "user = {'name': 'Bob'}\n# TODO: use .get() to look up 'age' and print the result\n",
+          "expected_output": "None",
+          "hint": "print(user.get('age'))"
+        },
+        {
+          "type": "text",
+          "heading": "Modifying Dictionaries",
+          "content": "Dictionaries are mutable. You can change values or add new keys just by assigning them.",
+          "example_code": "stock = {'apples': 5}\nstock['apples'] = 3\nprint(stock)   # {'apples': 3}"
+        },
+        {
+          "type": "code",
+          "heading": "Change a value",
+          "instruction": "Change the 'color' from 'red' to 'blue'. Print the dict.",
+          "initial_code": "item = {'color': 'red'}\n# TODO: change 'color' to 'blue'\n\nprint(item)",
+          "expected_output": "{'color': 'blue'}",
+          "hint": "item['color'] = 'blue'"
+        },
+        {
+          "type": "text",
+          "heading": "Adding New Keys",
+          "content": "If you assign a value to a key that doesn't exist yet, Python creates it.",
+          "example_code": "stock = {'apples': 5}\nstock['pears'] = 2\nprint(stock)   # {'apples': 5, 'pears': 2}"
+        },
+        {
+          "type": "code",
+          "heading": "Add a key",
+          "instruction": "Add a new key 'price' with value 10 to the dictionary.",
+          "initial_code": "fruit = {'name': 'Apple'}\n# TODO: add the key 'price' with value 10\n\nprint(fruit)",
+          "expected_output": "{'name': 'Apple', 'price': 10}",
+          "hint": "fruit['price'] = 10"
+        },
+        {
+          "type": "text",
+          "heading": "Removing Items",
+          "content": "Use `.pop(key)` to remove an item and get its value.",
+          "example_code": "stock = {'apples': 5, 'pears': 2}\nremoved = stock.pop('pears')\nprint(removed)   # 2\nprint(stock)     # {'apples': 5}"
+        },
+        {
+          "type": "code",
+          "heading": "Remove a key",
+          "instruction": "Remove 'model' from the dictionary.",
+          "initial_code": "laptop = {'brand': 'Dell', 'model': 'XPS'}\n# TODO: remove 'model' from the dictionary\n\nprint(laptop)",
+          "expected_output": "{'brand': 'Dell'}",
+          "hint": "laptop.pop('model')"
+        },
+        {
+          "type": "quiz",
+          "code": "d = {'a': 1, 'b': 2}\nprint(list(d.keys()))",
+          "question": "What does this code print?",
+          "options": [
+            "['a', 'b']",
+            "[1, 2]",
+            "[('a', 1), ('b', 2)]"
+          ],
+          "answer": "['a', 'b']",
+          "explanation": ".keys() gives the keys. .values() gives the values, and .items() gives key-value pairs.",
+          "feedback": {
+            "[1, 2]": "Those are the values, from .values().",
+            "[('a', 1), ('b', 2)]": "Those are the pairs, from .items()."
+          }
+        },
+        {
+          "type": "quiz",
+          "question": "Can a dictionary key be a list, like {[1, 2]: 'value'}?",
+          "options": [
+            "Yes",
+            "No, keys must be immutable"
+          ],
+          "answer": "No, keys must be immutable",
+          "explanation": "Keys must be hashable, which in practice means immutable: strings, numbers and tuples work, lists don't.",
+          "feedback": {
+            "Yes": "Python raises TypeError: unhashable type: 'list'."
+          }
+        }
+      ]
+    },
+    {
+      "id": "collections",
+      "title": "Tuples, Sets & Comprehensions",
+      "unit": "functions-data",
+      "summary": "Fixed tuples, unique sets, and one-line list building.",
+      "steps": [
+        {
+          "type": "text",
+          "heading": "Tuples",
+          "content": "A tuple is like a list that can't be changed (it's immutable). Tuples use parentheses.",
+          "example_code": "point = (3, 4)\nprint(point[0])   # 3\n# point[0] = 5 would raise TypeError"
+        },
+        {
+          "type": "quiz",
+          "question": "When is a tuple a better choice than a list?",
+          "options": [
+            "For values that shouldn't change, like coordinates",
+            "When you need to add items often",
+            "When you need key-value pairs"
+          ],
+          "answer": "For values that shouldn't change, like coordinates",
+          "explanation": "A tuple says 'this is fixed'. Tuples can also be dictionary keys, which lists can't.",
+          "feedback": {
+            "When you need to add items often": "Lists are better for collections that grow.",
+            "When you need key-value pairs": "That's a dictionary."
+          }
+        },
+        {
+          "type": "text",
+          "heading": "Unpacking",
+          "content": "You can unpack a tuple or list into separate variables in one line. It even makes swapping easy.",
+          "example_code": "point = (3, 4)\nx, y = point\nprint(x, y)   # 3 4\n\na, b = 1, 2\na, b = b, a   # swap\nprint(a, b)   # 2 1"
+        },
+        {
+          "type": "code",
+          "heading": "Unpack a tuple",
+          "instruction": "Unpack rgb into three variables named r, g and b.",
+          "initial_code": "rgb = (255, 128, 0)\n# TODO: unpack rgb into r, g, b\n\nprint(g)",
+          "expected_output": "128",
+          "hint": "r, g, b = rgb"
+        },
+        {
+          "type": "quiz",
+          "code": "a, b = 5, 9\na, b = b, a\nprint(a)",
+          "question": "What does this code print?",
+          "options": [
+            "5",
+            "9",
+            "Error"
+          ],
+          "answer": "9",
+          "explanation": "The right side (9, 5) is built first, then unpacked into a and b, which swaps them.",
+          "feedback": {
+            "5": "The swap happens in a single step.",
+            "Error": "Tuple unpacking makes this swap legal."
+          }
+        },
+        {
+          "type": "text",
+          "heading": "Sets",
+          "content": "A set holds unique items with no particular order. Duplicates disappear automatically.",
+          "example_code": "tags = {'python', 'code', 'python'}\nprint(len(tags))       # 2\nprint('code' in tags)  # True"
+        },
+        {
+          "type": "code",
+          "heading": "Remove duplicates",
+          "instruction": "Print how many unique visitors there are.",
+          "initial_code": "visitors = ['ann', 'bo', 'ann', 'cy', 'bo', 'ann']\n# TODO: print the number of unique visitors\n",
+          "expected_output": "3",
+          "hint": "set(visitors) drops the duplicates. Wrap it in len():\nprint(len(set(visitors)))"
+        },
+        {
+          "type": "text",
+          "heading": "Set operations",
+          "content": "Sets support math-style operations: `|` for union, `&` for intersection, `-` for difference.",
+          "example_code": "a = {1, 2, 3}\nb = {2, 3, 4}\nprint(a & b)   # {2, 3}\nprint(a - b)   # {1}"
+        },
+        {
+          "type": "code",
+          "heading": "Friends in common",
+          "instruction": "Print the friends Ann and Bo have in common, as a sorted list.",
+          "initial_code": "ann = {'cy', 'dee', 'eli'}\nbo = {'dee', 'eli', 'fay'}\n# TODO: print the common friends as a sorted list\n",
+          "expected_output": "['dee', 'eli']",
+          "hint": "ann & bo is the intersection. sorted() turns it into a sorted list:\nprint(sorted(ann & bo))"
+        },
+        {
+          "type": "quiz",
+          "code": "print(len({1, 1, 2, 2, 3}))",
+          "question": "What does this code print?",
+          "options": [
+            "5",
+            "3",
+            "2"
+          ],
+          "answer": "3",
+          "explanation": "A set keeps one copy of each value: {1, 2, 3}.",
+          "feedback": {
+            "5": "Duplicates are dropped in a set.",
+            "2": "There are three different values: 1, 2 and 3."
+          }
+        },
+        {
+          "type": "text",
+          "heading": "List comprehensions",
+          "content": "A comprehension builds a list in one line: `[expression for item in iterable]`.",
+          "example_code": "squares = [n * n for n in range(5)]\nprint(squares)   # [0, 1, 4, 9, 16]"
+        },
+        {
+          "type": "code",
+          "heading": "Double everything",
+          "instruction": "Use a list comprehension to build a list of each price doubled.",
+          "initial_code": "prices = [3, 5, 10]\n# TODO: doubled = [...]\n\nprint(doubled)",
+          "expected_output": "[6, 10, 20]",
+          "hint": "doubled = [p * 2 for p in prices]"
+        },
+        {
+          "type": "text",
+          "heading": "Filtering",
+          "content": "Add `if` at the end of a comprehension to keep only some items.",
+          "example_code": "nums = [4, 7, 10, 13]\nevens = [n for n in nums if n % 2 == 0]\nprint(evens)   # [4, 10]"
+        },
+        {
+          "type": "code",
+          "heading": "Filter with a comprehension",
+          "instruction": "Build a list of the words longer than 3 letters.",
+          "initial_code": "words = ['sun', 'planet', 'sky', 'galaxy', 'orbit']\n# TODO: long_words = [...]\n\nprint(long_words)",
+          "expected_output": "['planet', 'galaxy', 'orbit']",
+          "hint": "long_words = [w for w in words if len(w) > 3]"
+        },
+        {
+          "type": "quiz",
+          "code": "print([c.upper() for c in 'hey'])",
+          "question": "What does this code print?",
+          "options": [
+            "['H', 'E', 'Y']",
+            "HEY",
+            "['HEY']"
+          ],
+          "answer": "['H', 'E', 'Y']",
+          "explanation": "The comprehension loops over each character and builds a list of the results.",
+          "feedback": {
+            "HEY": "A list comprehension always builds a list, not a string.",
+            "['HEY']": "Each character becomes its own item."
+          }
+        },
+        {
+          "type": "text",
+          "heading": "Dictionary comprehensions",
+          "content": "The same idea works for dictionaries: `{key: value for item in iterable}`.",
+          "example_code": "names = ['ann', 'bo']\nlengths = {n: len(n) for n in names}\nprint(lengths)   # {'ann': 3, 'bo': 2}"
+        },
+        {
+          "type": "code",
+          "heading": "Build a dictionary",
+          "instruction": "Build a dictionary that maps each number to its square.",
+          "initial_code": "nums = [1, 2, 3]\n# TODO: squares = {...}\n\nprint(squares)",
+          "expected_output": "{1: 1, 2: 4, 3: 9}",
+          "hint": "squares = {n: n * n for n in nums}"
+        },
+        {
+          "type": "quiz",
+          "question": "Which collection is best for a group of unique tags?",
+          "options": [
+            "set",
+            "tuple",
+            "list"
+          ],
+          "answer": "set",
+          "explanation": "Sets drop duplicates automatically and make checking membership fast.",
+          "feedback": {
+            "tuple": "Tuples keep duplicates and can't change.",
+            "list": "Lists allow duplicates, so you'd have to check before adding."
+          }
+        }
+      ]
+    },
+    {
+      "id": "functions-2",
+      "title": "Functions 2: Arguments & Recursion",
+      "unit": "functions-data",
+      "summary": "Defaults, *args, lambdas, sorting keys, and recursion.",
+      "steps": [
+        {
+          "type": "text",
+          "heading": "Default values",
+          "content": "Give a parameter a default value and callers can leave it out.",
+          "example_code": "def greet(name, greeting='Hello'):\n    print(f'{greeting}, {name}!')\n\ngreet('Ada')             # Hello, Ada!\ngreet('Ada', 'Welcome')  # Welcome, Ada!"
+        },
+        {
+          "type": "code",
+          "heading": "Add a default",
+          "instruction": "Give exponent a default of 2, so power(5) returns 25.",
+          "initial_code": "def power(base, exponent):\n    return base ** exponent\n\nprint(power(5))",
+          "expected_output": "25",
+          "hint": "Change the parameter list to:\ndef power(base, exponent=2):"
+        },
+        {
+          "type": "text",
+          "heading": "Keyword arguments",
+          "content": "You can pass arguments by name. Then their order doesn't matter, and calls are easier to read.",
+          "example_code": "def describe(pet, sound):\n    print(f'The {pet} says {sound}')\n\ndescribe(sound='moo', pet='cow')"
+        },
+        {
+          "type": "quiz",
+          "code": "def f(a, b=10):\n    return a + b\n\nprint(f(1, b=2))",
+          "question": "What does this code print?",
+          "options": [
+            "3",
+            "11",
+            "12"
+          ],
+          "answer": "3",
+          "explanation": "b=2 replaces the default of 10, so the result is 1 + 2.",
+          "feedback": {
+            "11": "The 2 you passed replaces the default 10.",
+            "12": "a is 1, not 2."
+          }
+        },
+        {
+          "type": "text",
+          "heading": "*args",
+          "content": "`*args` collects any number of positional arguments into a tuple.",
+          "example_code": "def total(*numbers):\n    return sum(numbers)\n\nprint(total(1, 2, 3))   # 6\nprint(total(5))         # 5"
+        },
+        {
+          "type": "code",
+          "heading": "Average of anything",
+          "instruction": "Finish average so it works with any number of arguments.",
+          "initial_code": "def average(*nums):\n    # TODO: return the sum of nums divided by how many there are\n    pass\n\nprint(average(2, 4, 6))",
+          "expected_output": "4.0",
+          "hint": "return sum(nums) / len(nums)"
+        },
+        {
+          "type": "text",
+          "heading": "**kwargs",
+          "content": "`**kwargs` collects named arguments into a dictionary.",
+          "example_code": "def profile(**info):\n    for key, value in info.items():\n        print(f'{key}: {value}')\n\nprofile(name='Ada', lang='Python')"
+        },
+        {
+          "type": "quiz",
+          "code": "def f(*args, **kwargs):\n    print(len(args), len(kwargs))\n\nf(1, 2, x=3)",
+          "question": "What does this code print?",
+          "options": [
+            "2 1",
+            "3 0",
+            "1 2"
+          ],
+          "answer": "2 1",
+          "explanation": "1 and 2 go into args (a tuple). x=3 goes into kwargs (a dictionary).",
+          "feedback": {
+            "3 0": "Named arguments like x=3 go into kwargs, not args.",
+            "1 2": "There are two positional arguments and one named one."
+          }
+        },
+        {
+          "type": "text",
+          "heading": "Lambda functions",
+          "content": "A lambda is a tiny unnamed function written in one line. It's handy as a sort key.",
+          "example_code": "square = lambda n: n * n\nprint(square(4))   # 16\n\nwords = ['kiwi', 'fig', 'banana']\nprint(sorted(words, key=len))   # ['fig', 'kiwi', 'banana']"
+        },
+        {
+          "type": "code",
+          "heading": "Sort by score",
+          "instruction": "Sort the players by score (the second item), lowest first.",
+          "initial_code": "players = [('Ann', 30), ('Bo', 10), ('Cy', 20)]\n# TODO: ranked = sorted(players, key=...)\n\nfor name, score in ranked:\n    print(name)",
+          "expected_output": "Bo\nCy\nAnn",
+          "hint": "ranked = sorted(players, key=lambda p: p[1])"
+        },
+        {
+          "type": "quiz",
+          "question": "What does lambda x: x + 1 create?",
+          "options": [
+            "A function that adds 1 to its input",
+            "A variable named x",
+            "A list"
+          ],
+          "answer": "A function that adds 1 to its input",
+          "explanation": "lambda makes a small function. Here it takes x and returns x + 1.",
+          "feedback": {
+            "A variable named x": "x is the lambda's parameter, not a variable you can use afterwards.",
+            "A list": "Nothing here builds a list."
+          }
+        },
+        {
+          "type": "text",
+          "heading": "Recursion",
+          "content": "A recursive function calls itself on a smaller version of the problem. It needs a **base case** that stops the calls.",
+          "example_code": "def countdown(n):\n    if n == 0:            # base case\n        print('Liftoff!')\n        return\n    print(n)\n    countdown(n - 1)      # smaller problem\n\ncountdown(3)"
+        },
+        {
+          "type": "code",
+          "heading": "Factorial",
+          "instruction": "Finish the recursive factorial. factorial(5) is 5 * 4 * 3 * 2 * 1 = 120.",
+          "initial_code": "def factorial(n):\n    if n == 1:\n        return 1\n    # TODO: return n times the factorial of n - 1\n\nprint(factorial(5))",
+          "expected_output": "120",
+          "hint": "return n * factorial(n - 1)"
+        },
+        {
+          "type": "quiz",
+          "question": "What happens if a recursive function has no base case?",
+          "options": [
+            "It keeps calling itself until Python raises RecursionError",
+            "It returns None",
+            "It runs once"
+          ],
+          "answer": "It keeps calling itself until Python raises RecursionError",
+          "explanation": "Without a base case nothing stops the calls. Python gives up after about 1000 levels.",
+          "feedback": {
+            "It returns None": "It never gets the chance to return.",
+            "It runs once": "Each call makes another call, forever."
+          }
+        },
+        {
+          "type": "code",
+          "heading": "Sum a list recursively",
+          "instruction": "Finish total so it adds up the list recursively: the first item plus the total of the rest.",
+          "initial_code": "def total(nums):\n    if not nums:\n        return 0\n    # TODO: return the first item plus total(nums[1:])\n\nprint(total([4, 5, 6]))",
+          "expected_output": "15",
+          "hint": "return nums[0] + total(nums[1:])"
+        },
+        {
+          "type": "quiz",
+          "code": "def f(n):\n    if n <= 1:\n        return n\n    return f(n - 1) + f(n - 2)\n\nprint(f(6))",
+          "question": "What does this code print?",
+          "options": [
+            "8",
+            "6",
+            "13"
+          ],
+          "answer": "8",
+          "explanation": "This is the Fibonacci sequence: 0, 1, 1, 2, 3, 5, 8. f(6) is 8.",
+          "feedback": {
+            "13": "That's f(7).",
+            "6": "f only returns n itself when n is 0 or 1."
+          }
+        }
+      ]
+    },
+    {
+      "id": "lesson-08",
+      "title": "Error Handling",
+      "unit": "robust-code",
+      "summary": "Catch errors with try, except, else, and finally.",
+      "steps": [
+        {
+          "type": "text",
+          "heading": "When Things Go Wrong",
+          "content": "Errors (Exceptions) crash your program. As a developer, you need to handle these gracefully.",
+          "example_code": "print(10 / 0)   # ZeroDivisionError\nint('abc')      # ValueError\n[1, 2][5]       # IndexError"
+        },
+        {
+          "type": "code",
+          "heading": "Watch it crash",
+          "instruction": "Run this code to see it crash. (Then click Next).",
+          "initial_code": "print(10 / 0)",
+          "expected_error": "ZeroDivisionError",
+          "hint": "Just press Run. The last line of the traceback names the error."
+        },
+        {
+          "type": "text",
+          "heading": "The Try Block",
+          "content": "Wrap dangerous code in a `try:` block. If it fails, Python jumps to the `except:` block.",
+          "example_code": "try:\n    print(10 / 0)\nexcept:\n    print('Something went wrong')"
+        },
+        {
+          "type": "code",
+          "heading": "Catch the crash",
+          "instruction": "Fix the crash using try/except. Print 'Caught' if it fails.",
+          "initial_code": "# TODO: wrap this in try/except and print 'Caught' when it fails\nprint(10/0)",
+          "expected_output": "Caught",
+          "hint": "try:\n    print(10/0)\nexcept:\n    print('Caught')"
+        },
+        {
+          "type": "quiz",
+          "question": "Which block contains the code that MIGHT crash?",
+          "options": [
+            "try",
+            "except",
+            "catch"
+          ],
+          "answer": "try",
+          "explanation": "Risky code goes in try. The recovery code goes in except.",
+          "feedback": {
+            "except": "except holds the code that runs after an error.",
+            "catch": "catch is used in Java and JavaScript. Python uses except."
+          }
+        },
+        {
+          "type": "text",
+          "heading": "Specific Errors",
+          "content": "It is better to catch specific errors like `ZeroDivisionError` or `ValueError` rather than a generic `except:`.",
+          "example_code": "try:\n    result = 10 / 0\nexcept ZeroDivisionError:\n    print('Cannot divide by zero')\nexcept ValueError:\n    print('Bad value')"
+        },
+        {
+          "type": "code",
+          "heading": "Catch a specific error",
+          "instruction": "Catch the ZeroDivisionError specifically.",
+          "initial_code": "# TODO: catch the ZeroDivisionError and print 'No dividing by zero!'\nx = 5 / 0",
+          "expected_output": "No dividing by zero!",
+          "hint": "try:\n    x = 5 / 0\nexcept ZeroDivisionError:\n    print('No dividing by zero!')"
+        },
+        {
+          "type": "text",
+          "heading": "ValueError",
+          "content": "A `ValueError` happens when a function receives the right type of argument but an inappropriate value (like trying to convert 'abc' to an integer).",
+          "example_code": "try:\n    age = int('twelve')\nexcept ValueError:\n    print('Please enter digits')"
+        },
+        {
+          "type": "code",
+          "heading": "Catch a ValueError",
+          "instruction": "Try to convert 'hello' to an int. Catch the ValueError and print 'Oops'.",
+          "initial_code": "# TODO: catch the ValueError and print 'Oops'\nint('hello')",
+          "expected_output": "Oops",
+          "hint": "try:\n    int('hello')\nexcept ValueError:\n    print('Oops')"
+        },
+        {
+          "type": "text",
+          "heading": "The Else Block",
+          "content": "You can add an `else:` block. It runs only if NO errors occurred.",
+          "example_code": "try:\n    n = int('42')\nexcept ValueError:\n    print('Not a number')\nelse:\n    print('Got', n)"
+        },
+        {
+          "type": "code",
+          "heading": "The else block",
+          "instruction": "Run the code. Since there is no error, the else block should print 'Success'.",
+          "initial_code": "try:\n    x = 10 / 2\nexcept ZeroDivisionError:\n    print('Fail')\n# TODO: add an else block that prints 'Success'\n",
+          "expected_output": "Success",
+          "hint": "Line else up with try and except:\nelse:\n    print('Success')"
+        },
+        {
+          "type": "text",
+          "heading": "The Finally Block",
+          "content": "`finally:` runs 100% of the time, whether there was an error or not. It is used for cleanup (closing files, etc).",
+          "example_code": "try:\n    print(1 / 0)\nexcept ZeroDivisionError:\n    print('Error!')\nfinally:\n    print('Always runs')"
+        },
+        {
+          "type": "code",
+          "heading": "The finally block",
+          "instruction": "Write a finally block that prints 'Done'.",
+          "initial_code": "try:\n    print(1/0)\nexcept:\n    pass\n# TODO: add a finally block that prints 'Done'\n",
+          "expected_output": "Done",
+          "hint": "Line finally up with try:\nfinally:\n    print('Done')"
+        },
+        {
+          "type": "quiz",
+          "code": "try:\n    x = 1 / 0\nexcept ZeroDivisionError:\n    print('except')\nelse:\n    print('else')",
+          "question": "What does this code print?",
+          "options": [
+            "except",
+            "else",
+            "Nothing"
+          ],
+          "answer": "except",
+          "explanation": "An error happened, so except runs and else is skipped. else only runs when try finishes without an error.",
+          "feedback": {
+            "else": "else is skipped because the try block raised an error.",
+            "Nothing": "The except block catches the error and prints."
+          }
+        }
+      ]
+    },
+    {
+      "id": "lesson-09",
+      "title": "Modules & Libraries",
+      "unit": "robust-code",
+      "summary": "Use Python's standard library with import.",
+      "steps": [
+        {
+          "type": "text",
+          "heading": "Batteries Included",
+          "content": "Python comes with a huge 'Standard Library' of modules you can use immediately.",
+          "example_code": "import math\nimport random\nprint(math.ceil(4.1))        # 5\nprint(random.randint(1, 6))  # a dice roll"
+        },
+        {
+          "type": "quiz",
+          "question": "Which keyword loads a module?",
+          "options": [
+            "load",
+            "import",
+            "require"
+          ],
+          "answer": "import",
+          "explanation": "import loads a module so you can use what's inside it.",
+          "feedback": {
+            "load": "load isn't a Python keyword.",
+            "require": "require is from JavaScript (Node.js)."
+          }
+        },
+        {
+          "type": "text",
+          "heading": "The Math Module",
+          "content": "The `math` module contains advanced mathematical functions.",
+          "example_code": "import math\nprint(math.sqrt(81))    # 9.0\nprint(math.floor(2.7))  # 2"
+        },
+        {
+          "type": "code",
+          "heading": "Square root",
+          "instruction": "Import math and print the square root of 64.",
+          "initial_code": "# TODO: import math and print the square root of 64\n",
+          "expected_output": "8.0",
+          "hint": "import math\nprint(math.sqrt(64))"
+        },
+        {
+          "type": "text",
+          "heading": "Math Constants",
+          "content": "Modules can also contain variables, like `math.pi`.",
+          "example_code": "import math\nprint(math.pi)   # 3.141592653589793\nprint(math.e)    # 2.718281828459045"
+        },
+        {
+          "type": "code",
+          "heading": "Round pi",
+          "instruction": "Print the value of Pi (math.pi).",
+          "initial_code": "import math\n# TODO: print math.pi rounded to 2 decimals with round()\n",
+          "expected_output": "3.14",
+          "hint": "print(round(math.pi, 2))"
+        },
+        {
+          "type": "text",
+          "heading": "The Random Module",
+          "content": "`random` allows you to generate random numbers or make random choices.",
+          "example_code": "import random\nprint(random.randint(1, 10))       # a whole number from 1 to 10\nprint(random.choice(['a', 'b']))   # a random item"
+        },
+        {
+          "type": "code",
+          "heading": "Random choice",
+          "instruction": "Import random. Use `random.choice()` to pick from the list.",
+          "initial_code": "import random\n# Seed ensures the result is predictable for this test\nrandom.seed(1)\n\nitems = ['A', 'B', 'C']\n# TODO: print a random item from items with random.choice()\n",
+          "expected_output": "A",
+          "hint": "print(random.choice(items))"
+        },
+        {
+          "type": "text",
+          "heading": "From ... Import",
+          "content": "If you only need one specific function, you can import just that part.",
+          "example_code": "from math import sqrt, pi\nprint(sqrt(16))   # no math. prefix needed"
+        },
+        {
+          "type": "code",
+          "heading": "Import one name",
+          "instruction": "Import ONLY sqrt from math. Then use it directly without typing 'math.'",
+          "initial_code": "# TODO: import ONLY sqrt from math, then print sqrt(25)\n",
+          "expected_output": "5.0",
+          "hint": "from math import sqrt\nprint(sqrt(25))"
+        },
+        {
+          "type": "text",
+          "heading": "Aliasing (as)",
+          "content": "You can give a module a nickname using `as` to make it easier to type.",
+          "example_code": "import math as m\nprint(m.ceil(2.1))   # 3"
+        },
+        {
+          "type": "code",
+          "heading": "Use an alias",
+          "instruction": "Import math as 'm'. Then print m.floor(4.9).",
+          "initial_code": "# TODO: import math as m, then print m.floor(4.9)\n",
+          "expected_output": "4",
+          "hint": "import math as m\nprint(m.floor(4.9))"
+        },
+        {
+          "type": "text",
+          "heading": "Built-in Modules",
+          "content": "Common modules include: `datetime`, `os`, `sys`, `json`, and `random`.",
+          "example_code": "import datetime\nprint(datetime.date(2024, 1, 15))   # 2024-01-15"
+        },
+        {
+          "type": "quiz",
+          "question": "Which module would you use to work with today's date?",
+          "options": [
+            "math",
+            "datetime",
+            "random"
+          ],
+          "answer": "datetime",
+          "explanation": "datetime handles dates and times. You'll use it in the JSON & Dates lesson.",
+          "feedback": {
+            "math": "math is for numbers, not dates.",
+            "random": "random makes random choices."
+          }
+        },
+        {
+          "type": "quiz",
+          "question": "Can you create your own modules?",
+          "options": [
+            "Yes, any .py file is a module",
+            "No, only Python creators can"
+          ],
+          "answer": "Yes, any .py file is a module",
+          "explanation": "Any .py file can be imported by another file in the same folder, for example import my_helpers.",
+          "feedback": {
+            "No, only Python creators can": "You can write and import your own modules any time."
+          }
+        }
+      ]
+    },
+    {
+      "id": "lesson-10",
+      "title": "File I/O",
+      "unit": "robust-code",
+      "summary": "Save and load text files.",
+      "steps": [
+        {
+          "type": "text",
+          "heading": "Reading & Writing",
+          "content": "Programs need to save data. Python uses the `open()` function to interact with files.",
+          "example_code": "f = open('notes.txt', 'w')\nf.write('Remember milk')\nf.close()"
+        },
+        {
+          "type": "quiz",
+          "question": "What does 'I/O' stand for?",
+          "options": [
+            "Input/Output",
+            "Internal/Optional",
+            "Integer/Object"
+          ],
+          "answer": "Input/Output",
+          "explanation": "I/O means input/output: reading data in and writing data out.",
+          "feedback": {
+            "Internal/Optional": "I/O stands for Input/Output.",
+            "Integer/Object": "I/O stands for Input/Output."
+          }
+        },
+        {
+          "type": "text",
+          "heading": "Writing to Files",
+          "content": "To create or overwrite a file, use mode `'w'` (write). Use `.write()` to put text inside.",
+          "example_code": "with open('log.txt', 'w') as f:\n    f.write('Line one\\n')\n    f.write('Line two\\n')"
+        },
+        {
+          "type": "code",
+          "heading": "Write a file",
+          "instruction": "Open 'test.txt' in write mode and write 'Hello' to it.",
+          "initial_code": "f = open('test.txt', 'w')\n# TODO: write 'Hello' to the file\n\nf.close()\n\n# Verification (do not change)\nprint(open('test.txt').read())",
+          "expected_output": "Hello",
+          "hint": "Put the write between the open and close lines:\nf.write('Hello')"
+        },
+        {
+          "type": "text",
+          "heading": "Reading Files",
+          "content": "Use mode `'r'` (read) to open a file. Use `.read()` to get the contents.",
+          "example_code": "with open('log.txt') as f:\n    text = f.read()\nprint(text)"
+        },
+        {
+          "type": "code",
+          "heading": "Read a file",
+          "instruction": "Read the file 'note.txt' and print its content.",
+          "initial_code": "# Setup (creates the file for you)\nwith open('note.txt', 'w') as f: f.write('Secret Message')\n\n# TODO: open 'note.txt' in read mode and print its contents\n",
+          "expected_output": "Secret Message",
+          "hint": "f = open('note.txt', 'r')\nprint(f.read())\nf.close()"
+        },
+        {
+          "type": "quiz",
+          "question": "What happens if you open a non-existent file in 'r' mode?",
+          "options": [
+            "It creates the file",
+            "FileNotFoundError",
+            "It returns None"
+          ],
+          "answer": "FileNotFoundError",
+          "explanation": "Read mode needs the file to exist already. Write ('w') and append ('a') modes create it.",
+          "feedback": {
+            "It creates the file": "Only 'w' and 'a' create missing files.",
+            "It returns None": "open() raises an error instead."
+          }
+        },
+        {
+          "type": "text",
+          "heading": "The 'With' Statement",
+          "content": "Manually closing files with `.close()` is annoying. The `with` statement closes the file automatically.",
+          "example_code": "with open('data.txt', 'w') as f:\n    f.write('saved')\n# the file is closed automatically here"
+        },
+        {
+          "type": "code",
+          "heading": "Use 'with'",
+          "instruction": "Rewrite this using 'with'.",
+          "initial_code": "# OLD WAY:\n# f = open('log.txt', 'w')\n# f.write('Log Entry')\n# f.close()\n\n# TODO: rewrite the code above using 'with'\n\n\n# Verification (do not change)\nprint(open('log.txt').read())",
+          "expected_output": "Log Entry",
+          "hint": "with open('log.txt', 'w') as f:\n    f.write('Log Entry')"
+        },
+        {
+          "type": "text",
+          "heading": "Appending",
+          "content": "Mode `'w'` deletes existing content. Mode `'a'` (append) adds to the end of the file.",
+          "example_code": "with open('list.txt', 'a') as f:\n    f.write('another line\\n')"
+        },
+        {
+          "type": "code",
+          "heading": "Append to a file",
+          "instruction": "Append ' World' to the existing file.",
+          "initial_code": "# Setup\nwith open('greet.txt', 'w') as f: f.write('Hello')\n\n# TODO: open 'greet.txt' in append mode ('a') and write ' World'\n\n\n# Verification (do not change)\nprint(open('greet.txt').read())",
+          "expected_output": "Hello World",
+          "hint": "with open('greet.txt', 'a') as f:\n    f.write(' World')"
+        },
+        {
+          "type": "quiz",
+          "question": "Which mode allows reading AND writing?",
+          "options": [
+            "'r+'",
+            "'rw'",
+            "'x'"
+          ],
+          "answer": "'r+'",
+          "explanation": "'r+' opens an existing file for reading and writing. 'x' creates a new file and fails if it already exists.",
+          "feedback": {
+            "'rw'": "'rw' isn't a valid mode. Python raises ValueError.",
+            "'x'": "'x' is exclusive create: write-only, and it fails if the file exists."
+          }
+        },
+        {
+          "type": "text",
+          "heading": "Readlines",
+          "content": "You can read a file line-by-line using `.readlines()` or by looping over the file object.",
+          "example_code": "with open('list.txt') as f:\n    for line in f:\n        print(line.strip())   # strip() removes the newline"
+        },
+        {
+          "type": "code",
+          "heading": "Loop over lines",
+          "instruction": "Loop through the file and print each line.",
+          "initial_code": "# Setup\nwith open('list.txt', 'w') as f: f.write('Line 1\\nLine 2')\n\n# TODO: open 'list.txt', loop over the file, and print each line (use .strip())\n",
+          "expected_output": "Line 1\nLine 2",
+          "hint": "with open('list.txt') as f:\n    for line in f:\n        print(line.strip())"
+        },
+        {
+          "type": "quiz",
+          "question": "Why is 'with' preferred over manual open and close?",
+          "options": [
+            "It runs faster",
+            "It closes the file for you, even if an error happens",
+            "It uses less memory"
+          ],
+          "answer": "It closes the file for you, even if an error happens",
+          "explanation": "with guarantees the file is closed when the block ends, even if an exception is raised, so your data is saved and the file isn't left open.",
+          "feedback": {
+            "It runs faster": "Speed is the same either way.",
+            "It uses less memory": "Memory use is the same either way."
+          }
+        }
+      ]
+    },
+    {
+      "id": "testing",
+      "title": "Testing with assert",
+      "unit": "robust-code",
+      "summary": "Prove your code works and catch bugs early.",
+      "steps": [
+        {
+          "type": "text",
+          "heading": "Why test?",
+          "content": "Tests are code that checks your code. They catch bugs early and let you change things without fear of breaking them.",
+          "example_code": "def add(a, b):\n    return a + b\n\nprint(add(2, 2) == 4)   # True means the check passed"
+        },
+        {
+          "type": "text",
+          "heading": "assert",
+          "content": "`assert condition` does nothing when the condition is True and raises an `AssertionError` when it's False.",
+          "example_code": "assert 2 + 2 == 4       # passes silently\nassert len('hi') == 2   # passes\n# assert 1 > 5 would raise AssertionError"
+        },
+        {
+          "type": "code",
+          "heading": "See a failing test",
+          "instruction": "Run this test. double() has a bug, so the assert fails with an AssertionError. That's the point!",
+          "initial_code": "def double(n):\n    return n + 2   # bug!\n\nassert double(5) == 10",
+          "expected_error": "AssertionError",
+          "hint": "Just press Run. You'll fix the bug in the next step."
+        },
+        {
+          "type": "code",
+          "heading": "Fix the bug",
+          "instruction": "Fix double so both tests pass. Then the last line prints the success message.",
+          "initial_code": "def double(n):\n    return n + 2   # bug!\n\nassert double(5) == 10\nassert double(0) == 0\nprint('All tests passed')",
+          "expected_output": "All tests passed",
+          "hint": "Doubling means multiplying:\n    return n * 2"
+        },
+        {
+          "type": "quiz",
+          "question": "What does assert x == 5 do when x is 5?",
+          "options": [
+            "Nothing, the program continues",
+            "Prints True",
+            "Raises AssertionError"
+          ],
+          "answer": "Nothing, the program continues",
+          "explanation": "A passing assert is silent. You only hear from it when something is wrong.",
+          "feedback": {
+            "Prints True": "assert never prints anything.",
+            "Raises AssertionError": "That only happens when the condition is False."
+          }
+        },
+        {
+          "type": "text",
+          "heading": "Assert messages",
+          "content": "Add a message after a comma. It's shown when the assert fails, so you know what went wrong.",
+          "example_code": "price = -3\nassert price >= 0, f'price must not be negative, got {price}'"
+        },
+        {
+          "type": "quiz",
+          "code": "try:\n    assert 1 + 1 == 3, 'math is broken'\nexcept AssertionError as e:\n    print(e)",
+          "question": "What does this code print?",
+          "options": [
+            "math is broken",
+            "AssertionError",
+            "False"
+          ],
+          "answer": "math is broken",
+          "explanation": "The message you give assert becomes the error's text, so print(e) shows it.",
+          "feedback": {
+            "AssertionError": "print(e) shows the error's message, not its type.",
+            "False": "The assert raises an error; it doesn't print the condition."
+          }
+        },
+        {
+          "type": "text",
+          "heading": "Test functions",
+          "content": "Group related checks in a function whose name starts with `test_`. Tools like pytest find and run these automatically.",
+          "example_code": "def is_even(n):\n    return n % 2 == 0\n\ndef test_is_even():\n    assert is_even(4)\n    assert not is_even(7)\n\ntest_is_even()\nprint('ok')"
+        },
+        {
+          "type": "code",
+          "heading": "Write a test that catches a bug",
+          "instruction": "shout() forgets the '!'. Write an assert in test_shout checking that shout('hi') equals 'HI!'. Your test should fail with an AssertionError, proving it catches the bug.",
+          "initial_code": "def shout(text):\n    return text.upper()   # bug: missing '!'\n\ndef test_shout():\n    # TODO: assert that shout('hi') equals 'HI!'\n    pass\n\ntest_shout()",
+          "expected_error": "AssertionError",
+          "hint": "Replace pass with:\n    assert shout('hi') == 'HI!'"
+        },
+        {
+          "type": "text",
+          "heading": "Edge cases",
+          "content": "Bugs love boundaries: zero, empty lists, negative numbers, the first and last item. Good tests check them.",
+          "example_code": "def average(nums):\n    if not nums:\n        return 0\n    return sum(nums) / len(nums)\n\nassert average([2, 4]) == 3\nassert average([]) == 0   # the edge case"
+        },
+        {
+          "type": "code",
+          "heading": "Handle the edge case",
+          "instruction": "safe_divide should return None when dividing by zero. Fix it so all the tests pass.",
+          "initial_code": "def safe_divide(a, b):\n    # TODO: return None when b is 0\n    return a / b\n\nassert safe_divide(10, 2) == 5\nassert safe_divide(1, 0) is None\nprint('All tests passed')",
+          "expected_output": "All tests passed",
+          "hint": "    if b == 0:\n        return None"
+        },
+        {
+          "type": "quiz",
+          "question": "Why test edge cases like 0, empty lists, or negative numbers?",
+          "options": [
+            "Bugs often hide at the boundaries",
+            "They make tests run faster",
+            "Python requires them"
+          ],
+          "answer": "Bugs often hide at the boundaries",
+          "explanation": "Code that works for typical values often breaks at the extremes, like dividing by zero or averaging an empty list.",
+          "feedback": {
+            "They make tests run faster": "Extra tests don't make anything faster.",
+            "Python requires them": "Python doesn't require any tests. They're a good habit."
+          }
+        },
+        {
+          "type": "text",
+          "heading": "Testing for errors",
+          "content": "Sometimes the correct behaviour is to raise an error. Use `raise` in your function and check for it with try/except in the test.",
+          "example_code": "def check_age(age):\n    if age < 0:\n        raise ValueError('age cannot be negative')\n    return age\n\ntry:\n    check_age(-1)\n    print('No error: test FAILED')\nexcept ValueError:\n    print('Raised ValueError: test passed')"
+        },
+        {
+          "type": "code",
+          "heading": "Raise an error",
+          "instruction": "Make withdraw raise a ValueError when the amount is more than the balance. The test at the bottom checks it.",
+          "initial_code": "def withdraw(balance, amount):\n    # TODO: raise ValueError if amount > balance\n    return balance - amount\n\ntry:\n    withdraw(50, 80)\n    print('No error raised')\nexcept ValueError:\n    print('Test passed')",
+          "expected_output": "Test passed",
+          "hint": "    if amount > balance:\n        raise ValueError('insufficient funds')"
+        },
+        {
+          "type": "quiz",
+          "question": "You find a bug. What's a good habit?",
+          "options": [
+            "Write a test that reproduces it, then fix the code",
+            "Delete the test that fails",
+            "Fix it and move on without a test"
+          ],
+          "answer": "Write a test that reproduces it, then fix the code",
+          "explanation": "The test proves the bug is fixed and stops it from quietly coming back later.",
+          "feedback": {
+            "Delete the test that fails": "That hides the bug instead of fixing it.",
+            "Fix it and move on without a test": "It works, but nothing stops the bug from coming back."
+          }
+        }
+      ]
+    },
+    {
+      "id": "lesson-11",
+      "title": "Classes & OOP",
+      "unit": "objects",
+      "summary": "Create your own types with classes.",
+      "steps": [
+        {
+          "type": "text",
+          "heading": "Object Oriented Programming",
+          "content": "Everything in Python is an Object. OOP allows us to create our own data types called **Classes**.",
+          "example_code": "print(type(5))      # <class 'int'>\nprint(type('hi'))   # <class 'str'>\n# Numbers and strings are objects made from classes."
+        },
+        {
+          "type": "quiz",
+          "question": "A Class is like a...?",
+          "options": [
+            "Variable",
+            "Blueprint",
+            "List"
+          ],
+          "answer": "Blueprint",
+          "explanation": "A class describes what its objects hold and can do. Each object is built from it.",
+          "feedback": {
+            "Variable": "A variable can hold an object, but the class is the blueprint.",
+            "List": "A list is one kind of object, not the idea of a class."
+          }
+        },
+        {
+          "type": "text",
+          "heading": "Defining a Class",
+          "content": "Use the `class` keyword. By convention, class names are Capitalized.",
+          "example_code": "class Dog:\n    pass   # an empty class for now"
+        },
+        {
+          "type": "code",
+          "heading": "Define a class",
+          "instruction": "Define a class named 'Cat' with a placeholder 'pass'.",
+          "initial_code": "# TODO: define a class named Cat (use 'pass' as the body)\n\n\n# Verification (do not change)\nprint(Cat)",
+          "expected_output": "<class '__main__.Cat'>",
+          "hint": "class Cat:\n    pass"
+        },
+        {
+          "type": "text",
+          "heading": "Creating Objects",
+          "content": "An **Object** is an instance of a Class. You create one by calling the class like a function.",
+          "example_code": "class Dog:\n    pass\n\nrex = Dog()\nfido = Dog()   # two separate objects"
+        },
+        {
+          "type": "code",
+          "heading": "Create an object",
+          "instruction": "Create an instance of Cat assigned to the variable 'kitty'.",
+          "initial_code": "class Cat:\n    pass\n\n# TODO: create an instance of Cat called 'kitty'\n\n\n# Verification (do not change)\nprint(type(kitty))",
+          "expected_output": "<class '__main__.Cat'>",
+          "hint": "kitty = Cat()"
+        },
+        {
+          "type": "text",
+          "heading": "The __init__ Method",
+          "content": "This special method sets up the object when it is created. It's often called the Constructor.",
+          "example_code": "class Dog:\n    def __init__(self, name):\n        self.name = name\n\nrex = Dog('Rex')\nprint(rex.name)   # Rex"
+        },
+        {
+          "type": "code",
+          "heading": "Write __init__",
+          "instruction": "Finish __init__ to set self.name = name.",
+          "initial_code": "class Person:\n    def __init__(self, name):\n        # TODO: store name on self\n        pass\n\np = Person('Alice')\nprint(p.name)",
+          "expected_output": "Alice",
+          "hint": "Replace pass with:\n        self.name = name"
+        },
+        {
+          "type": "quiz",
+          "question": "What is the first parameter of every method in a class?",
+          "options": [
+            "this",
+            "self",
+            "init"
+          ],
+          "answer": "self",
+          "explanation": "Python passes the object itself as the first argument. By convention it's named self.",
+          "feedback": {
+            "this": "this is used in Java and JavaScript.",
+            "init": "__init__ is a method name, not a parameter."
+          }
+        },
+        {
+          "type": "text",
+          "heading": "Methods",
+          "content": "Methods are just functions that belong to an object.",
+          "example_code": "class Dog:\n    def __init__(self, name):\n        self.name = name\n\n    def bark(self):\n        print(self.name + ' says woof')\n\nDog('Rex').bark()"
+        },
+        {
+          "type": "code",
+          "heading": "Add a method",
+          "instruction": "Add a method 'speak' that prints 'Woof'.",
+          "initial_code": "class Dog:\n    # TODO: add a method 'speak' that prints 'Woof'\n    pass\n\nd = Dog()\nd.speak()",
+          "expected_output": "Woof",
+          "hint": "Replace pass with:\n    def speak(self):\n        print('Woof')"
+        },
+        {
+          "type": "text",
+          "heading": "Attributes",
+          "content": "Variables inside an object are called Attributes. You access them using dot notation (`object.attribute`).",
+          "example_code": "class Car:\n    def __init__(self, color):\n        self.color = color\n\nmy_car = Car('blue')\nprint(my_car.color)   # blue"
+        },
+        {
+          "type": "code",
+          "heading": "Read an attribute",
+          "instruction": "Create a Car with color 'Red'. Print the color.",
+          "initial_code": "class Car:\n    def __init__(self, color):\n        self.color = color\n\n# TODO: create a Car with color 'Red' and print its color\n",
+          "expected_output": "Red",
+          "hint": "c = Car('Red')\nprint(c.color)"
+        },
+        {
+          "type": "quiz",
+          "code": "class Box:\n    def __init__(self, size):\n        self.size = size\n\na = Box(1)\nb = Box(2)\nprint(a.size, b.size)",
+          "question": "What does this code print?",
+          "options": [
+            "1 2",
+            "2 2",
+            "1 1"
+          ],
+          "answer": "1 2",
+          "explanation": "Each object keeps its own attributes, so a and b have different sizes.",
+          "feedback": {
+            "2 2": "Creating b doesn't change a.",
+            "1 1": "b was created with size 2."
+          }
+        },
+        {
+          "type": "code",
+          "heading": "Counter class",
+          "instruction": "Create a 'Counter' class. The 'increment' method should add 1 to 'self.count'.",
+          "initial_code": "class Counter:\n    def __init__(self):\n        self.count = 0\n\n    def increment(self):\n        # TODO: add 1 to self.count\n        pass\n\nc = Counter()\nc.increment()\nprint(c.count)",
+          "expected_output": "1",
+          "hint": "Replace pass with:\n        self.count += 1"
+        },
+        {
+          "type": "quiz",
+          "question": "In a method, self refers to...",
+          "options": [
+            "The Class itself",
+            "The specific object instance",
+            "The global scope"
+          ],
+          "answer": "The specific object instance",
+          "explanation": "self is the particular object the method was called on.",
+          "feedback": {
+            "The Class itself": "That would be cls in a class method. self is one object.",
+            "The global scope": "self has nothing to do with globals."
+          }
+        }
+      ]
+    },
+    {
+      "id": "inheritance",
+      "title": "Inheritance & Special Methods",
+      "unit": "objects",
+      "summary": "Build on existing classes and customise how objects behave.",
+      "steps": [
+        {
+          "type": "text",
+          "heading": "Inheritance",
+          "content": "A child class inherits everything from its parent class, and can add or change behaviour. Put the parent in parentheses.",
+          "example_code": "class Animal:\n    def __init__(self, name):\n        self.name = name\n\n    def speak(self):\n        print('...')\n\nclass Dog(Animal):\n    def speak(self):\n        print(f'{self.name} says woof')\n\nDog('Rex').speak()"
+        },
+        {
+          "type": "quiz",
+          "question": "In class Dog(Animal):, which class is the parent?",
+          "options": [
+            "Animal",
+            "Dog",
+            "object"
+          ],
+          "answer": "Animal",
+          "explanation": "The class in parentheses is the parent. Dog inherits from Animal.",
+          "feedback": {
+            "Dog": "Dog is the child being defined.",
+            "object": "Every class ultimately inherits from object, but Dog's direct parent is Animal."
+          }
+        },
+        {
+          "type": "code",
+          "heading": "Inherit a method",
+          "instruction": "Make Cat a child of Animal. Without writing any new methods, Cat('Tom').describe() should work.",
+          "initial_code": "class Animal:\n    def __init__(self, name):\n        self.name = name\n\n    def describe(self):\n        print(f'I am {self.name}')\n\n# TODO: make Cat inherit from Animal\nclass Cat:\n    pass\n\nCat('Tom').describe()",
+          "expected_output": "I am Tom",
+          "hint": "class Cat(Animal):\n    pass"
+        },
+        {
+          "type": "text",
+          "heading": "Overriding",
+          "content": "To change inherited behaviour, define a method with the same name in the child. The child's version wins.",
+          "example_code": "class Bird:\n    def move(self):\n        print('fly')\n\nclass Penguin(Bird):\n    def move(self):\n        print('waddle')\n\nPenguin().move()   # waddle"
+        },
+        {
+          "type": "code",
+          "heading": "Override a method",
+          "instruction": "Override sound in Duck so it prints Quack.",
+          "initial_code": "class Animal:\n    def sound(self):\n        print('Some sound')\n\nclass Duck(Animal):\n    # TODO: override sound to print 'Quack'\n    pass\n\nDuck().sound()",
+          "expected_output": "Quack",
+          "hint": "    def sound(self):\n        print('Quack')"
+        },
+        {
+          "type": "text",
+          "heading": "super()",
+          "content": "`super()` calls the parent's version of a method, so you can extend it instead of replacing it. It's most common in `__init__`.",
+          "example_code": "class Animal:\n    def __init__(self, name):\n        self.name = name\n\nclass Dog(Animal):\n    def __init__(self, name, breed):\n        super().__init__(name)\n        self.breed = breed\n\nd = Dog('Rex', 'beagle')\nprint(d.name, d.breed)"
+        },
+        {
+          "type": "code",
+          "heading": "Use super()",
+          "instruction": "Finish Student.__init__: call the parent __init__ with name, then store school.",
+          "initial_code": "class Person:\n    def __init__(self, name):\n        self.name = name\n\nclass Student(Person):\n    def __init__(self, name, school):\n        # TODO: call super().__init__(name), then set self.school\n        pass\n\ns = Student('Ada', 'MIT')\nprint(s.name, s.school)",
+          "expected_output": "Ada MIT",
+          "hint": "        super().__init__(name)\n        self.school = school"
+        },
+        {
+          "type": "quiz",
+          "code": "class A:\n    def hi(self):\n        return 'A'\n\nclass B(A):\n    def hi(self):\n        return 'B' + super().hi()\n\nprint(B().hi())",
+          "question": "What does this code print?",
+          "options": [
+            "BA",
+            "AB",
+            "B"
+          ],
+          "answer": "BA",
+          "explanation": "B's hi returns 'B' plus whatever A's hi returns, which is 'A'.",
+          "feedback": {
+            "AB": "'B' comes first in the expression 'B' + super().hi().",
+            "B": "super().hi() also runs A's version and adds its result."
+          }
+        },
+        {
+          "type": "text",
+          "heading": "isinstance",
+          "content": "`isinstance(obj, Class)` checks an object's type, and counts parent classes too.",
+          "example_code": "class Animal: pass\nclass Dog(Animal): pass\n\nrex = Dog()\nprint(isinstance(rex, Dog))      # True\nprint(isinstance(rex, Animal))   # True"
+        },
+        {
+          "type": "quiz",
+          "code": "class Shape: pass\nclass Square(Shape): pass\n\nprint(isinstance(Shape(), Square))",
+          "question": "What does this code print?",
+          "options": [
+            "True",
+            "False"
+          ],
+          "answer": "False",
+          "explanation": "Every Square is a Shape, but a plain Shape isn't a Square. Inheritance only goes one way.",
+          "feedback": {
+            "True": "A parent object isn't an instance of its child class."
+          }
+        },
+        {
+          "type": "text",
+          "heading": "Special methods",
+          "content": "Methods with double underscores (dunder methods) hook into Python itself. `__str__` controls what print() shows.",
+          "example_code": "class Point:\n    def __init__(self, x, y):\n        self.x = x\n        self.y = y\n\n    def __str__(self):\n        return f'({self.x}, {self.y})'\n\nprint(Point(2, 3))   # (2, 3)"
+        },
+        {
+          "type": "code",
+          "heading": "Friendly printing",
+          "instruction": "Add a __str__ method so print(book) shows: Dune by Frank Herbert",
+          "initial_code": "class Book:\n    def __init__(self, title, author):\n        self.title = title\n        self.author = author\n\n    # TODO: add __str__ that returns 'TITLE by AUTHOR'\n\nbook = Book('Dune', 'Frank Herbert')\nprint(book)",
+          "expected_output": "Dune by Frank Herbert",
+          "hint": "    def __str__(self):\n        return f'{self.title} by {self.author}'"
+        },
+        {
+          "type": "text",
+          "heading": "More dunder methods",
+          "content": "`__len__` powers len(), `__eq__` powers ==, and `__add__` powers +.",
+          "example_code": "class Playlist:\n    def __init__(self, songs):\n        self.songs = songs\n\n    def __len__(self):\n        return len(self.songs)\n\nprint(len(Playlist(['a', 'b'])))   # 2"
+        },
+        {
+          "type": "code",
+          "heading": "Compare objects",
+          "instruction": "Add __eq__ so two Money objects are equal when their amounts match.",
+          "initial_code": "class Money:\n    def __init__(self, amount):\n        self.amount = amount\n\n    # TODO: add __eq__(self, other) that compares amounts\n\nprint(Money(5) == Money(5))",
+          "expected_output": "True",
+          "hint": "    def __eq__(self, other):\n        return self.amount == other.amount"
+        },
+        {
+          "type": "quiz",
+          "code": "class Money:\n    def __init__(self, amount):\n        self.amount = amount\n\nprint(Money(5) == Money(5))",
+          "question": "What does this code print?",
+          "options": [
+            "True",
+            "False"
+          ],
+          "answer": "False",
+          "explanation": "Without __eq__, == checks whether both sides are the very same object. These are two different objects.",
+          "feedback": {
+            "True": "Without __eq__, Python doesn't compare the amounts at all."
+          }
+        },
+        {
+          "type": "quiz",
+          "question": "Why use inheritance?",
+          "options": [
+            "To reuse shared code and specialise it in child classes",
+            "To make programs run faster",
+            "To save data to files"
+          ],
+          "answer": "To reuse shared code and specialise it in child classes",
+          "explanation": "Shared behaviour lives once in the parent, and each child only adds what's different.",
+          "feedback": {
+            "To make programs run faster": "Inheritance is about organising code, not speed.",
+            "To save data to files": "That's file I/O or JSON."
+          }
+        }
+      ]
+    },
+    {
+      "id": "lesson-12",
+      "title": "Capstone: Inventory App",
+      "unit": "objects",
+      "summary": "Build a product inventory with classes and lists.",
+      "steps": [
+        {
+          "type": "text",
+          "heading": "Final Project",
+          "content": "Project time! You'll build a **Product Inventory System** using classes, lists, and loops."
+        },
+        {
+          "type": "text",
+          "heading": "Step 1: The Product Class",
+          "content": "First, we need a blueprint for a Product. It should have a name, price, and quantity.",
+          "example_code": "class Book:\n    def __init__(self, title, pages):\n        self.title = title\n        self.pages = pages"
+        },
+        {
+          "type": "code",
+          "heading": "Task 1: Define Product",
+          "instruction": "Create a Product class with __init__ that stores name, price, and qty.",
+          "initial_code": "class Product:\n    # TODO: write __init__ that stores name, price, and qty\n    pass\n\np = Product('Apple', 0.5, 10)\nprint(p.name)",
+          "expected_output": "Apple",
+          "hint": "    def __init__(self, name, price, qty):\n        self.name = name\n        self.price = price\n        self.qty = qty"
+        },
+        {
+          "type": "text",
+          "heading": "Step 2: Methods",
+          "content": "We need to update stock when we make a sale.",
+          "example_code": "class Account:\n    def __init__(self, balance):\n        self.balance = balance\n\n    def withdraw(self, amount):\n        self.balance -= amount"
+        },
+        {
+          "type": "code",
+          "heading": "Task 2: Sell method",
+          "instruction": "Add a 'sell(amount)' method that subtracts amount from self.qty.",
+          "initial_code": "class Product:\n    def __init__(self, name, qty):\n        self.name = name\n        self.qty = qty\n\n    def sell(self, amount):\n        # TODO: subtract amount from self.qty\n        pass\n\np = Product('Apple', 10)\np.sell(3)\nprint(p.qty)",
+          "expected_output": "7",
+          "hint": "Replace pass with:\n        self.qty -= amount"
+        },
+        {
+          "type": "text",
+          "heading": "Step 3: The Inventory",
+          "content": "Now we need a place to store multiple products. A list works perfectly.",
+          "example_code": "shelf = [Book('Dune', 412), Book('Emma', 474)]\nprint(shelf[1].title)   # Emma"
+        },
+        {
+          "type": "code",
+          "heading": "Task 3: Inventory list",
+          "instruction": "Create a list containing two Product objects: 'Laptop' (Qty 5) and 'Phone' (Qty 10). Print the name of the first one.",
+          "initial_code": "class Product:\n    def __init__(self, name, qty):\n        self.name = name\n        self.qty = qty\n\n# TODO: create a list called 'inventory' with Product('Laptop', 5) and Product('Phone', 10)\n\n\nprint(inventory[0].name)",
+          "expected_output": "Laptop",
+          "hint": "inventory = [\n    Product('Laptop', 5),\n    Product('Phone', 10)\n]"
+        },
+        {
+          "type": "text",
+          "heading": "Step 4: Managing Inventory",
+          "content": "Let's make a function to calculate the total value of our stock.",
+          "example_code": "total_pages = 0\nfor book in shelf:\n    total_pages += book.pages"
+        },
+        {
+          "type": "code",
+          "heading": "Task 4: Total value",
+          "instruction": "Loop through the inventory. Multiply price * qty for each item and sum them up.",
+          "initial_code": "class Product:\n    def __init__(self, price, qty):\n        self.price = price\n        self.qty = qty\n\ninventory = [\n    Product(100, 2),\n    Product(50, 4)\n]\n\ntotal_value = 0\n# TODO: loop through inventory and add item.price * item.qty to total_value\n\nprint(total_value)",
+          "expected_output": "400",
+          "hint": "for item in inventory:\n    total_value += item.price * item.qty"
+        },
+        {
+          "type": "text",
+          "heading": "Step 5: Putting it together",
+          "content": "You just combined OOP, lists, loops, and math. That's the foundation of almost every real application."
+        },
+        {
+          "type": "code",
+          "heading": "Final exam: fix the bug",
+          "instruction": "Fix the bug! The loop should print the name of items with Qty < 5 (Low Stock).",
+          "initial_code": "class Product:\n    def __init__(self, name, qty):\n        self.name = name\n        self.qty = qty\n\ninventory = [\n    Product('Paper', 50),\n    Product('Ink', 2)\n]\n\n# This should print only low-stock items (qty < 5), but it prints the wrong one\nfor item in inventory:\n    if item.qty > 5:\n        print(item.name)",
+          "expected_output": "Ink",
+          "hint": "Look at the comparison. Low stock means qty < 5, not qty > 5."
+        },
+        {
+          "type": "quiz",
+          "question": "How do you feel about Python so far?",
+          "options": [
+            "I'm ready to learn more!",
+            "It's confusing but fun",
+            "I'm a pro now"
+          ],
+          "explanation": "Every answer is fine. Next up: JSON, dates, generators, and one more project."
+        }
+      ]
+    },
+    {
+      "id": "json-dates",
+      "title": "JSON & Dates",
+      "unit": "toolkit",
+      "summary": "Save structured data and work with dates.",
+      "steps": [
+        {
+          "type": "text",
+          "heading": "What is JSON?",
+          "content": "JSON is a text format for data, used by almost every web API. It looks a lot like Python dictionaries and lists. `json.dumps` turns Python data into a JSON string.",
+          "example_code": "import json\n\ndata = {'name': 'Ada', 'langs': ['Python', 'C']}\nprint(json.dumps(data))"
+        },
+        {
+          "type": "code",
+          "heading": "Dictionary to JSON",
+          "instruction": "Convert settings to a JSON string with json.dumps and print it.",
+          "initial_code": "import json\n\nsettings = {'theme': 'dark', 'volume': 7}\n# TODO: print settings as a JSON string\n",
+          "expected_output": "{\"theme\": \"dark\", \"volume\": 7}",
+          "hint": "print(json.dumps(settings))"
+        },
+        {
+          "type": "quiz",
+          "code": "import json\nprint(json.dumps({'ok': True, 'x': None}))",
+          "question": "What does this code print?",
+          "options": [
+            "{\"ok\": true, \"x\": null}",
+            "{'ok': True, 'x': None}",
+            "{\"ok\": True, \"x\": None}"
+          ],
+          "answer": "{\"ok\": true, \"x\": null}",
+          "explanation": "JSON uses double quotes, lowercase true and false, and null instead of None.",
+          "feedback": {
+            "{'ok': True, 'x': None}": "That's how Python prints a dictionary, not JSON.",
+            "{\"ok\": True, \"x\": None}": "JSON writes booleans in lowercase and None as null."
+          }
+        },
+        {
+          "type": "text",
+          "heading": "Reading JSON",
+          "content": "`json.loads` turns a JSON string back into Python dictionaries and lists.",
+          "example_code": "import json\n\ntext = '{\"city\": \"Dayton\", \"temp\": 72}'\nweather = json.loads(text)\nprint(weather['city'])   # Dayton"
+        },
+        {
+          "type": "code",
+          "heading": "Read JSON",
+          "instruction": "Parse the JSON string and print the user's second hobby.",
+          "initial_code": "import json\n\nraw = '{\"user\": \"sam\", \"hobbies\": [\"chess\", \"hiking\", \"piano\"]}'\n# TODO: parse raw with json.loads and print the second hobby\n",
+          "expected_output": "hiking",
+          "hint": "data = json.loads(raw)\nprint(data['hobbies'][1])"
+        },
+        {
+          "type": "text",
+          "heading": "JSON files",
+          "content": "`json.dump` and `json.load` (no s) write and read files directly. This is an easy way to save a program's data.",
+          "example_code": "import json\n\nwith open('save.json', 'w') as f:\n    json.dump({'level': 3}, f)\n\nwith open('save.json') as f:\n    print(json.load(f))   # {'level': 3}"
+        },
+        {
+          "type": "code",
+          "heading": "Save and load",
+          "instruction": "Save scores to scores.json, then load the file back and print Bo's score.",
+          "initial_code": "import json\n\nscores = {'ann': 12, 'bo': 30}\n# TODO: write scores to 'scores.json' with json.dump\n\n# TODO: load the file and print the score for 'bo'\n",
+          "expected_output": "30",
+          "hint": "with open('scores.json', 'w') as f:\n    json.dump(scores, f)\n\nwith open('scores.json') as f:\n    loaded = json.load(f)\nprint(loaded['bo'])"
+        },
+        {
+          "type": "quiz",
+          "question": "What does indent=2 do in json.dumps(data, indent=2)?",
+          "options": [
+            "Spreads the JSON over several indented lines so people can read it",
+            "Makes the file smaller",
+            "Is required for nested data"
+          ],
+          "answer": "Spreads the JSON over several indented lines so people can read it",
+          "explanation": "indent is purely for readability. Without it, JSON is written on one compact line.",
+          "feedback": {
+            "Makes the file smaller": "Indenting adds spaces and newlines, so the file gets a little bigger.",
+            "Is required for nested data": "Nested data works fine without it."
+          }
+        },
+        {
+          "type": "text",
+          "heading": "Dates",
+          "content": "The `datetime` module handles dates and times. `date(year, month, day)` makes a date.",
+          "example_code": "from datetime import date\n\nlaunch = date(2024, 7, 20)\nprint(launch)        # 2024-07-20\nprint(launch.year)   # 2024"
+        },
+        {
+          "type": "code",
+          "heading": "Day of the week",
+          "instruction": "Create a date for 25 December 2025 and print its weekday name with .strftime('%A').",
+          "initial_code": "from datetime import date\n\n# TODO: create the date and print its weekday name\n",
+          "expected_output": "Thursday",
+          "hint": "d = date(2025, 12, 25)\nprint(d.strftime('%A'))"
+        },
+        {
+          "type": "text",
+          "heading": "Date math",
+          "content": "Subtracting two dates gives a `timedelta`. You can also add a timedelta to a date.",
+          "example_code": "from datetime import date, timedelta\n\nstart = date(2025, 1, 1)\nprint(start + timedelta(days=30))       # 2025-01-31\nprint((date(2025, 3, 1) - start).days)  # 59"
+        },
+        {
+          "type": "code",
+          "heading": "Days until",
+          "instruction": "Print how many days there are between start and end.",
+          "initial_code": "from datetime import date\n\nstart = date(2025, 9, 1)\nend = date(2025, 12, 25)\n# TODO: print the number of days between them\n",
+          "expected_output": "115",
+          "hint": "print((end - start).days)"
+        },
+        {
+          "type": "quiz",
+          "code": "from datetime import date, timedelta\nprint(date(2024, 2, 28) + timedelta(days=1))",
+          "question": "What does this code print?",
+          "options": [
+            "2024-02-29",
+            "2024-03-01",
+            "2024-02-28"
+          ],
+          "answer": "2024-02-29",
+          "explanation": "2024 is a leap year, so February has 29 days. datetime handles leap years for you.",
+          "feedback": {
+            "2024-03-01": "That would be right in a non-leap year like 2025.",
+            "2024-02-28": "Adding a day moves the date forward."
+          }
+        },
+        {
+          "type": "text",
+          "heading": "Formatting and parsing",
+          "content": "`strftime` formats a date as text. `strptime` parses text into a date. Codes like `%Y`, `%m` and `%d` describe the pattern.",
+          "example_code": "from datetime import datetime\n\nd = datetime.strptime('2025-03-14', '%Y-%m-%d')\nprint(d.strftime('%B %d, %Y'))   # March 14, 2025"
+        },
+        {
+          "type": "code",
+          "heading": "Reformat a date",
+          "instruction": "Parse '2025-07-04' and print it in US style: 07/04/2025",
+          "initial_code": "from datetime import datetime\n\ntext = '2025-07-04'\n# TODO: parse text, then print it as MM/DD/YYYY\n",
+          "expected_output": "07/04/2025",
+          "hint": "d = datetime.strptime(text, '%Y-%m-%d')\nprint(d.strftime('%m/%d/%Y'))"
+        },
+        {
+          "type": "quiz",
+          "question": "What does json.loads('[1, 2, 3]') return?",
+          "options": [
+            "A Python list",
+            "A string",
+            "A dictionary"
+          ],
+          "answer": "A Python list",
+          "explanation": "JSON arrays become Python lists, and JSON objects become dictionaries.",
+          "feedback": {
+            "A string": "loads parses the string into real Python data.",
+            "A dictionary": "Only JSON objects ({...}) become dictionaries."
+          }
+        }
+      ]
+    },
+    {
+      "id": "generators",
+      "title": "Iterators & Generators",
+      "unit": "toolkit",
+      "summary": "Loop smarter with enumerate, zip, and yield.",
+      "steps": [
+        {
+          "type": "text",
+          "heading": "Iterables",
+          "content": "Anything you can loop over is an iterable: lists, strings, dictionaries, files, range. `iter()` and `next()` show what a for loop does behind the scenes.",
+          "example_code": "it = iter(['a', 'b'])\nprint(next(it))   # a\nprint(next(it))   # b"
+        },
+        {
+          "type": "code",
+          "heading": "Run out of items",
+          "instruction": "Run this code. Calling next() after the last item raises StopIteration. That's how a for loop knows when to stop.",
+          "initial_code": "it = iter([1, 2])\nprint(next(it))\nprint(next(it))\nprint(next(it))",
+          "expected_error": "StopIteration",
+          "hint": "Just press Run and read the last line of the output."
+        },
+        {
+          "type": "quiz",
+          "code": "it = iter('hey')\nnext(it)\nprint(next(it))",
+          "question": "What does this code print?",
+          "options": [
+            "h",
+            "e",
+            "y"
+          ],
+          "answer": "e",
+          "explanation": "The first next() used up 'h', so the second one returns 'e'.",
+          "feedback": {
+            "h": "'h' was already taken by the first next().",
+            "y": "Only two next() calls have happened."
+          }
+        },
+        {
+          "type": "text",
+          "heading": "enumerate and zip",
+          "content": "`enumerate` gives you each item with its position. `zip` walks through two lists side by side.",
+          "example_code": "for i, fruit in enumerate(['apple', 'kiwi'], start=1):\n    print(i, fruit)\n\nfor name, score in zip(['Ann', 'Bo'], [90, 85]):\n    print(name, score)"
+        },
+        {
+          "type": "code",
+          "heading": "Number a list",
+          "instruction": "Use enumerate, starting at 1, to print each task with its number, like: 1. Wash car",
+          "initial_code": "tasks = ['Wash car', 'Buy milk', 'Call mom']\n# TODO: print '1. Wash car', '2. Buy milk', '3. Call mom'\n",
+          "expected_output": "1. Wash car\n2. Buy milk\n3. Call mom",
+          "hint": "for i, task in enumerate(tasks, start=1):\n    print(f'{i}. {task}')"
+        },
+        {
+          "type": "code",
+          "heading": "Zip two lists",
+          "instruction": "Use zip to print each country with its capital, like: France: Paris",
+          "initial_code": "countries = ['France', 'Japan']\ncapitals = ['Paris', 'Tokyo']\n# TODO: print 'France: Paris' and 'Japan: Tokyo'\n",
+          "expected_output": "France: Paris\nJapan: Tokyo",
+          "hint": "for country, capital in zip(countries, capitals):\n    print(f'{country}: {capital}')"
+        },
+        {
+          "type": "text",
+          "heading": "Generators",
+          "content": "A function that uses `yield` is a generator. It hands back values one at a time, pausing in between, instead of building a whole list.",
+          "example_code": "def countdown(n):\n    while n > 0:\n        yield n\n        n -= 1\n\nfor x in countdown(3):\n    print(x)   # 3, 2, 1"
+        },
+        {
+          "type": "code",
+          "heading": "Write a generator",
+          "instruction": "Finish evens so it yields the even numbers from 0 up to, but not including, limit.",
+          "initial_code": "def evens(limit):\n    # TODO: loop over range(limit) and yield the even numbers\n    pass\n\nprint(list(evens(10)))",
+          "expected_output": "[0, 2, 4, 6, 8]",
+          "hint": "    for n in range(limit):\n        if n % 2 == 0:\n            yield n"
+        },
+        {
+          "type": "quiz",
+          "question": "What makes generators memory-friendly?",
+          "options": [
+            "They produce one value at a time instead of building a whole list",
+            "They compress data",
+            "They run on a separate processor"
+          ],
+          "answer": "They produce one value at a time instead of building a whole list",
+          "explanation": "A generator only remembers where it paused, so even a billion values take almost no memory.",
+          "feedback": {
+            "They compress data": "Nothing is compressed; values are simply made on demand.",
+            "They run on a separate processor": "Generators run like normal Python code."
+          }
+        },
+        {
+          "type": "text",
+          "heading": "Generator expressions",
+          "content": "A generator expression looks like a list comprehension with parentheses. It's perfect inside `sum()`, `max()` and `any()`.",
+          "example_code": "prices = [3, 8, 5]\nprint(sum(p * 2 for p in prices))       # 32\nprint(any(p > 7 for p in prices))       # True"
+        },
+        {
+          "type": "code",
+          "heading": "Sum a cart",
+          "instruction": "Print the total price of the cart using sum() with a generator expression.",
+          "initial_code": "cart = [('pen', 1.5), ('book', 12.0), ('bag', 20.0)]\n# TODO: print the sum of the prices\n",
+          "expected_output": "33.5",
+          "hint": "print(sum(price for name, price in cart))"
+        },
+        {
+          "type": "quiz",
+          "code": "gen = (n * 2 for n in range(3))\nlist(gen)\nprint(list(gen))",
+          "question": "What does this code print?",
+          "options": [
+            "[]",
+            "[0, 2, 4]",
+            "Error"
+          ],
+          "answer": "[]",
+          "explanation": "A generator can only be used once. The first list() used it up, so the second one gets nothing.",
+          "feedback": {
+            "[0, 2, 4]": "That's what the first list(gen) got. The generator is empty after that.",
+            "Error": "An exhausted generator just produces nothing; it doesn't raise an error."
+          }
+        },
+        {
+          "type": "text",
+          "heading": "Infinite generators",
+          "content": "Because generators only make values when asked, they can even go on forever. The caller decides when to stop.",
+          "example_code": "def naturals():\n    n = 1\n    while True:\n        yield n\n        n += 1\n\nfor n in naturals():\n    if n > 3:\n        break\n    print(n)"
+        },
+        {
+          "type": "code",
+          "heading": "Fibonacci generator",
+          "instruction": "Finish fib so it yields the Fibonacci numbers forever. The loop at the bottom prints the first 7.",
+          "initial_code": "def fib():\n    a, b = 0, 1\n    while True:\n        # TODO: yield a, then move forward with a, b = b, a + b\n        yield 0\n\ngen = fib()\nfor _ in range(7):\n    print(next(gen))",
+          "expected_output": "0\n1\n1\n2\n3\n5\n8",
+          "hint": "Replace yield 0 with:\n        yield a\n        a, b = b, a + b"
+        },
+        {
+          "type": "quiz",
+          "question": "Which is best for reading a huge log file line by line?",
+          "options": [
+            "Loop over the file object: for line in f:",
+            "Load it all with f.readlines()",
+            "Load it all with f.read()"
+          ],
+          "answer": "Loop over the file object: for line in f:",
+          "explanation": "A file object is an iterator, so looping over it reads one line at a time without loading the whole file into memory.",
+          "feedback": {
+            "Load it all with f.readlines()": "That builds a list of every line in memory at once.",
+            "Load it all with f.read()": "That loads the entire file into one giant string."
+          }
+        }
+      ]
+    },
+    {
+      "id": "capstone-gradebook",
+      "title": "Capstone: Grade Book",
+      "unit": "toolkit",
+      "summary": "Build, save, and test a grade book app.",
+      "steps": [
+        {
+          "type": "text",
+          "heading": "The project",
+          "content": "Your final project is a **grade book**: it stores students and their scores, works out averages and letter grades, saves to JSON, and is backed by tests. It uses nearly everything you've learned."
+        },
+        {
+          "type": "text",
+          "heading": "Step 1: Students",
+          "content": "Each student has a name and a list of scores. The average must cope with a student who has no scores yet.",
+          "example_code": "class Student:\n    def __init__(self, name):\n        self.name = name\n        self.scores = []"
+        },
+        {
+          "type": "code",
+          "heading": "Task 1: Student average",
+          "instruction": "Finish average(): return the mean of self.scores, or 0 if there are no scores.",
+          "initial_code": "class Student:\n    def __init__(self, name):\n        self.name = name\n        self.scores = []\n\n    def average(self):\n        # TODO: return the mean score, or 0 if there are none\n        pass\n\ns = Student('Ada')\ns.scores = [90, 80]\nprint(s.average())\nprint(Student('Bo').average())",
+          "expected_output": "85.0\n0",
+          "hint": "        if not self.scores:\n            return 0\n        return sum(self.scores) / len(self.scores)"
+        },
+        {
+          "type": "text",
+          "heading": "Step 2: The grade book",
+          "content": "A GradeBook keeps students in a dictionary keyed by name, so looking someone up is instant."
+        },
+        {
+          "type": "code",
+          "heading": "Task 2: Add scores",
+          "instruction": "Finish add_score: create the Student if they aren't in the book yet, then append the score.",
+          "initial_code": "class Student:\n    def __init__(self, name):\n        self.name = name\n        self.scores = []\n\n    def average(self):\n        if not self.scores:\n            return 0\n        return sum(self.scores) / len(self.scores)\n\nclass GradeBook:\n    def __init__(self):\n        self.students = {}\n\n    def add_score(self, name, score):\n        # TODO: create the student if needed, then append the score\n        pass\n\nbook = GradeBook()\nfor name, score in [('Ada', 90), ('Bo', 95), ('Ada', 75), ('Bo', 88)]:\n    book.add_score(name, score)\n\nprint(book.students['Ada'].scores)",
+          "expected_output": "[90, 75]",
+          "hint": "        if name not in self.students:\n            self.students[name] = Student(name)\n        self.students[name].scores.append(score)"
+        },
+        {
+          "type": "code",
+          "heading": "Task 3: Top student",
+          "instruction": "Print the name of the student with the highest average, using max() with a key.",
+          "initial_code": "class Student:\n    def __init__(self, name):\n        self.name = name\n        self.scores = []\n\n    def average(self):\n        if not self.scores:\n            return 0\n        return sum(self.scores) / len(self.scores)\n\nclass GradeBook:\n    def __init__(self):\n        self.students = {}\n\n    def add_score(self, name, score):\n        if name not in self.students:\n            self.students[name] = Student(name)\n        self.students[name].scores.append(score)\n\nbook = GradeBook()\nfor name, score in [('Ada', 90), ('Bo', 95), ('Ada', 75), ('Bo', 88)]:\n    book.add_score(name, score)\n\n# TODO: print the name of the student with the best average\n",
+          "expected_output": "Bo",
+          "hint": "best = max(book.students.values(), key=lambda s: s.average())\nprint(best.name)"
+        },
+        {
+          "type": "text",
+          "heading": "Step 3: Letter grades",
+          "content": "Turn averages into letters: 90 and up is an A, 80 and up a B, 70 and up a C, anything lower an F."
+        },
+        {
+          "type": "code",
+          "heading": "Task 4: Report card",
+          "instruction": "Finish letter(), then print each student's average and letter grade, like: Ada: 82.5 (B)",
+          "initial_code": "class Student:\n    def __init__(self, name):\n        self.name = name\n        self.scores = []\n\n    def average(self):\n        if not self.scores:\n            return 0\n        return sum(self.scores) / len(self.scores)\n\nclass GradeBook:\n    def __init__(self):\n        self.students = {}\n\n    def add_score(self, name, score):\n        if name not in self.students:\n            self.students[name] = Student(name)\n        self.students[name].scores.append(score)\n\ndef letter(avg):\n    # TODO: return 'A', 'B', 'C', or 'F'\n    pass\n\nbook = GradeBook()\nfor name, score in [('Ada', 90), ('Bo', 95), ('Ada', 75), ('Bo', 88)]:\n    book.add_score(name, score)\n\nfor student in book.students.values():\n    avg = student.average()\n    print(f'{student.name}: {avg} ({letter(avg)})')",
+          "expected_output": "Ada: 82.5 (B)\nBo: 91.5 (A)",
+          "hint": "    if avg >= 90:\n        return 'A'\n    elif avg >= 80:\n        return 'B'\n    elif avg >= 70:\n        return 'C'\n    return 'F'"
+        },
+        {
+          "type": "text",
+          "heading": "Step 4: Saving",
+          "content": "To save the book, turn it into plain data (a dictionary of name to scores) and write it as JSON. A dictionary comprehension does it in one line."
+        },
+        {
+          "type": "code",
+          "heading": "Task 5: Save and load",
+          "instruction": "Build a {name: scores} dictionary with a comprehension, save it to grades.json, load it back, and print it.",
+          "initial_code": "import json\n\nclass Student:\n    def __init__(self, name):\n        self.name = name\n        self.scores = []\n\n    def average(self):\n        if not self.scores:\n            return 0\n        return sum(self.scores) / len(self.scores)\n\nclass GradeBook:\n    def __init__(self):\n        self.students = {}\n\n    def add_score(self, name, score):\n        if name not in self.students:\n            self.students[name] = Student(name)\n        self.students[name].scores.append(score)\n\nbook = GradeBook()\nfor name, score in [('Ada', 90), ('Bo', 95), ('Ada', 75), ('Bo', 88)]:\n    book.add_score(name, score)\n\n# TODO: data = {name: student.scores for ...}\n\n# TODO: save data to 'grades.json', load it back, and print it\n",
+          "expected_output": "{'Ada': [90, 75], 'Bo': [95, 88]}",
+          "hint": "data = {name: s.scores for name, s in book.students.items()}\n\nwith open('grades.json', 'w') as f:\n    json.dump(data, f)\n\nwith open('grades.json') as f:\n    print(json.load(f))"
+        },
+        {
+          "type": "text",
+          "heading": "Step 5: Tests",
+          "content": "A real app needs tests. The tests below describe exactly how letter() and average() should behave, including the edge cases."
+        },
+        {
+          "type": "code",
+          "heading": "Final exam: make the tests pass",
+          "instruction": "This version has two bugs: one in average() and one in letter(). Fix them so every test passes.",
+          "initial_code": "class Student:\n    def __init__(self, name):\n        self.name = name\n        self.scores = []\n\n    def average(self):\n        return sum(self.scores) / len(self.scores)\n\ndef letter(avg):\n    if avg > 90:\n        return 'A'\n    elif avg >= 80:\n        return 'B'\n    elif avg >= 70:\n        return 'C'\n    return 'F'\n\ns = Student('Ada')\nassert s.average() == 0, 'no scores should average 0'\ns.scores = [80, 100]\nassert s.average() == 90\nassert letter(90) == 'A', '90 should be an A'\nassert letter(79.9) == 'C'\nassert letter(50) == 'F'\nprint('All tests passed. Grade book ready!')",
+          "expected_output": "All tests passed. Grade book ready!",
+          "hint": "1. average() divides by zero when there are no scores. Return 0 first.\n2. letter() uses > 90, so exactly 90 isn't an A. Use >= 90."
+        },
+        {
+          "type": "quiz",
+          "question": "You finished the course! What will you build next?",
+          "options": [
+            "A game",
+            "A web app",
+            "A data project",
+            "An automation script"
+          ],
+          "explanation": "Great pick. Every one of these starts with the skills you just practised: variables, loops, functions, classes, files, and tests."
+        }
+      ]
+    }
+  ]
+}
