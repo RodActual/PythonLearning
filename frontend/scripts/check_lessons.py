@@ -66,8 +66,15 @@ for lesson in COURSE["lessons"]:
     for key in ("why", "unlocks"):
         if not lesson.get(key):
             problems.append(f"{lesson['id']}: missing {key}")
+    seen_ids = set()
     for i, step in enumerate(lesson["steps"]):
         where = f"{lesson['id']} step {i + 1}"
+        sid = step.get("id")
+        if not isinstance(sid, str) or not sid:
+            problems.append(f"{where}: missing step id")
+        elif sid in seen_ids:
+            problems.append(f"{where}: duplicate step id {sid!r}")
+        seen_ids.add(sid)
         kind = step["type"]
         if kind == "text":
             counts["text"] += 1
@@ -87,7 +94,7 @@ for lesson in COURSE["lessons"]:
                     problems.append(f"{where}: predict answer {step['answer']!r} but code printed {norm(out)!r} {err.strip()[-80:]}")
         elif kind == "code":
             counts["code"] += 1
-            key = f"{lesson['id']}:{i}"
+            key = f"{lesson['id']}:{step.get('id')}"
             if not step.get("hint"):
                 problems.append(f"{where}: coding step has no hint")
             solution = SOLUTIONS.get(key)
@@ -98,6 +105,14 @@ for lesson in COURSE["lessons"]:
                 problems.append(f"{where}: reference solution does not pass")
             if step["initial_code"] != solution and passes(step, step["initial_code"]):
                 problems.append(f"{where}: starter code already passes")
+
+# Legacy (index-based) progress maps to step ids through a frozen file. Removing a step that
+# appears there is allowed, but reusing its id for a different step would corrupt old progress.
+LEGACY = json.loads((ROOT / "src" / "data" / "legacy-step-ids.json").read_text(encoding="utf-8"))["lessons"]
+for lesson in COURSE["lessons"]:
+    legacy_ids = LEGACY.get(lesson["id"], [])
+    if len(set(legacy_ids)) != len(legacy_ids):
+        problems.append(f"{lesson['id']}: legacy-step-ids.json has duplicate ids")
 
 total = sum(counts.values())
 print(f"{len(COURSE['units'])} units, {len(COURSE['lessons'])} lessons, {total} steps: "

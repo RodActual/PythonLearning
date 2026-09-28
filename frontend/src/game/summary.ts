@@ -1,5 +1,6 @@
 import type { Lesson, UserProgress } from '../types/lesson';
 import { earnedBadgeIds } from './badges';
+import { doneCount, isLessonComplete } from './progress';
 import { levelInfo, totalXp, type LevelInfo } from './xp';
 
 export interface GameSummary {
@@ -15,16 +16,15 @@ export function summarize(lessons: Lesson[], progress: UserProgress): GameSummar
     xp,
     level: levelInfo(xp),
     badges: earnedBadgeIds(lessons, progress),
-    lessonsCompleted: lessons.filter((l) => (progress.completed_steps[l.id] ?? 0) >= l.steps.length).length,
+    lessonsCompleted: lessons.filter((l) => isLessonComplete(progress, l)).length,
   };
 }
 
 export type LessonState = 'completed' | 'in-progress' | 'not-started';
 
 export const lessonState = (lesson: Lesson, progress: UserProgress): LessonState => {
-  const reached = progress.completed_steps[lesson.id] ?? 0;
-  if (reached >= lesson.steps.length) return 'completed';
-  return reached > 0 ? 'in-progress' : 'not-started';
+  if (isLessonComplete(progress, lesson)) return 'completed';
+  return doneCount(progress, lesson) > 0 ? 'in-progress' : 'not-started';
 };
 
 /** Soft lock: the first unfinished lesson is recommended; the rest stay open. -1 when all are done. */

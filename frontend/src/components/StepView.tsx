@@ -1,4 +1,4 @@
-import { useId, useRef, useState } from 'react';
+import { useId, useState } from 'react';
 import Confetti from 'react-confetti';
 import CodeSandbox from './CodeSandbox';
 import RichText from './RichText';
@@ -95,20 +95,21 @@ function Quiz({ step, alreadyCompleted, onSolved }: { step: QuizStep; alreadyCom
   const questionId = useId();
   const [selected, setSelected] = useState<string | null>(null);
   const [solved, setSolved] = useState(false);
-  const attempts = useRef(0);
+  const [attempts, setAttempts] = useState(0);
 
   const choose = (option: string) => {
     if (solved) return;
-    attempts.current += 1;
+    const attempt = attempts + 1;
+    setAttempts(attempt);
     setSelected(option);
     const correct = step.answer === undefined || option.trim() === step.answer.trim();
     if (correct) {
       setSolved(true);
-      onSolved(attempts.current === 1);
+      onSolved(attempt === 1);
     }
   };
 
-  const firstTry = attempts.current === 1;
+  const firstTry = attempts === 1;
   let feedback = '';
   if (solved) {
     feedback = step.answer === undefined ? 'Thanks for answering!' : 'Correct!';

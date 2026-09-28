@@ -1,8 +1,8 @@
 import raw from './lessons.json';
 import type { Course, CourseAbout, Lesson, Step, Unit } from '../types/lesson';
 
-// Lessons are shown in file order. Progress is saved by lesson id and step index,
-// so never renumber ids or insert steps into a lesson people may have started.
+// Lessons are shown in file order. Progress is saved by lesson id and step id, so steps
+// can be added, removed, or reordered freely; never rename or reuse a step id.
 
 const isString = (v: unknown): v is string => typeof v === 'string';
 
@@ -59,6 +59,10 @@ function validate(data: unknown): Course {
     if (!unitIds.has(l.unit)) throw new Error(`${l.id}: unknown unit ${l.unit}`);
     seen.add(l.id);
     const steps = l.steps.map((s, j) => validateStep(s, `${l.id} step ${j + 1}`));
+    const ids = new Set(steps.map((s) => s.id));
+    if (ids.size !== steps.length || steps.some((s) => typeof s.id !== 'string' || !s.id)) {
+      throw new Error(`${l.id}: every step needs a unique "id"`);
+    }
     return {
       id: l.id,
       title: l.title,

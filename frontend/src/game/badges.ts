@@ -1,5 +1,6 @@
 import type { Lesson, UserProgress } from '../types/lesson';
 import { units } from '../data/lessons';
+import { firstTrySet, isLessonComplete, isStepDone } from './progress';
 
 export interface Badge {
   id: string;
@@ -11,7 +12,7 @@ export interface Badge {
 
 const isComplete = (lessons: Lesson[], progress: UserProgress, id: string) => {
   const lesson = lessons.find((l) => l.id === id);
-  return !!lesson && (progress.completed_steps[id] ?? 0) >= lesson.steps.length;
+  return !!lesson && isLessonComplete(progress, lesson);
 };
 
 const completedCount = (lessons: Lesson[], progress: UserProgress) =>
@@ -19,17 +20,17 @@ const completedCount = (lessons: Lesson[], progress: UserProgress) =>
 
 /** Count first-try solves of a given step type across all lessons. */
 const firstTryCount = (lessons: Lesson[], progress: UserProgress, type: 'quiz' | 'code') =>
-  lessons.reduce(
-    (n, l) => n + (progress.first_try[l.id] ?? []).filter((i) => l.steps[i]?.type === type).length,
-    0,
-  );
+  lessons.reduce((n, l) => {
+    const firstTry = firstTrySet(progress, l.id);
+    return n + l.steps.filter((s) => s.type === type && firstTry.has(s.id)).length;
+  }, 0);
 
 /** A completed lesson where every quiz and code step was solved first try. */
 const hasFlawlessLesson = (lessons: Lesson[], progress: UserProgress) =>
   lessons.some((l) => {
     if (!isComplete(lessons, progress, l.id)) return false;
-    const firstTry = new Set(progress.first_try[l.id] ?? []);
-    return l.steps.every((s, i) => s.type === 'text' || firstTry.has(i));
+    const firstTry = firstTrySet(progress, l.id);
+    return l.steps.every((s) => s.type === 'text' || firstTry.has(s.id));
   });
 
 const BASE_BADGES: Badge[] = [
@@ -39,7 +40,7 @@ const BASE_BADGES: Badge[] = [
     description: 'Pass your first coding challenge.',
     icon: '👋',
     earned: (lessons, p) =>
-      lessons.some((l) => l.steps.some((s, i) => s.type === 'code' && i < (p.completed_steps[l.id] ?? 0))),
+      lessons.some((l) => l.steps.some((s) => s.type === 'code' && isStepDone(p, l.id, s.id))),
   },
   {
     id: 'first-lesson',

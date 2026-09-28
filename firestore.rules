@@ -1,10 +1,29 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+
+    function isOwner(uid) {
+      return request.auth != null && request.auth.uid == uid;
+    }
+
+    // Progress document shape. v2 stores step ids (`done`, `first_try_ids`);
+    // v1 fields (`completed_steps`, `first_try`) are kept for old documents.
+    function validProgress(d) {
+      return d.keys().hasOnly(['version', 'done', 'first_try_ids', 'completed_steps', 'first_try'])
+        && (!('version' in d) || (d.version is int && d.version >= 1 && d.version <= 100))
+        && (!('done' in d) || (d.done is map && d.done.size() <= 200))
+        && (!('first_try_ids' in d) || (d.first_try_ids is map && d.first_try_ids.size() <= 200))
+        && (!('completed_steps' in d) || (d.completed_steps is map && d.completed_steps.size() <= 200))
+        && (!('first_try' in d) || (d.first_try is map && d.first_try.size() <= 200));
+    }
+
     // Each signed-in user can read and write only their own progress document.
     match /user_progress/{uid} {
-      allow read, write: if request.auth != null && request.auth.uid == uid;
+      allow read: if isOwner(uid);
+      allow create, update: if isOwner(uid) && validProgress(request.resource.data);
+      allow delete: if false;
     }
+
     // Lessons ship with the app (frontend/src/data/lessons.json); everything else is closed.
     match /{document=**} {
       allow read, write: if false;

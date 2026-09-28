@@ -12,7 +12,10 @@ interface WorkerScope {
 }
 const ctx = self as unknown as WorkerScope;
 
-const PYODIDE_URL = '/pyodide/';
+// Versioned path so the runtime can be cached forever; a new Pyodide version gets a new URL.
+const PYODIDE_URL = `/pyodide/${__PYODIDE_VERSION__}/`;
+/** Stop programs that print more than this many characters (e.g. print() in an endless loop). */
+const MAX_OUTPUT = 100_000;
 let pyodide: PyodideInterface | null = null;
 
 const ready = (async () => {
@@ -38,10 +41,26 @@ ctx.onmessage = async ({ data: { id, code } }) => {
 
   let stdout = '';
   let stderr = '';
-  const out = new TextDecoder();
-  const err = new TextDecoder();
-  pyodide.setStdout({ write: (buf) => { stdout += out.decode(buf, { stream: true }); return buf.length; } });
-  pyodide.setStderr({ write: (buf) => { stderr += err.decode(buf, { stream: true }); return buf.length; } });
+  let truncated = false;
+  const makeWriter = (target: 'out' | 'err') => {
+    const decoder = new TextDecoder();
+    return (buf: Uint8Array) => {
+      // Throwing here raises an error inside Python, which ends the learner's program.
+      if (truncated) throw new Error('output limit reached');
+      let text = decoder.decode(buf, { stream: true });
+      const room = MAX_OUTPUT - stdout.length - stderr.length;
+      if (text.length > room) {
+        text = text.slice(0, Math.max(0, room));
+        truncated = true;
+      }
+      if (target === 'out') stdout += text;
+      else stderr += text;
+      if (truncated) throw new Error('output limit reached');
+      return buf.length;
+    };
+  };
+  pyodide.setStdout({ write: makeWriter('out') });
+  pyodide.setStderr({ write: makeWriter('err') });
   pyodide.setStdin({ stdin: () => undefined }); // input() raises EOFError: no keyboard input here
 
   // Fresh globals and an empty working directory for every run, so files and
@@ -52,13 +71,19 @@ ctx.onmessage = async ({ data: { id, code } }) => {
     // Synchronous on purpose: in async mode a top-level StopIteration becomes RuntimeError (PEP 479).
     pyodide.runPython(code, { globals, filename: 'main.py' });
   } catch (e) {
-    stderr += formatError(e);
+    if (!truncated) stderr += formatError(e);
   } finally {
     globals.destroy();
-    // Flush output that didn't end in a newline, e.g. print('x', end='').
-    pyodide.runPython('import sys; sys.stdout.flush(); sys.stderr.flush()');
-    stdout += out.decode();
-    stderr += err.decode();
+    try {
+      // Flush output that didn't end in a newline, e.g. print('x', end='').
+      pyodide.runPython('import sys; sys.stdout.flush(); sys.stderr.flush()');
+    } catch {
+      // Flushing fails after the output limit; nothing more to show.
+    }
+  }
+
+  if (truncated) {
+    stderr = `\nOutput limit reached: your program printed more than ${MAX_OUTPUT.toLocaleString('en-US')} characters, so it was stopped. Check for a loop that prints too much.`;
   }
 
   ctx.postMessage({ type: 'result', id, stdout, stderr });

@@ -40,9 +40,24 @@ Step types:
 - `quiz`: `question`, `options`, `answer` (omit to accept any option), `explanation`, optional `feedback` per wrong option, optional `code` (makes it a predict-the-output question)
 - `code`: `heading`, `instruction`, `initial_code` (starter, never the solution), `expected_output` or `expected_error`, `hint`
 
-Every coding step needs a reference solution in `frontend/tests/solutions.json`, keyed `lessonId:stepIndex`. Run `npm run check:lessons` (needs Python) after editing: it runs every solution, confirms starters don't already pass, and checks that predict-the-output answers match what the code really prints.
+Every coding step needs a reference solution in `frontend/tests/solutions.json`, keyed `lessonId:stepId`. Run `npm run check:lessons` (needs Python) after editing: it runs every solution, confirms starters don't already pass, and checks that predict-the-output answers match what the code really prints.
 
-**Progress is saved by lesson id and step index.** Never rename a lesson id or insert/remove steps in a lesson people may have started; edit steps in place or add a new lesson instead.
+**Progress is saved by lesson id and step id.** Every step has a permanent `id` (unique within its lesson). You can add, remove, and reorder steps freely; never rename a lesson id, and never change or reuse a step id. Progress saved before step ids existed is migrated automatically using `frontend/src/data/legacy-step-ids.json`, which must never be edited.
+
+## Testing
+From `frontend/`:
+- `npm run check`: type check, lint, color contrast, and lesson checks (needs Python).
+- `npm run test:e2e`: Playwright browser tests with automated accessibility (axe) checks. They use an in-memory Firebase (`e2e/mocks`), so no accounts or network are needed. First time only: `npx playwright install chromium`.
+
+From `firestore-tests/`: `npm test` runs the security-rule tests against the Firestore emulator (needs Java 21).
+
+GitHub Actions (`.github/workflows/ci.yml`) runs all of the above on every push and pull request. Dependabot (`.github/dependabot.yml`) opens weekly dependency update PRs.
+
+## Reliability features
+- Progress is cached offline and syncs when the connection returns; a status line shows Saving, Saved, Offline, or a save error.
+- A crash in one screen shows a recovery screen instead of a blank page.
+- Learner code is stopped after 10 seconds or 100,000 characters of output.
+- Optional, off unless configured: Firebase App Check (`VITE_RECAPTCHA_SITE_KEY`) and Sentry error monitoring (`VITE_SENTRY_DSN`).
 
 ## Deploy
-Vercel reads `vercel.json`, builds `frontend/`, and serves `frontend/dist`. Set the `VITE_FIREBASE_*` environment variables in the Vercel project.
+Vercel reads `vercel.json`, builds `frontend/` with Node 22 (see `.nvmrc` and `engines`), and serves `frontend/dist`. Set the `VITE_FIREBASE_*` environment variables in the Vercel project. The Python runtime is served from `/pyodide/<version>/` and cached for a year; a Pyodide upgrade changes the path. Deploy `firestore.rules` from the Firebase console (or `firebase deploy --only firestore:rules`) whenever it changes.

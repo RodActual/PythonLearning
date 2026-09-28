@@ -17,5 +17,14 @@ frontend/public/pyodide
 frontend/.env
 frontend/.env.local
 
+# Firestore rules tests
+firestore-tests/node_modules
+*-debug.log
+
+# Playwright
+frontend/test-results
+frontend/playwright-report
+frontend/dist-e2e
+
 # Vercel build output
 .vercel

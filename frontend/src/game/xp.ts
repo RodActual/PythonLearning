@@ -1,4 +1,5 @@
 import type { Lesson, Step, UserProgress } from '../types/lesson';
+import { firstTrySet, isLessonComplete } from './progress';
 
 // XP is derived from saved progress, never stored, so replays can't farm it
 // and resetting a lesson removes exactly what it earned.
@@ -7,14 +8,14 @@ export const FIRST_TRY_BONUS: Record<Step['type'], number> = { text: 0, quiz: 5,
 export const LESSON_COMPLETE_BONUS = 50;
 
 export function lessonXp(lesson: Lesson, progress: UserProgress): number {
-  const reached = Math.min(progress.completed_steps[lesson.id] ?? 0, lesson.steps.length);
-  const firstTry = new Set(progress.first_try[lesson.id] ?? []);
+  const done = new Set(progress.done[lesson.id] ?? []);
+  const firstTry = firstTrySet(progress, lesson.id);
   let xp = 0;
-  for (let i = 0; i < reached; i++) {
-    const type = lesson.steps[i].type;
-    xp += STEP_XP[type] + (firstTry.has(i) ? FIRST_TRY_BONUS[type] : 0);
+  for (const step of lesson.steps) {
+    if (!done.has(step.id)) continue;
+    xp += STEP_XP[step.type] + (firstTry.has(step.id) ? FIRST_TRY_BONUS[step.type] : 0);
   }
-  if (reached >= lesson.steps.length) xp += LESSON_COMPLETE_BONUS;
+  if (isLessonComplete(progress, lesson)) xp += LESSON_COMPLETE_BONUS;
   return xp;
 }
 

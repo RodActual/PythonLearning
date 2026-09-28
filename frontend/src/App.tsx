@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react';
 import { onAuthStateChanged, signOut, type User } from 'firebase/auth';
 import { arrayUnion, deleteField, doc, FieldPath, onSnapshot, setDoc, updateDoc } from 'firebase/firestore';
 import { auth, db } from './firebaseConfig';
@@ -7,30 +7,54 @@ import type { UserProgress } from './types/lesson';
 import { summarize, type GameSummary } from './game/summary';
 import { BADGES } from './game/badges';
 import { lessonXp, LESSON_COMPLETE_BONUS } from './game/xp';
+import {
+  EMPTY_PROGRESS,
+  PROGRESS_VERSION,
+  fromDoc,
+  isLessonComplete,
+  isStepDone,
+  resumeIndex,
+  toDoc,
+  withStepDone,
+  withoutLesson,
+  type ProgressDoc,
+} from './game/progress';
+import { reportError } from './monitoring';
 import SkillMap from './components/SkillMap';
-import StepView from './components/StepView';
 import AuthForm from './components/AuthForm';
 import Hud from './components/Hud';
-import TrophyCase from './components/TrophyCase';
 import Toasts, { type Toast } from './components/Toasts';
 import CourseAbout from './components/CourseAbout';
+import ErrorBoundary from './components/ErrorBoundary';
+import SaveStatus, { type SaveState } from './components/SaveStatus';
+
+// Loaded on demand so the first page (sign-in and map) downloads less.
+const StepView = lazy(() => import('./components/StepView'));
+const TrophyCase = lazy(() => import('./components/TrophyCase'));
 
 const USER_PROGRESS_COLLECTION = 'user_progress';
-const EMPTY: UserProgress = { completed_steps: {}, first_try: {} };
 const TOAST_MS = 6000;
 
 type View = { name: 'map' } | { name: 'trophies' } | { name: 'lesson'; lessonId: string };
+
+const Loading = () => (
+  <div className="loading-state" role="status">
+    Loading…
+  </div>
+);
 
 function App() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [view, setView] = useState<View>({ name: 'map' });
   const [stepIndex, setStepIndex] = useState(0);
-  const [progress, setProgress] = useState<UserProgress>(EMPTY);
+  const [progress, setProgress] = useState<UserProgress>(EMPTY_PROGRESS);
   const [toasts, setToasts] = useState<Toast[]>([]);
+  const [saveState, setSaveState] = useState<SaveState>('idle');
   // Mirrors progress so callbacks always see the latest value.
-  const progressRef = useRef<UserProgress>(EMPTY);
+  const progressRef = useRef<UserProgress>(EMPTY_PROGRESS);
   const toastId = useRef(0);
+  const hasSaved = useRef(false);
 
   const summary = summarize(lessons, progress);
   const currentLesson = view.name === 'lesson' ? getLesson(view.lessonId) : undefined;
@@ -66,7 +90,31 @@ function App() {
     [pushToast],
   );
 
-  // --- AUTH + LIVE PROGRESS ---
+  /** Writes to Firestore and surfaces failures instead of only logging them. */
+  const write = useCallback((op: Promise<unknown>, context: string) => {
+    hasSaved.current = true;
+    setSaveState(navigator.onLine ? 'saving' : 'offline');
+    op.catch((error) => {
+      setSaveState('error');
+      reportError(error, { context });
+    });
+  }, []);
+
+  // --- ONLINE / OFFLINE ---
+  useEffect(() => {
+    const update = () => {
+      if (!hasSaved.current) return;
+      setSaveState((s) => (!navigator.onLine ? 'offline' : s === 'offline' ? 'saving' : s));
+    };
+    window.addEventListener('online', update);
+    window.addEventListener('offline', update);
+    return () => {
+      window.removeEventListener('online', update);
+      window.removeEventListener('offline', update);
+    };
+  }, []);
+
+  // --- AUTH + LIVE PROGRESS (with one-time migration of old progress) ---
   useEffect(() => {
     let unsubscribeProgress: (() => void) | undefined;
 
@@ -75,20 +123,38 @@ function App() {
       unsubscribeProgress = undefined;
       setUser(currentUser);
       setLoading(false);
+      hasSaved.current = false;
+      setSaveState('idle');
 
-      if (currentUser) {
-        unsubscribeProgress = onSnapshot(
-          doc(db, USER_PROGRESS_COLLECTION, currentUser.uid),
-          (snap) => {
-            const data = snap.data() as Partial<UserProgress> | undefined;
-            applyProgress({ completed_steps: data?.completed_steps ?? {}, first_try: data?.first_try ?? {} });
-          },
-          (error) => console.error('Progress listener error:', error),
-        );
-      } else {
-        applyProgress(EMPTY);
+      if (!currentUser) {
+        applyProgress(EMPTY_PROGRESS);
         setView({ name: 'map' });
+        return;
       }
+
+      const ref = doc(db, USER_PROGRESS_COLLECTION, currentUser.uid);
+      let migrated = false;
+      unsubscribeProgress = onSnapshot(
+        ref,
+        { includeMetadataChanges: true },
+        (snap) => {
+          const { progress: next, needsMigration } = fromDoc(snap.data() as ProgressDoc | undefined);
+          applyProgress(next);
+          if (needsMigration && !migrated) {
+            // Rewrite old position-based progress as step ids. Old fields stay for rollback.
+            migrated = true;
+            setDoc(ref, toDoc(next), { merge: true }).catch((error) => reportError(error, { context: 'migrate progress' }));
+          }
+          if (hasSaved.current) {
+            if (snap.metadata.hasPendingWrites) setSaveState(navigator.onLine ? 'saving' : 'offline');
+            else setSaveState((s) => (s === 'error' ? s : 'saved'));
+          }
+        },
+        (error) => {
+          setSaveState('error');
+          reportError(error, { context: 'progress listener' });
+        },
+      );
     });
 
     return () => {
@@ -97,88 +163,71 @@ function App() {
     };
   }, []);
 
-  // --- PROGRESS SAVING (only ever moves forward, so XP can't be farmed by replaying) ---
-  const saveProgress = useCallback(
-    (lessonId: string, completedIndex: number, firstTry: boolean) => {
+  // --- PROGRESS SAVING (each step counts once, so XP can't be farmed by replaying) ---
+  const completeStep = useCallback(
+    (lessonId: string, stepId: string, firstTry: boolean) => {
       if (!user) return;
-      const reached = completedIndex + 1;
       const prev = progressRef.current;
-      if (reached <= (prev.completed_steps[lessonId] ?? 0)) return;
+      if (isStepDone(prev, lessonId, stepId)) return;
 
-      const next: UserProgress = {
-        completed_steps: { ...prev.completed_steps, [lessonId]: reached },
-        first_try: firstTry
-          ? { ...prev.first_try, [lessonId]: [...(prev.first_try[lessonId] ?? []), completedIndex] }
-          : prev.first_try,
-      };
+      const next = withStepDone(prev, lessonId, stepId, firstTry);
       applyProgress(next);
 
       const lesson = getLesson(lessonId);
-      const justFinished = lesson && reached >= lesson.steps.length ? lesson.title : undefined;
+      const justFinished = lesson && isLessonComplete(next, lesson) ? lesson.title : undefined;
       announceRewards(summarize(lessons, prev), summarize(lessons, next), justFinished);
 
-      const update: Record<string, unknown> = { completed_steps: { [lessonId]: reached } };
-      if (firstTry) update.first_try = { [lessonId]: arrayUnion(completedIndex) };
-      setDoc(doc(db, USER_PROGRESS_COLLECTION, user.uid), update, { merge: true }).catch((error) =>
-        console.error('Error saving progress:', error),
-      );
+      const update: Record<string, unknown> = {
+        version: PROGRESS_VERSION,
+        done: { [lessonId]: arrayUnion(stepId) },
+      };
+      if (firstTry) update.first_try_ids = { [lessonId]: arrayUnion(stepId) };
+      write(setDoc(doc(db, USER_PROGRESS_COLLECTION, user.uid), update, { merge: true }), 'save step');
     },
-    [user, announceRewards],
+    [user, announceRewards, write],
   );
 
-  const resetLessonProgress = async (lessonId: string) => {
+  const resetLessonProgress = (lessonId: string) => {
     if (!user) return;
     const title = getLesson(lessonId)?.title ?? 'this lesson';
     if (!window.confirm(`Reset your progress for ${title}? The XP from this lesson will be removed.`)) return;
 
-    const next: UserProgress = {
-      completed_steps: { ...progressRef.current.completed_steps },
-      first_try: { ...progressRef.current.first_try },
-    };
-    delete next.completed_steps[lessonId];
-    delete next.first_try[lessonId];
-    applyProgress(next);
+    applyProgress(withoutLesson(progressRef.current, lessonId));
     if (currentLesson?.id === lessonId) setStepIndex(0);
-
-    try {
-      await updateDoc(
+    write(
+      updateDoc(
         doc(db, USER_PROGRESS_COLLECTION, user.uid),
-        new FieldPath('completed_steps', lessonId),
+        new FieldPath('done', lessonId),
         deleteField(),
-        new FieldPath('first_try', lessonId),
+        new FieldPath('first_try_ids', lessonId),
         deleteField(),
-      );
-    } catch (error) {
-      console.error('Error resetting lesson:', error);
-    }
+      ),
+      'reset lesson',
+    );
   };
 
-  const resetAllProgress = async () => {
+  const resetAllProgress = () => {
     if (!user) return;
     if (!window.confirm('This permanently erases ALL your progress, XP, and trophies. Are you sure?')) return;
 
-    applyProgress(EMPTY);
+    applyProgress(EMPTY_PROGRESS);
     setStepIndex(0);
-    try {
-      await setDoc(doc(db, USER_PROGRESS_COLLECTION, user.uid), EMPTY);
-    } catch (error) {
-      console.error('Error resetting all progress:', error);
-    }
+    // No merge: replaces the whole document, including any old-format fields.
+    write(setDoc(doc(db, USER_PROGRESS_COLLECTION, user.uid), toDoc(EMPTY_PROGRESS)), 'reset all');
   };
 
   // --- NAVIGATION ---
   const openLesson = (lessonId: string) => {
     const lesson = getLesson(lessonId);
     if (!lesson) return;
-    const saved = progressRef.current.completed_steps[lessonId] ?? 0;
-    // Completed lessons reopen at the start for review.
-    setStepIndex(saved >= lesson.steps.length ? 0 : saved);
+    setStepIndex(resumeIndex(progressRef.current, lesson));
     setView({ name: 'lesson', lessonId });
   };
 
   const nextStep = (firstTry: boolean) => {
     if (!currentLesson) return;
-    saveProgress(currentLesson.id, stepIndex, firstTry);
+    const step = currentLesson.steps[stepIndex];
+    if (step) completeStep(currentLesson.id, step.id, firstTry);
     setStepIndex(Math.min(stepIndex + 1, currentLesson.steps.length));
   };
 
@@ -192,13 +241,11 @@ function App() {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="loading-screen" role="status">
-        Loading…
-      </div>
-    );
-  }
+  const backToMap = () => setView({ name: 'map' });
+
+  if (loading) return <Loading />;
+
+  const currentStep = currentLesson?.steps[stepIndex];
 
   return (
     <>
@@ -218,38 +265,50 @@ function App() {
         </header>
 
         {user && (
-          <Hud summary={summary} totalLessons={lessons.length} onOpenTrophies={() => setView({ name: 'trophies' })} />
+          <>
+            <Hud summary={summary} totalLessons={lessons.length} onOpenTrophies={() => setView({ name: 'trophies' })} />
+            <SaveStatus state={saveState} />
+          </>
         )}
 
         <main id="main" className="app-main" tabIndex={-1}>
-          {!user ? (
-            <>
-              <AuthForm />
-              <CourseAbout about={about} defaultOpen />
-            </>
-          ) : view.name === 'trophies' ? (
-            <TrophyCase earned={summary.badges} onBack={() => setView({ name: 'map' })} />
-          ) : currentLesson ? (
-            <StepView
-              key={`${currentLesson.id}:${stepIndex}`}
-              lesson={currentLesson}
-              stepIndex={stepIndex}
-              alreadyCompleted={stepIndex < (progress.completed_steps[currentLesson.id] ?? 0)}
-              lessonXpEarned={lessonXp(currentLesson, progress)}
-              unit={getUnit(currentLesson.unit)}
-              unitComplete={lessons
-                .filter((l) => l.unit === currentLesson.unit)
-                .every((l) => (progress.completed_steps[l.id] ?? 0) >= l.steps.length)}
-              courseComplete={summary.lessonsCompleted === lessons.length}
-              about={about}
-              onNext={nextStep}
-              onPrev={prevStep}
-              onBackToMenu={() => setView({ name: 'map' })}
-              onRestart={restartLesson}
-            />
-          ) : (
-            <SkillMap about={about} units={units} lessons={lessons} progress={progress} onOpenLesson={openLesson} onResetLesson={resetLessonProgress} />
-          )}
+          <ErrorBoundary key={view.name === 'lesson' ? view.lessonId : view.name} onReset={backToMap}>
+            <Suspense fallback={<Loading />}>
+              {!user ? (
+                <>
+                  <AuthForm />
+                  <CourseAbout about={about} defaultOpen />
+                </>
+              ) : view.name === 'trophies' ? (
+                <TrophyCase earned={summary.badges} onBack={backToMap} />
+              ) : currentLesson ? (
+                <StepView
+                  key={`${currentLesson.id}:${stepIndex}`}
+                  lesson={currentLesson}
+                  stepIndex={stepIndex}
+                  alreadyCompleted={!!currentStep && isStepDone(progress, currentLesson.id, currentStep.id)}
+                  lessonXpEarned={lessonXp(currentLesson, progress)}
+                  unit={getUnit(currentLesson.unit)}
+                  unitComplete={lessons.filter((l) => l.unit === currentLesson.unit).every((l) => isLessonComplete(progress, l))}
+                  courseComplete={summary.lessonsCompleted === lessons.length}
+                  about={about}
+                  onNext={nextStep}
+                  onPrev={prevStep}
+                  onBackToMenu={backToMap}
+                  onRestart={restartLesson}
+                />
+              ) : (
+                <SkillMap
+                  about={about}
+                  units={units}
+                  lessons={lessons}
+                  progress={progress}
+                  onOpenLesson={openLesson}
+                  onResetLesson={resetLessonProgress}
+                />
+              )}
+            </Suspense>
+          </ErrorBoundary>
         </main>
       </div>
       <Toasts toasts={toasts} onDismiss={dismissToast} />

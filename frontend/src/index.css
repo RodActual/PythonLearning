@@ -380,6 +380,41 @@ button[aria-disabled='true'] {
   outline-color: #ffffff;
 }
 
+/* Save status (live region; empty when idle) */
+.save-status {
+  min-height: 1.5em;
+  margin: -0.5rem 0 0.75rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-align: right;
+}
+
+.save-saved { color: var(--success-ink); }
+.save-saving { color: var(--muted); }
+.save-offline { color: var(--gold-ink); }
+.save-error { color: var(--danger-ink); }
+
+/* Error boundary */
+.error-screen {
+  text-align: center;
+  padding: 2rem 0;
+}
+
+.error-icon {
+  font-size: 3rem;
+  margin: 0;
+}
+
+.auth-notice {
+  background: var(--success-soft);
+  color: var(--success-ink);
+  padding: 0.75rem;
+  border-radius: 6px;
+  border: 1px solid var(--success);
+  margin-bottom: 1.25rem;
+  font-weight: 600;
+}
+
 /* ==========================================================================
    Skill map
    ========================================================================== */

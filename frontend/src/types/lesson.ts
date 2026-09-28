@@ -1,4 +1,6 @@
 export interface TextStep {
+  /** Permanent id, unique within its lesson. Progress is saved by this id, so never change or reuse it. */
+  id: string;
   type: 'text';
   heading?: string;
   content: string;
@@ -6,6 +8,8 @@ export interface TextStep {
 }
 
 export interface QuizStep {
+  /** Permanent id, unique within its lesson. Progress is saved by this id, so never change or reuse it. */
+  id: string;
   type: 'quiz';
   question: string;
   options: string[];
@@ -20,6 +24,8 @@ export interface QuizStep {
 }
 
 export interface CodeStep {
+  /** Permanent id, unique within its lesson. Progress is saved by this id, so never change or reuse it. */
+  id: string;
   type: 'code';
   heading?: string;
   instruction: string;
@@ -77,14 +83,12 @@ export interface Course {
   lessons: Lesson[];
 }
 
-/** lessonId -> index of the furthest step reached (steps.length means completed). */
-export type Progress = Record<string, number>;
+/** lessonId -> ids of the steps the learner has completed. */
+export type DoneSteps = Record<string, string[]>;
 
-/** lessonId -> indices of quiz/code steps solved on the first attempt. */
-export type FirstTry = Record<string, number[]>;
-
-/** Shape of the user_progress/{uid} document in Firestore. */
+/** Learner progress as the app uses it. */
 export interface UserProgress {
-  completed_steps: Progress;
-  first_try: FirstTry;
+  done: DoneSteps;
+  /** lessonId -> ids of quiz/code steps solved on the first attempt. */
+  firstTry: DoneSteps;
 }
