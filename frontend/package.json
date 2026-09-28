@@ -22,7 +22,7 @@
     "@sentry/react": "^11.0.0",
     "firebase": "^12.19.0",
     "prismjs": "^1.30.0",
-    "pyodide": "0.29.5",
+    "pyodide": "314.0.7",
     "react": "^18.2.0",
     "react-confetti": "^6.4.0",
     "react-dom": "^18.2.0",
