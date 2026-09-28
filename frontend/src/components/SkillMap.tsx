@@ -1,9 +1,11 @@
-import type { Lesson, Unit, UserProgress } from '../types/lesson';
+import type { CourseAbout as About, Lesson, Unit, UserProgress } from '../types/lesson';
+import CourseAbout from './CourseAbout';
 import { lessonState, recommendedLessonIndex, type LessonState } from '../game/summary';
 import { lessonXp } from '../game/xp';
 import { useDocumentTitle, useFocusOnMount } from '../a11y/hooks';
 
 interface SkillMapProps {
+  about: About;
   units: Unit[];
   lessons: Lesson[];
   progress: UserProgress;
@@ -113,7 +115,7 @@ function UnitPath({ lessons, allLessons, progress, recommendedId, onOpenLesson, 
   );
 }
 
-const SkillMap = ({ units, lessons, progress, onOpenLesson, onResetLesson }: SkillMapProps) => {
+const SkillMap = ({ about, units, lessons, progress, onOpenLesson, onResetLesson }: SkillMapProps) => {
   useDocumentTitle('Learning path');
   const headingRef = useFocusOnMount<HTMLHeadingElement>();
   const recommended = recommendedLessonIndex(lessons, progress);
@@ -141,6 +143,8 @@ const SkillMap = ({ units, lessons, progress, onOpenLesson, onResetLesson }: Ski
         </div>
       )}
 
+      <CourseAbout about={about} defaultOpen={Object.keys(progress.completed_steps).length === 0} />
+
       {units.map((unit, u) => {
         const unitLessons = lessons.filter((l) => l.unit === unit.id);
         const done = unitLessons.filter((l) => lessonState(l, progress) === 'completed').length;
@@ -154,6 +158,23 @@ const SkillMap = ({ units, lessons, progress, onOpenLesson, onResetLesson }: Ski
                 <p className="eyebrow">Unit {u + 1}</p>
                 <h3 id={headingId} className="unit-title">{unit.title}</h3>
                 <p className="unit-desc">{unit.description}</p>
+                <details className="unit-details">
+                  <summary>What this unit prepares you for</summary>
+                  <div className="unit-details-body">
+                    <div>
+                      <h4 className="about-heading">You'll learn to</h4>
+                      <ul>
+                        {unit.prepares.map((p) => <li key={p}>{p}</li>)}
+                      </ul>
+                    </div>
+                    <div>
+                      <h4 className="about-heading">Programs you could build</h4>
+                      <ul>
+                        {unit.applications.map((a) => <li key={a}>{a}</li>)}
+                      </ul>
+                    </div>
+                  </div>
+                </details>
               </div>
               <p className="unit-progress">
                 {done} of {unitLessons.length} lessons complete

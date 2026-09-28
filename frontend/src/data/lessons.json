@@ -1,34 +1,124 @@
 {
+  "about": {
+    "tagline": "From your first print() to tested, file-saving, object-oriented programs.",
+    "outcomes": [
+      "Write, run, and debug Python programs on your own",
+      "Organize code with functions, classes, and modules",
+      "Work with real data: text, lists, dictionaries, files, JSON, and dates",
+      "Handle errors gracefully and prove your code works with tests"
+    ],
+    "paths": [
+      {
+        "icon": "🤖",
+        "title": "Automation and scripting",
+        "description": "Rename and sort files, clean up exported CSV data, generate reports, and automate repetitive office tasks."
+      },
+      {
+        "icon": "📊",
+        "title": "Data analysis",
+        "description": "Load, filter, and summarize data. You'll have the Python you need before learning pandas and matplotlib."
+      },
+      {
+        "icon": "🌐",
+        "title": "Web back ends and APIs",
+        "description": "APIs send JSON and are built from functions and classes. You'll be ready to start Flask or FastAPI."
+      },
+      {
+        "icon": "🎮",
+        "title": "Games and interactive programs",
+        "description": "Game loops, state, and objects map directly to what you learn here. The natural next step is pygame."
+      },
+      {
+        "icon": "🧪",
+        "title": "Testing and code quality",
+        "description": "Write checks that catch bugs before users do, a habit every professional team expects."
+      }
+    ],
+    "next_steps": "This course is a strong foundation, not the finish line. To build full applications, pick one path and learn its main library: pandas for data, Flask or FastAPI for the web, pygame for games, or pathlib and csv for automation. Then build something you'll actually use."
+  },
   "units": [
     {
       "id": "foundations",
       "title": "Foundations",
       "icon": "🌱",
-      "description": "Print, variables, strings, decisions, and loops."
+      "description": "Print, variables, strings, decisions, and loops.",
+      "prepares": [
+        "Write programs that print, calculate, and make decisions",
+        "Store and format text and numbers",
+        "Repeat work with loops instead of copy and paste"
+      ],
+      "applications": [
+        "A tip calculator or unit converter",
+        "A number-guessing game",
+        "A text cleaner that tidies up names and messages"
+      ]
     },
     {
       "id": "functions-data",
       "title": "Functions & Data",
       "icon": "🧰",
-      "description": "Reusable functions and Python's core collections."
+      "description": "Reusable functions and Python's core collections.",
+      "prepares": [
+        "Break problems into small, reusable functions",
+        "Choose the right collection: list, dictionary, tuple, or set",
+        "Transform data in one line with comprehensions",
+        "Solve problems recursively"
+      ],
+      "applications": [
+        "A contact book or to-do list",
+        "A word-frequency counter",
+        "A leaderboard that ranks players by score"
+      ]
     },
     {
       "id": "robust-code",
       "title": "Robust Code",
       "icon": "🛡️",
-      "description": "Handle errors, use modules, work with files, and test your code."
+      "description": "Handle errors, use modules, work with files, and test your code.",
+      "prepares": [
+        "Keep programs running when input is bad or files are missing",
+        "Use Python's standard library instead of reinventing it",
+        "Save data to files so it survives a restart",
+        "Prove your code works with tests"
+      ],
+      "applications": [
+        "A log-file analyzer",
+        "A script that renames or sorts files",
+        "A journal app that saves entries to disk"
+      ]
     },
     {
       "id": "objects",
       "title": "Objects",
       "icon": "🏗️",
-      "description": "Model real things with classes and inheritance."
+      "description": "Model real things with classes and inheritance.",
+      "prepares": [
+        "Model real things as classes with data and behavior",
+        "Share and extend behavior with inheritance",
+        "Make your objects work with print(), ==, and len()"
+      ],
+      "applications": [
+        "An inventory or library system",
+        "A bank account simulator",
+        "Characters and items for a text adventure"
+      ]
     },
     {
       "id": "toolkit",
       "title": "Intermediate Toolkit",
       "icon": "🚀",
-      "description": "JSON, dates, generators, and a final project."
+      "description": "JSON, dates, generators, and a final project.",
+      "prepares": [
+        "Exchange data with web APIs and save app state as JSON",
+        "Handle dates, deadlines, and durations correctly",
+        "Process large data one piece at a time with generators",
+        "Plan, build, and test a complete small application"
+      ],
+      "applications": [
+        "A habit or expense tracker that saves to JSON",
+        "A due-date reminder tool",
+        "A grade book or quiz app backed by tests"
+      ]
     }
   ],
   "lessons": [
@@ -37,6 +127,8 @@
       "title": "Introduction to Python",
       "unit": "foundations",
       "summary": "Print text, do math, and write comments.",
+      "why": "Every program shows results somewhere. print() and basic math are the first tools every Python developer uses, and comments keep code understandable for the next person, including future you.",
+      "unlocks": "Write and run small programs that display results and do calculations.",
       "steps": [
         {
           "type": "text",
@@ -219,6 +311,8 @@
       "title": "Variables & Types",
       "unit": "foundations",
       "summary": "Store values in variables and meet the basic types.",
+      "why": "Programs remember things in variables: a player's score, a user's name, a price. Knowing the basic types tells you what you can do with each value.",
+      "unlocks": "Store, update, and reuse values in your programs.",
       "steps": [
         {
           "type": "text",
@@ -378,6 +472,8 @@
       "title": "Strings & f‑strings",
       "unit": "foundations",
       "summary": "Slice, search, split, and format text.",
+      "why": "Almost every app handles text: usernames, messages, file names, reports. Slicing, cleaning, and formatting strings is daily work in automation and web development.",
+      "unlocks": "Clean up messy text and produce neatly formatted output like receipts and reports.",
       "steps": [
         {
           "type": "text",
@@ -578,6 +674,8 @@
       "title": "Logic (If/Else)",
       "unit": "foundations",
       "summary": "Make decisions with if, elif, else, and Booleans.",
+      "why": "Programs become useful when they react: show a discount only to members, warn when a password is too short. That's all if, elif, and else.",
+      "unlocks": "Write programs that make decisions based on data.",
       "steps": [
         {
           "type": "text",
@@ -744,6 +842,8 @@
       "title": "Loops (Repetition)",
       "unit": "foundations",
       "summary": "Repeat work with for and while loops.",
+      "why": "Loops let the computer do the repetitive work: process every row in a file, retry a download, or update a game one frame at a time.",
+      "unlocks": "Repeat actions and process whole collections automatically.",
       "steps": [
         {
           "type": "text",
@@ -889,6 +989,8 @@
       "title": "Functions",
       "unit": "functions-data",
       "summary": "Write reusable functions with parameters and return values.",
+      "why": "Functions keep real programs organized. Each one does one job, can be tested on its own, and can be reused anywhere.",
+      "unlocks": "Split programs into named, reusable pieces.",
       "steps": [
         {
           "type": "text",
@@ -1014,6 +1116,8 @@
       "title": "Lists & Arrays",
       "unit": "functions-data",
       "summary": "Store ordered collections and change them.",
+      "why": "Lists hold collections: search results, shopping cart items, lines from a file. Most data you work with arrives as a list.",
+      "unlocks": "Store, change, and look up ordered collections of data.",
       "steps": [
         {
           "type": "text",
@@ -1165,6 +1269,8 @@
       "title": "Dictionaries",
       "unit": "functions-data",
       "summary": "Look things up by key with dictionaries.",
+      "why": "Dictionaries map keys to values, just like the JSON that web APIs send back. They power settings, user profiles, and fast lookups.",
+      "unlocks": "Look up information instantly by name or ID.",
       "steps": [
         {
           "type": "text",
@@ -1316,6 +1422,8 @@
       "title": "Tuples, Sets & Comprehensions",
       "unit": "functions-data",
       "summary": "Fixed tuples, unique sets, and one-line list building.",
+      "why": "Tuples, sets, and comprehensions make data code shorter and clearer: remove duplicates in one line, or transform a whole list in one expression.",
+      "unlocks": "Pick the right collection for the job and transform data concisely.",
       "steps": [
         {
           "type": "text",
@@ -1492,6 +1600,8 @@
       "title": "Functions 2: Arguments & Recursion",
       "unit": "functions-data",
       "summary": "Defaults, *args, lambdas, sorting keys, and recursion.",
+      "why": "Flexible arguments and sort keys show up in almost every library you'll use next, and recursion handles problems like folders inside folders or menus inside menus.",
+      "unlocks": "Write flexible functions, sort data any way you like, and solve problems recursively.",
       "steps": [
         {
           "type": "text",
@@ -1654,6 +1764,8 @@
       "title": "Error Handling",
       "unit": "robust-code",
       "summary": "Catch errors with try, except, else, and finally.",
+      "why": "Real users type bad input, files go missing, and networks fail. Handling errors is what separates a script that crashes from one people can rely on.",
+      "unlocks": "Keep programs running and show helpful messages when things go wrong.",
       "steps": [
         {
           "type": "text",
@@ -1777,6 +1889,8 @@
       "title": "Modules & Libraries",
       "unit": "robust-code",
       "summary": "Use Python's standard library with import.",
+      "why": "Python's standard library already solves thousands of problems. Knowing how to import modules is the doorway to every package you'll install later.",
+      "unlocks": "Use ready-made tools instead of writing everything yourself.",
       "steps": [
         {
           "type": "text",
@@ -1910,6 +2024,8 @@
       "title": "File I/O",
       "unit": "robust-code",
       "summary": "Save and load text files.",
+      "why": "Files let programs remember things after they close: saved games, logs, exported reports. Automation scripts read and write files constantly.",
+      "unlocks": "Save data to files and read it back.",
       "steps": [
         {
           "type": "text",
@@ -2054,6 +2170,8 @@
       "title": "Testing with assert",
       "unit": "robust-code",
       "summary": "Prove your code works and catch bugs early.",
+      "why": "Professional teams expect code to come with tests. Tests catch bugs before users do and let you improve code without fear of breaking it.",
+      "unlocks": "Write checks that prove your code works and catch bugs early.",
       "steps": [
         {
           "type": "text",
@@ -2199,6 +2317,8 @@
       "title": "Classes & OOP",
       "unit": "objects",
       "summary": "Create your own types with classes.",
+      "why": "Classes let you model real things, like a player, an order, or a bank account, as objects with their own data and actions. Most large programs are built this way.",
+      "unlocks": "Create your own types that bundle data and behavior.",
       "steps": [
         {
           "type": "text",
@@ -2352,6 +2472,8 @@
       "title": "Inheritance & Special Methods",
       "unit": "objects",
       "summary": "Build on existing classes and customise how objects behave.",
+      "why": "Frameworks like Django and many game engines are built on inheritance: you extend their classes to add your own behavior. Special methods make your objects feel built in.",
+      "unlocks": "Reuse and customize classes, and make objects that print and compare naturally.",
       "steps": [
         {
           "type": "text",
@@ -2510,6 +2632,8 @@
       "title": "Capstone: Inventory App",
       "unit": "objects",
       "summary": "Build a product inventory with classes and lists.",
+      "why": "Projects are where the pieces click. This one mirrors real inventory and point-of-sale software.",
+      "unlocks": "Combine classes, lists, and loops into a working program.",
       "steps": [
         {
           "type": "text",
@@ -2602,6 +2726,8 @@
       "title": "JSON & Dates",
       "unit": "toolkit",
       "summary": "Save structured data and work with dates.",
+      "why": "JSON is how apps and web APIs exchange data, and dates are everywhere: due dates, timestamps, subscriptions. Both are daily tools in web and automation work.",
+      "unlocks": "Save and load structured data and calculate with dates.",
       "steps": [
         {
           "type": "text",
@@ -2756,6 +2882,8 @@
       "title": "Iterators & Generators",
       "unit": "toolkit",
       "summary": "Loop smarter with enumerate, zip, and yield.",
+      "why": "When data gets big, like a huge log file or a live feed, generators process it one piece at a time without running out of memory.",
+      "unlocks": "Loop smarter with enumerate and zip, and handle large data efficiently.",
       "steps": [
         {
           "type": "text",
@@ -2904,6 +3032,8 @@
       "title": "Capstone: Grade Book",
       "unit": "toolkit",
       "summary": "Build, save, and test a grade book app.",
+      "why": "This final project combines classes, dictionaries, JSON, and tests, the same building blocks behind real record-keeping apps.",
+      "unlocks": "Plan, build, save, and test a complete small application.",
       "steps": [
         {
           "type": "text",

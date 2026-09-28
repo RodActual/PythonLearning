@@ -39,6 +39,10 @@ export interface Lesson {
   title: string;
   unit: string;
   summary?: string;
+  /** Why this lesson matters in real projects. Shown before step 1. */
+  why?: string;
+  /** What the learner can do after finishing. Shown on the completion screen. */
+  unlocks?: string;
   steps: Step[];
 }
 
@@ -47,9 +51,28 @@ export interface Unit {
   title: string;
   description: string;
   icon: string;
+  /** Skills this unit builds. */
+  prepares: string[];
+  /** Example programs a learner could build after the unit. */
+  applications: string[];
+}
+
+export interface CareerPath {
+  icon: string;
+  title: string;
+  description: string;
+}
+
+/** Course-level overview: outcomes, where the skills lead, and honest next steps. */
+export interface CourseAbout {
+  tagline: string;
+  outcomes: string[];
+  paths: CareerPath[];
+  next_steps: string;
 }
 
 export interface Course {
+  about: CourseAbout;
   units: Unit[];
   lessons: Lesson[];
 }

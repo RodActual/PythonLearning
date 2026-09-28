@@ -28,7 +28,12 @@ npm run build
 `frontend/.env` needs the `VITE_FIREBASE_*` values from your Firebase project.
 
 ## Editing lessons
-Lessons live in `frontend/src/data/lessons.json`: a list of `units` and an ordered list of `lessons` (each with a `unit`). The course has 5 units and 20 lessons.
+Lessons live in `frontend/src/data/lessons.json`: an `about` block, a list of `units`, and an ordered list of `lessons` (each with a `unit`). The course has 5 units and 20 lessons.
+
+Learner-facing guidance about what the course prepares people for:
+- `about`: `tagline`, `outcomes`, `paths` (where the skills lead, e.g. automation, data, web), and `next_steps`. Shown under the sign-in form and at the top of the map.
+- Each unit: `prepares` (skills) and `applications` (example programs). Shown in the unit header and when a unit is finished.
+- Each lesson: `why` (shown before step 1) and `unlocks` (shown on the completion screen).
 
 Step types:
 - `text`: `heading`, `content` (supports `code` and **bold**), optional `example_code`

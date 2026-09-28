@@ -2,7 +2,7 @@ import { useId, useRef, useState } from 'react';
 import Confetti from 'react-confetti';
 import CodeSandbox from './CodeSandbox';
 import RichText from './RichText';
-import type { Lesson, QuizStep, Step } from '../types/lesson';
+import type { CourseAbout, Lesson, QuizStep, Step, Unit } from '../types/lesson';
 import { stepReward } from '../game/xp';
 import { useDocumentTitle, useFocusOnMount, usePrefersReducedMotion } from '../a11y/hooks';
 
@@ -12,6 +12,10 @@ interface StepViewProps {
   /** True when this step was already completed earlier, so no XP is at stake. */
   alreadyCompleted: boolean;
   lessonXpEarned: number;
+  unit?: Unit;
+  unitComplete: boolean;
+  courseComplete: boolean;
+  about: CourseAbout;
   onNext: (firstTry: boolean) => void;
   onPrev: () => void;
   onBackToMenu: () => void;
@@ -26,7 +30,12 @@ const CodeBlock = ({ code }: { code: string }) => (
   <pre className="code-block"><code>{code}</code></pre>
 );
 
-function CompletionScreen({ lesson, lessonXpEarned, onBackToMenu, onRestart }: Pick<StepViewProps, 'lesson' | 'lessonXpEarned' | 'onBackToMenu' | 'onRestart'>) {
+type CompletionProps = Pick<
+  StepViewProps,
+  'lesson' | 'lessonXpEarned' | 'unit' | 'unitComplete' | 'courseComplete' | 'about' | 'onBackToMenu' | 'onRestart'
+>;
+
+function CompletionScreen({ lesson, lessonXpEarned, unit, unitComplete, courseComplete, about, onBackToMenu, onRestart }: CompletionProps) {
   useDocumentTitle(`${lesson.title} complete`);
   const headingRef = useFocusOnMount<HTMLHeadingElement>();
   const reducedMotion = usePrefersReducedMotion();
@@ -41,6 +50,39 @@ function CompletionScreen({ lesson, lessonXpEarned, onBackToMenu, onRestart }: P
       <h2 ref={headingRef} tabIndex={-1}>Lesson complete!</h2>
       <p>You finished <strong>{lesson.title}</strong>.</p>
       <p className="completion-xp">{lessonXpEarned} XP earned in this lesson</p>
+
+      <div className="completion-details">
+        {lesson.unlocks && (
+          <section className="completion-card" aria-labelledby="unlocks-heading">
+            <h3 id="unlocks-heading"><span aria-hidden="true">🔓 </span>You can now</h3>
+            <p>{lesson.unlocks}</p>
+          </section>
+        )}
+
+        {unit && unitComplete && !courseComplete && (
+          <section className="completion-card unit-card" aria-labelledby="unit-done-heading">
+            <h3 id="unit-done-heading"><span aria-hidden="true">{unit.icon} </span>{unit.title} unit complete</h3>
+            <p>With this unit behind you, you're ready to build programs like:</p>
+            <ul>
+              {unit.applications.map((a) => <li key={a}>{a}</li>)}
+            </ul>
+          </section>
+        )}
+
+        {courseComplete && (
+          <section className="completion-card course-card" aria-labelledby="course-done-heading">
+            <h3 id="course-done-heading"><span aria-hidden="true">🎓 </span>You finished the whole course</h3>
+            <p>You now have the foundation for:</p>
+            <ul>
+              {about.paths.map((p) => (
+                <li key={p.title}><strong>{p.title}.</strong> {p.description}</li>
+              ))}
+            </ul>
+            <p>{about.next_steps}</p>
+          </section>
+        )}
+      </div>
+
       <div className="completion-actions">
         <button type="button" onClick={onBackToMenu} className="primary-button">Back to the map</button>
         <button type="button" onClick={onRestart} className="secondary-button">Review lesson</button>
@@ -118,7 +160,20 @@ function Quiz({ step, alreadyCompleted, onSolved }: { step: QuizStep; alreadyCom
 }
 
 // Rendered with key={stepIndex} by the parent, so local state starts fresh on every step.
-function StepView({ lesson, stepIndex, alreadyCompleted, lessonXpEarned, onNext, onPrev, onBackToMenu, onRestart }: StepViewProps) {
+function StepView({
+  lesson,
+  stepIndex,
+  alreadyCompleted,
+  lessonXpEarned,
+  unit,
+  unitComplete,
+  courseComplete,
+  about,
+  onNext,
+  onPrev,
+  onBackToMenu,
+  onRestart,
+}: StepViewProps) {
   const total = lesson.steps.length;
   const finished = stepIndex >= total;
   const step = finished ? null : lesson.steps[stepIndex];
@@ -128,7 +183,18 @@ function StepView({ lesson, stepIndex, alreadyCompleted, lessonXpEarned, onNext,
   const [solved, setSolved] = useState<{ firstTry: boolean } | null>(null);
 
   if (!step) {
-    return <CompletionScreen lesson={lesson} lessonXpEarned={lessonXpEarned} onBackToMenu={onBackToMenu} onRestart={onRestart} />;
+    return (
+      <CompletionScreen
+        lesson={lesson}
+        lessonXpEarned={lessonXpEarned}
+        unit={unit}
+        unitComplete={unitComplete}
+        courseComplete={courseComplete}
+        about={about}
+        onBackToMenu={onBackToMenu}
+        onRestart={onRestart}
+      />
+    );
   }
 
   const canProceed = step.type === 'text' || solved !== null;
@@ -161,6 +227,14 @@ function StepView({ lesson, stepIndex, alreadyCompleted, lessonXpEarned, onNext,
           <span key={i} className={`seg seg-${s.type} ${i < stepIndex ? 'done' : i === stepIndex ? 'current' : ''}`} />
         ))}
       </div>
+
+      {stepIndex === 0 && lesson.why && (
+        <aside className="why-banner" aria-label="Why this lesson matters">
+          <p className="why-title"><span aria-hidden="true">💡 </span>Why this matters</p>
+          <p>{lesson.why}</p>
+          {lesson.unlocks && <p className="why-unlocks"><strong>By the end:</strong> {lesson.unlocks}</p>}
+        </aside>
+      )}
 
       <div className={`step-card step-${step.type}`}>
         <h3 ref={headingRef} tabIndex={-1} className="step-heading">

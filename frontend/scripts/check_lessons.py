@@ -51,9 +51,21 @@ problems = []
 counts = {"code": 0, "predict": 0, "quiz": 0, "text": 0}
 unit_ids = {u["id"] for u in COURSE["units"]}
 
+about = COURSE.get("about") or {}
+for key in ("tagline", "outcomes", "paths", "next_steps"):
+    if not about.get(key):
+        problems.append(f"about: missing {key}")
+for unit in COURSE["units"]:
+    for key in ("prepares", "applications"):
+        if not unit.get(key):
+            problems.append(f"unit {unit['id']}: missing {key}")
+
 for lesson in COURSE["lessons"]:
     if lesson["unit"] not in unit_ids:
         problems.append(f"{lesson['id']}: unknown unit {lesson['unit']}")
+    for key in ("why", "unlocks"):
+        if not lesson.get(key):
+            problems.append(f"{lesson['id']}: missing {key}")
     for i, step in enumerate(lesson["steps"]):
         where = f"{lesson['id']} step {i + 1}"
         kind = step["type"]

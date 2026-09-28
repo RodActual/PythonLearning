@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { onAuthStateChanged, signOut, type User } from 'firebase/auth';
 import { arrayUnion, deleteField, doc, FieldPath, onSnapshot, setDoc, updateDoc } from 'firebase/firestore';
 import { auth, db } from './firebaseConfig';
-import { getLesson, lessons, units } from './data/lessons';
+import { about, getLesson, getUnit, lessons, units } from './data/lessons';
 import type { UserProgress } from './types/lesson';
 import { summarize, type GameSummary } from './game/summary';
 import { BADGES } from './game/badges';
@@ -13,6 +13,7 @@ import AuthForm from './components/AuthForm';
 import Hud from './components/Hud';
 import TrophyCase from './components/TrophyCase';
 import Toasts, { type Toast } from './components/Toasts';
+import CourseAbout from './components/CourseAbout';
 
 const USER_PROGRESS_COLLECTION = 'user_progress';
 const EMPTY: UserProgress = { completed_steps: {}, first_try: {} };
@@ -222,7 +223,10 @@ function App() {
 
         <main id="main" className="app-main" tabIndex={-1}>
           {!user ? (
-            <AuthForm />
+            <>
+              <AuthForm />
+              <CourseAbout about={about} defaultOpen />
+            </>
           ) : view.name === 'trophies' ? (
             <TrophyCase earned={summary.badges} onBack={() => setView({ name: 'map' })} />
           ) : currentLesson ? (
@@ -232,13 +236,19 @@ function App() {
               stepIndex={stepIndex}
               alreadyCompleted={stepIndex < (progress.completed_steps[currentLesson.id] ?? 0)}
               lessonXpEarned={lessonXp(currentLesson, progress)}
+              unit={getUnit(currentLesson.unit)}
+              unitComplete={lessons
+                .filter((l) => l.unit === currentLesson.unit)
+                .every((l) => (progress.completed_steps[l.id] ?? 0) >= l.steps.length)}
+              courseComplete={summary.lessonsCompleted === lessons.length}
+              about={about}
               onNext={nextStep}
               onPrev={prevStep}
               onBackToMenu={() => setView({ name: 'map' })}
               onRestart={restartLesson}
             />
           ) : (
-            <SkillMap units={units} lessons={lessons} progress={progress} onOpenLesson={openLesson} onResetLesson={resetLessonProgress} />
+            <SkillMap about={about} units={units} lessons={lessons} progress={progress} onOpenLesson={openLesson} onResetLesson={resetLessonProgress} />
           )}
         </main>
       </div>
