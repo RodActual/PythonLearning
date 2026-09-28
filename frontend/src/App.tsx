@@ -23,6 +23,7 @@ import { reportError } from './monitoring';
 import { dueItems, nextCard, reviewItems } from './game/review';
 import SkillMap from './components/SkillMap';
 import AuthForm from './components/AuthForm';
+import ThemeToggle from './components/ThemeToggle';
 import Hud from './components/Hud';
 import Toasts, { type Toast } from './components/Toasts';
 import CourseAbout from './components/CourseAbout';
@@ -275,16 +276,17 @@ function App() {
       <a className="skip-link" href="#main">Skip to main content</a>
       <div className="app-shell">
         <header className="app-header">
-          <h1 className="app-title">
-            <span aria-hidden="true">🐍 </span>Python Learning Path
-          </h1>
-          {user && (
-            <div className="user-info">
-              <span className="user-email">{user.email}</span>
-              <button type="button" onClick={resetAllProgress} className="danger-button">Reset all progress</button>
-              <button type="button" onClick={() => signOut(auth)} className="secondary-button">Log out</button>
-            </div>
-          )}
+          <h1 className="app-title">Python Learning Path</h1>
+          <div className="user-info">
+            <ThemeToggle />
+            {user && (
+              <>
+                <span className="user-email">{user.email}</span>
+                <button type="button" onClick={resetAllProgress} className="danger-button">Reset all progress</button>
+                <button type="button" onClick={() => signOut(auth)} className="secondary-button">Log out</button>
+              </>
+            )}
+          </div>
         </header>
 
         {user && (
