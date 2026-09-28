@@ -6,13 +6,15 @@ service cloud.firestore {
       return request.auth != null && request.auth.uid == uid;
     }
 
-    // Progress document shape. v2 stores step ids (`done`, `first_try_ids`);
-    // v1 fields (`completed_steps`, `first_try`) are kept for old documents.
+    // Progress document shape. v2 stores step ids (`done`, `first_try_ids`) and the
+    // spaced-repetition schedule (`review`); v1 fields (`completed_steps`, `first_try`)
+    // are kept for old documents.
     function validProgress(d) {
-      return d.keys().hasOnly(['version', 'done', 'first_try_ids', 'completed_steps', 'first_try'])
+      return d.keys().hasOnly(['version', 'done', 'first_try_ids', 'review', 'completed_steps', 'first_try'])
         && (!('version' in d) || (d.version is int && d.version >= 1 && d.version <= 100))
         && (!('done' in d) || (d.done is map && d.done.size() <= 200))
         && (!('first_try_ids' in d) || (d.first_try_ids is map && d.first_try_ids.size() <= 200))
+        && (!('review' in d) || (d.review is map && d.review.size() <= 2000))
         && (!('completed_steps' in d) || (d.completed_steps is map && d.completed_steps.size() <= 200))
         && (!('first_try' in d) || (d.first_try is map && d.first_try.size() <= 200));
     }

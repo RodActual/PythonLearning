@@ -12,6 +12,8 @@ interface SkillMapProps {
   progress: UserProgress;
   onOpenLesson: (lessonId: string) => void;
   onResetLesson: (lessonId: string) => void;
+  reviewsDue: number;
+  onOpenReview: () => void;
 }
 
 const ROW = 216; // px between nodes
@@ -117,7 +119,7 @@ function UnitPath({ lessons, allLessons, progress, recommendedId, onOpenLesson, 
   );
 }
 
-const SkillMap = ({ about, units, lessons, progress, onOpenLesson, onResetLesson }: SkillMapProps) => {
+const SkillMap = ({ about, units, lessons, progress, onOpenLesson, onResetLesson, reviewsDue, onOpenReview }: SkillMapProps) => {
   useDocumentTitle('Learning path');
   const headingRef = useFocusOnMount<HTMLHeadingElement>();
   const recommended = recommendedLessonIndex(lessons, progress);
@@ -142,6 +144,16 @@ const SkillMap = ({ about, units, lessons, progress, onOpenLesson, onResetLesson
       ) : (
         <div className="continue-card done">
           <p className="continue-title"><span aria-hidden="true">🎓 </span>You finished every lesson. Replay any lesson to review.</p>
+        </div>
+      )}
+
+      {reviewsDue > 0 && (
+        <div className="review-card">
+          <p>
+            <span aria-hidden="true">🔁 </span>
+            <strong>{reviewsDue}</strong> review {reviewsDue === 1 ? 'card is' : 'cards are'} due. A quick review helps you remember earlier lessons.
+          </p>
+          <button type="button" className="secondary-button" onClick={onOpenReview}>Start review</button>
         </div>
       )}
 

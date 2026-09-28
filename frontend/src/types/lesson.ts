@@ -86,9 +86,17 @@ export interface Course {
 /** lessonId -> ids of the steps the learner has completed. */
 export type DoneSteps = Record<string, string[]>;
 
+/** Spaced-repetition state for one reviewable step. `box` 1-5; `due` is a local YYYY-MM-DD date. */
+export interface ReviewCard {
+  box: number;
+  due: string;
+}
+
 /** Learner progress as the app uses it. */
 export interface UserProgress {
   done: DoneSteps;
   /** lessonId -> ids of quiz/code steps solved on the first attempt. */
   firstTry: DoneSteps;
+  /** "lessonId:stepId" -> review schedule. */
+  review: Record<string, ReviewCard>;
 }

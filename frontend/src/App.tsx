@@ -20,6 +20,7 @@ import {
   type ProgressDoc,
 } from './game/progress';
 import { reportError } from './monitoring';
+import { dueItems, nextCard, reviewItems } from './game/review';
 import SkillMap from './components/SkillMap';
 import AuthForm from './components/AuthForm';
 import Hud from './components/Hud';
@@ -31,11 +32,18 @@ import SaveStatus, { type SaveState } from './components/SaveStatus';
 // Loaded on demand so the first page (sign-in and map) downloads less.
 const StepView = lazy(() => import('./components/StepView'));
 const TrophyCase = lazy(() => import('./components/TrophyCase'));
+const ReviewView = lazy(() => import('./components/ReviewView'));
+const Playground = lazy(() => import('./components/Playground'));
 
 const USER_PROGRESS_COLLECTION = 'user_progress';
 const TOAST_MS = 6000;
 
-type View = { name: 'map' } | { name: 'trophies' } | { name: 'lesson'; lessonId: string };
+type View =
+  | { name: 'map' }
+  | { name: 'trophies' }
+  | { name: 'review' }
+  | { name: 'playground' }
+  | { name: 'lesson'; lessonId: string };
 
 const Loading = () => (
   <div className="loading-state" role="status">
@@ -57,6 +65,7 @@ function App() {
   const hasSaved = useRef(false);
 
   const summary = summarize(lessons, progress);
+  const reviewsDue = dueItems(reviewItems(lessons, progress)).length;
   const currentLesson = view.name === 'lesson' ? getLesson(view.lessonId) : undefined;
 
   const applyProgress = (next: UserProgress) => {
@@ -187,6 +196,20 @@ function App() {
     [user, announceRewards, write],
   );
 
+  /** Saves one scheduled review answer (spaced repetition). */
+  const recordReview = useCallback(
+    (key: string, correct: boolean) => {
+      if (!user) return;
+      const card = nextCard(progressRef.current.review[key], correct);
+      applyProgress({ ...progressRef.current, review: { ...progressRef.current.review, [key]: card } });
+      write(
+        setDoc(doc(db, USER_PROGRESS_COLLECTION, user.uid), { version: PROGRESS_VERSION, review: { [key]: card } }, { merge: true }),
+        'save review',
+      );
+    },
+    [user, write],
+  );
+
   const resetLessonProgress = (lessonId: string) => {
     if (!user) return;
     const title = getLesson(lessonId)?.title ?? 'this lesson';
@@ -267,6 +290,38 @@ function App() {
         {user && (
           <>
             <Hud summary={summary} totalLessons={lessons.length} onOpenTrophies={() => setView({ name: 'trophies' })} />
+            <nav className="main-nav" aria-label="Main">
+              <ul>
+                {(
+                  [
+                    ['map', '🗺️', 'Learning path'],
+                    ['review', '🔁', 'Review'],
+                    ['playground', '🧪', 'Playground'],
+                  ] as const
+                ).map(([name, icon, label]) => {
+                  const current = view.name === name || (name === 'map' && view.name === 'lesson');
+                  return (
+                    <li key={name}>
+                      <button
+                        type="button"
+                        className={`nav-tab${current ? ' active' : ''}`}
+                        aria-current={current ? 'page' : undefined}
+                        onClick={() => setView({ name } as View)}
+                      >
+                        <span aria-hidden="true">{icon} </span>
+                        {label}
+                        {name === 'review' && reviewsDue > 0 && (
+                          <span className="nav-badge">
+                            {reviewsDue}
+                            <span className="visually-hidden"> due</span>
+                          </span>
+                        )}
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
+            </nav>
             <SaveStatus state={saveState} />
           </>
         )}
@@ -281,6 +336,10 @@ function App() {
                 </>
               ) : view.name === 'trophies' ? (
                 <TrophyCase earned={summary.badges} onBack={backToMap} />
+              ) : view.name === 'review' ? (
+                <ReviewView lessons={lessons} progress={progress} onResult={recordReview} onBackToMap={backToMap} />
+              ) : view.name === 'playground' ? (
+                <Playground uid={user.uid} onBackToMap={backToMap} />
               ) : currentLesson ? (
                 <StepView
                   key={`${currentLesson.id}:${stepIndex}`}
@@ -305,6 +364,8 @@ function App() {
                   progress={progress}
                   onOpenLesson={openLesson}
                   onResetLesson={resetLessonProgress}
+                  reviewsDue={reviewsDue}
+                  onOpenReview={() => setView({ name: 'review' })}
                 />
               )}
             </Suspense>

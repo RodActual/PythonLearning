@@ -1,8 +1,8 @@
 import legacyMap from '../data/legacy-step-ids.json';
-import type { DoneSteps, Lesson, UserProgress } from '../types/lesson';
+import type { DoneSteps, Lesson, ReviewCard, UserProgress } from '../types/lesson';
 
 export const PROGRESS_VERSION = 2;
-export const EMPTY_PROGRESS: UserProgress = { done: {}, firstTry: {} };
+export const EMPTY_PROGRESS: UserProgress = { done: {}, firstTry: {}, review: {} };
 
 /**
  * Shape of user_progress/{uid} in Firestore.
@@ -12,6 +12,7 @@ export interface ProgressDoc {
   version?: number;
   done?: DoneSteps;
   first_try_ids?: DoneSteps;
+  review?: Record<string, ReviewCard>;
   /** v1: lessonId -> index of the furthest step reached. */
   completed_steps?: Record<string, number>;
   /** v1: lessonId -> step indices solved first try. */
@@ -25,6 +26,19 @@ const asStringLists = (value: unknown): DoneSteps => {
   if (value && typeof value === 'object') {
     for (const [k, v] of Object.entries(value)) {
       if (Array.isArray(v)) out[k] = v.filter((x): x is string => typeof x === 'string');
+    }
+  }
+  return out;
+};
+
+const DATE = /^\d{4}-\d{2}-\d{2}$/;
+const asReview = (value: unknown): Record<string, ReviewCard> => {
+  const out: Record<string, ReviewCard> = {};
+  if (value && typeof value === 'object') {
+    for (const [k, v] of Object.entries(value as Record<string, Partial<ReviewCard>>)) {
+      if (v && typeof v.box === 'number' && typeof v.due === 'string' && DATE.test(v.due)) {
+        out[k] = { box: Math.min(Math.max(Math.round(v.box), 1), 5), due: v.due };
+      }
     }
   }
   return out;
@@ -45,21 +59,32 @@ export function migrateLegacy(doc: ProgressDoc): UserProgress {
     const mapped = indices.map((i) => ids[i]).filter((id): id is string => typeof id === 'string');
     if (mapped.length) firstTry[lessonId] = mapped;
   }
-  return { done, firstTry };
+  return { done, firstTry, review: {} };
 }
 
 /** Reads a Firestore document. `needsMigration` means it should be rewritten as v2. */
 export function fromDoc(doc: ProgressDoc | undefined): { progress: UserProgress; needsMigration: boolean } {
   if (!doc) return { progress: EMPTY_PROGRESS, needsMigration: false };
   if ((doc.version ?? 1) >= PROGRESS_VERSION) {
-    return { progress: { done: asStringLists(doc.done), firstTry: asStringLists(doc.first_try_ids) }, needsMigration: false };
+    return {
+      progress: { done: asStringLists(doc.done), firstTry: asStringLists(doc.first_try_ids), review: asReview(doc.review) },
+      needsMigration: false,
+    };
   }
   const hasLegacy = Object.keys(doc.completed_steps ?? {}).length > 0 || Object.keys(doc.first_try ?? {}).length > 0;
   return { progress: migrateLegacy(doc), needsMigration: hasLegacy };
 }
 
-/** The v2 fields to write for a progress snapshot. Legacy fields are left in place for rollback. */
-export const toDoc = (p: UserProgress) => ({ version: PROGRESS_VERSION, done: p.done, first_try_ids: p.firstTry });
+/**
+ * The v2 fields to write for a progress snapshot (migration and "reset all").
+ * `review` is deliberately left out: it's only written by review sessions, and a
+ * non-merge write of this (reset all) clears it. Legacy fields are left for rollback.
+ */
+export const toDoc = (p: UserProgress) => ({
+  version: PROGRESS_VERSION,
+  done: p.done,
+  first_try_ids: p.firstTry,
+});
 
 // --- Queries (all ignore ids of steps that no longer exist) ---
 
@@ -89,6 +114,7 @@ export function withStepDone(p: UserProgress, lessonId: string, stepId: string, 
   return {
     done: { ...p.done, [lessonId]: [...(p.done[lessonId] ?? []), stepId] },
     firstTry: firstTry ? { ...p.firstTry, [lessonId]: [...(p.firstTry[lessonId] ?? []), stepId] } : p.firstTry,
+    review: p.review,
   };
 }
 
@@ -97,5 +123,5 @@ export function withoutLesson(p: UserProgress, lessonId: string): UserProgress {
   const firstTry = { ...p.firstTry };
   delete done[lessonId];
   delete firstTry[lessonId];
-  return { done, firstTry };
+  return { done, firstTry, review: {} };
 }

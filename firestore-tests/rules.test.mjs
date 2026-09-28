@@ -41,6 +41,14 @@ test('owner can save a completed step the way the app does', async () => {
   );
 });
 
+test('owner can save a review result', async () => {
+  await seed('alice', { version: 2, done: { 'lesson-01': ['s02'] }, first_try_ids: {} });
+  await assertSucceeds(
+    setDoc(progress('alice'), { version: 2, review: { 'lesson-01:s02': { box: 2, due: '2026-10-01' } } }, { merge: true }),
+  );
+  await assertFails(setDoc(progress('alice'), { version: 2, review: 'everything' }, { merge: true }));
+});
+
 test('owner can read their own progress', async () => {
   await seed('alice', { version: 2, done: {}, first_try_ids: {} });
   await assertSucceeds(getDoc(progress('alice')));

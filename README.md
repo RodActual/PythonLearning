@@ -7,6 +7,10 @@ A basic application that teaches Python.
 - Learner code runs in the browser with [Pyodide](https://pyodide.org) inside a Web Worker. Runs time out after 10 seconds.
 - Firebase is used only for sign-in and saving progress (`user_progress/{uid}` in Firestore). Access rules are in `firestore.rules`.
 
+## Review and Playground
+- **Review** (`src/game/review.ts`): every completed quiz and coding challenge becomes a spaced-repetition card (Leitner boxes). Right on the first try moves a card up a box (next review in 3, 7, 14, then 30 days); a miss sends it back to tomorrow. Sessions show up to 10 due cards, at most 3 of them coding challenges, mixed across lessons. The schedule is saved in the progress document's `review` field. "Practice anyway" never changes the schedule.
+- **Playground** (`src/components/Playground.tsx`): a free-form editor with runnable examples (`src/data/playground-examples.ts`). Code is saved in the browser's localStorage per account; no grading or XP.
+
 ## Game layer
 - XP is derived from saved progress (`src/game/xp.ts`), so replaying a lesson can't farm it and resetting a lesson removes exactly what it earned. Steps are worth 5 (text), 10 (quiz), 20 (code), with first-try bonuses of +5/+10 and +50 per finished lesson.
 - Levels and titles come from total XP. Trophies are defined in `src/game/badges.ts`.

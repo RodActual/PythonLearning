@@ -1,8 +1,10 @@
 import { useId, useState } from 'react';
 import Confetti from 'react-confetti';
 import CodeSandbox from './CodeSandbox';
+import Quiz from './Quiz';
+import CodeBlock from './CodeBlock';
 import RichText from './RichText';
-import type { CourseAbout, Lesson, QuizStep, Step, Unit } from '../types/lesson';
+import type { CourseAbout, Lesson, Step, Unit } from '../types/lesson';
 import { stepReward } from '../game/xp';
 import { useDocumentTitle, useFocusOnMount, usePrefersReducedMotion } from '../a11y/hooks';
 
@@ -24,11 +26,6 @@ interface StepViewProps {
 
 const stepLabel = (step: Step) =>
   step.type === 'text' ? 'Lesson' : step.type === 'code' ? 'Coding challenge' : step.code ? 'Predict the output' : 'Quiz';
-const LETTERS = 'ABCDEFGH';
-
-const CodeBlock = ({ code }: { code: string }) => (
-  <pre className="code-block"><code>{code}</code></pre>
-);
 
 type CompletionProps = Pick<
   StepViewProps,
@@ -85,76 +82,7 @@ function CompletionScreen({ lesson, lessonXpEarned, unit, unitComplete, courseCo
 
       <div className="completion-actions">
         <button type="button" onClick={onBackToMenu} className="primary-button">Back to the map</button>
-        <button type="button" onClick={onRestart} className="secondary-button">Review lesson</button>
-      </div>
-    </div>
-  );
-}
-
-function Quiz({ step, alreadyCompleted, onSolved }: { step: QuizStep; alreadyCompleted: boolean; onSolved: (firstTry: boolean) => void }) {
-  const questionId = useId();
-  const [selected, setSelected] = useState<string | null>(null);
-  const [solved, setSolved] = useState(false);
-  const [attempts, setAttempts] = useState(0);
-
-  const choose = (option: string) => {
-    if (solved) return;
-    const attempt = attempts + 1;
-    setAttempts(attempt);
-    setSelected(option);
-    const correct = step.answer === undefined || option.trim() === step.answer.trim();
-    if (correct) {
-      setSolved(true);
-      onSolved(attempt === 1);
-    }
-  };
-
-  const firstTry = attempts === 1;
-  let feedback = '';
-  if (solved) {
-    feedback = step.answer === undefined ? 'Thanks for answering!' : 'Correct!';
-    if (!alreadyCompleted) feedback += ` +${stepReward(step, firstTry)} XP${firstTry ? ' (includes first-try bonus)' : ''}`;
-  } else if (selected) {
-    const why = step.feedback?.[selected];
-    feedback = `Not quite. ${why ?? `"${selected}" is not right.`} Try another answer.`;
-  }
-
-  return (
-    <div className="quiz-section">
-      {step.code && (
-        <div className="predict-code">
-          <p className="predict-label">Read this code:</p>
-          <CodeBlock code={step.code} />
-        </div>
-      )}
-      <p id={questionId} className="question-text"><RichText text={step.question} /></p>
-      <div className="options-grid" role="group" aria-labelledby={questionId}>
-        {step.options.map((option, i) => {
-          const isSelected = selected === option;
-          const state = isSelected ? (solved ? 'correct' : 'incorrect') : '';
-          return (
-            <button
-              key={option}
-              type="button"
-              className={`option-button ${state}`}
-              onClick={() => choose(option)}
-              aria-pressed={isSelected}
-              aria-disabled={solved || undefined}
-            >
-              <span className="option-letter" aria-hidden="true">{LETTERS[i]}</span>
-              <span className="option-text">{option}</span>
-              {state && (
-                <span className="option-mark" aria-hidden="true">{state === 'correct' ? '✓' : '✗'}</span>
-              )}
-            </button>
-          );
-        })}
-      </div>
-      <div className={`feedback ${solved ? 'feedback-good' : selected ? 'feedback-bad' : ''}`} role="status">
-        {feedback && <p className="feedback-line">{feedback}</p>}
-        {solved && step.explanation && (
-          <p className="explanation"><strong>Why: </strong><RichText text={step.explanation} /></p>
-        )}
+        <button type="button" onClick={onRestart} className="secondary-button">Replay lesson</button>
       </div>
     </div>
   );
@@ -259,7 +187,11 @@ function StepView({
         )}
 
         {step.type === 'quiz' && (
-          <Quiz step={step} alreadyCompleted={alreadyCompleted} onSolved={(firstTry) => setSolved({ firstTry })} />
+          <Quiz
+            step={step}
+            rewardText={alreadyCompleted ? undefined : (firstTry) => `+${stepReward(step, firstTry)} XP${firstTry ? ' (includes first-try bonus)' : ''}`}
+            onSolved={(firstTry) => setSolved({ firstTry })}
+          />
         )}
 
         {step.type === 'code' && (

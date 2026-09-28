@@ -1,8 +1,6 @@
-import { useEffect, useId, useRef, useState, type KeyboardEvent } from 'react';
-import Editor from 'react-simple-code-editor';
-import Prism from 'prismjs';
-import 'prismjs/components/prism-python';
+import { useEffect, useId, useRef, useState } from 'react';
 import { pythonRunner } from '../python/runner';
+import CodeEditor from './CodeEditor';
 
 interface CodeSandboxProps {
   initialCode: string;
@@ -30,14 +28,11 @@ const CodeSandbox = ({ initialCode, expectedOutput, expectedError, hint, rewardT
   const [pythonReady, setPythonReady] = useState(false);
   const [status, setStatus] = useState<Status>('idle');
   const [message, setMessage] = useState('');
-  // Tab indents inside the editor. After Esc, Tab moves focus out instead (avoids a keyboard trap, WCAG 2.1.2).
-  const [tabExits, setTabExits] = useState(false);
   const [showHint, setShowHint] = useState(false);
   const [hintUsed, setHintUsed] = useState(false);
   const runs = useRef(0);
   const passed = useRef(false);
-  const editorId = useId();
-  const helpId = useId();
+  const outputId = useId();
   const hintId = useId();
 
   useEffect(() => {
@@ -50,20 +45,6 @@ const CodeSandbox = ({ initialCode, expectedOutput, expectedError, hint, rewardT
       active = false;
     };
   }, []);
-
-  // The editor renders its own textarea; link it to the keyboard help text.
-  useEffect(() => {
-    document.getElementById(editorId)?.setAttribute('aria-describedby', helpId);
-  }, [editorId, helpId]);
-
-  const onEditorKeyDown = (e: KeyboardEvent<HTMLElement>) => {
-    if (e.key === 'Escape') {
-      e.preventDefault(); // keep focus here; the library would otherwise blur
-      setTabExits(true);
-    } else if (e.key !== 'Tab' && e.key !== 'Shift') {
-      setTabExits(false);
-    }
-  };
 
   const runCode = async () => {
     if (isRunning) return;
@@ -110,26 +91,7 @@ const CodeSandbox = ({ initialCode, expectedOutput, expectedError, hint, rewardT
 
   return (
     <div className="sandbox-container">
-      <div className="editor-wrapper">
-        <label className="editor-label" htmlFor={editorId}>Code editor (main.py)</label>
-        <Editor
-          value={code}
-          onValueChange={setCode}
-          highlight={(c) => Prism.highlight(c, Prism.languages.python, 'python')}
-          padding={16}
-          className="code-editor"
-          textareaId={editorId}
-          textareaClassName="code-input"
-          ignoreTabKey={tabExits}
-          onKeyDown={onEditorKeyDown}
-          onBlur={() => setTabExits(false)}
-        />
-        <p id={helpId} className="editor-help">
-          {tabExits
-            ? 'Tab now moves focus out of the editor.'
-            : 'Tab inserts spaces. Press Esc, then Tab, to leave the editor.'}
-        </p>
-      </div>
+      <CodeEditor value={code} onChange={setCode} />
 
       {hint && (
         <div className="hint-area">
@@ -165,8 +127,8 @@ const CodeSandbox = ({ initialCode, expectedOutput, expectedError, hint, rewardT
       </div>
 
       <div className="terminal-wrapper">
-        <h4 className="terminal-label" id={`${editorId}-out`}>Console output</h4>
-        <pre className={`terminal-output ${status === 'error' ? 'output-wrong' : ''}`} role="region" aria-labelledby={`${editorId}-out`} tabIndex={0}>
+        <h4 className="terminal-label" id={outputId}>Console output</h4>
+        <pre className={`terminal-output ${status === 'error' ? 'output-wrong' : ''}`} role="region" aria-labelledby={outputId} tabIndex={0}>
           {output || <span className="placeholder">Run your code to see the output here.</span>}
         </pre>
       </div>
