@@ -1,0 +1,12 @@
+{
+  "name": "Python Learning Path",
+  "short_name": "Python Path",
+  "description": "Learn Python step by step with quizzes, coding challenges, XP, and trophies.",
+  "start_url": "/",
+  "background_color": "#0a0f1f",
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
