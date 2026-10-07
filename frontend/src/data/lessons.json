@@ -134,7 +134,7 @@
           "id": "s01",
           "type": "text",
           "heading": "Welcome",
-          "content": "Python is a popular language known for being easy to read. It's used for Web Development, Data Science, and AI.",
+          "content": "Python is a popular language known for being easy to read. It's used for Web Development, Data Science, and AI. Python is an **interpreted** language: instead of converting the whole program to machine code first, the Python interpreter reads and runs your code line by line, top to bottom. Python programs are saved in files ending in `.py`, like `hello.py`.",
           "example_code": "print('Hello, Python!')"
         },
         {
@@ -157,7 +157,7 @@
           "id": "s03",
           "type": "text",
           "heading": "The Print Function",
-          "content": "To output text to the screen/console, we use `print()`. Text must be wrapped in quotes.",
+          "content": "To output text to the screen/console, we use `print()`. Text must be wrapped in quotes, and the parentheses are required: `print 'Hello'` is an error in Python 3. Without quotes, Python reads the word as a variable name, so `print(Hello)` fails too.",
           "example_code": "print('Hello!')\nprint(\"Double quotes work too\")"
         },
         {
@@ -253,8 +253,8 @@
           "id": "s12",
           "type": "text",
           "heading": "Data Types Preview",
-          "content": "Text is called a 'String'. Numbers are 'Integers'. We will learn more about these soon.",
-          "example_code": "print('Hello')   # a string\nprint(42)        # an integer\nprint(3.14)      # a float (decimal number)"
+          "content": "Text is called a 'String'. Numbers are 'Integers'. Quotes make anything a string, even digits: `'7'` is text, `7` is a number. Using `+` on two strings joins them end to end instead of adding them. We will learn more about these soon.",
+          "example_code": "print('Hello')     # a string\nprint(42)          # an integer\nprint(3.14)        # a float (decimal number)\nprint('5' + '5')   # 55: two strings joined\nprint(5 + 5)       # 10: two numbers added"
         },
         {
           "id": "s13",
@@ -335,7 +335,7 @@
           "id": "s01",
           "type": "text",
           "heading": "What is a Variable?",
-          "content": "A variable is a container for storing data values. Think of it like a labeled box.",
+          "content": "A variable is a container for storing data values. Think of it like a labeled box. The `=` sign is the **assignment operator**: it stores the value on the right in the name on the left. (It does not mean 'is equal to'; comparing uses `==`, which comes later.)",
           "example_code": "points = 10\nname = 'Ada'\nprint(name, points)   # Ada 10"
         },
         {
@@ -390,7 +390,7 @@
           "id": "s06",
           "type": "text",
           "heading": "Strings",
-          "content": "Strings are surrounded by either single quotes `'` or double quotes `\"`.",
+          "content": "Strings are surrounded by either single quotes `'` or double quotes `\"`. The opening and closing quotes must match: `'Hello\"` is a SyntaxError.",
           "example_code": "greeting = 'Hi'\nreply = \"It's fine\"   # double quotes let you use ' inside"
         },
         {
@@ -420,7 +420,7 @@
           "id": "s09",
           "type": "text",
           "heading": "Integers and Floats",
-          "content": "Integers are whole numbers (5). Floats are decimals (5.5).",
+          "content": "Integers are whole numbers (5). Floats are decimals (5.5). The built-in `type()` function tells you what type a value or variable holds.",
           "example_code": "count = 5\nprice = 5.5\nprint(type(count))   # <class 'int'>\nprint(type(price))   # <class 'float'>"
         },
         {
@@ -453,8 +453,8 @@
           "id": "s12",
           "type": "text",
           "heading": "Reassigning Variables",
-          "content": "You can change the value of a variable at any time.",
-          "example_code": "lives = 3\nlives = lives - 1\nprint(lives)   # 2"
+          "content": "You can change the value of a variable at any time. `lives -= 1` is shorthand for `lives = lives - 1`, and `+=` works the same way for adding. Python is **dynamically typed**: you never declare a type, and a variable can even hold a different type later.",
+          "example_code": "lives = 3\nlives = lives - 1\nlives -= 1     # same idea, shorter\nprint(lives)   # 1\n\nx = 5          # an int...\nx = 'five'     # ...now a str. That's allowed."
         },
         {
           "id": "s13",
@@ -511,7 +511,7 @@
           "id": "s01",
           "type": "text",
           "heading": "Strings are sequences",
-          "content": "A string is a sequence of characters, so you can index it just like a list and use `len()` on it.",
+          "content": "A string is a sequence of characters, so you can pick out one character by its position (its **index**) in square brackets. Counting starts at 0, so `[0]` is the first character; negative indexes count from the end, so `[-1]` is the last. `len()` gives the number of characters.",
           "example_code": "word = 'Python'\nprint(word[0])    # P\nprint(word[-1])   # n\nprint(len(word))  # 6"
         },
         {
@@ -568,7 +568,7 @@
           "id": "s06",
           "type": "text",
           "heading": "String methods",
-          "content": "Strings come with built-in methods like `.upper()`, `.lower()`, `.strip()` and `.title()`. They return a **new** string; the original never changes.",
+          "content": "Strings come with built-in methods like `.upper()`, `.lower()`, `.strip()` and `.title()`. Strings are **immutable**: you can't change one in place, so these methods return a **new** string and the original never changes.",
           "example_code": "name = '  ada lovelace  '\nprint(name.strip())          # 'ada lovelace'\nprint(name.strip().title())  # 'Ada Lovelace'\nprint('hi'.upper())          # 'HI'"
         },
         {
@@ -616,7 +616,7 @@
           "id": "s11",
           "type": "text",
           "heading": "Split and join",
-          "content": "`.split()` breaks a string into a list of pieces. `'separator'.join(list)` glues a list of strings back together.",
+          "content": "`.split()` breaks a string into a **list** of pieces (a list is an ordered collection written in square brackets; you'll study lists soon). With no argument it splits on spaces. `len()` on a list counts its items, and `list[0]` gets the first item, just like with strings. `'separator'.join(list)` glues a list of strings back together.",
           "example_code": "csv = 'red,green,blue'\ncolors = csv.split(',')\nprint(colors)              # ['red', 'green', 'blue']\nprint(' | '.join(colors))  # red | green | blue"
         },
         {
@@ -733,7 +733,7 @@
           "id": "s01",
           "type": "text",
           "heading": "Booleans",
-          "content": "Logic starts with True and False. These are called Booleans.",
+          "content": "Logic starts with True and False. These are called Booleans, and they are written with a capital first letter. Comparisons like `10 > 5` produce a Boolean.",
           "example_code": "is_raining = True\nprint(10 > 5)   # True\nprint(3 > 8)    # False"
         },
         {
@@ -757,7 +757,7 @@
           "id": "s03",
           "type": "text",
           "heading": "Comparison Operators",
-          "content": "We use `==` for equality, `!=` for not equal, `<` and `>` for less/greater than.",
+          "content": "We use `==` for equality, `!=` for not equal, `<` and `>` for less/greater than, and `<=` and `>=` for 'less than or equal' and 'greater than or equal'.",
           "example_code": "print(5 == 5)   # True\nprint(5 != 3)   # True\nprint(2 < 1)    # False"
         },
         {
@@ -789,7 +789,7 @@
           "id": "s06",
           "type": "text",
           "heading": "The 'if' Statement",
-          "content": "Use `if` to run code ONLY when a condition is True. Indentation is required!",
+          "content": "Use `if` to run code ONLY when a condition is True. The `if` line must end with a colon `:`, and the code that belongs to it is indented. Indentation is required, and the standard is 4 spaces.",
           "example_code": "temperature = 30\nif temperature > 25:\n    print('Wear shorts')"
         },
         {
@@ -837,7 +837,7 @@
           "id": "s11",
           "type": "text",
           "heading": "The 'elif' Statement",
-          "content": "`elif` stands for 'Else If'. It allows you to check multiple conditions in a row.",
+          "content": "`elif` stands for 'Else If'. It allows you to check multiple conditions in a row. Python checks from the top and runs only the first branch whose condition is True. The `else` block runs only when the `if` and every `elif` were all False.",
           "example_code": "score = 85\nif score >= 90:\n    print('A')\nelif score >= 80:\n    print('B')\nelse:\n    print('C')"
         },
         {
@@ -869,7 +869,7 @@
           "id": "s14",
           "type": "text",
           "heading": "Logical AND / OR",
-          "content": "`and` checks if BOTH are true. `or` checks if EITHER is true.",
+          "content": "`and` checks if BOTH are true. `or` checks if EITHER is true. `not` flips a Boolean: `not True` is False.",
           "example_code": "has_ticket = True\nis_vip = False\nprint(has_ticket and is_vip)   # False\nprint(has_ticket or is_vip)    # True\nprint(not is_vip)              # True"
         },
         {
@@ -917,7 +917,7 @@
           "id": "s01",
           "type": "text",
           "heading": "The Power of Repetition",
-          "content": "Computers are great at doing the same thing over and over. In Python, we use **Loops** to repeat code.",
+          "content": "Computers are great at doing the same thing over and over. In Python, we use **Loops** to repeat code. The `for` keyword starts a loop that goes through each item in a sequence, one at a time.",
           "example_code": "for i in range(3):\n    print('Hip hip hooray!')"
         },
         {
@@ -940,7 +940,7 @@
           "id": "s03",
           "type": "text",
           "heading": "The For Loop",
-          "content": "A `for` loop iterates over a sequence (like a list or a string).",
+          "content": "A `for` loop iterates over a sequence, like a string or a list (items in square brackets). `range(3)` makes the sequence 0, 1, 2, so `for i in range(3):` runs its indented body 3 times.",
           "example_code": "for fruit in ['apple', 'banana']:\n    print(fruit)"
         },
         {
@@ -956,7 +956,7 @@
           "id": "s05",
           "type": "text",
           "heading": "The Range Function",
-          "content": "`range(5)` creates a sequence of numbers from 0 to 4 (5 is excluded).",
+          "content": "`range(5)` creates a sequence of numbers from 0 to 4 (5 is excluded). You can also give a start, and a step. After a loop finishes, the loop variable keeps the last value it was given.",
           "example_code": "for n in range(2, 6):\n    print(n)      # 2, 3, 4, 5\n\nfor n in range(0, 10, 3):\n    print(n)      # 0, 3, 6, 9"
         },
         {
@@ -1005,7 +1005,7 @@
           "id": "s10",
           "type": "text",
           "heading": "The While Loop",
-          "content": "A `while` loop runs AS LONG AS a condition is True. Be careful of infinite loops!",
+          "content": "A `while` loop runs AS LONG AS a condition is True. Be careful of infinite loops! If nothing inside the loop ever makes the condition False (for example, you forget to change the counter), it runs forever and the program hangs until it is stopped.",
           "example_code": "fuel = 3\nwhile fuel > 0:\n    print('Flying, fuel =', fuel)\n    fuel = fuel - 1\nprint('Landed')"
         },
         {
@@ -1079,7 +1079,7 @@
           "id": "s01",
           "type": "text",
           "heading": "Reusability",
-          "content": "Functions allow you to write code once and use it many times. It keeps code clean (DRY - Don't Repeat Yourself).",
+          "content": "Functions allow you to write code once and use it many times. It keeps code clean (DRY - Don't Repeat Yourself). Define one with the `def` keyword, a name, parentheses and a colon, then indent its body. Call it by writing its name followed by parentheses, like `greet()`.",
           "example_code": "def greet():\n    print('Welcome!')\n\ngreet()\ngreet()"
         },
         {
@@ -1111,7 +1111,7 @@
           "id": "s04",
           "type": "text",
           "heading": "Arguments (Parameters)",
-          "content": "You can pass data INTO a function using arguments.",
+          "content": "You can pass data INTO a function using arguments. A function can take several parameters, separated by commas: `def add(a, b):` is called as `add(2, 3)`.",
           "example_code": "def greet(name):\n    print('Hello ' + name)\n\ngreet('Ada')\ngreet('Linus')"
         },
         {
@@ -1143,7 +1143,7 @@
           "id": "s07",
           "type": "text",
           "heading": "The Return Statement",
-          "content": "Functions usually 'return' a value to be used later, rather than just printing it.",
+          "content": "Functions usually 'return' a value to be used later, rather than just printing it. `return` also ends the function immediately: any lines after it in the function never run.",
           "example_code": "def square(n):\n    return n * n\n\nresult = square(4)\nprint(result + 1)   # 17"
         },
         {
@@ -1218,7 +1218,7 @@
           "id": "s01",
           "type": "text",
           "heading": "What is a List?",
-          "content": "A list is an ordered collection of items. In other languages, these are often called Arrays.",
+          "content": "A list is an ordered collection of items, written in square brackets `[ ]` and separated by commas. In other languages, these are often called Arrays. One list can hold different types together, like `[1, 'hello', 3.5]`.",
           "example_code": "scores = [90, 72, 85]\nprint(scores)"
         },
         {
@@ -1314,9 +1314,9 @@
         {
           "id": "s11",
           "type": "text",
-          "heading": "Adding Items",
-          "content": "Use `.append(item)` to add to the end. Use `.insert(index, item)` to add to a specific spot.",
-          "example_code": "queue = ['Ann']\nqueue.append('Bo')\nqueue.insert(0, 'Cy')\nprint(queue)   # ['Cy', 'Ann', 'Bo']"
+          "heading": "Adding and Removing Items",
+          "content": "Use `.append(item)` to add to the end. Use `.insert(index, item)` to add to a specific spot. To take items out, `.remove(value)` deletes the first item equal to that value, and `.pop(index)` removes by position (the last item if you give no index).",
+          "example_code": "queue = ['Ann']\nqueue.append('Bo')\nqueue.insert(0, 'Cy')\nprint(queue)   # ['Cy', 'Ann', 'Bo']\nqueue.remove('Ann')\nprint(queue)   # ['Cy', 'Bo']"
         },
         {
           "id": "s12",
@@ -1387,7 +1387,7 @@
           "id": "s01",
           "type": "text",
           "heading": "Key-Value Pairs",
-          "content": "Dictionaries store data in pairs, like a real dictionary (Word: Definition). In Python, we use `{ key: value }`.",
+          "content": "Dictionaries store data in pairs, like a real dictionary (Word: Definition). In Python, we use curly braces `{ key: value }`. Keys must be immutable values like strings or numbers; a list can't be a key because lists can change.",
           "example_code": "person = {'name': 'Ada', 'age': 36}\nprint(person)"
         },
         {
@@ -1419,7 +1419,7 @@
           "id": "s04",
           "type": "text",
           "heading": "Accessing Values",
-          "content": "You cannot access items by index [0]. You must access them by their Key Name.",
+          "content": "You cannot access items by index [0]. You must access them by their Key Name. If the key doesn't exist, Python raises a `KeyError` and the program crashes.",
           "example_code": "person = {'name': 'Ada', 'age': 36}\nprint(person['name'])   # Ada"
         },
         {
@@ -1499,8 +1499,8 @@
           "id": "s13",
           "type": "text",
           "heading": "Removing Items",
-          "content": "Use `.pop(key)` to remove an item and get its value.",
-          "example_code": "stock = {'apples': 5, 'pears': 2}\nremoved = stock.pop('pears')\nprint(removed)   # 2\nprint(stock)     # {'apples': 5}"
+          "content": "Use `.pop(key)` to remove an item and get its value. To see what's inside, `.keys()` gives all the keys, `.values()` all the values, and `.items()` the key-value pairs. Wrap any of them in `list()` to get a plain list.",
+          "example_code": "stock = {'apples': 5, 'pears': 2}\nremoved = stock.pop('pears')\nprint(removed)              # 2\nprint(stock)                # {'apples': 5}\nprint(list(stock.values())) # [5]"
         },
         {
           "id": "s14",
@@ -1556,7 +1556,7 @@
           "id": "s01",
           "type": "text",
           "heading": "Tuples",
-          "content": "A tuple is like a list that can't be changed (it's immutable). Tuples use parentheses.",
+          "content": "A tuple is like a list that can't be changed (it's immutable). Tuples use parentheses. Use one for values that belong together and shouldn't change, like the x and y of a coordinate.",
           "example_code": "point = (3, 4)\nprint(point[0])   # 3\n# point[0] = 5 would raise TypeError"
         },
         {
@@ -1612,7 +1612,7 @@
           "id": "s06",
           "type": "text",
           "heading": "Sets",
-          "content": "A set holds unique items with no particular order. Duplicates disappear automatically.",
+          "content": "A set holds unique items with no particular order. Duplicates disappear automatically, so `set(some_list)` is a quick way to drop repeats from a list. `len()` counts the unique items.",
           "example_code": "tags = {'python', 'code', 'python'}\nprint(len(tags))       # 2\nprint('code' in tags)  # True"
         },
         {
@@ -1628,7 +1628,7 @@
           "id": "s08",
           "type": "text",
           "heading": "Set operations",
-          "content": "Sets support math-style operations: `|` for union, `&` for intersection, `-` for difference.",
+          "content": "Sets support math-style operations: `|` for union, `&` for intersection (items in both), `-` for difference. Sets have no order, so use `sorted()` to get a sorted list from any collection.",
           "example_code": "a = {1, 2, 3}\nb = {2, 3, 4}\nprint(a & b)   # {2, 3}\nprint(a - b)   # {1}"
         },
         {
@@ -1661,7 +1661,7 @@
           "id": "s11",
           "type": "text",
           "heading": "List comprehensions",
-          "content": "A comprehension builds a list in one line: `[expression for item in iterable]`.",
+          "content": "A comprehension builds a list in one line: `[expression for item in iterable]`. The iterable can be a range, a list, or even a string, which gives one character at a time.",
           "example_code": "squares = [n * n for n in range(5)]\nprint(squares)   # [0, 1, 4, 9, 16]"
         },
         {
@@ -1677,7 +1677,7 @@
           "id": "s13",
           "type": "text",
           "heading": "Filtering",
-          "content": "Add `if` at the end of a comprehension to keep only some items.",
+          "content": "Add `if` at the end of a comprehension to keep only some items. The `%` operator gives the remainder of a division, so `n % 2 == 0` means n is even.",
           "example_code": "nums = [4, 7, 10, 13]\nevens = [n for n in nums if n % 2 == 0]\nprint(evens)   # [4, 10]"
         },
         {
@@ -1752,7 +1752,7 @@
           "id": "s01",
           "type": "text",
           "heading": "Default values",
-          "content": "Give a parameter a default value and callers can leave it out.",
+          "content": "Give a parameter a default value and callers can leave it out. (The `**` operator raises to a power: `5 ** 2` is 25.)",
           "example_code": "def greet(name, greeting='Hello'):\n    print(f'{greeting}, {name}!')\n\ngreet('Ada')             # Hello, Ada!\ngreet('Ada', 'Welcome')  # Welcome, Ada!"
         },
         {
@@ -1768,7 +1768,7 @@
           "id": "s03",
           "type": "text",
           "heading": "Keyword arguments",
-          "content": "You can pass arguments by name. Then their order doesn't matter, and calls are easier to read.",
+          "content": "You can pass arguments by name. Then their order doesn't matter, and calls are easier to read. You can mix the two styles: positional arguments first, then named ones, like `f(1, b=2)`. A named argument replaces that parameter's default.",
           "example_code": "def describe(pet, sound):\n    print(f'The {pet} says {sound}')\n\ndescribe(sound='moo', pet='cow')"
         },
         {
@@ -1792,7 +1792,7 @@
           "id": "s05",
           "type": "text",
           "heading": "*args",
-          "content": "`*args` collects any number of positional arguments into a tuple.",
+          "content": "`*args` collects any number of positional arguments into a tuple. Built-ins like `sum()` (adds up numbers) and `len()` (counts them) work on it.",
           "example_code": "def total(*numbers):\n    return sum(numbers)\n\nprint(total(1, 2, 3))   # 6\nprint(total(5))         # 5"
         },
         {
@@ -1808,7 +1808,7 @@
           "id": "s07",
           "type": "text",
           "heading": "**kwargs",
-          "content": "`**kwargs` collects named arguments into a dictionary.",
+          "content": "`**kwargs` collects named arguments into a dictionary. `.items()` gives each key-value pair, which the for loop unpacks into two variables. `len()` works on both `args` and `kwargs`.",
           "example_code": "def profile(**info):\n    for key, value in info.items():\n        print(f'{key}: {value}')\n\nprofile(name='Ada', lang='Python')"
         },
         {
@@ -1832,7 +1832,7 @@
           "id": "s09",
           "type": "text",
           "heading": "Lambda functions",
-          "content": "A lambda is a tiny unnamed function written in one line. It's handy as a sort key.",
+          "content": "A lambda is a tiny unnamed function written in one line: `lambda x: x + 1` is a function that takes x and returns x + 1. It's handy as a sort key: `sorted(items, key=...)` calls the key function on each item and sorts by the result.",
           "example_code": "square = lambda n: n * n\nprint(square(4))   # 16\n\nwords = ['kiwi', 'fig', 'banana']\nprint(sorted(words, key=len))   # ['fig', 'kiwi', 'banana']"
         },
         {
@@ -1864,7 +1864,7 @@
           "id": "s12",
           "type": "text",
           "heading": "Recursion",
-          "content": "A recursive function calls itself on a smaller version of the problem. It needs a **base case** that stops the calls.",
+          "content": "A recursive function calls itself on a smaller version of the problem. It needs a **base case** that stops the calls; without one it keeps calling itself until Python stops it with a `RecursionError`. Slices work on lists like on strings (`nums[1:]` is everything but the first item), and an empty list counts as False, so `if not nums:` means 'if the list is empty'.",
           "example_code": "def countdown(n):\n    if n == 0:            # base case\n        print('Liftoff!')\n        return\n    print(n)\n    countdown(n - 1)      # smaller problem\n\ncountdown(3)"
         },
         {
@@ -2071,7 +2071,7 @@
           "id": "s01",
           "type": "text",
           "heading": "Batteries Included",
-          "content": "Python comes with a huge 'Standard Library' of modules you can use immediately.",
+          "content": "Python comes with a huge 'Standard Library' of modules you can use immediately. Load a module with the `import` keyword, then use what's inside it with a dot, like `math.ceil`.",
           "example_code": "import math\nimport random\nprint(math.ceil(4.1))        # 5\nprint(random.randint(1, 6))  # a dice roll"
         },
         {
@@ -2110,8 +2110,8 @@
           "id": "s05",
           "type": "text",
           "heading": "Math Constants",
-          "content": "Modules can also contain variables, like `math.pi`.",
-          "example_code": "import math\nprint(math.pi)   # 3.141592653589793\nprint(math.e)    # 2.718281828459045"
+          "content": "Modules can also contain variables, like `math.pi`. The built-in `round(number, digits)` rounds to that many decimal places.",
+          "example_code": "import math\nprint(math.pi)           # 3.141592653589793\nprint(math.e)            # 2.718281828459045\nprint(round(math.e, 3))  # 2.718"
         },
         {
           "id": "s06",
@@ -2174,7 +2174,7 @@
           "id": "s13",
           "type": "text",
           "heading": "Built-in Modules",
-          "content": "Common modules include: `datetime`, `os`, `sys`, `json`, and `random`.",
+          "content": "Common modules include: `datetime` (dates and times, like today's date), `os`, `sys`, `json`, and `random`. You can make your own too: any `.py` file is a module, so if `helpers.py` sits next to your program, `import helpers` loads it.",
           "example_code": "import datetime\nprint(datetime.date(2024, 1, 15))   # 2024-01-15"
         },
         {
@@ -2221,7 +2221,7 @@
           "id": "s01",
           "type": "text",
           "heading": "Reading & Writing",
-          "content": "Programs need to save data. Python uses the `open()` function to interact with files.",
+          "content": "Programs need to save data. File **I/O** means Input/Output: reading data in and writing data out. Python uses the `open()` function to interact with files.",
           "example_code": "f = open('notes.txt', 'w')\nf.write('Remember milk')\nf.close()"
         },
         {
@@ -2260,7 +2260,7 @@
           "id": "s05",
           "type": "text",
           "heading": "Reading Files",
-          "content": "Use mode `'r'` (read) to open a file. Use `.read()` to get the contents.",
+          "content": "Use mode `'r'` (read) to open a file. It's the default, so `open('log.txt')` reads too. Use `.read()` to get the contents. Opening a file that doesn't exist in read mode raises a `FileNotFoundError`.",
           "example_code": "with open('log.txt') as f:\n    text = f.read()\nprint(text)"
         },
         {
@@ -2292,7 +2292,7 @@
           "id": "s08",
           "type": "text",
           "heading": "The 'With' Statement",
-          "content": "Manually closing files with `.close()` is annoying. The `with` statement closes the file automatically.",
+          "content": "Manually closing files with `.close()` is annoying. The `with` statement closes the file automatically when the block ends, even if an error happens inside it.",
           "example_code": "with open('data.txt', 'w') as f:\n    f.write('saved')\n# the file is closed automatically here"
         },
         {
@@ -2308,7 +2308,7 @@
           "id": "s10",
           "type": "text",
           "heading": "Appending",
-          "content": "Mode `'w'` deletes existing content. Mode `'a'` (append) adds to the end of the file.",
+          "content": "Mode `'w'` deletes existing content. Mode `'a'` (append) adds to the end of the file. Two more: `'r+'` opens an existing file for both reading and writing, and `'x'` creates a new file but fails if it already exists.",
           "example_code": "with open('list.txt', 'a') as f:\n    f.write('another line\\n')"
         },
         {
@@ -2430,7 +2430,7 @@
           "id": "s06",
           "type": "text",
           "heading": "Assert messages",
-          "content": "Add a message after a comma. It's shown when the assert fails, so you know what went wrong.",
+          "content": "Add a message after a comma. It's shown when the assert fails, so you know what went wrong. To read the message in your own code, catch the error with `except AssertionError as e:`; `e` holds the error, and `print(e)` shows its message.",
           "example_code": "price = -3\nassert price >= 0, f'price must not be negative, got {price}'"
         },
         {
@@ -2470,7 +2470,7 @@
           "id": "s10",
           "type": "text",
           "heading": "Edge cases",
-          "content": "Bugs love boundaries: zero, empty lists, negative numbers, the first and last item. Good tests check them.",
+          "content": "Bugs love boundaries: zero, empty lists, negative numbers, the first and last item. Good tests check them. To check for `None`, use `is None`, as in `assert result is None`.",
           "example_code": "def average(nums):\n    if not nums:\n        return 0\n    return sum(nums) / len(nums)\n\nassert average([2, 4]) == 3\nassert average([]) == 0   # the edge case"
         },
         {
@@ -2502,7 +2502,7 @@
           "id": "s13",
           "type": "text",
           "heading": "Testing for errors",
-          "content": "Sometimes the correct behaviour is to raise an error. Use `raise` in your function and check for it with try/except in the test.",
+          "content": "Sometimes the correct behaviour is to raise an error. Use `raise` in your function and check for it with try/except in the test. A good habit: when you find a bug, first write a test that reproduces it, then fix the code. The test proves the fix and keeps the bug from coming back.",
           "example_code": "def check_age(age):\n    if age < 0:\n        raise ValueError('age cannot be negative')\n    return age\n\ntry:\n    check_age(-1)\n    print('No error: test FAILED')\nexcept ValueError:\n    print('Raised ValueError: test passed')"
         },
         {
@@ -2544,7 +2544,7 @@
           "id": "s01",
           "type": "text",
           "heading": "Object Oriented Programming",
-          "content": "Everything in Python is an Object. OOP allows us to create our own data types called **Classes**.",
+          "content": "Everything in Python is an Object. OOP allows us to create our own data types called **Classes**. A class is a **blueprint**: it describes what its objects hold and can do, and each object is built from it.",
           "example_code": "print(type(5))      # <class 'int'>\nprint(type('hi'))   # <class 'str'>\n# Numbers and strings are objects made from classes."
         },
         {
@@ -2599,7 +2599,7 @@
           "id": "s07",
           "type": "text",
           "heading": "The __init__ Method",
-          "content": "This special method sets up the object when it is created. It's often called the Constructor.",
+          "content": "This special method sets up the object when it is created. It's often called the Constructor. Every method's first parameter is `self`: the specific object being set up or used, so `self.name = name` stores the name on that one object.",
           "example_code": "class Dog:\n    def __init__(self, name):\n        self.name = name\n\nrex = Dog('Rex')\nprint(rex.name)   # Rex"
         },
         {
@@ -2715,7 +2715,7 @@
           "id": "s01",
           "type": "text",
           "heading": "Inheritance",
-          "content": "A child class inherits everything from its parent class, and can add or change behaviour. Put the parent in parentheses.",
+          "content": "A child class inherits everything from its parent class, and can add or change behaviour. Put the parent in parentheses. This lets you reuse shared code once and specialise it in each child.",
           "example_code": "class Animal:\n    def __init__(self, name):\n        self.name = name\n\n    def speak(self):\n        print('...')\n\nclass Dog(Animal):\n    def speak(self):\n        print(f'{self.name} says woof')\n\nDog('Rex').speak()"
         },
         {
@@ -2796,7 +2796,7 @@
           "id": "s09",
           "type": "text",
           "heading": "isinstance",
-          "content": "`isinstance(obj, Class)` checks an object's type, and counts parent classes too.",
+          "content": "`isinstance(obj, Class)` checks an object's type, and counts parent classes too. It doesn't work the other way: a plain Animal is not a Dog.",
           "example_code": "class Animal: pass\nclass Dog(Animal): pass\n\nrex = Dog()\nprint(isinstance(rex, Dog))      # True\nprint(isinstance(rex, Animal))   # True"
         },
         {
@@ -2834,7 +2834,7 @@
           "id": "s13",
           "type": "text",
           "heading": "More dunder methods",
-          "content": "`__len__` powers len(), `__eq__` powers ==, and `__add__` powers +.",
+          "content": "`__len__` powers len(), `__eq__` powers ==, and `__add__` powers +. Without `__eq__`, == only checks whether both sides are the very same object, so two separate objects with equal data compare as False.",
           "example_code": "class Playlist:\n    def __init__(self, songs):\n        self.songs = songs\n\n    def __len__(self):\n        return len(self.songs)\n\nprint(len(Playlist(['a', 'b'])))   # 2"
         },
         {
@@ -2997,7 +2997,7 @@
           "id": "s01",
           "type": "text",
           "heading": "What is JSON?",
-          "content": "JSON is a text format for data, used by almost every web API. It looks a lot like Python dictionaries and lists. `json.dumps` turns Python data into a JSON string.",
+          "content": "JSON is a text format for data, used by almost every web API. It looks a lot like Python dictionaries and lists, with differences: JSON always uses double quotes, and writes True, False and None as `true`, `false` and `null`. `json.dumps` turns Python data into a JSON string.",
           "example_code": "import json\n\ndata = {'name': 'Ada', 'langs': ['Python', 'C']}\nprint(json.dumps(data))"
         },
         {
@@ -3030,7 +3030,7 @@
           "id": "s04",
           "type": "text",
           "heading": "Reading JSON",
-          "content": "`json.loads` turns a JSON string back into Python dictionaries and lists.",
+          "content": "`json.loads` turns a JSON string back into Python data: a JSON object `{...}` becomes a dictionary and a JSON array `[...]` becomes a list.",
           "example_code": "import json\n\ntext = '{\"city\": \"Dayton\", \"temp\": 72}'\nweather = json.loads(text)\nprint(weather['city'])   # Dayton"
         },
         {
@@ -3046,7 +3046,7 @@
           "id": "s06",
           "type": "text",
           "heading": "JSON files",
-          "content": "`json.dump` and `json.load` (no s) write and read files directly. This is an easy way to save a program's data.",
+          "content": "`json.dump` and `json.load` (no s) write and read files directly. This is an easy way to save a program's data. Add `indent=2` to `dump` or `dumps` to spread the JSON over several indented lines that people can read.",
           "example_code": "import json\n\nwith open('save.json', 'w') as f:\n    json.dump({'level': 3}, f)\n\nwith open('save.json') as f:\n    print(json.load(f))   # {'level': 3}"
         },
         {
@@ -3078,7 +3078,7 @@
           "id": "s09",
           "type": "text",
           "heading": "Dates",
-          "content": "The `datetime` module handles dates and times. `date(year, month, day)` makes a date.",
+          "content": "The `datetime` module handles dates and times. `date(year, month, day)` makes a date, and `.strftime('%A')` gives its weekday name, like Monday.",
           "example_code": "from datetime import date\n\nlaunch = date(2024, 7, 20)\nprint(launch)        # 2024-07-20\nprint(launch.year)   # 2024"
         },
         {
@@ -3094,7 +3094,7 @@
           "id": "s11",
           "type": "text",
           "heading": "Date math",
-          "content": "Subtracting two dates gives a `timedelta`. You can also add a timedelta to a date.",
+          "content": "Subtracting two dates gives a `timedelta`; its `.days` is the gap in days. You can also add a timedelta to a date. Date math follows the real calendar, including month lengths and leap years.",
           "example_code": "from datetime import date, timedelta\n\nstart = date(2025, 1, 1)\nprint(start + timedelta(days=30))       # 2025-01-31\nprint((date(2025, 3, 1) - start).days)  # 59"
         },
         {
@@ -3127,7 +3127,7 @@
           "id": "s14",
           "type": "text",
           "heading": "Formatting and parsing",
-          "content": "`strftime` formats a date as text. `strptime` parses text into a date. Codes like `%Y`, `%m` and `%d` describe the pattern.",
+          "content": "`strftime` formats a date as text. `strptime` parses text into a date. Codes describe the pattern: `%Y` four-digit year, `%m` two-digit month, `%d` two-digit day, `%B` month name, `%A` weekday name.",
           "example_code": "from datetime import datetime\n\nd = datetime.strptime('2025-03-14', '%Y-%m-%d')\nprint(d.strftime('%B %d, %Y'))   # March 14, 2025"
         },
         {
@@ -3227,7 +3227,7 @@
           "id": "s07",
           "type": "text",
           "heading": "Generators",
-          "content": "A function that uses `yield` is a generator. It hands back values one at a time, pausing in between, instead of building a whole list.",
+          "content": "A function that uses `yield` is a generator. It hands back values one at a time, pausing in between, instead of building a whole list. That keeps memory use small even for huge sequences.",
           "example_code": "def countdown(n):\n    while n > 0:\n        yield n\n        n -= 1\n\nfor x in countdown(3):\n    print(x)   # 3, 2, 1"
         },
         {
@@ -3259,7 +3259,7 @@
           "id": "s10",
           "type": "text",
           "heading": "Generator expressions",
-          "content": "A generator expression looks like a list comprehension with parentheses. It's perfect inside `sum()`, `max()` and `any()`.",
+          "content": "A generator expression looks like a list comprehension with parentheses. It's perfect inside `sum()`, `max()` and `any()` (True if at least one value is True). Like any generator it can be used only once: after it has been looped through, it's empty.",
           "example_code": "prices = [3, 8, 5]\nprint(sum(p * 2 for p in prices))       # 32\nprint(any(p > 7 for p in prices))       # True"
         },
         {
@@ -3292,7 +3292,7 @@
           "id": "s13",
           "type": "text",
           "heading": "Infinite generators",
-          "content": "Because generators only make values when asked, they can even go on forever. The caller decides when to stop.",
+          "content": "Because generators only make values when asked, they can even go on forever. The caller decides when to stop. Files work the same way: `for line in f:` reads one line at a time, while `.read()` and `.readlines()` load the whole file into memory at once. (A loop variable you don't need is often named `_`.)",
           "example_code": "def naturals():\n    n = 1\n    while True:\n        yield n\n        n += 1\n\nfor n in naturals():\n    if n > 3:\n        break\n    print(n)"
         },
         {
@@ -3356,7 +3356,7 @@
           "id": "s04",
           "type": "text",
           "heading": "Step 2: The grade book",
-          "content": "A GradeBook keeps students in a dictionary keyed by name, so looking someone up is instant."
+          "content": "A GradeBook keeps students in a dictionary keyed by name, so looking someone up is instant. `name in self.students` checks whether a key exists. `.values()` gives the Student objects, and `max()` takes a `key` function just like `sorted()`, so it can find the student with the best average."
         },
         {
           "id": "s05",
