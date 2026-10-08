@@ -42,3 +42,8 @@ export async function expectAccessible(page: Page) {
 }
 
 export const nextButton = (page: Page) => page.locator('.lesson-nav-controls .primary-button');
+
+/** Answers an exercise's check-in with "Feeling good" so the code editor appears. */
+export async function passCheckIn(page: Page) {
+  await page.getByRole('button', { name: "Feeling good, let's try it" }).click();
+}

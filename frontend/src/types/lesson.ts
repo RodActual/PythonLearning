@@ -5,6 +5,17 @@ export interface TextStep {
   heading?: string;
   content: string;
   example_code?: string;
+  /** Why the syntax works the way it does. */
+  how?: string;
+  /** What it's used for in real programs. */
+  use?: string;
+}
+
+/** Extra teaching shown before an exercise when the learner says they feel unsure. */
+export interface SupportTier {
+  heading: string;
+  content: string;
+  example_code?: string;
 }
 
 export interface QuizStep {
@@ -36,6 +47,11 @@ export interface CodeStep {
   expected_error?: string;
   /** Revealing it gives up the first-try bonus. */
   hint?: string;
+  /**
+   * One or two tiers of extra explanation offered by the check-in before the exercise.
+   * Omitted on demo steps (e.g. "watch it crash"), which get no check-in.
+   */
+  support?: SupportTier[];
 }
 
 export type Step = TextStep | QuizStep | CodeStep;

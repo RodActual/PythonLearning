@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { allIds, lesson, nextButton, solutions, store } from './helpers';
+import { allIds, lesson, nextButton, passCheckIn, solutions, store } from './helpers';
 
 test('complete lesson 1: quizzes, hints, predict-the-output, and real Python', async ({ page }) => {
   test.setTimeout(120_000);
@@ -18,6 +18,7 @@ test('complete lesson 1: quizzes, hints, predict-the-output, and real Python', a
       await page.locator('.option-button').filter({ hasText: new RegExp(`^.?${escape(step.answer!)}`) }).first().click();
       await expect(page.locator('.feedback')).toContainText(/Correct|Thanks/);
     } else if (step.type === 'code') {
+      await passCheckIn(page);
       if (step.id === 's10') {
         await page.locator('.hint-button').click();
         await expect(page.locator('.hint-button')).toHaveAttribute('aria-expanded', 'true');
