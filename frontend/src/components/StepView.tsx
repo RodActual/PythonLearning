@@ -1,5 +1,6 @@
 import { useId, useState } from 'react';
 import Confetti from 'react-confetti';
+import CheckIn from './CheckIn';
 import CodeSandbox from './CodeSandbox';
 import Quiz from './Quiz';
 import CodeBlock from './CodeBlock';
@@ -22,6 +23,8 @@ interface StepViewProps {
   onPrev: () => void;
   onBackToMenu: () => void;
   onRestart: () => void;
+  /** Back to step 1 without asking first (the learner chose it in a check-in). */
+  onStartOver: () => void;
 }
 
 const stepLabel = (step: Step) =>
@@ -102,6 +105,7 @@ function StepView({
   onPrev,
   onBackToMenu,
   onRestart,
+  onStartOver,
 }: StepViewProps) {
   const total = lesson.steps.length;
   const finished = stepIndex >= total;
@@ -110,6 +114,8 @@ function StepView({
   const headingRef = useFocusOnMount<HTMLHeadingElement>();
   const hintId = useId();
   const [solved, setSolved] = useState<{ firstTry: boolean } | null>(null);
+  // Unfinished exercises with support tiers start with a check-in; replays go straight to the exercise.
+  const [checkedIn, setCheckedIn] = useState(false);
 
   if (!step) {
     return (
@@ -126,6 +132,7 @@ function StepView({
     );
   }
 
+  const needsCheckIn = step.type === 'code' && !alreadyCompleted && !checkedIn && !!step.support?.length;
   const canProceed = step.type === 'text' || solved !== null;
   const isLast = stepIndex === total - 1;
   const handleNext = () => {
@@ -183,6 +190,22 @@ function StepView({
           <div className="text-step">
             <p><RichText text={step.content} /></p>
             {step.example_code && <CodeBlock code={step.example_code} />}
+            {(step.how || step.use) && (
+              <dl className="explain-list">
+                {step.how && (
+                  <div className="explain-item">
+                    <dt><span aria-hidden="true">⚙️ </span>How it works</dt>
+                    <dd><RichText text={step.how} /></dd>
+                  </div>
+                )}
+                {step.use && (
+                  <div className="explain-item">
+                    <dt><span aria-hidden="true">🛠️ </span>What it's used for</dt>
+                    <dd><RichText text={step.use} /></dd>
+                  </div>
+                )}
+              </dl>
+            )}
           </div>
         )}
 
@@ -196,15 +219,19 @@ function StepView({
 
         {step.type === 'code' && (
           <div className="code-section">
-            <p className="task"><strong>Task:</strong> <RichText text={step.instruction} /></p>
-            <CodeSandbox
-              initialCode={step.initial_code}
-              expectedOutput={step.expected_output}
-              expectedError={step.expected_error}
-              hint={step.hint}
-              rewardText={alreadyCompleted ? undefined : (firstTry) => `+${stepReward(step, firstTry)} XP${firstTry ? ' (includes first-try bonus)' : ''}`}
-              onPass={(firstTry) => setSolved((prev) => prev ?? { firstTry })}
-            />
+            <p className="task"><strong>{needsCheckIn ? 'Up next:' : 'Task:'}</strong> <RichText text={step.instruction} /></p>
+            {needsCheckIn ? (
+              <CheckIn tiers={step.support!} onReady={() => setCheckedIn(true)} onRestartLesson={onStartOver} />
+            ) : (
+              <CodeSandbox
+                initialCode={step.initial_code}
+                expectedOutput={step.expected_output}
+                expectedError={step.expected_error}
+                hint={step.hint}
+                rewardText={alreadyCompleted ? undefined : (firstTry) => `+${stepReward(step, firstTry)} XP${firstTry ? ' (includes first-try bonus)' : ''}`}
+                onPass={(firstTry) => setSolved((prev) => prev ?? { firstTry })}
+              />
+            )}
           </div>
         )}
       </div>

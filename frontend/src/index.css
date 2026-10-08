@@ -1211,6 +1211,89 @@ button[aria-disabled='true'] {
   font-size: 1.06rem;
 }
 
+/* "How it works" / "What it's used for" notes under a lesson explanation */
+.explain-list {
+  display: grid;
+  gap: 0.6rem;
+  margin: 1rem 0 0;
+}
+
+.explain-item {
+  padding: 0.7rem 0.9rem;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--primary);
+  border-radius: 8px;
+}
+
+.explain-item dt {
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--primary-ink);
+}
+
+.explain-item dd {
+  margin: 0.25rem 0 0;
+  color: var(--ink);
+}
+
+/* Check-in before an exercise, with optional extra explanation tiers */
+.check-in {
+  display: grid;
+  gap: 0.9rem;
+  margin-top: 0.5rem;
+}
+
+.check-in-card {
+  padding: 1rem 1.1rem;
+  background: var(--primary-soft);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.check-in-question {
+  margin: 0 0 0.75rem;
+  font-weight: 650;
+  font-size: 1.02rem;
+  color: var(--ink-strong);
+}
+
+.check-in-card p:not(.check-in-question) {
+  margin: 0 0 0.75rem;
+}
+
+.check-in-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.support-tier {
+  padding: 0.9rem 1.1rem;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--yellow);
+  border-radius: 12px;
+}
+
+.support-tier p {
+  margin: 0.4rem 0 0.6rem;
+}
+
+.support-heading {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.support-kicker {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--yellow-ink);
+}
+
 /* Code samples get a window title bar */
 .code-block {
   position: relative;

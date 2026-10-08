@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { nextButton, seedProgress } from './helpers';
+import { nextButton, passCheckIn, seedProgress } from './helpers';
 
 /** Opens the first coding challenge in lesson 1 (step 4). */
 async function openCodeStep(page: import('@playwright/test').Page) {
@@ -7,6 +7,7 @@ async function openCodeStep(page: import('@playwright/test').Page) {
   await page.goto('/');
   await page.locator('.continue-card .primary-button').click();
   await expect(page.locator('.step-kicker')).toContainText('Coding challenge');
+  await passCheckIn(page);
 }
 
 test('runaway output is stopped with a clear message', async ({ page }) => {

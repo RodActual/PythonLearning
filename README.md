@@ -40,11 +40,13 @@ Learner-facing guidance about what the course prepares people for:
 - Each lesson: `why` (shown before step 1) and `unlocks` (shown on the completion screen).
 
 Step types:
-- `text`: `heading`, `content` (supports `code` and **bold**), optional `example_code`
+- `text`: `heading`, `content` (supports `code` and **bold**), optional `example_code`. A step with `example_code` also needs `how` (why the syntax does what it does) and `use` (what it's used for in real programs), shown as two labeled notes under the example.
 - `quiz`: `question`, `options`, `answer` (omit to accept any option), `explanation`, optional `feedback` per wrong option, optional `code` (makes it a predict-the-output question)
-- `code`: `heading`, `instruction`, `initial_code` (starter, never the solution), `expected_output` or `expected_error`, `hint`
+- `code`: `heading`, `instruction`, `initial_code` (starter, never the solution), `expected_output` or `expected_error`, `hint`, and `support`: 1 or 2 tiers of extra teaching (`heading`, `content`, optional `example_code`) used by the check-in. Demo steps whose starter is the solution (e.g. "watch it crash") have no `support` and no check-in.
 
-Every coding step needs a reference solution in `frontend/tests/solutions.json`, keyed `lessonId:stepId`. Run `npm run check:lessons` (needs Python) after editing: it runs every solution, confirms starters don't already pass, and checks that predict-the-output answers match what the code really prints.
+**Check-ins.** Before an exercise the learner hasn't finished, the lesson asks how they feel. "Feeling good" opens the exercise. "Not sure yet" shows support tier 1 and asks again; "Still unsure" shows tier 2; still unsure after the last tier offers to restart the lesson from step 1 (saved progress and XP are kept). The tiers are capped at two so the extra help never repeats or loops. Finished exercises skip the check-in, and so does Review.
+
+Every coding step needs a reference solution in `frontend/tests/solutions.json`, keyed `lessonId:stepId`. Run `npm run check:lessons` (needs Python) after editing: it runs every solution, confirms starters don't already pass, checks that predict-the-output answers match what the code really prints, and checks that every explanation has `how`/`use` and every exercise has 1-2 support tiers whose examples run cleanly and don't give away the solution.
 
 **Progress is saved by lesson id and step id.** Every step has a permanent `id` (unique within its lesson). You can add, remove, and reorder steps freely; never rename a lesson id, and never change or reuse a step id. Progress saved before step ids existed is migrated automatically using `frontend/src/data/legacy-step-ids.json`, which must never be edited.
 

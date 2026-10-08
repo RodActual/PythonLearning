@@ -265,6 +265,11 @@ function App() {
     }
   };
 
+  const startOver = () => {
+    setStepIndex(0);
+    window.scrollTo(0, 0);
+  };
+
   const backToMap = () => setView({ name: 'map' });
 
   if (loading) return <Loading />;
@@ -357,6 +362,7 @@ function App() {
                   onPrev={prevStep}
                   onBackToMenu={backToMap}
                   onRestart={restartLesson}
+                  onStartOver={startOver}
                 />
               ) : (
                 <SkillMap

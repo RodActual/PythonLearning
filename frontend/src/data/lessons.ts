@@ -29,6 +29,12 @@ function validateStep(s: Record<string, unknown>, where: string): Step {
       if (isString(s.expected_output) === isString(s.expected_error)) {
         throw new Error(`${where}: code steps need exactly one of expected_output or expected_error`);
       }
+      if (s.support !== undefined) {
+        const tiers = s.support as Record<string, unknown>[];
+        if (!Array.isArray(tiers) || tiers.length < 1 || tiers.length > 2 || !tiers.every((t) => isString(t.heading) && isString(t.content))) {
+          throw new Error(`${where}: support must be 1 or 2 tiers, each with a heading and content`);
+        }
+      }
       return s as unknown as Step;
   }
   throw new Error(`${where}: invalid or incomplete step`);

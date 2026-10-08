@@ -6,6 +6,9 @@
 - Each predict-the-output question's answer must match what the code prints.
 - Structure: answers are options, feedback keys are options, hints and
   explanations are present.
+- Every explanation with example code says how the syntax works and what it's used
+  for, and every exercise (except demos) has 1-2 check-in support tiers whose
+  examples run without errors and don't give away the reference solution.
 
 Run from the frontend folder:  python scripts/check_lessons.py
 """
@@ -78,6 +81,10 @@ for lesson in COURSE["lessons"]:
         kind = step["type"]
         if kind == "text":
             counts["text"] += 1
+            if step.get("example_code"):
+                for key in ("how", "use"):
+                    if not step.get(key):
+                        problems.append(f"{where}: explanation has no {key!r}")
         elif kind == "quiz":
             counts["predict" if step.get("code") else "quiz"] += 1
             opts = step["options"]
@@ -105,6 +112,24 @@ for lesson in COURSE["lessons"]:
                 problems.append(f"{where}: reference solution does not pass")
             if step["initial_code"] != solution and passes(step, step["initial_code"]):
                 problems.append(f"{where}: starter code already passes")
+            demo = step["initial_code"] == solution
+            tiers = step.get("support")
+            if demo:
+                if tiers:
+                    problems.append(f"{where}: demo steps don't get a check-in")
+            elif not isinstance(tiers, list) or not 1 <= len(tiers) <= 2:
+                problems.append(f"{where}: exercise needs 1 or 2 check-in support tiers")
+            else:
+                for t, tier in enumerate(tiers, 1):
+                    if not tier.get("heading") or not tier.get("content"):
+                        problems.append(f"{where}: support tier {t} needs a heading and content")
+                    example = tier.get("example_code")
+                    if example:
+                        out, err = run(example)
+                        if err:
+                            problems.append(f"{where}: support tier {t} example raises {err.strip()[-80:]}")
+                        if norm(example) == norm(solution) or (len(norm(solution)) > 30 and norm(solution) in norm(example)):
+                            problems.append(f"{where}: support tier {t} example gives away the solution")
 
 # Legacy (index-based) progress maps to step ids through a frozen file. Removing a step that
 # appears there is allowed, but reusing its id for a different step would corrupt old progress.

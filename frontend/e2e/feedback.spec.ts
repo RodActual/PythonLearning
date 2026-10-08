@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { diagnose } from '../src/python/feedback';
-import { expectAccessible, seedProgress } from './helpers';
+import { expectAccessible, passCheckIn, seedProgress } from './helpers';
 
 // Lesson 1, step 4 asks the learner to print: Learning Python
 const attempts: [code: string, advice: RegExp][] = [
@@ -18,6 +18,7 @@ test('a wrong answer gets advice based on the code, the error and the output', a
   await page.goto('/');
   await page.locator('.continue-card .primary-button').click();
   await expect(page.locator('.step-kicker')).toContainText('Coding challenge');
+  await passCheckIn(page);
 
   for (const [code, advice] of attempts) {
     await page.locator('textarea.code-input').fill(code);
