@@ -1,6 +1,8 @@
 import { useEffect, useId, useRef, useState } from 'react';
+import { diagnose, normalize, raisedError } from '../python/feedback';
 import { pythonRunner } from '../python/runner';
 import CodeEditor from './CodeEditor';
+import RichText from './RichText';
 
 interface CodeSandboxProps {
   initialCode: string;
@@ -14,13 +16,6 @@ interface CodeSandboxProps {
 
 type Status = 'idle' | 'success' | 'error';
 
-/** Normalizes line endings and trailing whitespace so formatting noise doesn't fail a correct answer. */
-const normalize = (s: string) =>
-  s.replace(/\r\n/g, '\n').split('\n').map((line) => line.trimEnd()).join('\n').trim();
-
-/** The exception name from the last line of a traceback, e.g. "ZeroDivisionError". */
-const raisedError = (stderr: string) => stderr.trim().split('\n').pop()?.split(':')[0].trim() ?? '';
-
 const CodeSandbox = ({ initialCode, expectedOutput, expectedError, hint, rewardText, onPass }: CodeSandboxProps) => {
   const [code, setCode] = useState(initialCode);
   const [output, setOutput] = useState('');
@@ -28,6 +23,7 @@ const CodeSandbox = ({ initialCode, expectedOutput, expectedError, hint, rewardT
   const [pythonReady, setPythonReady] = useState(false);
   const [status, setStatus] = useState<Status>('idle');
   const [message, setMessage] = useState('');
+  const [advice, setAdvice] = useState('');
   const [showHint, setShowHint] = useState(false);
   const [hintUsed, setHintUsed] = useState(false);
   const runs = useRef(0);
@@ -52,6 +48,7 @@ const CodeSandbox = ({ initialCode, expectedOutput, expectedError, hint, rewardT
     setStatus('idle');
     setMessage(pythonReady ? 'Running your code…' : 'Loading Python, this can take a few seconds the first time…');
     setOutput('');
+    setAdvice('');
 
     try {
       const { stdout, stderr } = await pythonRunner.run(code);
@@ -76,11 +73,8 @@ const CodeSandbox = ({ initialCode, expectedOutput, expectedError, hint, rewardT
         }
       } else {
         setStatus('error');
-        setMessage(
-          expectedError
-            ? `Not quite. This step expects the code to raise a ${expectedError}.`
-            : `Not quite. Expected output: ${expectedOutput}`,
-        );
+        setMessage('Not quite.');
+        setAdvice(diagnose({ code, initialCode, stdout, stderr, expectedOutput, expectedError }));
       }
     } catch (err) {
       setMessage(`Error: ${err instanceof Error ? err.message : String(err)}`);
@@ -123,8 +117,29 @@ const CodeSandbox = ({ initialCode, expectedOutput, expectedError, hint, rewardT
           {status === 'success' && <span aria-hidden="true">✓ </span>}
           {status === 'error' && <span aria-hidden="true">✗ </span>}
           {message}
+          {advice && (
+            <span className="run-advice">
+              {' '}
+              <RichText text={advice} />
+            </span>
+          )}
         </p>
       </div>
+
+      {status === 'error' && (
+        <div className="expected-output">
+          {expectedError ? (
+            <p>
+              <strong>Expected:</strong> the code raises a <code>{expectedError}</code>.
+            </p>
+          ) : (
+            <>
+              <h4 className="expected-label">Expected output</h4>
+              <pre>{expectedOutput}</pre>
+            </>
+          )}
+        </div>
+      )}
 
       <div className="terminal-wrapper">
         <h4 className="terminal-label" id={outputId}>Console output</h4>

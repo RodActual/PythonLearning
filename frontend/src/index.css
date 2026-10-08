@@ -1606,6 +1606,46 @@ button[aria-disabled='true'] {
   color: var(--danger-ink);
 }
 
+.run-status {
+  flex: 1 1 16rem;
+}
+
+.run-advice {
+  font-weight: 400;
+  color: var(--ink);
+}
+
+.expected-output {
+  padding: 0.6rem 1rem 0.75rem;
+  background: var(--surface-2);
+  border-top: 1px solid var(--border);
+  font-size: 0.9rem;
+}
+
+.expected-output p {
+  margin: 0;
+}
+
+.expected-label {
+  margin: 0 0 0.35rem;
+  font-size: 0.78rem;
+  font-weight: 650;
+  color: var(--muted);
+}
+
+.expected-output pre {
+  margin: 0;
+  padding: 0.6rem 0.8rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  color: var(--ink);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
 .terminal-wrapper {
   background: var(--code-bg);
 }
