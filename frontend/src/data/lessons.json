@@ -3694,6 +3694,408 @@
             "start": "That refers to the function but doesn't run it.",
             "call start": "Python has no call keyword."
           }
+        },
+        {
+          "id": "d01",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "return vs print",
+          "content": "`print` shows a value on the screen; `return` hands a value back to the code that called the function. A function that only prints gives back `None`, so its result can't be stored, added, or compared.",
+          "example_code": "def show_double(n):\n    print(n * 2)       # shows it, returns None\n\ndef get_double(n):\n    return n * 2       # gives it back\n\nx = show_double(4)     # prints 8\nprint(x)               # None\ny = get_double(4)\nprint(y + 1)           # 9",
+          "how": "When a function finishes without reaching a `return`, Python returns `None` for it automatically. The call expression then becomes None in the caller's code.",
+          "use": "Returning makes functions reusable: the caller decides whether to print, store, combine or test the result. Most functions in real code return values; printing is left to the outer layer."
+        },
+        {
+          "id": "d02",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "A function prints its result but has no `return`. What does `x = f()` store in x?",
+          "options": [
+            "None",
+            "The printed value",
+            "An error"
+          ],
+          "answer": "None",
+          "explanation": "Every function returns something. Without a `return` statement, it's `None`. The printed text went to the screen, not back to the caller."
+        },
+        {
+          "id": "d03",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Turn prints into returns",
+          "instruction": "`area` prints instead of returning, so adding two results crashes. Fix `area` so the program prints 22.",
+          "initial_code": "def area(w, h):\n    print(w * h)\n\ntotal = area(3, 4) + area(2, 5)\nprint(total)",
+          "expected_output": "22",
+          "hint": "Replace the print with a return:\n    return w * h",
+          "support": [
+            {
+              "heading": "None + None fails",
+              "content": "Each call to `area` returns None, so the program tries `None + None` and raises a TypeError. Returned numbers can be added.",
+              "example_code": "def half(n):\n    return n / 2\n\nprint(half(10) + half(4))  # 7.0"
+            },
+            {
+              "heading": "One word changes",
+              "content": "Inside `area`, change `print(w * h)` to `return w * h`. 3×4 + 2×5 is 22.",
+              "example_code": "def cube(n):\n    return n * n * n\n\nprint(cube(2) + cube(1))  # 9"
+            }
+          ]
+        },
+        {
+          "id": "d04",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Docstrings and clear names",
+          "content": "Name functions with verbs that say what they do (`to_celsius`, `is_valid`, `count_words`). The first line inside a function can be a string in triple quotes, a **docstring**, describing what it does. Tools and `help()` show it.",
+          "example_code": "def to_celsius(f):\n    \"\"\"Convert a Fahrenheit temperature to Celsius.\"\"\"\n    return (f - 32) * 5 / 9\n\nprint(to_celsius(212))     # 100.0\nprint(to_celsius.__doc__)  # Convert a Fahrenheit ...",
+          "how": "If the first statement in a function body is a string, Python stores it as the function's `__doc__` attribute instead of discarding it.",
+          "use": "Self-explaining code that teammates (and interviewers reading your solution) can follow, plus editor tooltips and generated documentation."
+        },
+        {
+          "id": "d05",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "Where does a docstring go?",
+          "options": [
+            "As the first line inside the function body",
+            "On the line above `def`, as a # comment",
+            "After the return statement"
+          ],
+          "answer": "As the first line inside the function body",
+          "explanation": "Only a string that's the very first statement in the body becomes the docstring. A `#` comment above the function is ignored by Python."
+        },
+        {
+          "id": "d06",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Returning several values",
+          "content": "A function can return several values separated by commas. Python packs them into one tuple, and the caller can unpack them into separate names, just like `a, b = 1, 2`.",
+          "example_code": "def divide(a, b):\n    return a // b, a % b\n\nq, r = divide(17, 5)\nprint(q, r)        # 3 2\nprint(divide(9, 4))  # (2, 1)",
+          "how": "The commas after `return` build a tuple (an unchangeable sequence). Assigning it to several names unpacks it position by position.",
+          "use": "Functions that naturally produce more than one answer: a minimum and maximum, a quotient and remainder, a result and an error message."
+        },
+        {
+          "id": "d07",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Total and average",
+          "instruction": "Finish `stats` so it returns the total of the three numbers and their average. The program should print: 18 6.0",
+          "initial_code": "def stats(a, b, c):\n    # TODO: return the total and the average\n    pass\n\ntotal, avg = stats(4, 8, 6)\nprint(total, avg)",
+          "expected_output": "18 6.0",
+          "hint": "total = a + b + c\nreturn total, total / 3",
+          "support": [
+            {
+              "heading": "return a, b",
+              "content": "Separate the values with a comma after `return`. The caller's `x, y = f()` receives them in the same order.",
+              "example_code": "def min_max(a, b):\n    return min(a, b), max(a, b)\n\nlo, hi = min_max(8, 3)\nprint(lo, hi)  # 3 8"
+            },
+            {
+              "heading": "Work out the total first",
+              "content": "Store the sum in a variable inside the function, then return that variable and the variable divided by 3. Division gives a float, so the average prints as 6.0.",
+              "example_code": "def pair(n):\n    doubled = n * 2\n    return doubled, doubled + 1\n\nprint(pair(5))  # (10, 11)"
+            }
+          ]
+        },
+        {
+          "id": "d08",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Early returns and guard clauses",
+          "content": "A `return` can come anywhere in a function. Handling special cases first and returning right away (a **guard clause**) keeps the main logic unindented and easy to read.",
+          "example_code": "def safe_divide(a, b):\n    if b == 0:\n        return None      # guard: stop early\n    return a / b\n\nprint(safe_divide(10, 4))  # 2.5\nprint(safe_divide(1, 0))   # None",
+          "how": "`return` ends the function immediately, so nothing after it runs for that call. Each guard removes one case, and the code below can assume it's been dealt with.",
+          "use": "Validating input, handling empty or missing data, and avoiding deep if/else nesting. Reviewers and interviewers like this style."
+        },
+        {
+          "id": "d09",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "What does this code print?",
+          "options": [
+            "negative",
+            "positive",
+            "zero"
+          ],
+          "answer": "negative",
+          "explanation": "-4 > 0 is False, so the first return is skipped. -4 < 0 is True, so the function returns 'negative' and stops.",
+          "code": "def sign(n):\n    if n > 0:\n        return 'positive'\n    if n < 0:\n        return 'negative'\n    return 'zero'\n\nprint(sign(-4))"
+        },
+        {
+          "id": "d10",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Grade with early returns",
+          "instruction": "Finish `grade` using early returns: 90 or more returns `'A'`, 50 or more returns `'pass'`, anything else `'fail'`. The prints should show A, pass and fail.",
+          "initial_code": "def grade(score):\n    # TODO: early returns for A, pass and fail\n    pass\n\nprint(grade(95))\nprint(grade(60))\nprint(grade(20))",
+          "expected_output": "A\npass\nfail",
+          "hint": "if score >= 90:\n    return 'A'\nif score >= 50:\n    return 'pass'\nreturn 'fail'",
+          "support": [
+            {
+              "heading": "No elif needed",
+              "content": "Because `return` leaves the function, a plain `if` after it only runs when the first check failed. That's why early returns don't need `elif`.",
+              "example_code": "def size(n):\n    if n > 100:\n        return 'big'\n    return 'small'\n\nprint(size(500))"
+            },
+            {
+              "heading": "Highest check first",
+              "content": "Test 90 first, then 50, then fall through to the final `return 'fail'`. Each line is indented inside the function.",
+              "example_code": "def temp(t):\n    if t > 30:\n        return 'hot'\n    if t > 15:\n        return 'warm'\n    return 'cold'\n\nprint(temp(20))  # warm"
+            }
+          ]
+        },
+        {
+          "id": "d11",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Functions that use functions",
+          "content": "Big programs are built from small functions that call each other. Each one does one job, so it's easy to test and reuse.",
+          "example_code": "def square(n):\n    return n * n\n\ndef sum_of_squares(a, b):\n    return square(a) + square(b)\n\nprint(sum_of_squares(3, 4))   # 25",
+          "how": "When `sum_of_squares` calls `square(a)`, Python pauses it, runs `square` to its return, and drops the result into the expression. Then it carries on with the next call.",
+          "use": "Breaking problems into steps. In interviews, writing a small helper (like `is_vowel`) for one part of the problem shows clear thinking."
+        },
+        {
+          "id": "d12",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Build on a helper",
+          "instruction": "Using the `is_even` helper, write `count_evens(limit)` that returns how many numbers from 1 to `limit` are even. It should print: 5",
+          "initial_code": "def is_even(n):\n    return n % 2 == 0\n\n# TODO: def count_evens(limit):\n\n\nprint(count_evens(10))",
+          "expected_output": "5",
+          "hint": "def count_evens(limit):\n    count = 0\n    for n in range(1, limit + 1):\n        if is_even(n):\n            count += 1\n    return count",
+          "support": [
+            {
+              "heading": "Call the helper inside a loop",
+              "content": "A function's result can be used directly as a condition: `if is_even(n):` asks the helper about each number.",
+              "example_code": "def is_big(n):\n    return n > 3\n\nfor n in range(1, 6):\n    if is_big(n):\n        print(n)  # 4, 5"
+            },
+            {
+              "heading": "Count, then return",
+              "content": "Start a counter at 0, loop from 1 to `limit` (so `range(1, limit + 1)`), add 1 when the helper says yes, and return the counter after the loop.",
+              "example_code": "def count_big(limit):\n    c = 0\n    for n in range(1, limit + 1):\n        if n > 3:\n            c += 1\n    return c\n\nprint(count_big(6))  # 3"
+            }
+          ]
+        },
+        {
+          "id": "d13",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Local and global variables",
+          "content": "A function can **read** a variable from outside it. But assigning to a name inside a function creates a new local variable, even if an outside one has the same name; the outside one is untouched. The `global` keyword changes that, but passing values in and returning them out is almost always clearer.",
+          "example_code": "x = 5\n\ndef show():\n    print(x)     # reads the outside x: 5\n\ndef change():\n    x = 10       # a new local x\n    return x\n\nshow()\nchange()\nprint(x)         # still 5",
+          "how": "Python decides a name is local if the function assigns to it anywhere. Local names live only during that call and disappear after it returns.",
+          "use": "Keeping functions independent. Code that changes globals is hard to test and debug, which is why reviewers flag it."
+        },
+        {
+          "id": "d14",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "What does this code print?",
+          "options": [
+            "5",
+            "10",
+            "Error"
+          ],
+          "answer": "5",
+          "explanation": "Inside `f`, `x = 10` creates a local x. The outside x is never changed, and `f()`'s return value isn't stored, so the outer x is still 5.",
+          "code": "x = 5\n\ndef f():\n    x = 10\n    return x\n\nf()\nprint(x)"
+        },
+        {
+          "id": "d15",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Functions are values",
+          "content": "A function's name refers to a value like any other. You can store it in another variable, or pass it into another function and call it there. Built-ins like `len` work the same way.",
+          "example_code": "def shout(s):\n    return s.upper()\n\nspeak = shout              # no parentheses: the function itself\nprint(speak('hi'))         # HI\n\ndef apply(func, value):\n    return func(value)\n\nprint(apply(len, 'hello'))  # 5\nprint(apply(shout, 'ok'))   # OK",
+          "how": "Writing a name without `()` refers to the function; adding `()` calls it. Passing the function lets the receiver decide when to call it.",
+          "use": "Custom sorting (`sorted(items, key=...)`), callbacks in web frameworks, and reusable helpers that work with any operation."
+        },
+        {
+          "id": "d16",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "What does this code print?",
+          "options": [
+            "7",
+            "4",
+            "6"
+          ],
+          "answer": "7",
+          "explanation": "`twice(add3, 1)` calls `add3(add3(1))`: add3(1) is 4, then add3(4) is 7.",
+          "code": "def twice(f, x):\n    return f(f(x))\n\ndef add3(n):\n    return n + 3\n\nprint(twice(add3, 1))"
+        },
+        {
+          "id": "d17",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Total of a function",
+          "instruction": "Write `total_of(func, limit)` that returns the sum of `func(n)` for n from 1 to `limit`. With `square` it should print: 14",
+          "initial_code": "def square(n):\n    return n * n\n\n# TODO: def total_of(func, limit):\n\n\nprint(total_of(square, 3))",
+          "expected_output": "14",
+          "hint": "def total_of(func, limit):\n    total = 0\n    for n in range(1, limit + 1):\n        total += func(n)\n    return total",
+          "support": [
+            {
+              "heading": "Call the parameter like a function",
+              "content": "Inside `total_of`, `func` is whatever function was passed in. `func(n)` calls it.",
+              "example_code": "def run(f):\n    return f(10)\n\ndef half(n):\n    return n / 2\n\nprint(run(half))  # 5.0"
+            },
+            {
+              "heading": "Accumulate the results",
+              "content": "Start a total at 0, loop n from 1 to limit, add `func(n)` each time, then return the total. 1² + 2² + 3² is 14.",
+              "example_code": "def double(n):\n    return n * 2\n\nt = 0\nfor n in range(1, 4):\n    t += double(n)\nprint(t)  # 12"
+            }
+          ]
+        },
+        {
+          "id": "i01",
+          "type": "quiz",
+          "track": "interview",
+          "question": "Interview question: what's the difference between a parameter and an argument?",
+          "options": [
+            "A parameter is the name in the def line; an argument is the value passed in the call",
+            "They're two words for the same thing",
+            "Arguments are only for built-in functions"
+          ],
+          "answer": "A parameter is the name in the def line; an argument is the value passed in the call",
+          "explanation": "In `def greet(name):`, `name` is a parameter. In `greet('Ada')`, `'Ada'` is the argument. People often use the words loosely, but knowing the difference sounds precise."
+        },
+        {
+          "id": "i02",
+          "type": "quiz",
+          "track": "interview",
+          "question": "What does a function return if it has no `return` statement?",
+          "options": [
+            "None",
+            "0",
+            "The last value it calculated"
+          ],
+          "answer": "None",
+          "explanation": "Python adds an implicit `return None`. That's why a function that only prints gives None when you store its result."
+        },
+        {
+          "id": "i03",
+          "type": "quiz",
+          "track": "interview",
+          "question": "What does this code print?",
+          "options": [
+            "None",
+            "pos",
+            "An error"
+          ],
+          "answer": "None",
+          "explanation": "-1 > 0 is False, so the `return 'pos'` line never runs. The function reaches its end and returns None. Forgetting a return on one path is a common bug.",
+          "code": "def f(n):\n    if n > 0:\n        return 'pos'\n\nprint(f(-1))"
+        },
+        {
+          "id": "i04",
+          "type": "quiz",
+          "track": "interview",
+          "question": "A helper `contains(text, ch)` loops over every character of `text`. You call it once for each of the n characters of another string, and `text` also has n characters. What's the overall time complexity?",
+          "options": [
+            "O(n)",
+            "O(n²)",
+            "O(1)"
+          ],
+          "answer": "O(n²)",
+          "explanation": "Each call is O(n), and you make n calls: n × n. Function calls can hide loops, so interviewers expect you to count the work inside the functions you call."
+        },
+        {
+          "id": "i05",
+          "type": "quiz",
+          "track": "interview",
+          "question": "Why is returning a value usually better than printing it inside the function?",
+          "options": [
+            "The caller can store, combine, test or print the result as needed",
+            "Return is faster than print",
+            "print doesn't work inside functions"
+          ],
+          "answer": "The caller can store, combine, test or print the result as needed",
+          "explanation": "A returned value is flexible: you can use it in more calculations or check it in a test. A printed value is gone once it's on the screen."
+        },
+        {
+          "id": "i06",
+          "type": "code",
+          "track": "interview",
+          "heading": "Classic: password validator",
+          "instruction": "Write `is_valid(password)` that returns True only if the password has at least 8 characters, at least one digit, and at least one uppercase letter. The prints should show True then False.",
+          "initial_code": "# TODO: def is_valid(password):\n\n\nprint(is_valid('Secret123'))\nprint(is_valid('password'))",
+          "expected_output": "True\nFalse",
+          "hint": "Guard the length first, then loop once and set two flags:\nif len(password) < 8:\n    return False\nhas_digit = False\nhas_upper = False\nfor ch in password:\n    if ch.isdigit(): has_digit = True\n    if ch.isupper(): has_upper = True\nreturn has_digit and has_upper",
+          "support": [
+            {
+              "heading": "One rule at a time",
+              "content": "Check the easy rule (length) with an early return. For the other two, loop over the characters and remember what you've seen in True/False flags.",
+              "example_code": "seen_digit = False\nfor ch in 'ab3':\n    if ch.isdigit():\n        seen_digit = True\nprint(seen_digit)  # True"
+            },
+            {
+              "heading": "Combine the flags at the end",
+              "content": "After the loop, both rules must hold, so return `has_digit and has_upper`. 'password' fails because it has no digit and no capital.",
+              "example_code": "def has_space(s):\n    for ch in s:\n        if ch == ' ':\n            return True\n    return False\n\nprint(has_space('a b'))  # True"
+            }
+          ]
+        },
+        {
+          "id": "i07",
+          "type": "code",
+          "track": "interview",
+          "heading": "Classic: factorial with a loop",
+          "instruction": "Write `factorial(n)` that returns 1 × 2 × ... × n using a loop. factorial(0) is 1 by definition. The prints should show 120 then 1.",
+          "initial_code": "# TODO: def factorial(n):\n\n\nprint(factorial(5))\nprint(factorial(0))",
+          "expected_output": "120\n1",
+          "hint": "def factorial(n):\n    result = 1\n    for i in range(2, n + 1):\n        result *= i\n    return result",
+          "support": [
+            {
+              "heading": "Multiply instead of add",
+              "content": "It's the accumulator pattern with `*=`. Start at 1, not 0, or everything multiplies to 0.",
+              "example_code": "product = 1\nfor i in range(1, 4):\n    product *= i\nprint(product)  # 6"
+            },
+            {
+              "heading": "0 comes for free",
+              "content": "If the result starts at 1 and the loop is `range(2, n + 1)`, then for n = 0 the loop never runs and the function returns 1.",
+              "example_code": "print(list(range(2, 1)))  # [] - the loop body never runs"
+            }
+          ]
+        },
+        {
+          "id": "i08",
+          "type": "code",
+          "track": "interview",
+          "heading": "Classic: largest of three",
+          "instruction": "Without using `max()`, write `biggest(a, b, c)` that returns the largest value. The prints should show 9 then 7.",
+          "initial_code": "# TODO: def biggest(a, b, c):\n\n\nprint(biggest(3, 9, 4))\nprint(biggest(7, 7, 2))",
+          "expected_output": "9\n7",
+          "hint": "best = a\nif b > best:\n    best = b\nif c > best:\n    best = c\nreturn best",
+          "support": [
+            {
+              "heading": "Keep the best so far",
+              "content": "Assume the first is biggest, then compare each of the others with it and replace it when one is bigger. This scales to any number of values.",
+              "example_code": "best = 4\nif 6 > best:\n    best = 6\nprint(best)  # 6"
+            },
+            {
+              "heading": "Ties are fine",
+              "content": "Using `>` (not `>=`) means equal values don't replace the best, which is fine: the result is the same number. Return `best` at the end.",
+              "example_code": "def bigger(a, b):\n    best = a\n    if b > best:\n        best = b\n    return best\n\nprint(bigger(5, 5))  # 5"
+            }
+          ]
+        },
+        {
+          "id": "i09",
+          "type": "code",
+          "track": "interview",
+          "heading": "Debug: the function that quits too soon",
+          "instruction": "`sum_to(5)` should return 1 + 2 + 3 + 4 + 5 = 15, but it returns 1. Fix the bug.",
+          "initial_code": "def sum_to(n):\n    total = 0\n    for i in range(1, n + 1):\n        total += i\n        return total\n\nprint(sum_to(5))",
+          "expected_output": "15",
+          "hint": "The return is indented inside the loop, so it returns after the first round. Move it out one level:\n    return total",
+          "support": [
+            {
+              "heading": "Indentation decides what's inside the loop",
+              "content": "A `return` inside a loop ends the whole function the first time it runs. Lines at the loop's own indentation run after the loop finishes.",
+              "example_code": "def first(n):\n    for i in range(n):\n        return i   # returns 0 straight away\n\nprint(first(5))"
+            },
+            {
+              "heading": "Dedent one line",
+              "content": "Move `return total` left so it lines up with `for`, not with `total += i`.",
+              "example_code": "def total3():\n    t = 0\n    for i in range(3):\n        t += i\n    return t\n\nprint(total3())  # 3"
+            }
+          ]
         }
       ]
     },
@@ -3947,6 +4349,422 @@
           "feedback": {
             "No": "Python lists aren't limited to one type."
           }
+        },
+        {
+          "id": "d01",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Slicing lists",
+          "content": "Slices work on lists exactly like on strings: `nums[1:3]`, `nums[-2:]`, `nums[::-1]`. A slice always gives back a **new** list, so `nums[:]` (everything) is a quick way to copy a list.",
+          "example_code": "nums = [10, 20, 30, 40, 50]\nprint(nums[1:3])    # [20, 30]\nprint(nums[-2:])    # [40, 50]\nprint(nums[::-1])   # [50, 40, 30, 20, 10]\ncopy = nums[:]      # a separate list",
+          "how": "A slice copies the chosen items into a fresh list. Changing the slice doesn't change the original, and vice versa.",
+          "use": "Taking the top 3 scores, the last 5 messages, every other item, or a safe copy before changing a list."
+        },
+        {
+          "id": "d02",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "What does this code print?",
+          "options": [
+            "[20, 30, 40]",
+            "[20, 30, 40, 50]",
+            "[10, 20, 30, 40]"
+          ],
+          "answer": "[20, 30, 40]",
+          "explanation": "The slice starts at index 1 (20) and stops before index 4, so it takes indexes 1, 2 and 3.",
+          "code": "nums = [10, 20, 30, 40, 50]\nprint(nums[1:4])"
+        },
+        {
+          "id": "d03",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "The last three scores",
+          "instruction": "Print the last three items of `scores` using a slice with a negative start. It should print: [88, 61, 99]",
+          "initial_code": "scores = [72, 95, 88, 61, 99]\n# TODO: print the last three\n",
+          "expected_output": "[88, 61, 99]",
+          "hint": "print(scores[-3:])",
+          "support": [
+            {
+              "heading": "Negative start counts from the end",
+              "content": "`[-3:]` starts three from the end and runs to the end, whatever the list's length.",
+              "example_code": "letters = ['a', 'b', 'c', 'd']\nprint(letters[-2:])  # ['c', 'd']"
+            },
+            {
+              "heading": "Leave the stop empty",
+              "content": "After the colon, write nothing so the slice goes to the end. Put the slice inside print().",
+              "example_code": "nums = [1, 2, 3, 4, 5, 6]\nprint(nums[-4:])  # [3, 4, 5, 6]"
+            }
+          ]
+        },
+        {
+          "id": "d04",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Built-ins for lists: sum, min, max, sorted",
+          "content": "`sum(nums)`, `min(nums)` and `max(nums)` do what they say. `sorted(nums)` returns a **new** sorted list and leaves the original alone, while `nums.sort()` sorts the list **in place** and returns `None`. Both accept `reverse=True`.",
+          "example_code": "nums = [3, 1, 2]\nprint(sum(nums), min(nums), max(nums))   # 6 1 3\nprint(sorted(nums))                  # [1, 2, 3]\nprint(nums)                          # [3, 1, 2], unchanged\nnums.sort(reverse=True)\nprint(nums)                          # [3, 2, 1]",
+          "how": "Methods that change a list in place (`sort`, `append`, `reverse`...) return None on purpose, so you don't mistake the result for a new list. Functions like `sorted` build and return a new list.",
+          "use": "Totals, averages, best and worst scores, leaderboards. Choosing in place versus a copy matters when other code still needs the original order."
+        },
+        {
+          "id": "d05",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "What does this code print?",
+          "options": [
+            "None",
+            "[1, 2, 3]",
+            "[3, 1, 2]"
+          ],
+          "answer": "None",
+          "explanation": "`.sort()` sorts `nums` in place and returns None, so `result` is None. Use `sorted(nums)` when you want the sorted list back.",
+          "code": "nums = [3, 1, 2]\nresult = nums.sort()\nprint(result)",
+          "feedback": {
+            "[1, 2, 3]": "`nums` is now [1, 2, 3], but `.sort()` itself returns None, and that's what was stored in result."
+          }
+        },
+        {
+          "id": "d06",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Average score",
+          "instruction": "Print the average of `scores` using `sum()` and `len()`. It should print: 79.0",
+          "initial_code": "scores = [72, 95, 88, 61]\n# TODO: print the average\n",
+          "expected_output": "79.0",
+          "hint": "print(sum(scores) / len(scores))",
+          "support": [
+            {
+              "heading": "Total divided by count",
+              "content": "An average is the sum of the values divided by how many there are. `sum()` and `len()` give you both.",
+              "example_code": "ages = [10, 20, 30]\nprint(sum(ages) / len(ages))  # 20.0"
+            },
+            {
+              "heading": "One expression",
+              "content": "Put `sum(scores) / len(scores)` inside print(). Division gives a float, so it shows 79.0.",
+              "example_code": "print(sum([2, 4]) / len([2, 4]))  # 3.0"
+            }
+          ]
+        },
+        {
+          "id": "d07",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Searching a list",
+          "content": "`x in nums` checks whether a value is in the list (True/False). `nums.index(x)` gives its first position (and raises ValueError if it's missing), and `nums.count(x)` counts it. All three look through the list item by item, so they're **O(n)**.",
+          "example_code": "names = ['Ann', 'Bo', 'Cy', 'Bo']\nprint('Cy' in names)       # True\nprint(names.index('Cy'))   # 2\nprint(names.count('Bo'))   # 2\nprint('Zed' in names)      # False",
+          "how": "Python starts at index 0 and compares each item until it finds a match or runs out of items. On a long list, that can mean checking every item.",
+          "use": "Checking membership, finding positions, counting duplicates. For many lookups in a big collection, a set or dictionary (later lessons) is much faster."
+        },
+        {
+          "id": "d08",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Find a name",
+          "instruction": "Print the position of `'Cy'` in `names`, then on the next line whether `'Zed'` is in the list. It should print 2 then False.",
+          "initial_code": "names = ['Ann', 'Bo', 'Cy', 'Dee']\n# TODO: print the index of 'Cy', then whether 'Zed' is in names\n",
+          "expected_output": "2\nFalse",
+          "hint": "print(names.index('Cy'))\nprint('Zed' in names)",
+          "support": [
+            {
+              "heading": "index() finds, in checks",
+              "content": "`.index(x)` answers \"where?\" and `x in lst` answers \"is it there?\".",
+              "example_code": "pets = ['cat', 'dog']\nprint(pets.index('dog'))  # 1\nprint('fish' in pets)     # False"
+            },
+            {
+              "heading": "Check before index",
+              "content": "Calling `.index()` on a missing value raises a ValueError, which is why you check with `in` first when you're not sure. Here 'Cy' is present, so `.index` is safe.",
+              "example_code": "items = ['a', 'b']\nif 'z' in items:\n    print(items.index('z'))\nelse:\n    print('not there')"
+            }
+          ]
+        },
+        {
+          "id": "d09",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Two names, one list",
+          "content": "Lists are **mutable**, so the label picture from Variables matters: `b = a` makes both names point at the same list. Changing it through `b` changes what `a` sees. Make a real copy with `a.copy()`, `a[:]` or `list(a)`.",
+          "example_code": "a = [1, 2]\nb = a           # same list, two labels\nb.append(3)\nprint(a)        # [1, 2, 3]\n\nc = a.copy()    # a separate list\nc.append(4)\nprint(a, c)     # [1, 2, 3] [1, 2, 3, 4]",
+          "how": "Assignment never copies; it only attaches another name. With immutable values (numbers, strings) that's invisible, because nothing can change them in place. With lists it shows, because `append`, `remove` and item assignment change the list itself.",
+          "use": "Avoiding one of the most common bugs in real Python code, and a favorite interview question."
+        },
+        {
+          "id": "d10",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "What does this code print?",
+          "options": [
+            "[1, 2, 3]",
+            "[1, 2]",
+            "Error"
+          ],
+          "answer": "[1, 2, 3]",
+          "explanation": "`b = a` doesn't copy the list. Both names refer to the same list, so appending through b changes what a shows.",
+          "code": "a = [1, 2]\nb = a\nb.append(3)\nprint(a)",
+          "feedback": {
+            "[1, 2]": "That would be true if `b = a` made a copy. It doesn't: both names share one list."
+          }
+        },
+        {
+          "id": "d11",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Copy before changing",
+          "instruction": "`backup` should keep the original list, but appending to `working` changes both. Fix it so it prints: [1, 2, 3] [1, 2, 3, 4]",
+          "initial_code": "backup = [1, 2, 3]\nworking = backup\nworking.append(4)\nprint(backup, working)",
+          "expected_output": "[1, 2, 3] [1, 2, 3, 4]",
+          "hint": "Make working a separate list:\nworking = backup.copy()",
+          "support": [
+            {
+              "heading": "Assignment shares, copy() duplicates",
+              "content": "`.copy()` builds a new list with the same items. After that, changes to one don't affect the other.",
+              "example_code": "x = ['a']\ny = x.copy()\ny.append('b')\nprint(x)  # ['a']"
+            },
+            {
+              "heading": "Change one line",
+              "content": "Only the second line needs to change. `backup[:]` or `list(backup)` also work.",
+              "example_code": "orig = [5]\nnew = orig[:]\nnew.append(6)\nprint(orig, new)  # [5] [5, 6]"
+            }
+          ]
+        },
+        {
+          "id": "d12",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Building a list in a loop",
+          "content": "Start with an empty list `[]`, loop over something, and `append` the items you want to keep or the values you calculate. It's the accumulator pattern for lists.",
+          "example_code": "evens = []\nfor n in range(1, 11):\n    if n % 2 == 0:\n        evens.append(n)\nprint(evens)    # [2, 4, 6, 8, 10]\n\nsquares = []\nfor n in range(4):\n    squares.append(n * n)\nprint(squares)  # [0, 1, 4, 9]",
+          "how": "The list is created once before the loop and grows by one item each time `append` runs.",
+          "use": "Filtering data (only passing scores), transforming data (prices with tax), and collecting results (matches found while scanning)."
+        },
+        {
+          "id": "d13",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Collect the long words",
+          "instruction": "Build a list of the words in `words` that have more than 4 letters, using a loop and `append`, then print it. It should print: ['python', 'loops', 'lists']",
+          "initial_code": "words = ['code', 'python', 'is', 'loops', 'fun', 'lists']\n# TODO: build long_words with a loop\n\nprint(long_words)",
+          "expected_output": "['python', 'loops', 'lists']",
+          "hint": "long_words = []\nfor w in words:\n    if len(w) > 4:\n        long_words.append(w)",
+          "support": [
+            {
+              "heading": "Empty list, loop, condition, append",
+              "content": "Create the empty list before the loop. Inside the loop, `append` only the items that pass the check.",
+              "example_code": "small = []\nfor n in [5, 50, 2]:\n    if n < 10:\n        small.append(n)\nprint(small)  # [5, 2]"
+            },
+            {
+              "heading": "len() inside the condition",
+              "content": "Each `w` is a word, so `len(w) > 4` checks its length. 'loops' has 5 letters and 'code' has 4, so only the first is kept.",
+              "example_code": "print(len('loops') > 4, len('code') > 4)  # True False"
+            }
+          ]
+        },
+        {
+          "id": "d14",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Lists inside lists",
+          "content": "A list can hold other lists, which is how you store a grid or table. `grid[row]` gets a whole row, and `grid[row][col]` gets one cell. A loop over the grid gives one row at a time.",
+          "example_code": "grid = [\n    [1, 2, 3],\n    [4, 5, 6],\n]\nprint(grid[0])      # [1, 2, 3]\nprint(grid[1][0])   # 4\nfor row in grid:\n    print(sum(row))  # 6, then 15",
+          "how": "The first index picks an item of the outer list, which is itself a list; the second index picks from that inner list.",
+          "use": "Game boards, spreadsheets and matrices, seating charts, and any data with rows and columns."
+        },
+        {
+          "id": "d15",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "What does this code print?",
+          "options": [
+            "6",
+            "5",
+            "[4, 5, 6]"
+          ],
+          "answer": "6",
+          "explanation": "`grid[1]` is the second row, [4, 5, 6], and `[2]` picks its third item: 6.",
+          "code": "grid = [[1, 2, 3], [4, 5, 6]]\nprint(grid[1][2])"
+        },
+        {
+          "id": "d16",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Combining lists: +, *, append and extend",
+          "content": "`a + b` makes a new list with both lists' items. `[0] * 3` makes `[0, 0, 0]`. `a.extend(b)` adds each item of b to a, while `a.append(b)` adds b as **one** item, a list inside a list.",
+          "example_code": "a = [1, 2]\nprint(a + [3, 4])   # [1, 2, 3, 4]\nprint([0] * 3)      # [0, 0, 0]\n\nx = [1, 2]\nx.extend([3, 4])\nprint(x)            # [1, 2, 3, 4]\ny = [1, 2]\ny.append([3, 4])\nprint(y)            # [1, 2, [3, 4]]",
+          "how": "`append` always adds exactly one item, whatever it is. `extend` loops over its argument and appends each element.",
+          "use": "Merging results, building rows of a fixed size, and avoiding the classic mistake of appending a list when you meant to add its items."
+        },
+        {
+          "id": "d17",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "What does this code print?",
+          "options": [
+            "3",
+            "4",
+            "2"
+          ],
+          "answer": "3",
+          "explanation": "`append` adds the list [3, 4] as a single item, so `a` becomes [1, 2, [3, 4]], which has 3 items.",
+          "code": "a = [1, 2]\na.append([3, 4])\nprint(len(a))",
+          "feedback": {
+            "4": "That's what `extend` would give. `append` adds the whole list as one item."
+          }
+        },
+        {
+          "id": "i01",
+          "type": "quiz",
+          "track": "interview",
+          "question": "Interview question: what's the difference between `nums.sort()` and `sorted(nums)`?",
+          "options": [
+            "`.sort()` changes the list in place and returns None; `sorted()` returns a new sorted list",
+            "They're identical",
+            "`sorted()` only works on numbers"
+          ],
+          "answer": "`.sort()` changes the list in place and returns None; `sorted()` returns a new sorted list",
+          "explanation": "Use `sorted()` when you need to keep the original order too, or when sorting something that isn't a list (like a string or set). `sorted()` works on any iterable."
+        },
+        {
+          "id": "i02",
+          "type": "quiz",
+          "track": "interview",
+          "question": "What's the difference between `append` and `extend`?",
+          "options": [
+            "`append` adds one item (even a whole list); `extend` adds each item of another list",
+            "They're the same",
+            "`extend` adds to the front"
+          ],
+          "answer": "`append` adds one item (even a whole list); `extend` adds each item of another list",
+          "explanation": "`[1].append([2, 3])` gives `[1, [2, 3]]`; `[1].extend([2, 3])` gives `[1, 2, 3]`."
+        },
+        {
+          "id": "i03",
+          "type": "quiz",
+          "track": "interview",
+          "question": "What's the time complexity of `x in my_list` for a list of n items?",
+          "options": [
+            "O(n)",
+            "O(1)",
+            "O(n²)"
+          ],
+          "answer": "O(n)",
+          "explanation": "Python checks the items one by one until it finds a match. In the worst case (missing value) it checks all n."
+        },
+        {
+          "id": "i04",
+          "type": "quiz",
+          "track": "interview",
+          "question": "What's the time complexity of reading `my_list[5000]` from a list of a million items?",
+          "options": [
+            "O(1)",
+            "O(n)",
+            "O(log n)"
+          ],
+          "answer": "O(1)",
+          "explanation": "Lists store items in a row in memory, so Python can jump straight to any index. Indexing is constant time, whatever the size."
+        },
+        {
+          "id": "i05",
+          "type": "quiz",
+          "track": "interview",
+          "question": "What does this code print?",
+          "options": [
+            "[1, 2, 3]",
+            "[2, 4, 6]",
+            "Error"
+          ],
+          "answer": "[1, 2, 3]",
+          "explanation": "`n *= 2` changes the loop variable n, which is just a name for the current item. It doesn't change the list. To change the list, assign to `nums[i]` or build a new list.",
+          "code": "nums = [1, 2, 3]\nfor n in nums:\n    n *= 2\nprint(nums)",
+          "feedback": {
+            "[2, 4, 6]": "The loop variable is a separate label. Rebinding it doesn't touch the list's items."
+          }
+        },
+        {
+          "id": "i06",
+          "type": "code",
+          "track": "interview",
+          "heading": "Classic: find the maximum without max()",
+          "instruction": "Without using `max()` or sorting, print the largest number in `nums`. It should print: 23",
+          "initial_code": "nums = [4, 17, 9, 23, 8]\n# TODO: find the largest with a loop\n",
+          "expected_output": "23",
+          "hint": "largest = nums[0]\nfor n in nums:\n    if n > largest:\n        largest = n\nprint(largest)",
+          "support": [
+            {
+              "heading": "Start with the first item",
+              "content": "Assume the first number is the largest, then loop and replace it whenever you see something bigger. Starting from 0 would break if all numbers were negative.",
+              "example_code": "best = 3\nfor n in [1, 7, 2]:\n    if n > best:\n        best = n\nprint(best)  # 7"
+            },
+            {
+              "heading": "One pass is O(n)",
+              "content": "Each number is looked at once. Print the tracked value after the loop. Interviewers ask this to see that you don't reach for sorting (O(n log n)) when one pass will do.",
+              "example_code": "nums = [-5, -2, -9]\nbest = nums[0]\nfor n in nums:\n    if n > best:\n        best = n\nprint(best)  # -2"
+            }
+          ]
+        },
+        {
+          "id": "i07",
+          "type": "code",
+          "track": "interview",
+          "heading": "Classic: remove duplicates, keep the order",
+          "instruction": "Build a new list with each item of `items` once, in the order first seen, using a loop. It should print: ['a', 'b', 'c']",
+          "initial_code": "items = ['a', 'b', 'a', 'c', 'b']\n# TODO: unique items, original order\n",
+          "expected_output": "['a', 'b', 'c']",
+          "hint": "unique = []\nfor x in items:\n    if x not in unique:\n        unique.append(x)",
+          "support": [
+            {
+              "heading": "Keep what you haven't seen",
+              "content": "Loop over the items and append each one only if it isn't already in the new list. `not in` is the opposite of `in`.",
+              "example_code": "seen = []\nfor x in [3, 3, 1]:\n    if x not in seen:\n        seen.append(x)\nprint(seen)  # [3, 1]"
+            },
+            {
+              "heading": "Note the cost",
+              "content": "`x not in unique` is itself a loop, so this is O(n²). It's fine here; in the Collections lesson you'll learn a set-based O(n) version, which is the follow-up interviewers ask for.",
+              "example_code": "print('b' not in ['a', 'c'])  # True"
+            }
+          ]
+        },
+        {
+          "id": "i08",
+          "type": "code",
+          "track": "interview",
+          "heading": "Classic: second largest",
+          "instruction": "Print the second largest **distinct** value in `nums`. It should print: 7",
+          "initial_code": "nums = [5, 1, 9, 7, 9]\n# TODO: print the second largest distinct value\n",
+          "expected_output": "7",
+          "hint": "Remove duplicates first (9 appears twice), then sort and take the second from the end:\nprint(sorted(unique)[-2])",
+          "support": [
+            {
+              "heading": "Duplicates are the trap",
+              "content": "If you sort [5, 1, 9, 7, 9] and take `[-2]` you get 9 again. Remove repeats first, as in the previous problem.",
+              "example_code": "print(sorted([5, 1, 9, 7, 9])[-2])  # 9: the trap"
+            },
+            {
+              "heading": "Unique, sort, index -2",
+              "content": "Build the unique list with a loop, sort it, and print the item at `[-2]`. (A one-pass version tracks the largest and second largest as it goes.)",
+              "example_code": "vals = [4, 8, 2]\nprint(sorted(vals)[-2])  # 4"
+            }
+          ]
+        },
+        {
+          "id": "i09",
+          "type": "code",
+          "track": "interview",
+          "heading": "Debug: removing while looping",
+          "instruction": "This should remove all even numbers, but it prints [1, 2, 3]. Fix it so it prints: [1, 3]",
+          "initial_code": "nums = [1, 2, 2, 3, 4]\nfor n in nums:\n    if n % 2 == 0:\n        nums.remove(n)\nprint(nums)",
+          "expected_output": "[1, 3]",
+          "hint": "Don't change a list while looping over it. Build a new list of the items to keep:\nodds = []\nfor n in nums:\n    if n % 2 != 0:\n        odds.append(n)\nprint(odds)",
+          "support": [
+            {
+              "heading": "Why items get skipped",
+              "content": "When you remove an item, everything after it shifts left one place, but the loop moves on to the next index anyway, so the item that slid into the gap is never checked.",
+              "example_code": "a = [2, 2]\nfor n in a:\n    a.remove(n)\nprint(a)  # [2]: the second 2 was skipped"
+            },
+            {
+              "heading": "Build a new list instead",
+              "content": "Loop over the original and append the items you want to keep (the odd ones) to a new list. Looping over a copy (`for n in nums[:]`) also works.",
+              "example_code": "keep = []\nfor n in [5, 6, 7]:\n    if n != 6:\n        keep.append(n)\nprint(keep)  # [5, 7]"
+            }
+          ]
         }
       ]
     },
@@ -4200,6 +5018,409 @@
           "feedback": {
             "Yes": "Python raises TypeError: unhashable type: 'list'."
           }
+        },
+        {
+          "id": "d01",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Looping over a dictionary",
+          "content": "`for key in d:` loops over the keys. `for key, value in d.items():` gives both at once, which is what you want most of the time. Dictionaries keep the order keys were added in.",
+          "example_code": "stock = {'apples': 5, 'pears': 2}\nfor fruit in stock:\n    print(fruit)                 # apples, pears\nfor fruit, count in stock.items():\n    print(f'{fruit}: {count}')   # apples: 5, pears: 2",
+          "how": "`.items()` produces (key, value) pairs, and the for loop unpacks each pair into the two names. Insertion order has been guaranteed since Python 3.7.",
+          "use": "Printing reports, totaling values, finding the key with the biggest value, converting data to another format."
+        },
+        {
+          "id": "d02",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "What does this code print?",
+          "options": [
+            "a b",
+            "1 2",
+            "a 1 b 2"
+          ],
+          "answer": "a b",
+          "explanation": "Looping over a dictionary directly gives its keys, in the order they were added.",
+          "code": "d = {'a': 1, 'b': 2}\nfor k in d:\n    print(k, end=' ')"
+        },
+        {
+          "id": "d03",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Print a price list",
+          "instruction": "Loop over `prices` with `.items()` and print each line like `apple: $0.50` (two decimals).",
+          "initial_code": "prices = {'apple': 0.5, 'bread': 2.25}\n# TODO: print each item and its price\n",
+          "expected_output": "apple: $0.50\nbread: $2.25",
+          "hint": "for item, price in prices.items():\n    print(f'{item}: ${price:.2f}')",
+          "support": [
+            {
+              "heading": "Unpack each pair",
+              "content": "`for name, value in d.items():` gives you both parts of each entry. Use them in an f-string.",
+              "example_code": "ages = {'Ann': 30}\nfor name, age in ages.items():\n    print(f'{name} is {age}')"
+            },
+            {
+              "heading": "Format the money",
+              "content": "`{price:.2f}` shows two decimals, and the `$` before it is plain text.",
+              "example_code": "p = 1.5\nprint(f'tea: ${p:.2f}')  # tea: $1.50"
+            }
+          ]
+        },
+        {
+          "id": "d04",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Counting with a dictionary",
+          "content": "To count things, use the item as the key and its count as the value. `counts.get(word, 0) + 1` reads the current count (0 if it's new) and adds one, so the first time works without a special case.",
+          "example_code": "words = ['cat', 'dog', 'cat']\ncounts = {}\nfor w in words:\n    counts[w] = counts.get(w, 0) + 1\nprint(counts)    # {'cat': 2, 'dog': 1}",
+          "how": "`.get(key, default)` returns the default when the key is missing, so a new word starts from 0. Assigning to `counts[w]` then creates or updates the entry.",
+          "use": "Word frequencies, votes, inventory tallies, counting errors by type. It's one of the most-used patterns in Python."
+        },
+        {
+          "id": "d05",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "What does this code print?",
+          "options": [
+            "{'a': 2, 'b': 1}",
+            "{'a': 1, 'b': 1}",
+            "{'aab': 1}"
+          ],
+          "answer": "{'a': 2, 'b': 1}",
+          "explanation": "The loop goes over 'a', 'a', 'b'. The count for 'a' goes 1, 2; 'b' gets 1.",
+          "code": "counts = {}\nfor ch in 'aab':\n    counts[ch] = counts.get(ch, 0) + 1\nprint(counts)"
+        },
+        {
+          "id": "d06",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Word frequency",
+          "instruction": "Count how many times each word appears in `text` and print the dictionary. It should print: {'the': 2, 'cat': 1, 'and': 1, 'hat': 1}",
+          "initial_code": "text = 'the cat and the hat'\n# TODO: count each word\n",
+          "expected_output": "{'the': 2, 'cat': 1, 'and': 1, 'hat': 1}",
+          "hint": "counts = {}\nfor word in text.split():\n    counts[word] = counts.get(word, 0) + 1\nprint(counts)",
+          "support": [
+            {
+              "heading": "Split first, then count",
+              "content": "`text.split()` gives the list of words. Loop over that list, not over the string (which would give letters).",
+              "example_code": "print('a b a'.split())  # ['a', 'b', 'a']"
+            },
+            {
+              "heading": "The get-plus-one line",
+              "content": "Inside the loop: `counts[word] = counts.get(word, 0) + 1`. Start with `counts = {}` before the loop and print after it.",
+              "example_code": "c = {}\nfor x in ['x', 'y', 'x']:\n    c[x] = c.get(x, 0) + 1\nprint(c)  # {'x': 2, 'y': 1}"
+            }
+          ]
+        },
+        {
+          "id": "d07",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Checking for keys",
+          "content": "`key in d` checks the **keys**, not the values, and it's **O(1)**: just as fast for a million keys as for ten. Checking values with `x in d.values()` has to look through them one by one, which is O(n).",
+          "example_code": "user = {'name': 'Ada', 'role': 'admin'}\nprint('name' in user)          # True: a key\nprint('Ada' in user)           # False: a value, not a key\nprint('Ada' in user.values())  # True, but O(n)",
+          "how": "Dictionaries find keys by hashing them to a location, so they don't need to scan. Values have no such index, so searching them means checking each one.",
+          "use": "Fast lookups: is this username taken, have we seen this item before, is this setting present."
+        },
+        {
+          "id": "d08",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "What does this code print?",
+          "options": [
+            "False",
+            "True",
+            "Error"
+          ],
+          "answer": "False",
+          "explanation": "`in` checks a dictionary's keys. 'Ada' is a value here; the only key is 'name'.",
+          "code": "print('Ada' in {'name': 'Ada'})"
+        },
+        {
+          "id": "d09",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Nested data",
+          "content": "Values can be lists or other dictionaries, which is how real data (like JSON from a web API) looks. Chain the lookups: `order['customer']['city']`, or `order['items'][0]`.",
+          "example_code": "order = {\n    'id': 7,\n    'customer': {'name': 'Kim', 'city': 'Lima'},\n    'items': ['pen', 'ink'],\n}\nprint(order['customer']['name'])   # Kim\nprint(order['items'][1])           # ink\nprint(len(order['items']))         # 2",
+          "how": "Each lookup returns a value; if that value is itself a dict or list, the next `[...]` looks inside it.",
+          "use": "Working with API responses, configuration files, and records that have sub-records, like a user with an address."
+        },
+        {
+          "id": "d10",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Read nested data",
+          "instruction": "Print the customer's city, then on the next line the number of items in the order. It should print: Lima then 2",
+          "initial_code": "order = {\n    'id': 7,\n    'customer': {'name': 'Kim', 'city': 'Lima'},\n    'items': ['pen', 'ink'],\n}\n# TODO: print the city, then how many items\n",
+          "expected_output": "Lima\n2",
+          "hint": "print(order['customer']['city'])\nprint(len(order['items']))",
+          "support": [
+            {
+              "heading": "Chain the brackets",
+              "content": "`order['customer']` is the inner dictionary; add `['city']` to look inside it.",
+              "example_code": "data = {'pet': {'kind': 'dog'}}\nprint(data['pet']['kind'])  # dog"
+            },
+            {
+              "heading": "len() of the inner list",
+              "content": "`order['items']` is a list, so `len(order['items'])` counts its items.",
+              "example_code": "d = {'tags': ['a', 'b', 'c']}\nprint(len(d['tags']))  # 3"
+            }
+          ]
+        },
+        {
+          "id": "d11",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Updating and merging",
+          "content": "`d.update(other)` copies every key from `other` into `d`, overwriting keys that already exist. In Python 3.9+, `a | b` builds a new merged dictionary instead, with `b`'s values winning on clashes.",
+          "example_code": "settings = {'theme': 'light', 'size': 12}\nsettings.update({'theme': 'dark', 'lang': 'en'})\nprint(settings)  # {'theme': 'dark', 'size': 12, 'lang': 'en'}\n\ndefaults = {'a': 1, 'b': 2}\nprint(defaults | {'b': 20})   # {'a': 1, 'b': 20}",
+          "how": "Both go through the second dictionary's keys and set each one; existing keys keep their position but get the new value, and new keys are added at the end.",
+          "use": "Applying user settings over defaults, combining data from two sources, and applying a batch of changes at once."
+        },
+        {
+          "id": "d12",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "What does this code print?",
+          "options": [
+            "{'x': 1, 'y': 20, 'z': 3}",
+            "{'x': 1, 'y': 2, 'z': 3}",
+            "{'y': 20, 'z': 3}"
+          ],
+          "answer": "{'x': 1, 'y': 20, 'z': 3}",
+          "explanation": "`update` keeps x, overwrites y with 20, and adds z.",
+          "code": "a = {'x': 1, 'y': 2}\na.update({'y': 20, 'z': 3})\nprint(a)"
+        },
+        {
+          "id": "d13",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Apply a discount",
+          "instruction": "Loop over `prices` and replace each price with 90% of it, rounded to 2 decimals, then print the dictionary. It should print: {'tea': 3.6, 'cake': 5.4}",
+          "initial_code": "prices = {'tea': 4.0, 'cake': 6.0}\n# TODO: take 10% off every price\n\nprint(prices)",
+          "expected_output": "{'tea': 3.6, 'cake': 5.4}",
+          "hint": "for item, price in prices.items():\n    prices[item] = round(price * 0.9, 2)",
+          "support": [
+            {
+              "heading": "Changing values while looping is fine",
+              "content": "You can assign new values to existing keys during a loop. (Adding or removing keys is what's not allowed; see the next step.)",
+              "example_code": "d = {'a': 1, 'b': 2}\nfor k, v in d.items():\n    d[k] = v * 10\nprint(d)  # {'a': 10, 'b': 20}"
+            },
+            {
+              "heading": "90% means times 0.9",
+              "content": "For each pair, store `round(price * 0.9, 2)` back under the same key.",
+              "example_code": "print(round(5.0 * 0.9, 2))  # 4.5"
+            }
+          ]
+        },
+        {
+          "id": "d14",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Don't add or remove keys while looping",
+          "content": "Adding or deleting keys while looping over a dictionary raises **RuntimeError: dictionary changed size during iteration**. Loop over a copy of the keys instead, `for k in list(d):`, or build a new dictionary.",
+          "example_code": "stock = {'apples': 0, 'pears': 3, 'kiwis': 0}\nfor fruit in list(stock):      # a copy of the keys\n    if stock[fruit] == 0:\n        del stock[fruit]         # safe now\nprint(stock)   # {'pears': 3}",
+          "how": "A loop over a dictionary walks its internal table. Changing the number of entries could make it skip or repeat keys, so Python refuses. `list(d)` makes a separate list of keys that isn't affected. `del d[key]` removes an entry, like `pop` but without returning the value.",
+          "use": "Cleaning up data (removing empty or expired entries) without crashing."
+        },
+        {
+          "id": "d15",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "What happens if you delete keys from a dictionary while looping directly over it?",
+          "options": [
+            "RuntimeError: dictionary changed size during iteration",
+            "The keys are deleted normally",
+            "Python silently skips the delete"
+          ],
+          "answer": "RuntimeError: dictionary changed size during iteration",
+          "explanation": "Python detects the change and stops. Loop over `list(d)` (a copy of the keys) when you need to delete as you go."
+        },
+        {
+          "id": "d16",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Grouping into lists",
+          "content": "To group items, make each group a key whose value is a list. Create the list the first time you see the key, then append to it.",
+          "example_code": "names = ['Ann', 'Bo', 'Alex', 'Bea']\ngroups = {}\nfor name in names:\n    letter = name[0]\n    if letter not in groups:\n        groups[letter] = []\n    groups[letter].append(name)\nprint(groups)   # {'A': ['Ann', 'Alex'], 'B': ['Bo', 'Bea']}",
+          "how": "`groups[letter]` returns the list stored for that letter, and `.append` changes that list in place, so the dictionary sees the new item.",
+          "use": "Grouping orders by customer, files by extension, students by class: the \"group by\" operation from databases and spreadsheets."
+        },
+        {
+          "id": "d17",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Group words by first letter",
+          "instruction": "Group `words` by their first letter into a dictionary of lists and print it. It should print: {'a': ['apple', 'avocado'], 'b': ['banana', 'blueberry'], 'c': ['cherry']}",
+          "initial_code": "words = ['apple', 'avocado', 'banana', 'blueberry', 'cherry']\n# TODO: group by first letter\n",
+          "expected_output": "{'a': ['apple', 'avocado'], 'b': ['banana', 'blueberry'], 'c': ['cherry']}",
+          "hint": "groups = {}\nfor w in words:\n    first = w[0]\n    if first not in groups:\n        groups[first] = []\n    groups[first].append(w)\nprint(groups)",
+          "support": [
+            {
+              "heading": "Make the list once, then append",
+              "content": "If the key isn't there yet, set it to an empty list. Then, every time, append the word to that key's list.",
+              "example_code": "g = {}\nfor x in ['hi', 'ho']:\n    if 'h' not in g:\n        g['h'] = []\n    g['h'].append(x)\nprint(g)  # {'h': ['hi', 'ho']}"
+            },
+            {
+              "heading": "The key is the first letter",
+              "content": "`w[0]` gives each word's first letter. Use it as the key in both the check and the append.",
+              "example_code": "print('cherry'[0])  # c"
+            }
+          ]
+        },
+        {
+          "id": "i01",
+          "type": "quiz",
+          "track": "interview",
+          "question": "Interview question: why must dictionary keys be immutable (hashable)?",
+          "options": [
+            "A key's hash decides where its value is stored; if the key could change, the value couldn't be found again",
+            "To save memory",
+            "Because dictionaries are sorted"
+          ],
+          "answer": "A key's hash decides where its value is stored; if the key could change, the value couldn't be found again",
+          "explanation": "Strings, numbers and tuples of those are hashable. Lists and dicts aren't, because they can change after being used as a key."
+        },
+        {
+          "id": "i02",
+          "type": "quiz",
+          "track": "interview",
+          "question": "What's the average time complexity of looking up a key in a dictionary?",
+          "options": [
+            "O(1)",
+            "O(n)",
+            "O(log n)"
+          ],
+          "answer": "O(1)",
+          "explanation": "Hashing jumps straight to the right slot, so lookup time doesn't grow with the size of the dictionary (on average)."
+        },
+        {
+          "id": "i03",
+          "type": "quiz",
+          "track": "interview",
+          "question": "What's the difference between `d['x']` and `d.get('x')` when 'x' isn't a key?",
+          "options": [
+            "`d['x']` raises KeyError; `d.get('x')` returns None",
+            "Both return None",
+            "Both raise KeyError"
+          ],
+          "answer": "`d['x']` raises KeyError; `d.get('x')` returns None",
+          "explanation": "Use brackets when a missing key is a bug you want to notice; use `.get()` (optionally with a default) when missing is normal."
+        },
+        {
+          "id": "i04",
+          "type": "quiz",
+          "track": "interview",
+          "question": "You need to check, many times, whether usernames exist among a million users. Which is faster to search?",
+          "options": [
+            "A dictionary (or set) keyed by username: O(1) per check",
+            "A list of usernames: O(1) per check",
+            "They're the same speed"
+          ],
+          "answer": "A dictionary (or set) keyed by username: O(1) per check",
+          "explanation": "Each `in` on a list scans up to a million names (O(n)). A dictionary or set lookup is O(1). Choosing the right structure is often the whole answer to an interview question."
+        },
+        {
+          "id": "i05",
+          "type": "quiz",
+          "track": "interview",
+          "question": "What does this code print?",
+          "options": [
+            "{'a': 11}",
+            "{'a': 1}",
+            "KeyError"
+          ],
+          "answer": "{'a': 11}",
+          "explanation": "'b' isn't a key, so `d.get('b', 10)` returns the default 10. 10 + 1 is 11, stored back under 'a'.",
+          "code": "d = {'a': 1}\nd['a'] = d.get('b', 10) + d['a']\nprint(d)"
+        },
+        {
+          "id": "i06",
+          "type": "code",
+          "track": "interview",
+          "heading": "Classic: two sum",
+          "instruction": "Find the positions of the two numbers in `nums` that add up to `target`, and print them separated by a space. Use a dictionary of numbers you've already seen. It should print: 0 1",
+          "initial_code": "nums = [2, 7, 11, 15]\ntarget = 9\n# TODO: print the two indexes\n",
+          "expected_output": "0 1",
+          "hint": "seen = {}   # number -> its index\nfor i in range(len(nums)):\n    need = target - nums[i]\n    if need in seen:\n        print(seen[need], i)\n        break\n    seen[nums[i]] = i",
+          "support": [
+            {
+              "heading": "Ask what you need",
+              "content": "For each number, the partner you need is `target - number`. If you've already seen that partner, you're done.",
+              "example_code": "target = 10\nprint(target - 3)  # 7 is the partner of 3"
+            },
+            {
+              "heading": "Remember positions in a dict",
+              "content": "Keep `seen = {number: index}`. Check `need in seen` (O(1)) before storing the current number. That makes the whole thing one pass, O(n), instead of checking every pair, O(n²), which is exactly the improvement interviewers look for.",
+              "example_code": "seen = {4: 0}\nprint(6 in seen, 4 in seen)  # False True\nprint(seen[4])               # 0"
+            }
+          ]
+        },
+        {
+          "id": "i07",
+          "type": "code",
+          "track": "interview",
+          "heading": "Classic: first non-repeating character",
+          "instruction": "Print the first character in `s` that appears exactly once. It should print: w",
+          "initial_code": "s = 'swiss'\n# TODO: print the first character that appears once\n",
+          "expected_output": "w",
+          "hint": "Count every character first, then loop over the string again and print the first one whose count is 1.",
+          "support": [
+            {
+              "heading": "Two passes",
+              "content": "One loop can't know whether a character appears again later. So count everything in a first pass, then check in a second pass, in the original order.",
+              "example_code": "c = {}\nfor ch in 'aab':\n    c[ch] = c.get(ch, 0) + 1\nprint(c)  # {'a': 2, 'b': 1}"
+            },
+            {
+              "heading": "Break on the first match",
+              "content": "In the second loop, check `counts[ch] == 1`, print it, and `break` so only the first one prints. Two O(n) passes is still O(n).",
+              "example_code": "c = {'a': 2, 'b': 1}\nfor ch in 'aab':\n    if c[ch] == 1:\n        print(ch)  # b\n        break"
+            }
+          ]
+        },
+        {
+          "id": "i08",
+          "type": "code",
+          "track": "interview",
+          "heading": "Classic: anagram check",
+          "instruction": "Two words are anagrams if they use the same letters the same number of times. Print whether `a` and `b` are anagrams by comparing letter-count dictionaries. It should print: True",
+          "initial_code": "a = 'listen'\nb = 'silent'\n# TODO: compare letter counts\n",
+          "expected_output": "True",
+          "hint": "Write a helper that returns a letter-count dict, then compare the two dicts with ==.",
+          "support": [
+            {
+              "heading": "Dictionaries compare by content",
+              "content": "Two dictionaries are `==` when they have the same keys with the same values, whatever order the keys were added in.",
+              "example_code": "print({'a': 1, 'b': 2} == {'b': 2, 'a': 1})  # True"
+            },
+            {
+              "heading": "A helper keeps it short",
+              "content": "Write `letter_counts(word)` using the counting pattern, call it on both words, and print whether the results are equal. (`sorted(a) == sorted(b)` also works, in O(n log n).)",
+              "example_code": "def counts(w):\n    c = {}\n    for ch in w:\n        c[ch] = c.get(ch, 0) + 1\n    return c\n\nprint(counts('ab') == counts('ba'))  # True"
+            }
+          ]
+        },
+        {
+          "id": "i09",
+          "type": "code",
+          "track": "interview",
+          "heading": "Debug: the counter that crashes",
+          "instruction": "This crashes with a KeyError. Fix it so it prints: {'red': 2, 'blue': 1}",
+          "initial_code": "colors = ['red', 'blue', 'red']\ncounts = {}\nfor c in colors:\n    counts[c] += 1\nprint(counts)",
+          "expected_output": "{'red': 2, 'blue': 1}",
+          "hint": "`counts[c] += 1` reads counts[c] first, which doesn't exist yet. Use get with a default:\ncounts[c] = counts.get(c, 0) + 1",
+          "support": [
+            {
+              "heading": "+= has to read before it writes",
+              "content": "`d[k] += 1` means `d[k] = d[k] + 1`, and reading `d[k]` for a new key raises KeyError.",
+              "example_code": "d = {}\nd['x'] = d.get('x', 0) + 1\nprint(d)  # {'x': 1}"
+            },
+            {
+              "heading": "Give new keys a starting value",
+              "content": "Replace the line inside the loop with the get-plus-one pattern. (Checking `if c not in counts: counts[c] = 0` first also works.)",
+              "example_code": "d = {}\nfor k in 'aa':\n    d[k] = d.get(k, 0) + 1\nprint(d)  # {'a': 2}"
+            }
+          ]
         }
       ]
     },
@@ -4482,6 +5703,413 @@
             "tuple": "Tuples keep duplicates and can't change.",
             "list": "Lists allow duplicates, so you'd have to check before adding."
           }
+        },
+        {
+          "id": "d01",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Tuples in practice",
+          "content": "It's the **comma** that makes a tuple, not the parentheses: `(5)` is just the number 5, while `(5,)` is a one-item tuple. Because tuples can't change, they can be dictionary keys and set items, which lists can't.",
+          "example_code": "point = 3, 4             # parentheses optional\nprint(type((5)))         # <class 'int'>\nprint(type((5,)))        # <class 'tuple'>\n\ndistances = {(0, 0): 'home', (2, 3): 'shop'}\nprint(distances[(2, 3)]) # shop",
+          "how": "Parentheses also group math, so Python needs the comma to know you meant a tuple. A tuple's contents are fixed at creation, so its hash never changes, which is what makes it usable as a key.",
+          "use": "Coordinates as dictionary keys (game maps, grids), fixed records like (name, age), and returning several values from a function."
+        },
+        {
+          "id": "d02",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "What does this code print?",
+          "options": [
+            "<class 'int'>",
+            "<class 'tuple'>",
+            "<class 'list'>"
+          ],
+          "answer": "<class 'int'>",
+          "explanation": "Without a comma, the parentheses just group the expression, so `t` is the int 5. Write `(5,)` for a one-item tuple.",
+          "code": "t = (5)\nprint(type(t))",
+          "feedback": {
+            "<class 'tuple'>": "Parentheses alone don't make a tuple; the comma does. `(5,)` would be a tuple."
+          }
+        },
+        {
+          "id": "d03",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Coordinates as keys",
+          "instruction": "Add the key `(1, 1)` with value `'trap'` to `grid`, then print the value at `(2, 3)` and, on the next line, how many entries `grid` has. It should print: treasure then 3",
+          "initial_code": "grid = {(0, 0): 'start', (2, 3): 'treasure'}\n# TODO: add (1, 1) -> 'trap', then print grid[(2, 3)] and len(grid)\n",
+          "expected_output": "treasure\n3",
+          "hint": "grid[(1, 1)] = 'trap'\nprint(grid[(2, 3)])\nprint(len(grid))",
+          "support": [
+            {
+              "heading": "A tuple key works like any other key",
+              "content": "Write the tuple inside the brackets: `d[(x, y)] = value` to set, `d[(x, y)]` to read.",
+              "example_code": "board = {}\nboard[(0, 1)] = 'X'\nprint(board[(0, 1)])  # X"
+            },
+            {
+              "heading": "Three lines",
+              "content": "Add the trap, then print the lookup, then print `len(grid)`, which counts the entries.",
+              "example_code": "m = {(0, 0): 'a'}\nm[(5, 5)] = 'b'\nprint(len(m))  # 2"
+            }
+          ]
+        },
+        {
+          "id": "d04",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Changing a set",
+          "content": "`s.add(x)` adds one item (ignored if it's already there). `s.remove(x)` deletes it and raises KeyError if it's missing, while `s.discard(x)` quietly does nothing in that case. An empty set is written `set()`, because `{}` is an empty dictionary.",
+          "example_code": "tags = {'python', 'code'}\ntags.add('fun')\ntags.add('python')        # already there: no change\ntags.discard('missing')   # no error\nprint(len(tags))          # 3\nempty = set()\nprint(type({}))           # <class 'dict'>",
+          "how": "A set stores each value once, located by its hash, so adding a duplicate finds the existing entry and does nothing.",
+          "use": "Tracking things you've already seen (visited pages, used usernames), and keeping tags or categories unique."
+        },
+        {
+          "id": "d05",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "What does this code print?",
+          "options": [
+            "3",
+            "4",
+            "2"
+          ],
+          "answer": "3",
+          "explanation": "The set starts as {1, 2}. Adding 2 again changes nothing; adding 3 makes {1, 2, 3}, which has 3 items.",
+          "code": "s = {1, 2}\ns.add(2)\ns.add(3)\nprint(len(s))"
+        },
+        {
+          "id": "d06",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Unique words, sorted",
+          "instruction": "Print the unique words in `text` as a sorted list. It should print: ['end', 'lazy', 'quick', 'the']",
+          "initial_code": "text = 'the quick the lazy the end'\n# TODO: unique words, sorted\n",
+          "expected_output": "['end', 'lazy', 'quick', 'the']",
+          "hint": "print(sorted(set(text.split())))",
+          "support": [
+            {
+              "heading": "Three steps, inside out",
+              "content": "`text.split()` gives the words, `set(...)` drops repeats, and `sorted(...)` turns the set into an alphabetical list.",
+              "example_code": "print(sorted(set('b a b'.split())))  # ['a', 'b']"
+            },
+            {
+              "heading": "Nest the calls",
+              "content": "Write it as one line: `sorted(set(text.split()))`, inside print. Python works from the innermost call outwards.",
+              "example_code": "words = ['x', 'y', 'x']\nprint(sorted(set(words)))  # ['x', 'y']"
+            }
+          ]
+        },
+        {
+          "id": "d07",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "More set operations",
+          "content": "Besides `|`, `&` and `-`, `a ^ b` (symmetric difference) gives items in exactly one of the sets. `a <= b` asks whether every item of a is also in b (a **subset**), and `a >= b` the reverse.",
+          "example_code": "a = {1, 2, 3}\nb = {3, 4}\nprint(a ^ b)            # {1, 2, 4}\nprint({1, 2} <= a)      # True: subset\nprint(a <= {1, 2})      # False",
+          "how": "Each operation builds a new set by checking membership in both sets, which is fast because set lookups are O(1).",
+          "use": "Permissions (does this user have all required roles?), comparing two lists of IDs, and finding items that changed between versions."
+        },
+        {
+          "id": "d08",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "What does this code print?",
+          "options": [
+            "True",
+            "False",
+            "{1, 2}"
+          ],
+          "answer": "True",
+          "explanation": "Every item of {1, 2} is also in {1, 2, 3}, so it's a subset.",
+          "code": "print({1, 2} <= {1, 2, 3})"
+        },
+        {
+          "id": "d09",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Comprehensions with if/else",
+          "content": "An `if` at the **end** of a comprehension filters items out. To keep every item but choose between two values, put a conditional expression at the **start**: `[a if cond else b for x in items]`.",
+          "example_code": "nums = [1, 2, 3, 4]\nprint([n for n in nums if n % 2 == 0])               # [2, 4]: filter\nprint(['even' if n % 2 == 0 else 'odd' for n in nums]) # transform all",
+          "how": "The front part is the expression worked out for each item, and a conditional expression is just an expression. The trailing `if` decides which items get in at all.",
+          "use": "Labeling or cleaning every item (replacing missing values with a default, marking pass/fail) without losing any items."
+        },
+        {
+          "id": "d10",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Label the numbers",
+          "instruction": "Use one list comprehension to turn `nums` into labels. It should print: ['odd', 'even', 'odd', 'even']",
+          "initial_code": "nums = [1, 2, 3, 4]\n# TODO: labels = [...]\n\nprint(labels)",
+          "expected_output": "['odd', 'even', 'odd', 'even']",
+          "hint": "labels = ['even' if n % 2 == 0 else 'odd' for n in nums]",
+          "support": [
+            {
+              "heading": "The if/else goes first",
+              "content": "Because every number gets a label, this is a transform, not a filter. Put the whole `a if cond else b` before `for`.",
+              "example_code": "print(['big' if n > 2 else 'small' for n in [1, 5]])  # ['small', 'big']"
+            },
+            {
+              "heading": "Same one-line if from Logic",
+              "content": "It's the conditional expression you used for `kind = 'even' if ... else 'odd'`, wrapped in `[ ... for n in nums]`.",
+              "example_code": "n = 3\nprint('even' if n % 2 == 0 else 'odd')  # odd"
+            }
+          ]
+        },
+        {
+          "id": "d11",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Nested comprehensions",
+          "content": "A comprehension can have more than one `for`. They run in the same order as nested loops written out: the first `for` is the outer loop. That makes flattening a list of lists a one-liner.",
+          "example_code": "grid = [[1, 2], [3, 4]]\nflat = [x for row in grid for x in row]\nprint(flat)     # [1, 2, 3, 4]\n\n# same as:\nflat = []\nfor row in grid:\n    for x in row:\n        flat.append(x)",
+          "how": "Read the `for` parts left to right as if each were indented under the previous one; the expression at the front is what gets appended.",
+          "use": "Flattening nested data, building all pairs or combinations, and turning a table into a single list."
+        },
+        {
+          "id": "d12",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "What does this code print?",
+          "options": [
+            "[10, 20, 20, 40]",
+            "[10, 40]",
+            "[11, 21, 12, 22]"
+          ],
+          "answer": "[10, 20, 20, 40]",
+          "explanation": "x is the outer loop: for x = 1, y gives 10, 20; for x = 2, y gives 20, 40.",
+          "code": "print([x * y for x in [1, 2] for y in [10, 20]])"
+        },
+        {
+          "id": "d13",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Flatten a grid",
+          "instruction": "Use a nested list comprehension to flatten `grid` into one list. It should print: [1, 2, 3, 4, 5, 6]",
+          "initial_code": "grid = [[1, 2], [3], [4, 5, 6]]\n# TODO: flat = [...]\n\nprint(flat)",
+          "expected_output": "[1, 2, 3, 4, 5, 6]",
+          "hint": "flat = [x for row in grid for x in row]",
+          "support": [
+            {
+              "heading": "Outer loop first",
+              "content": "Write the loops in the order you'd nest them: `for row in grid` then `for x in row`. Put `x` at the front.",
+              "example_code": "pairs = [(a, b) for a in 'ab' for b in '12']\nprint(pairs)  # [('a', '1'), ('a', '2'), ('b', '1'), ('b', '2')]"
+            },
+            {
+              "heading": "Rows can be different lengths",
+              "content": "The inner loop just goes over whatever each row holds, so [3] and [4, 5, 6] both work.",
+              "example_code": "rows = [[7], [8, 9]]\nprint([v for r in rows for v in r])  # [7, 8, 9]"
+            }
+          ]
+        },
+        {
+          "id": "d14",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Set and dictionary comprehensions",
+          "content": "Curly braces make a **set** comprehension: `{x % 3 for x in nums}`. Add `key: value` to make a **dictionary** comprehension, which can also filter with `if` or swap keys and values.",
+          "example_code": "print({n % 3 for n in range(10)})                 # {0, 1, 2}\nscores = {'Ann': 90, 'Bo': 55, 'Cy': 72}\npassed = {name: s for name, s in scores.items() if s >= 60}\nprint(passed)                                      # {'Ann': 90, 'Cy': 72}\ncodes = {'a': 1, 'b': 2}\nprint({v: k for k, v in codes.items()})           # {1: 'a', 2: 'b'}",
+          "how": "Same shape as a list comprehension; the brackets decide what's built. A set drops duplicates as it goes; a dict uses the expression before the colon as the key.",
+          "use": "Unique values in one line, filtering dictionaries, and building reverse lookups (code to name and name to code)."
+        },
+        {
+          "id": "d15",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "What does this code print?",
+          "options": [
+            "{0, 1, 2}",
+            "[0, 1, 2, 0, 1, 2, 0]",
+            "{0, 1, 2, 3, 4, 5, 6}"
+          ],
+          "answer": "{0, 1, 2}",
+          "explanation": "The remainders of 0..6 divided by 3 are 0,1,2,0,1,2,0. A set keeps each once.",
+          "code": "print({n % 3 for n in range(7)})"
+        },
+        {
+          "id": "d16",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Choosing the right collection",
+          "content": "**List**: ordered, allows duplicates, changeable; `in` is O(n). **Tuple**: a fixed record; can be a key. **Set**: unique items, no order; `in` is O(1). **Dict**: look up values by key; `in` (on keys) is O(1). Picking the right one is often the main idea of an interview answer.",
+          "example_code": "todo = ['email', 'call', 'email']    # order and repeats matter\nrgb = (255, 128, 0)                  # a fixed record\nseen = {'ann', 'bo'}                 # fast 'have we seen it?'\nages = {'ann': 30, 'bo': 25}         # look up by name",
+          "how": "Lists check `in` by scanning; sets and dicts hash the value to jump straight to it. That's the difference between O(n) and O(1) per lookup.",
+          "use": "Making code fast and clear: a set for membership tests inside a loop can turn an O(n²) solution into O(n)."
+        },
+        {
+          "id": "d17",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Invert a dictionary",
+          "instruction": "Use a dictionary comprehension to swap keys and values in `codes`. It should print: {'United States': 'US', 'France': 'FR'}",
+          "initial_code": "codes = {'US': 'United States', 'FR': 'France'}\n# TODO: names = {...}\n\nprint(names)",
+          "expected_output": "{'United States': 'US', 'France': 'FR'}",
+          "hint": "names = {v: k for k, v in codes.items()}",
+          "support": [
+            {
+              "heading": "Swap the order in the expression",
+              "content": "Loop with `for k, v in codes.items()` and write `v: k` at the front so values become keys.",
+              "example_code": "d = {'x': 1}\nprint({v: k for k, v in d.items()})  # {1: 'x'}"
+            },
+            {
+              "heading": "Watch for duplicate values",
+              "content": "If two keys had the same value, the inverted dictionary would keep only the last one, because keys must be unique. Here the values are unique, so nothing is lost.",
+              "example_code": "d = {'a': 1, 'b': 1}\nprint({v: k for k, v in d.items()})  # {1: 'b'}"
+            }
+          ]
+        },
+        {
+          "id": "i01",
+          "type": "quiz",
+          "track": "interview",
+          "question": "Interview question: what's the difference between a list and a tuple?",
+          "options": [
+            "Lists can change; tuples can't, so tuples can be dict keys or set items and signal a fixed record",
+            "Tuples are faster to sort",
+            "Lists can only hold numbers"
+          ],
+          "answer": "Lists can change; tuples can't, so tuples can be dict keys or set items and signal a fixed record",
+          "explanation": "Use a list for a collection that grows or changes (a to-do list), and a tuple for a fixed group of related values (a coordinate, a date)."
+        },
+        {
+          "id": "i02",
+          "type": "quiz",
+          "track": "interview",
+          "question": "What's the average time complexity of `x in s` when `s` is a set of n items?",
+          "options": [
+            "O(1)",
+            "O(n)",
+            "O(n²)"
+          ],
+          "answer": "O(1)",
+          "explanation": "Sets use hashing like dictionary keys, so membership checks don't depend on size. That's the main reason to convert a list to a set before doing many lookups."
+        },
+        {
+          "id": "i03",
+          "type": "quiz",
+          "track": "interview",
+          "question": "Why can't you put a list inside a set?",
+          "options": [
+            "Lists are mutable, so they aren't hashable",
+            "Sets can only hold numbers",
+            "Lists are too big"
+          ],
+          "answer": "Lists are mutable, so they aren't hashable",
+          "explanation": "Set items, like dict keys, must keep the same hash forever. Convert the list to a tuple if you need to store it in a set."
+        },
+        {
+          "id": "i04",
+          "type": "quiz",
+          "track": "interview",
+          "question": "Removing duplicates with `list(set(items))` versus comparing every pair of items with nested loops. What are their time complexities?",
+          "options": [
+            "O(n) for the set version, O(n²) for nested loops",
+            "Both O(n)",
+            "Both O(n²)"
+          ],
+          "answer": "O(n) for the set version, O(n²) for nested loops",
+          "explanation": "Building a set touches each item once. Nested loops compare each item with every other. Note that `list(set(items))` loses the original order; keep a `seen` set while looping if order matters."
+        },
+        {
+          "id": "i05",
+          "type": "quiz",
+          "track": "interview",
+          "question": "What does this code print?",
+          "options": [
+            "[1, 2, 3, 4]",
+            "[2]",
+            "[1, 3, 4]"
+          ],
+          "answer": "[1, 2, 3, 4]",
+          "explanation": "`|` is union: every item in either set, once. `sorted` turns the set into an ordered list.",
+          "code": "print(sorted({3, 1, 2} | {2, 4}))"
+        },
+        {
+          "id": "i06",
+          "type": "code",
+          "track": "interview",
+          "heading": "Classic: contains duplicate",
+          "instruction": "Print whether `nums` contains any value more than once, using a set. It should print: True",
+          "initial_code": "nums = [3, 1, 4, 1, 5]\n# TODO: True if there's a duplicate\n",
+          "expected_output": "True",
+          "hint": "A set drops duplicates, so it's shorter when there were any:\nprint(len(set(nums)) != len(nums))",
+          "support": [
+            {
+              "heading": "Compare the sizes",
+              "content": "If converting to a set made the collection smaller, something was repeated.",
+              "example_code": "a = [1, 2, 2]\nprint(len(a), len(set(a)))  # 3 2"
+            },
+            {
+              "heading": "One expression, O(n)",
+              "content": "Print the result of `!=` between the two lengths. (An early-exit version adds each item to a `seen` set and stops at the first repeat.)",
+              "example_code": "print(len({1, 2}) != len([1, 2]))  # False: no duplicates"
+            }
+          ]
+        },
+        {
+          "id": "i07",
+          "type": "code",
+          "track": "interview",
+          "heading": "Classic: common elements",
+          "instruction": "Print the values that appear in both `a` and `b`, once each, as a sorted list. It should print: [2, 4]",
+          "initial_code": "a = [1, 2, 2, 3, 4]\nb = [2, 4, 6]\n# TODO: values in both, sorted\n",
+          "expected_output": "[2, 4]",
+          "hint": "print(sorted(set(a) & set(b)))",
+          "support": [
+            {
+              "heading": "Intersection does the work",
+              "content": "Convert both lists to sets and use `&`. Duplicates disappear automatically.",
+              "example_code": "print(set([1, 1, 2]) & set([2, 3]))  # {2}"
+            },
+            {
+              "heading": "Sort for a predictable order",
+              "content": "Sets have no order, so wrap the result in `sorted()` before printing. This runs in about O(n + m), compared with O(n × m) for checking each item of a against all of b.",
+              "example_code": "print(sorted({5, 1}))  # [1, 5]"
+            }
+          ]
+        },
+        {
+          "id": "i08",
+          "type": "code",
+          "track": "interview",
+          "heading": "Classic: the missing number",
+          "instruction": "`nums` holds every number from 0 to 4 except one. Print the missing number. It should print: 2",
+          "initial_code": "nums = [0, 1, 3, 4]\n# TODO: find the missing number from 0..4\n",
+          "expected_output": "2",
+          "hint": "Build the full set 0..4 and subtract:\nfull = set(range(len(nums) + 1))\nprint((full - set(nums)).pop())",
+          "support": [
+            {
+              "heading": "Difference finds what's absent",
+              "content": "The full range minus the numbers you have leaves the missing one. `range(len(nums) + 1)` is 0 to 4 here.",
+              "example_code": "print(set(range(4)) - {0, 1, 3})  # {2}"
+            },
+            {
+              "heading": "Get the single item out",
+              "content": "The difference is a set with one item. `.pop()` takes an item out of a set. A neat alternative uses math: the sum of 0..n minus `sum(nums)`.",
+              "example_code": "s = {7}\nprint(s.pop())  # 7\nprint(sum(range(5)) - sum([0, 1, 3, 4]))  # 2"
+            }
+          ]
+        },
+        {
+          "id": "i09",
+          "type": "code",
+          "track": "interview",
+          "heading": "Debug: the wrong squares",
+          "instruction": "This should print the squares of the even numbers from 1 to 6, but it prints the odd ones. Fix the filter so it prints: [4, 16, 36]",
+          "initial_code": "evens_squared = [n * n for n in range(1, 7) if n % 2]\nprint(evens_squared)",
+          "expected_output": "[4, 16, 36]",
+          "hint": "`n % 2` is 1 (truthy) for odd numbers. Compare with 0:\nif n % 2 == 0",
+          "support": [
+            {
+              "heading": "Truthiness strikes again",
+              "content": "`if n % 2` keeps items where the remainder is non-zero, which means the odd numbers. Even numbers have remainder 0, which is falsy.",
+              "example_code": "print([n for n in range(5) if n % 2])       # [1, 3]\nprint([n for n in range(5) if n % 2 == 0])  # [0, 2, 4]"
+            },
+            {
+              "heading": "Be explicit",
+              "content": "Change the condition to `n % 2 == 0`. Spelling out the comparison is clearer to readers, which is the point reviewers make about code like this.",
+              "example_code": "print([n * n for n in [2, 3] if n % 2 == 0])  # [4]"
+            }
+          ]
         }
       ]
     },
@@ -4734,6 +6362,414 @@
             "13": "That's f(7).",
             "6": "f only returns n itself when n is 0 or 1."
           }
+        },
+        {
+          "id": "d01",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "The mutable default trap",
+          "content": "A default value is created **once**, when the `def` line runs, not on every call. If the default is a list or dict and the function changes it, the change carries over to the next call. The standard fix is a default of `None` and creating a fresh list inside.",
+          "example_code": "def add_bad(item, items=[]):\n    items.append(item)\n    return items\n\nprint(add_bad(1))   # [1]\nprint(add_bad(2))   # [1, 2]  surprise!\n\ndef add_good(item, items=None):\n    if items is None:\n        items = []\n    items.append(item)\n    return items\n\nprint(add_good(1))  # [1]\nprint(add_good(2))  # [2]",
+          "how": "Python evaluates default expressions when it defines the function and stores the resulting object with it. Every call that uses the default gets that same stored list.",
+          "use": "Avoiding a famous bug, and one of the most common Python interview questions."
+        },
+        {
+          "id": "d02",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "What does this code print?",
+          "options": [
+            "[1, 2]",
+            "[2]",
+            "[1]"
+          ],
+          "answer": "[1, 2]",
+          "explanation": "The default list is shared between calls. The first call appends 1 to it, the second appends 2 to the same list.",
+          "code": "def f(x, lst=[]):\n    lst.append(x)\n    return lst\n\nf(1)\nprint(f(2))",
+          "feedback": {
+            "[2]": "That's what you'd expect if a new list were made each call. Defaults are made once, when `def` runs."
+          }
+        },
+        {
+          "id": "d03",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Fix the shared default",
+          "instruction": "`add_tag` remembers tags from earlier calls. Fix it with a `None` default so it prints `['a']` then `['b']`.",
+          "initial_code": "def add_tag(tag, tags=[]):\n    tags.append(tag)\n    return tags\n\nprint(add_tag('a'))\nprint(add_tag('b'))",
+          "expected_output": "['a']\n['b']",
+          "hint": "def add_tag(tag, tags=None):\n    if tags is None:\n        tags = []\n    tags.append(tag)\n    return tags",
+          "support": [
+            {
+              "heading": "None means \"make a new one\"",
+              "content": "`None` is immutable, so it's safe as a default. Inside the function, swap it for a brand-new list on each call.",
+              "example_code": "def collect(x, bag=None):\n    if bag is None:\n        bag = []\n    bag.append(x)\n    return bag\n\nprint(collect(1), collect(2))  # [1] [2]"
+            },
+            {
+              "heading": "Two changes",
+              "content": "Change the default to `tags=None`, and add `if tags is None: tags = []` as the first lines of the body.",
+              "example_code": "v = None\nif v is None:\n    v = []\nprint(v)  # []"
+            }
+          ]
+        },
+        {
+          "id": "d04",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Keyword-only parameters",
+          "content": "Put a bare `*` in the parameter list and every parameter after it must be passed **by name**. It stops confusing calls like `connect('db', 30, True)` where nobody can tell what 30 and True mean.",
+          "example_code": "def connect(host, *, timeout=10, retry=False):\n    return f'{host} timeout={timeout} retry={retry}'\n\nprint(connect('db', timeout=30))   # db timeout=30 retry=False\n# connect('db', 30)   would be a TypeError",
+          "how": "The `*` marks the end of the positional parameters. Python then refuses to match extra positional arguments to the names after it.",
+          "use": "Settings and flags in library functions; `sorted(items, reverse=True)` and `print(..., end='')` work this way."
+        },
+        {
+          "id": "d05",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "With `def connect(host, *, timeout):`, which call works?",
+          "options": [
+            "connect('x', timeout=5)",
+            "connect('x', 5)",
+            "connect(timeout=5)"
+          ],
+          "answer": "connect('x', timeout=5)",
+          "explanation": "`timeout` comes after `*`, so it must be named. `host` is still required, by position or name.",
+          "feedback": {
+            "connect('x', 5)": "After the `*`, parameters can't be filled by position, so 5 has nowhere to go: TypeError."
+          }
+        },
+        {
+          "id": "d06",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Unpacking arguments with * and **",
+          "content": "In a **call**, `*` spreads a list or tuple into separate positional arguments, and `**` spreads a dictionary into keyword arguments. It's the reverse of `*args` and `**kwargs` in a definition.",
+          "example_code": "def volume(l, w, h):\n    return l * w * h\n\ndims = [2, 3, 4]\nprint(volume(*dims))           # 24\n\nsize = {'l': 1, 'w': 2, 'h': 5}\nprint(volume(**size))          # 10\nprint(*['a', 'b', 'c'])        # a b c",
+          "how": "`f(*[2, 3, 4])` becomes `f(2, 3, 4)`. `f(**{'l': 1})` becomes `f(l=1)`. The keys must match parameter names.",
+          "use": "Passing data you already have in a list or dict to a function, and forwarding arguments from one function to another."
+        },
+        {
+          "id": "d07",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Spread a list into a function",
+          "instruction": "Call `volume` with the three numbers in `dims` using `*`. It should print: 24",
+          "initial_code": "def volume(l, w, h):\n    return l * w * h\n\ndims = [2, 3, 4]\n# TODO: print the volume using *dims\n",
+          "expected_output": "24",
+          "hint": "print(volume(*dims))",
+          "support": [
+            {
+              "heading": "* in a call spreads",
+              "content": "`f(*items)` passes items[0], items[1], ... as separate arguments. The list needs exactly as many items as the function has parameters.",
+              "example_code": "def add(a, b):\n    return a + b\n\nprint(add(*[3, 4]))  # 7"
+            },
+            {
+              "heading": "Without the star",
+              "content": "`volume(dims)` would pass the whole list as `l` and leave `w` and `h` missing: TypeError. Add the `*` in front of dims.",
+              "example_code": "print(max(*[4, 9, 2]))  # 9"
+            }
+          ]
+        },
+        {
+          "id": "d08",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Sort keys that return tuples",
+          "content": "`max`, `min` and `sorted` all take `key=`. If the key returns a **tuple**, items are compared by its first element, then the second to break ties, and so on. Negate a number in the key to sort that part from high to low.",
+          "example_code": "people = [('Ann', 30), ('Bo', 25), ('Cy', 30)]\nprint(max(people, key=lambda p: p[1]))       # ('Ann', 30)\n# age high to low, then name A to Z\nprint(sorted(people, key=lambda p: (-p[1], p[0])))\n# [('Ann', 30), ('Cy', 30), ('Bo', 25)]",
+          "how": "Tuples compare element by element, so a tuple key gives a multi-level sort. `-p[1]` makes larger ages smaller, so they come first in ascending order.",
+          "use": "Leaderboards (score high to low, then name), sorting records by several columns, and picking the best match by several criteria."
+        },
+        {
+          "id": "d09",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "What does this code print?",
+          "options": [
+            "banana",
+            "kiwi",
+            "fig"
+          ],
+          "answer": "banana",
+          "explanation": "`key=len` compares the words by length, and 'banana' is longest.",
+          "code": "words = ['kiwi', 'fig', 'banana']\nprint(max(words, key=len))"
+        },
+        {
+          "id": "d10",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Sort by two keys",
+          "instruction": "Sort `people` by age from oldest to youngest, breaking ties alphabetically by name, and print each name. It should print Ann, Cy, Bo (one per line).",
+          "initial_code": "people = [('Cy', 30), ('Bo', 25), ('Ann', 30)]\n# TODO: ranked = sorted(people, key=...)\n\nfor name, age in ranked:\n    print(name)",
+          "expected_output": "Ann\nCy\nBo",
+          "hint": "ranked = sorted(people, key=lambda p: (-p[1], p[0]))",
+          "support": [
+            {
+              "heading": "A tuple key sorts on several things",
+              "content": "`key=lambda p: (first_rule, second_rule)`. The second rule only matters when the first ties.",
+              "example_code": "pts = [(1, 'b'), (1, 'a'), (0, 'c')]\nprint(sorted(pts, key=lambda p: (p[0], p[1])))  # [(0, 'c'), (1, 'a'), (1, 'b')]"
+            },
+            {
+              "heading": "Negate for descending",
+              "content": "Ages should go high to low, so use `-p[1]`. Names go A to Z, so use `p[0]` as is.",
+              "example_code": "print(sorted([3, 1, 2], key=lambda n: -n))  # [3, 2, 1]"
+            }
+          ]
+        },
+        {
+          "id": "d11",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Closures: functions that remember",
+          "content": "A function defined inside another function can use the outer function's variables, and it **keeps** them even after the outer function has returned. That combination is a **closure**. It lets you build customized functions.",
+          "example_code": "def make_multiplier(n):\n    def multiply(x):\n        return x * n      # remembers n\n    return multiply\n\ndouble = make_multiplier(2)\ntriple = make_multiplier(3)\nprint(double(5), triple(5))   # 10 15",
+          "how": "When the inner function is created, Python attaches the outer variables it uses. Each call to the outer function makes a new inner function with its own remembered values.",
+          "use": "Function factories, callbacks that need some setup, and decorators (a more advanced Python feature built on closures)."
+        },
+        {
+          "id": "d12",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "What does this code print?",
+          "options": [
+            "15",
+            "5",
+            "10"
+          ],
+          "answer": "15",
+          "explanation": "`make_adder(5)` returns a function that remembers n = 5. Calling it with 10 returns 10 + 5.",
+          "code": "def make_adder(n):\n    return lambda x: x + n\n\nadd5 = make_adder(5)\nprint(add5(10))"
+        },
+        {
+          "id": "d13",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Make a greeting function",
+          "instruction": "Write `make_greeting(greeting)` that returns a function taking a name and returning e.g. `'Hello, Ada!'`. The prints should show `Hello, Ada!` then `Hi, Bo!`.",
+          "initial_code": "# TODO: def make_greeting(greeting):\n\n\nhello = make_greeting('Hello')\nhi = make_greeting('Hi')\nprint(hello('Ada'))\nprint(hi('Bo'))",
+          "expected_output": "Hello, Ada!\nHi, Bo!",
+          "hint": "def make_greeting(greeting):\n    def greet(name):\n        return f'{greeting}, {name}!'\n    return greet",
+          "support": [
+            {
+              "heading": "Define inside, return without calling",
+              "content": "Inside the outer function, define the inner one, then `return greet` with no parentheses, so you hand back the function itself.",
+              "example_code": "def outer():\n    def inner():\n        return 'hi'\n    return inner\n\nf = outer()\nprint(f())  # hi"
+            },
+            {
+              "heading": "The inner function uses the outer parameter",
+              "content": "`greet(name)` builds its text from `greeting` (remembered from the outer call) and `name` (its own parameter).",
+              "example_code": "def make_suffix(s):\n    def add(word):\n        return word + s\n    return add\n\nprint(make_suffix('!')('wow'))  # wow!"
+            }
+          ]
+        },
+        {
+          "id": "d14",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "How recursion uses the call stack",
+          "content": "Each recursive call waits for the smaller call inside it to finish. Python keeps all the waiting calls on the **call stack**, and it caps the depth at about 1000 to protect memory; going deeper raises RecursionError. That's why a loop is often safer for long sequences.",
+          "example_code": "def depth(n):\n    if n == 0:\n        return 0\n    return 1 + depth(n - 1)\n\nprint(depth(500))      # 500: fine\n# depth(5000) would raise RecursionError",
+          "how": "Every call needs its own space for its variables until it returns. Deep recursion stacks up thousands of unfinished calls at once.",
+          "use": "Choosing between recursion (natural for trees, folders, nested data) and loops (better for long, flat sequences)."
+        },
+        {
+          "id": "d15",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "Why might a loop be better than recursion for adding up a list of 100,000 numbers?",
+          "options": [
+            "Recursion would need 100,000 nested calls, past Python's limit of about 1,000, so it raises RecursionError",
+            "Loops can't add numbers",
+            "Recursion is always slower"
+          ],
+          "answer": "Recursion would need 100,000 nested calls, past Python's limit of about 1,000, so it raises RecursionError",
+          "explanation": "Recursive sum makes one call per item, all waiting at once. A loop uses the same few variables no matter how long the list is."
+        },
+        {
+          "id": "d16",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Memoization: remember answers",
+          "content": "The naive recursive Fibonacci recalculates the same values over and over, so its work roughly doubles with each step: **O(2ⁿ)**. Storing each answer in a dictionary the first time (a **memo**) means each value is computed once: **O(n)**. `functools.lru_cache` does this automatically.",
+          "example_code": "memo = {}\n\ndef fib(n):\n    if n <= 1:\n        return n\n    if n in memo:\n        return memo[n]\n    memo[n] = fib(n - 1) + fib(n - 2)\n    return memo[n]\n\nprint(fib(80))   # 23416728348467685, instantly",
+          "how": "Before doing any work, the function checks whether it already knows the answer. The first time, it computes and stores it; every later call with the same n is a single dictionary lookup.",
+          "use": "Speeding up recursive solutions (this is the core idea of dynamic programming, a big interview topic) and caching slow lookups."
+        },
+        {
+          "id": "d17",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Memoized Fibonacci",
+          "instruction": "This `fib` is far too slow for 50 (it would take hours). Use the `memo` dictionary so it prints fib(50) instantly: 12586269025",
+          "initial_code": "memo = {}\n\ndef fib(n):\n    if n <= 1:\n        return n\n    return fib(n - 1) + fib(n - 2)\n\nprint(fib(50))",
+          "expected_output": "12586269025",
+          "hint": "if n in memo:\n    return memo[n]\nmemo[n] = fib(n - 1) + fib(n - 2)\nreturn memo[n]",
+          "support": [
+            {
+              "heading": "Check the memo before working",
+              "content": "Add `if n in memo: return memo[n]` near the top. Only compute when the answer isn't stored yet.",
+              "example_code": "cache = {3: 'stored'}\nif 3 in cache:\n    print(cache[3])"
+            },
+            {
+              "heading": "Store, then return",
+              "content": "Replace the last line: save `fib(n - 1) + fib(n - 2)` in `memo[n]`, then return `memo[n]`. Now each n is computed once.",
+              "example_code": "memo = {}\ndef square(n):\n    if n in memo:\n        return memo[n]\n    memo[n] = n * n\n    return memo[n]\n\nprint(square(9), memo)  # 81 {9: 81}"
+            }
+          ]
+        },
+        {
+          "id": "i01",
+          "type": "quiz",
+          "track": "interview",
+          "question": "Interview question: what's wrong with `def add(item, items=[])`?",
+          "options": [
+            "The default list is created once and shared by every call that uses it",
+            "Lists aren't allowed as parameters",
+            "Nothing; it's the recommended style"
+          ],
+          "answer": "The default list is created once and shared by every call that uses it",
+          "explanation": "Changes from one call leak into the next. Use `items=None` and create the list inside the function."
+        },
+        {
+          "id": "i02",
+          "type": "quiz",
+          "track": "interview",
+          "question": "What are `*args` and `**kwargs`?",
+          "options": [
+            "They collect extra positional arguments into a tuple and extra keyword arguments into a dict",
+            "Pointers, like in C",
+            "They make all parameters optional"
+          ],
+          "answer": "They collect extra positional arguments into a tuple and extra keyword arguments into a dict",
+          "explanation": "The names are a convention; the `*` and `**` do the work. In a call, the same symbols do the opposite: they spread a list or dict into arguments."
+        },
+        {
+          "id": "i03",
+          "type": "quiz",
+          "track": "interview",
+          "question": "The naive recursive Fibonacci, `fib(n - 1) + fib(n - 2)`, has what time complexity? And with memoization?",
+          "options": [
+            "About O(2ⁿ) naive; O(n) memoized",
+            "O(n) both ways",
+            "O(n²) naive; O(1) memoized"
+          ],
+          "answer": "About O(2ⁿ) naive; O(n) memoized",
+          "explanation": "Each naive call makes two more, so the number of calls roughly doubles with n. The memo makes each fib(k) compute once."
+        },
+        {
+          "id": "i04",
+          "type": "quiz",
+          "track": "interview",
+          "question": "What is a closure?",
+          "options": [
+            "An inner function that remembers variables from the enclosing function after it has returned",
+            "A function with no parameters",
+            "The last line of a function"
+          ],
+          "answer": "An inner function that remembers variables from the enclosing function after it has returned",
+          "explanation": "`make_multiplier(3)` returns a function that still knows n = 3. Closures are the building block for decorators."
+        },
+        {
+          "id": "i05",
+          "type": "quiz",
+          "track": "interview",
+          "question": "What does this code print?",
+          "options": [
+            "[-1, 2, 3]",
+            "[3, 2, -1]",
+            "[-1, 3, 2]"
+          ],
+          "answer": "[-1, 2, 3]",
+          "explanation": "`key=abs` sorts by distance from zero: |-1| = 1, |2| = 2, |3| = 3. The original values are kept.",
+          "code": "print(sorted([3, -1, 2], key=abs))"
+        },
+        {
+          "id": "i06",
+          "type": "code",
+          "track": "interview",
+          "heading": "Classic: recursive power",
+          "instruction": "Write a recursive `power(base, exp)` (no `**` or loops): any number to the power 0 is 1, and base^exp is base × base^(exp − 1). It should print: 1024",
+          "initial_code": "# TODO: def power(base, exp):\n\n\nprint(power(2, 10))",
+          "expected_output": "1024",
+          "hint": "def power(base, exp):\n    if exp == 0:\n        return 1\n    return base * power(base, exp - 1)",
+          "support": [
+            {
+              "heading": "Base case first",
+              "content": "The smallest problem is exp = 0, which returns 1 without recursing.",
+              "example_code": "def times(a, b):\n    if b == 0:\n        return 0\n    return a + times(a, b - 1)\n\nprint(times(3, 4))  # 12"
+            },
+            {
+              "heading": "Then shrink the problem",
+              "content": "Every other call returns `base * power(base, exp - 1)`, which is one step closer to 0. (A faster version halves exp each time, giving O(log n), a common follow-up.)",
+              "example_code": "def countdown(n):\n    if n == 0:\n        return 'go'\n    return countdown(n - 1)\n\nprint(countdown(3))  # go"
+            }
+          ]
+        },
+        {
+          "id": "i07",
+          "type": "code",
+          "track": "interview",
+          "heading": "Classic: flatten a nested list",
+          "instruction": "Write a recursive `flatten(items)` that returns one flat list from lists nested to any depth. Check with `type(x) == list`. It should print: [1, 2, 3, 4, 5]",
+          "initial_code": "# TODO: def flatten(items):\n\n\nprint(flatten([1, [2, [3, 4]], 5]))",
+          "expected_output": "[1, 2, 3, 4, 5]",
+          "hint": "def flatten(items):\n    result = []\n    for x in items:\n        if type(x) == list:\n            result.extend(flatten(x))\n        else:\n            result.append(x)\n    return result",
+          "support": [
+            {
+              "heading": "Recurse on the lists, keep the rest",
+              "content": "Loop over the items. A plain value goes straight into the result. A list gets flattened by a recursive call, and its items are added with `extend`.",
+              "example_code": "print(type([1]) == list, type(5) == list)  # True False"
+            },
+            {
+              "heading": "extend, not append",
+              "content": "`flatten(x)` returns a list. `extend` adds its items one by one; `append` would put the whole list in as a single item and undo the flattening.",
+              "example_code": "r = [1]\nr.extend([2, 3])\nprint(r)  # [1, 2, 3]"
+            }
+          ]
+        },
+        {
+          "id": "i08",
+          "type": "code",
+          "track": "interview",
+          "heading": "Classic: binary search",
+          "instruction": "`nums` is sorted. Find the index of `target` by binary search: look at the middle item and throw away the half that can't contain the target, until you find it. It should print: 4",
+          "initial_code": "nums = [1, 3, 5, 7, 9, 11]\ntarget = 9\n# TODO: binary search for target\n",
+          "expected_output": "4",
+          "hint": "low, high = 0, len(nums) - 1\nwhile low <= high:\n    mid = (low + high) // 2\n    if nums[mid] == target: print(mid); break\n    elif nums[mid] < target: low = mid + 1\n    else: high = mid - 1",
+          "support": [
+            {
+              "heading": "Keep a window of possible positions",
+              "content": "`low` and `high` mark where the target could still be. The middle is `(low + high) // 2`. If the middle item is too small, the target is to the right, so move `low` past it; if too big, move `high`.",
+              "example_code": "low, high = 0, 5\nmid = (low + high) // 2\nprint(mid)  # 2"
+            },
+            {
+              "heading": "Why it's fast",
+              "content": "Each step halves the window, so a million items take only about 20 steps: O(log n). It only works because the list is sorted. Loop `while low <= high` and print `mid` when `nums[mid] == target`.",
+              "example_code": "n = 1000000\nsteps = 0\nwhile n > 1:\n    n //= 2\n    steps += 1\nprint(steps)  # 19"
+            }
+          ]
+        },
+        {
+          "id": "i09",
+          "type": "code",
+          "track": "interview",
+          "heading": "Debug: recursion with no way out",
+          "instruction": "This crashes with RecursionError. Add a base case so it prints 3, 2, 1 (one per line) and stops.",
+          "initial_code": "def countdown(n):\n    print(n)\n    countdown(n - 1)\n\ncountdown(3)",
+          "expected_output": "3\n2\n1",
+          "hint": "Stop when n reaches 0, before printing:\nif n == 0:\n    return",
+          "support": [
+            {
+              "heading": "Every recursion needs a stop",
+              "content": "Without a base case, countdown keeps calling itself with -1, -2, ... until Python's depth limit raises RecursionError.",
+              "example_code": "def down(n):\n    if n < 1:\n        return\n    down(n - 1)\n\ndown(5)\nprint('done')"
+            },
+            {
+              "heading": "Put the check at the top",
+              "content": "Add `if n == 0: return` as the first lines of the function, so 0 isn't printed and the calls stop.",
+              "example_code": "def show(n):\n    if n == 0:\n        return\n    print(n)\n\nshow(0)  # prints nothing"
+            }
+          ]
         }
       ]
     },

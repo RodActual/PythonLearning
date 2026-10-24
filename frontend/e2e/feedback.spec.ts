@@ -68,6 +68,20 @@ test.describe('diagnose (no browser)', () => {
     );
   });
 
+  test('advice added for the deep-dive and interview exercises', () => {
+    // Text + number: offer the math fix too, not only str().
+    expect(run("age = '30'\nprint(age + 1)", tb(2, 'print(age + 1)', 'TypeError: can only concatenate str (not "int") to str'), '31')).toMatch(/int\(\)/);
+    // Repeating text by text.
+    expect(run("print('=' * '3')", tb(1, "print('=' * '3')", "TypeError: can't multiply sequence by non-int of type 'str'"), '===')).toMatch(/whole number/);
+    // A None from a function with no return.
+    expect(run('x = f() + f()', tb(1, 'x = f() + f()', "TypeError: unsupported operand type(s) for +: 'NoneType' and 'NoneType'"), '2')).toMatch(/no `return`/);
+    // print() exists but its line never ran.
+    expect(run('for i in range(5, 0):\n    print(i)', '', '5', '')).toMatch(/never ran/);
+    // Built-in suggestions only when the name is called.
+    expect(run('print(flat)', tb(1, 'print(flat)', "NameError: name 'flat' is not defined. Did you mean: 'float'?"), '[1]')).not.toMatch(/float/);
+    expect(run("print(lenn('ab'))", tb(1, "print(lenn('ab'))", "NameError: name 'lenn' is not defined. Did you mean: 'len'?"), '2')).toMatch(/Did you mean `len`/);
+  });
+
   test('timeouts and the output limit pass through unchanged', () => {
     const stopped = 'Stopped: your code ran longer than 10 seconds. Check for an infinite loop.';
     expect(run('while True:\n    pass', stopped, '1')).toBe(stopped);
