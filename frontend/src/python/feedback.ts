@@ -172,10 +172,12 @@ function explainBody(err: PyError, attempt: Attempt): string {
       if (missingQuotes) return quotesFix(missingQuotes);
       const defined = definedNames(code);
       const pySuggestion = /Did you mean: '(\w+)'/.exec(msg)?.[1];
-      const suggestion =
-        pySuggestion && (defined.has(pySuggestion) || distance(pySuggestion.toLowerCase(), name.toLowerCase()) <= 1)
-          ? pySuggestion
-          : closestName(name, defined);
+      // Python also suggests built-ins (flat -> float); pass those on only when the name is being called.
+      const nearMiss =
+        !!pySuggestion &&
+        distance(pySuggestion.toLowerCase(), name.toLowerCase()) <= 1 &&
+        (!BUILTINS.has(pySuggestion) || src.includes(`${name}(`));
+      const suggestion = pySuggestion && (defined.has(pySuggestion) || nearMiss) ? pySuggestion : closestName(name, defined);
       if (suggestion) return `${where}there is no variable named ${quote(name)}. Did you mean ${quote(suggestion)}? Spelling and capital letters must match exactly.`;
       if (expectedOutput && appearsAsText(name, expectedOutput))
         return `${where}${quote(name)} has no quotation marks, so Python looks for a variable with that name. If it's text, put it inside quotes.`;
@@ -191,7 +193,7 @@ function explainBody(err: PyError, attempt: Attempt): string {
       const noArgs = /(\w+)\(\) takes no arguments/.exec(msg);
       if (noArgs)
         return `${where}${quote(`${noArgs[1]}()`)} doesn't accept arguments yet. Give the class an ${quote('__init__')} that takes them, or make it inherit one from a parent class.`;
-      if (/'NoneType' object/.test(msg))
+      if (/NoneType/.test(msg))
         return `${where}a value is None, so it can't be used here (${msg}). A function with no ${quote('return')} (or ${quote('yield')}) gives back None.`;
       if (/object is not callable/.test(msg)) return `${where}${msg}. Something that isn't a function is being called with ( ). Check for a variable that reuses a function's name.`;
       if (/can't multiply sequence by non-int/.test(msg))
