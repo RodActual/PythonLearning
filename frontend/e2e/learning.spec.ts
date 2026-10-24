@@ -47,6 +47,8 @@ test('replaying a finished lesson earns no extra XP', async ({ page }) => {
     (window as unknown as { __MOCK_STORE: unknown }).__MOCK_STORE = { version: 2, done: { 'lesson-01': ids }, first_try_ids: {} };
   }, allIds('lesson-01'));
   await page.goto('/');
+  // The map renders before saved progress arrives; read XP only once the seeded lesson shows as done.
+  await expect(page.locator('.map-node').first()).toHaveClass(/state-completed/);
   const xpBefore = await page.locator('.hud-stats dd').first().innerText();
   await page.locator('.map-node').first().locator('.node-button').click();
   await expect(page.locator('.step-kicker')).toContainText('Step 1 of');
