@@ -126,20 +126,27 @@ function App() {
   // --- AUTH + LIVE PROGRESS (with one-time migration of old progress) ---
   useEffect(() => {
     let unsubscribeProgress: (() => void) | undefined;
+    let giveUp: ReturnType<typeof setTimeout> | undefined;
 
     const unsubscribeAuth = onAuthStateChanged(auth, (currentUser) => {
       unsubscribeProgress?.();
       unsubscribeProgress = undefined;
+      clearTimeout(giveUp);
       setUser(currentUser);
-      setLoading(false);
       hasSaved.current = false;
       setSaveState('idle');
 
       if (!currentUser) {
         applyProgress(EMPTY_PROGRESS);
         setView({ name: 'map' });
+        setLoading(false);
         return;
       }
+
+      // Keep the loading screen until saved progress arrives, so the map never flashes as empty.
+      // If Firestore stays silent (offline with nothing cached), show the app anyway after a while.
+      setLoading(true);
+      giveUp = setTimeout(() => setLoading(false), 8000);
 
       const ref = doc(db, USER_PROGRESS_COLLECTION, currentUser.uid);
       let migrated = false;
@@ -149,6 +156,8 @@ function App() {
         (snap) => {
           const { progress: next, needsMigration } = fromDoc(snap.data() as ProgressDoc | undefined);
           applyProgress(next);
+          clearTimeout(giveUp);
+          setLoading(false);
           if (needsMigration && !migrated) {
             // Rewrite old position-based progress as step ids. Old fields stay for rollback.
             migrated = true;
@@ -160,6 +169,8 @@ function App() {
           }
         },
         (error) => {
+          clearTimeout(giveUp);
+          setLoading(false);
           setSaveState('error');
           reportError(error, { context: 'progress listener' });
         },
@@ -167,6 +178,7 @@ function App() {
     });
 
     return () => {
+      clearTimeout(giveUp);
       unsubscribeProgress?.();
       unsubscribeAuth();
     };

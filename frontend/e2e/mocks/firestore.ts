@@ -53,7 +53,7 @@ export function onSnapshot(_ref: string, ...args: any[]) {
   void error;
   const l = () => next(snapshot());
   listeners.add(l);
-  setTimeout(l, 0);
+  setTimeout(l, (window as unknown as { __SNAPSHOT_DELAY?: number }).__SNAPSHOT_DELAY ?? 0);
   return () => listeners.delete(l);
 }
 

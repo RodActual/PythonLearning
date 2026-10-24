@@ -69,6 +69,18 @@ test('password reset sends a link without revealing whether the account exists',
   await expect(page.locator('.auth-notice')).toContainText('If an account exists');
 });
 
+test('the map waits for saved progress instead of flashing as empty', async ({ page }) => {
+  await page.addInitScript((ids) => {
+    (window as unknown as { __MOCK_STORE: unknown }).__MOCK_STORE = { version: 2, done: { 'lesson-01': ids }, first_try_ids: {} };
+    (window as unknown as { __SNAPSHOT_DELAY: number }).__SNAPSHOT_DELAY = 600;
+  }, allIds('lesson-01'));
+  await page.goto('/');
+  await expect(page.getByRole('status')).toContainText('Loading');
+  await expect(page.locator('.map-node')).toHaveCount(0);
+  // When the map first appears, the saved lesson is already marked done.
+  await expect(page.locator('.map-node').first()).toHaveClass(/state-completed/);
+});
+
 function escape(s: string) {
   return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
