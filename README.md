@@ -36,7 +36,7 @@ npm run build
 Lessons live in `frontend/src/data/lessons.json`: an `about` block, a list of `units`, and an ordered list of `lessons` (each with a `unit`). The course has 5 units and 20 lessons.
 
 Learner-facing guidance about what the course prepares people for:
-- `about`: `tagline`, `outcomes`, `paths` (where the skills lead, e.g. automation, data, web), and `next_steps`. Shown at the top of the map.
+- `about`: `tagline`, `outcomes`, `paths` (where the skills lead, e.g. automation, data, web), and `next_steps`. Shown at the top of the map; `paths` and `next_steps` also appear on the course-complete screen.
 - Each unit: `prepares` (skills) and `applications` (example programs). Shown in the unit header and when a unit is finished.
 - Each lesson: `why` (shown before step 1) and `unlocks` (shown on the completion screen).
 

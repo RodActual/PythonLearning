@@ -8,12 +8,14 @@ const ERROR_MESSAGES: Record<string, string> = {
   'auth/invalid-credential': 'Incorrect email or password.',
   'auth/wrong-password': 'Incorrect email or password.',
   'auth/user-not-found': 'Incorrect email or password.',
+  'auth/user-disabled': 'This account has been disabled.',
   'auth/invalid-email': 'That email address is not valid.',
   'auth/too-many-requests': 'Too many attempts. Try again in a few minutes.',
   'auth/network-request-failed': 'Network error. Check your connection.',
 };
 
-// Single-user app: there is no sign-up. New accounts are also disabled in the Firebase console.
+// Single-user app: this form offers no sign-up. That only hides it; turning off sign-up in the
+// Firebase console (see README) is what blocks new accounts.
 type Mode = 'login' | 'reset';
 
 const COPY: Record<Mode, { title: string; subtitle: string; submit: string; doc: string }> = {
@@ -110,7 +112,8 @@ const AuthForm = () => {
         <div className="auth-footer">
           <p>
             {mode === 'reset' && 'Remembered it? '}
-            <button type="button" className="toggle-btn" onClick={() => switchMode(mode === 'login' ? 'reset' : 'login')}>
+            {/* Disabled while a request is out, so its result can't land on the other screen. */}
+            <button type="button" className="toggle-btn" disabled={loading} onClick={() => switchMode(mode === 'login' ? 'reset' : 'login')}>
               {mode === 'login' ? 'Forgot your password?' : 'Log In'}
             </button>
           </p>

@@ -832,10 +832,6 @@ button[aria-disabled='true'] {
   border-left: 4px solid var(--primary);
 }
 
-.auth-wrapper + .course-about {
-  margin-top: 2rem;
-}
-
 /* Units */
 .unit {
   margin-top: 2.25rem;
@@ -2130,12 +2126,6 @@ button[aria-disabled='true'] {
 
 .input-group input[aria-invalid='true'] {
   border-color: var(--danger);
-}
-
-.input-help {
-  margin: 0.3rem 0 0;
-  font-size: 0.86rem;
-  color: var(--muted);
 }
 
 .auth-submit-btn {
