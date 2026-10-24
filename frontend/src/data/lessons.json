@@ -8901,7 +8901,7 @@
           "track": "deep-dive",
           "heading": "Arrange, act, assert",
           "instruction": "In `test_cart_total`, the arrange and assert lines are written. Replace `None` with the act: a call to `cart_total(items)`. Then the test passes and the last line prints ok.",
-          "initial_code": "def cart_total(items):\n    return sum(price * qty for price, qty in items)\n\ndef test_cart_total():\n    items = [(5, 2), (7, 1)]   # arrange\n    total = None               # TODO act: call cart_total(items)\n    assert total == 17         # assert\n\ntest_cart_total()\nprint('ok')",
+          "initial_code": "def cart_total(items):\n    return sum([price * qty for price, qty in items])\n\ndef test_cart_total():\n    items = [(5, 2), (7, 1)]   # arrange\n    total = None               # TODO act: call cart_total(items)\n    assert total == 17         # assert\n\ntest_cart_total()\nprint('ok')",
           "expected_output": "ok",
           "hint": "total = cart_total(items)",
           "support": [
@@ -9058,7 +9058,7 @@
           "track": "deep-dive",
           "heading": "Test-driven development",
           "content": "**TDD** flips the usual order: write a test for behavior that doesn't exist yet and watch it fail (red), write just enough code to make it pass (green), then tidy the code while the tests keep passing (refactor). Repeat for the next behavior.",
-          "example_code": "# 1. Red: the test comes first and fails\ndef test_initials():\n    assert initials('Ada Lovelace') == 'AL'\n\n# 2. Green: the simplest code that passes\ndef initials(name):\n    return ''.join(word[0] for word in name.split())\n\ntest_initials()\nprint('green')",
+          "example_code": "# 1. Red: the test comes first and fails\ndef test_initials():\n    assert initials('Ada Lovelace') == 'AL'\n\n# 2. Green: the simplest code that passes\ndef initials(name):\n    return ''.join([word[0] for word in name.split()])\n\ntest_initials()\nprint('green')",
           "how": "Writing the test first makes you decide what \"done\" means before coding, and the failing run proves the test can actually catch a mistake.",
           "use": "Many teams use it for tricky logic and bug fixes, and some interviews ask you to work this way: write the tests, then the code."
         },
