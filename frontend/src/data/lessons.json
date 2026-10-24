@@ -11424,6 +11424,415 @@
             "A string": "loads parses the string into real Python data.",
             "A dictionary": "Only JSON objects ({...}) become dictionaries."
           }
+        },
+        {
+          "id": "d01",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Nested JSON from tools and APIs",
+          "content": "Security and monitoring tools return JSON with objects inside lists inside objects. You reach the data by chaining keys and indexes, one level at a time. `.get(key, default)` reads a field that might be missing without a KeyError.",
+          "example_code": "import json\n\nraw = '{\"alerts\": [{\"host\": \"web-01\", \"severity\": \"high\"}, {\"host\": \"db-02\"}]}'\ndata = json.loads(raw)\nfirst = data['alerts'][0]\nprint(first['host'])                          # web-01\nprint(data['alerts'][1].get('severity', 'unknown'))   # unknown",
+          "how": "`json.loads` builds ordinary dictionaries and lists, so everything you know about indexing and looping applies. Each `[...]` steps one level deeper.",
+          "use": "Reading alerts from a SIEM, scan results from a vulnerability scanner, or user lists from an identity API."
+        },
+        {
+          "id": "d02",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "High-severity hosts",
+          "instruction": "Parse `raw` and print a list of the hosts whose alerts have severity 'high'. It should print: ['web-01', 'vpn-gw']",
+          "initial_code": "import json\n\nraw = '{\"alerts\": [{\"host\": \"web-01\", \"severity\": \"high\"}, {\"host\": \"db-02\", \"severity\": \"low\"}, {\"host\": \"vpn-gw\", \"severity\": \"high\"}]}'\n# TODO: print the hosts of high-severity alerts\n",
+          "expected_output": "['web-01', 'vpn-gw']",
+          "hint": "data = json.loads(raw)\nprint([a['host'] for a in data['alerts'] if a['severity'] == 'high'])",
+          "support": [
+            {
+              "heading": "Parse, then step in",
+              "content": "`json.loads(raw)` gives a dictionary. `data['alerts']` is the list of alert dictionaries inside it.",
+              "example_code": "import json\nd = json.loads('{\"items\": [{\"n\": 1}, {\"n\": 2}]}')\nprint(d['items'][1]['n'])  # 2"
+            },
+            {
+              "heading": "Filter the list",
+              "content": "A comprehension with an `if` keeps only matching alerts: `[a['host'] for a in ... if a['severity'] == 'high']`.",
+              "example_code": "rows = [{'k': 'x', 'v': 1}, {'k': 'y', 'v': 5}]\nprint([r['k'] for r in rows if r['v'] > 2])  # ['y']"
+            }
+          ]
+        },
+        {
+          "id": "d03",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "JSON types and what can't be saved",
+          "content": "JSON only has objects, arrays, strings, numbers, true/false and null. Python's dict, list, str, int/float, bool and None map onto them. Anything else, like a set, a date or your own object, makes `json.dumps` raise TypeError. `sort_keys=True` sorts keys so output is stable, and `default=str` turns unknown types into text.",
+          "example_code": "import json\nfrom datetime import date\n\nprint(json.dumps({'ok': True, 'owner': None}))   # {\"ok\": true, \"owner\": null}\nprint(json.dumps({'b': 1, 'a': 2}, sort_keys=True))   # {\"a\": 2, \"b\": 1}\nprint(json.dumps({'seen': date(2025, 10, 1)}, default=str))",
+          "how": "`dumps` walks the data and writes each value in JSON's syntax. For a type it doesn't know, it calls the `default` function if you gave one, and otherwise raises TypeError.",
+          "use": "Saving reports and sending data to APIs. Stable key order also makes JSON files easy to compare in version control."
+        },
+        {
+          "id": "d04",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "What does this code print?",
+          "options": [
+            "{\"ok\": true, \"owner\": null}",
+            "{'ok': True, 'owner': None}",
+            "{\"ok\": True, \"owner\": None}"
+          ],
+          "answer": "{\"ok\": true, \"owner\": null}",
+          "explanation": "JSON uses double quotes and writes True and None as `true` and `null`.",
+          "code": "import json\nprint(json.dumps({'ok': True, 'owner': None}))"
+        },
+        {
+          "id": "d05",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Bad JSON: catch the decode error",
+          "content": "Logs are often stored as **JSON Lines**: one JSON object per line. A truncated or corrupted line makes `json.loads` raise `json.JSONDecodeError` (a kind of ValueError). Catch it so one bad line doesn't stop the whole run.",
+          "example_code": "import json\n\nfor line in ['{\"user\": \"ada\"}', '{\"user\": ']:\n    try:\n        print(json.loads(line)['user'])\n    except json.JSONDecodeError:\n        print('skipped a bad line')",
+          "how": "The parser stops at the first character that breaks JSON's rules and raises an error that says where. A small try block around the parse handles just that failure.",
+          "use": "Processing log files, webhooks and exports where you can't trust every record to be complete."
+        },
+        {
+          "id": "d06",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Survive a corrupted log",
+          "instruction": "Parse each line of `lines`, skipping any that aren't valid JSON, and print the users of the 'login' events. It should print: ['ada', 'bob']",
+          "initial_code": "import json\n\nlines = [\n    '{\"event\": \"login\", \"user\": \"ada\"}',\n    '{\"event\": \"logout\", \"user\": \"ada\"',\n    '{\"event\": \"login\", \"user\": \"bob\"}',\n    'not json',\n]\nusers = []\n# TODO: parse each line, skip bad ones, collect login users\n\nprint(users)",
+          "expected_output": "['ada', 'bob']",
+          "hint": "for line in lines:\n    try:\n        record = json.loads(line)\n    except json.JSONDecodeError:\n        continue\n    if record['event'] == 'login':\n        users.append(record['user'])",
+          "support": [
+            {
+              "heading": "Keep the try small",
+              "content": "Wrap only `json.loads(line)` in try. `continue` in the except jumps to the next line.",
+              "example_code": "for word in ['1', 'x', '3']:\n    try:\n        n = int(word)\n    except ValueError:\n        continue\n    print(n)"
+            },
+            {
+              "heading": "Then check the event",
+              "content": "After a successful parse, test `record['event'] == 'login'` and append `record['user']`. The second line is cut off and the fourth isn't JSON, so both are skipped.",
+              "example_code": "import json\nr = json.loads('{\"event\": \"login\", \"user\": \"cy\"}')\nprint(r['event'] == 'login', r['user'])"
+            }
+          ]
+        },
+        {
+          "id": "d07",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "datetime: dates with times",
+          "content": "`datetime` holds a date and a time. Logs usually store it in ISO 8601 form, like `2025-03-14T09:30:00`, which `datetime.fromisoformat` reads directly (and `date.fromisoformat` reads `2025-03-14`). `.hour`, `.minute` and `.date()` pull out parts.",
+          "example_code": "from datetime import datetime, date\n\nseen = datetime.fromisoformat('2025-03-14T09:30:00')\nprint(seen.hour, seen.minute)     # 9 30\nprint(seen.date())                # 2025-03-14\nprint(date.fromisoformat('2025-12-01').month)   # 12",
+          "how": "ISO format sorts correctly as text and has one fixed layout, so it parses without a format string.",
+          "use": "Login times, scan times, ticket timestamps: nearly every IT record carries one."
+        },
+        {
+          "id": "d08",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "What does this code print?",
+          "options": [
+            "9",
+            "14",
+            "30"
+          ],
+          "answer": "9",
+          "explanation": "In ISO format the time follows the T: 09:30:00, so the hour is 9.",
+          "code": "from datetime import datetime\nprint(datetime.fromisoformat('2025-03-14T09:30:00').hour)"
+        },
+        {
+          "id": "d09",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Expiry checks with timedelta",
+          "content": "Policies are date math: certificates expire, passwords must change every 90 days, accounts lock after inactivity. Subtract dates to get a `timedelta`, then compare its `.days`, or add `timedelta(days=90)` to find a deadline.",
+          "example_code": "from datetime import date, timedelta\n\nchanged = date(2025, 6, 1)\ntoday = date(2025, 10, 1)\nprint((today - changed).days)            # 122\nprint(today - changed > timedelta(days=90))   # True: password too old\nprint(changed + timedelta(days=90))      # 2025-08-30",
+          "how": "Dates know the real calendar, so month lengths and leap years are handled for you. Comparing two timedeltas works like comparing numbers.",
+          "use": "Certificate renewal alerts, password-age checks, warranty end dates and stale-account cleanup."
+        },
+        {
+          "id": "d10",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Certificate expiry",
+          "instruction": "Work out how many days are left before the certificate expires, then print the number and 'renew' if it's under 30 days, otherwise 'ok'. It should print: 22 renew",
+          "initial_code": "from datetime import date\n\nexpires = date(2025, 11, 15)\ntoday = date(2025, 10, 24)\n# TODO: print days left and 'renew' or 'ok'\n",
+          "expected_output": "22 renew",
+          "hint": "days_left = (expires - today).days\nprint(days_left, 'renew' if days_left < 30 else 'ok')",
+          "support": [
+            {
+              "heading": "Later minus earlier",
+              "content": "`expires - today` is a timedelta. Its `.days` is the whole number of days between them.",
+              "example_code": "from datetime import date\nprint((date(2025, 1, 10) - date(2025, 1, 1)).days)  # 9"
+            },
+            {
+              "heading": "One line decides",
+              "content": "A conditional expression picks the word: `'renew' if days_left < 30 else 'ok'`. Print both values with one print.",
+              "example_code": "n = 40\nprint(n, 'renew' if n < 30 else 'ok')"
+            }
+          ]
+        },
+        {
+          "id": "d11",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "What does this code print?",
+          "options": [
+            "5 86405.0",
+            "86405 86405.0",
+            "5 5.0"
+          ],
+          "answer": "5 86405.0",
+          "explanation": "`.seconds` is only the seconds part left after whole days, from 0 to 86399. `.total_seconds()` is the full length. Mixing them up is a common timing bug.",
+          "code": "from datetime import timedelta\nd = timedelta(days=1, seconds=5)\nprint(d.seconds, d.total_seconds())",
+          "feedback": {
+            "86405 86405.0": "`.seconds` leaves out the whole days. Use `.total_seconds()` for the full duration."
+          }
+        },
+        {
+          "id": "d12",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Parsing log timestamps",
+          "content": "Many logs don't use ISO format. `datetime.strptime(text, pattern)` parses any layout you describe: `%H` hour (00-23), `%M` minute, `%S` second, plus `%Y-%m-%d` for the date. Once parsed, timestamps sort and subtract correctly.",
+          "example_code": "from datetime import datetime\n\nfmt = '%Y-%m-%d %H:%M:%S'\nstart = datetime.strptime('2025-10-01 09:14:00', fmt)\nend = datetime.strptime('2025-10-01 09:20:30', fmt)\nprint(end - start)                       # 0:06:30\nprint((end - start).total_seconds() / 60)   # 6.5",
+          "how": "The pattern tells strptime where each number sits in the text. If the text doesn't match, it raises ValueError and says so.",
+          "use": "Incident timelines: when the first alert fired, when it was contained, and how long that took."
+        },
+        {
+          "id": "d13",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Incident duration",
+          "instruction": "This incident ran overnight. Parse the first and last timestamps and print how many minutes it lasted in total. It should print: 1548.5",
+          "initial_code": "from datetime import datetime\n\nfirst_alert = '2025-10-01 09:14:00'\ncontained = '2025-10-02 11:02:30'\n# TODO: print the duration in minutes\n",
+          "expected_output": "1548.5",
+          "hint": "fmt = '%Y-%m-%d %H:%M:%S'\nduration = datetime.strptime(contained, fmt) - datetime.strptime(first_alert, fmt)\nprint(duration.total_seconds() / 60)",
+          "support": [
+            {
+              "heading": "One pattern for both",
+              "content": "Both strings have the layout `'%Y-%m-%d %H:%M:%S'`. Parse each with `datetime.strptime(text, fmt)`.",
+              "example_code": "from datetime import datetime\nprint(datetime.strptime('2025-01-02 03:04:05', '%Y-%m-%d %H:%M:%S').minute)  # 4"
+            },
+            {
+              "heading": "Seconds, then minutes",
+              "content": "Subtract to get a timedelta, then `.total_seconds() / 60`. `.seconds` would drop the whole day here and give 108.5.",
+              "example_code": "from datetime import timedelta\nprint(timedelta(hours=1, minutes=30).total_seconds() / 60)  # 90.0"
+            }
+          ]
+        },
+        {
+          "id": "d14",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Unix timestamps and UTC",
+          "content": "Many systems log time as a **Unix timestamp**: seconds since 1 January 1970 UTC. `datetime.fromtimestamp(ts, tz=timezone.utc)` turns one into a readable time. Keep log times in UTC: local time shifts with daylight saving and differs between servers, which scrambles timelines.",
+          "example_code": "from datetime import datetime, timezone\n\nts = 1700000000\nwhen = datetime.fromtimestamp(ts, tz=timezone.utc)\nprint(when.isoformat())    # 2023-11-14T22:13:20+00:00",
+          "how": "The `tz` argument attaches a time zone, making the datetime \"aware\". `.isoformat()` then includes the offset, `+00:00` for UTC.",
+          "use": "Correlating events across servers, cloud logs and APIs, which almost always use UTC."
+        },
+        {
+          "id": "d15",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "Why should servers log times in UTC?",
+          "options": [
+            "One shared clock avoids daylight-saving jumps and time-zone mix-ups when combining logs",
+            "UTC timestamps take less disk space",
+            "Local time can't be parsed"
+          ],
+          "answer": "One shared clock avoids daylight-saving jumps and time-zone mix-ups when combining logs",
+          "explanation": "Convert to local time only when showing a person. Store and compare in UTC."
+        },
+        {
+          "id": "d16",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Read an epoch timestamp",
+          "instruction": "Convert the Unix timestamp to a UTC datetime and print it in ISO format. It should print: 2023-11-14T22:13:20+00:00",
+          "initial_code": "from datetime import datetime, timezone\n\nts = 1700000000\n# TODO: print the UTC time in ISO format\n",
+          "expected_output": "2023-11-14T22:13:20+00:00",
+          "hint": "print(datetime.fromtimestamp(ts, tz=timezone.utc).isoformat())",
+          "support": [
+            {
+              "heading": "Pass the time zone",
+              "content": "`datetime.fromtimestamp(ts, tz=timezone.utc)` reads the seconds as UTC. Without `tz`, Python uses the computer's local zone.",
+              "example_code": "from datetime import datetime, timezone\nprint(datetime.fromtimestamp(0, tz=timezone.utc).year)  # 1970"
+            },
+            {
+              "heading": "Then format it",
+              "content": "Call `.isoformat()` on the result to get the standard text form with the `+00:00` offset.",
+              "example_code": "from datetime import datetime, timezone\nprint(datetime(2024, 1, 2, tzinfo=timezone.utc).isoformat())"
+            }
+          ]
+        },
+        {
+          "id": "d17",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "You need to store each host with a list of open ports and nested scan details. Which format fits best?",
+          "options": [
+            "JSON",
+            "CSV",
+            "A plain text file with one value per line"
+          ],
+          "answer": "JSON",
+          "explanation": "CSV is flat: one row, fixed columns. JSON holds lists and nested objects directly."
+        },
+        {
+          "id": "i01",
+          "type": "quiz",
+          "track": "interview",
+          "question": "Interview question: what's the difference between `json.load` and `json.loads`?",
+          "options": [
+            "`load` reads from an open file; `loads` parses a string",
+            "`loads` is the faster version",
+            "`load` returns a list and `loads` a dictionary"
+          ],
+          "answer": "`load` reads from an open file; `loads` parses a string",
+          "explanation": "The s stands for string. `dump` and `dumps` mirror them for writing."
+        },
+        {
+          "id": "i02",
+          "type": "quiz",
+          "track": "interview",
+          "question": "`json.dumps({'when': datetime.now()})` raises TypeError. Why, and what's a fix?",
+          "options": [
+            "JSON has no date type; convert first, e.g. `.isoformat()` or `default=str`",
+            "datetime objects are always empty",
+            "dumps needs `indent=2` for dates"
+          ],
+          "answer": "JSON has no date type; convert first, e.g. `.isoformat()` or `default=str`",
+          "explanation": "ISO strings are the usual choice because they sort correctly and parse back with `fromisoformat`."
+        },
+        {
+          "id": "i03",
+          "type": "quiz",
+          "track": "interview",
+          "question": "A password policy says passwords expire after 90 days. Which check is right?",
+          "options": [
+            "`(today - changed).days > 90`",
+            "`today.day - changed.day > 90`",
+            "`today - changed > 90`"
+          ],
+          "answer": "`(today - changed).days > 90`",
+          "explanation": "Subtracting dates gives a timedelta; `.days` is the gap. `.day` is just the day of the month, and a timedelta can't be compared to a plain int."
+        },
+        {
+          "id": "i04",
+          "type": "quiz",
+          "track": "interview",
+          "question": "What does this code print?",
+          "options": [
+            "[1, 2]",
+            "(1, 2)",
+            "It raises TypeError"
+          ],
+          "answer": "[1, 2]",
+          "explanation": "JSON has arrays but no tuples, so a tuple is saved as an array and comes back as a list.",
+          "code": "import json\nprint(json.loads(json.dumps((1, 2))))"
+        },
+        {
+          "id": "i05",
+          "type": "quiz",
+          "track": "interview",
+          "question": "What does this code print?",
+          "options": [
+            "{'1': 'a'}",
+            "{1: 'a'}",
+            "It raises TypeError"
+          ],
+          "answer": "{'1': 'a'}",
+          "explanation": "JSON object keys are always strings, so the int key 1 comes back as '1'. A frequent surprise when reloading saved data.",
+          "code": "import json\nprint(json.loads(json.dumps({1: 'a'})))",
+          "feedback": {
+            "{1: 'a'}": "dumps writes the key as \"1\", and loads has no way to know it was an int."
+          }
+        },
+        {
+          "id": "i06",
+          "type": "code",
+          "track": "interview",
+          "heading": "Classic: inactive account audit",
+          "instruction": "Accounts unused for over 90 days are a risk and should be disabled. Parse `raw` and print the usernames whose last login is more than 90 days before `today`. It should print: ['bob', 'svc-backup']",
+          "initial_code": "import json\nfrom datetime import date\n\nraw = '[{\"user\": \"ada\", \"last_login\": \"2025-09-20\"}, {\"user\": \"bob\", \"last_login\": \"2025-05-02\"}, {\"user\": \"svc-backup\", \"last_login\": \"2024-12-31\"}]'\ntoday = date(2025, 10, 1)\n# TODO: print users inactive for more than 90 days\n",
+          "expected_output": "['bob', 'svc-backup']",
+          "hint": "accounts = json.loads(raw)\nprint([a['user'] for a in accounts if (today - date.fromisoformat(a['last_login'])).days > 90])",
+          "support": [
+            {
+              "heading": "Turn each text date into a date",
+              "content": "`date.fromisoformat(a['last_login'])` reads '2025-05-02' as a real date you can subtract.",
+              "example_code": "from datetime import date\nprint((date(2025, 10, 1) - date.fromisoformat('2025-09-20')).days)  # 11"
+            },
+            {
+              "heading": "Filter on the gap",
+              "content": "Keep users where `(today - last).days > 90`. Service accounts like svc-backup are a classic finding in real audits.",
+              "example_code": "gaps = {'a': 11, 'b': 152}\nprint([u for u in gaps if gaps[u] > 90])"
+            }
+          ]
+        },
+        {
+          "id": "i07",
+          "type": "code",
+          "track": "interview",
+          "heading": "Classic: brute-force detection",
+          "instruction": "Flag any address with 3 or more failed logins within 5 minutes. Group the timestamps by IP, sort them, and check each run of 3 consecutive failures. Print the flagged addresses sorted. It should print: ['10.0.0.5']",
+          "initial_code": "from datetime import datetime, timedelta\nfrom collections import defaultdict\n\nevents = [\n    ('2025-10-01 09:00:00', '10.0.0.5'),\n    ('2025-10-01 09:00:00', '10.0.0.9'),\n    ('2025-10-01 09:01:30', '10.0.0.5'),\n    ('2025-10-01 09:20:00', '10.0.0.9'),\n    ('2025-10-01 09:03:10', '10.0.0.5'),\n    ('2025-10-01 09:40:00', '10.0.0.9'),\n    ('2025-10-01 10:00:00', '10.0.0.7'),\n]\n# TODO: flag IPs with 3 failures inside 5 minutes\n",
+          "expected_output": "['10.0.0.5']",
+          "hint": "times = defaultdict(list)\nfor stamp, ip in events:\n    times[ip].append(datetime.strptime(stamp, '%Y-%m-%d %H:%M:%S'))\nflagged = []\nfor ip, ts in times.items():\n    ts.sort()\n    for i in range(len(ts) - 2):\n        if ts[i + 2] - ts[i] <= timedelta(minutes=5):\n            flagged.append(ip)\n            break\nprint(sorted(flagged))",
+          "support": [
+            {
+              "heading": "Group, then sort",
+              "content": "Collect each IP's parsed times in `defaultdict(list)`, then sort each list so nearby failures sit next to each other.",
+              "example_code": "from collections import defaultdict\ng = defaultdict(list)\nfor t, k in [(3, 'a'), (1, 'a'), (2, 'b')]:\n    g[k].append(t)\nprint({k: sorted(v) for k, v in g.items()})"
+            },
+            {
+              "heading": "A window of three",
+              "content": "For sorted times, three failures fit in 5 minutes when `ts[i + 2] - ts[i] <= timedelta(minutes=5)` for some i. Check every i up to `len(ts) - 3`. Sorting makes this O(n log n) per address.",
+              "example_code": "ts = [0, 90, 190, 900]\nprint(any([ts[i + 2] - ts[i] <= 300 for i in range(len(ts) - 2)]))  # True"
+            }
+          ]
+        },
+        {
+          "id": "i08",
+          "type": "code",
+          "track": "interview",
+          "heading": "Classic: merge config files",
+          "instruction": "A hardened SSH config starts from defaults and applies overrides. Parse both JSON strings, apply the overrides on top of the defaults with `.update()`, and print the result with `json.dumps(..., sort_keys=True)`. It should print: {\"max_tries\": 3, \"password_auth\": false, \"port\": 22}",
+          "initial_code": "import json\n\ndefaults = '{\"port\": 22, \"password_auth\": true, \"max_tries\": 5}'\noverrides = '{\"password_auth\": false, \"max_tries\": 3}'\n# TODO: merge and print\n",
+          "expected_output": "{\"max_tries\": 3, \"password_auth\": false, \"port\": 22}",
+          "hint": "config = json.loads(defaults)\nconfig.update(json.loads(overrides))\nprint(json.dumps(config, sort_keys=True))",
+          "support": [
+            {
+              "heading": "update overwrites matching keys",
+              "content": "`a.update(b)` copies every key of b into a, replacing values that were already there and keeping the rest.",
+              "example_code": "a = {'x': 1, 'y': 2}\na.update({'y': 9})\nprint(a)  # {'x': 1, 'y': 9}"
+            },
+            {
+              "heading": "Sorted output",
+              "content": "`json.dumps(config, sort_keys=True)` writes keys alphabetically, so the result is the same however the dict was built.",
+              "example_code": "import json\nprint(json.dumps({'b': 1, 'a': 2}, sort_keys=True))"
+            }
+          ]
+        },
+        {
+          "id": "i09",
+          "type": "code",
+          "track": "interview",
+          "heading": "Debug: the timestamp won't parse",
+          "instruction": "This raises ValueError: the time data doesn't match the format. The pattern has the day and month swapped. Fix the pattern so it prints: July 31",
+          "initial_code": "from datetime import datetime\n\nstamp = '2025-07-31 14:05:00'\nwhen = datetime.strptime(stamp, '%Y-%d-%m %H:%M:%S')\nprint(when.strftime('%B %d'))",
+          "expected_output": "July 31",
+          "hint": "The month comes before the day in this log:\n'%Y-%m-%d %H:%M:%S'",
+          "support": [
+            {
+              "heading": "Read the text, then the pattern",
+              "content": "In '2025-07-31', 07 is the month and 31 the day. The pattern says `%d` first, so Python tries to read 31 as a month and fails.",
+              "example_code": "from datetime import datetime\nprint(datetime.strptime('2025-02-03', '%Y-%m-%d').month)  # 2"
+            },
+            {
+              "heading": "Swap two codes",
+              "content": "Change `%Y-%d-%m` to `%Y-%m-%d`. The time part `%H:%M:%S` is already right.",
+              "example_code": "from datetime import datetime\nprint(datetime.strptime('10:30', '%H:%M').hour)"
+            }
+          ]
         }
       ]
     },
@@ -11659,6 +12068,411 @@
             "Load it all with f.readlines()": "That builds a list of every line in memory at once.",
             "Load it all with f.read()": "That loads the entire file into one giant string."
           }
+        },
+        {
+          "id": "d01",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Filtering logs with a generator",
+          "content": "A generator can sit between a data source and the code that uses it, passing along only what matters. Because it yields one line at a time, it works the same on a 10-line list or a 10 GB log file.",
+          "example_code": "def errors(lines):\n    for line in lines:\n        if 'ERROR' in line:\n            yield line\n\nlog = ['INFO boot', 'ERROR disk', 'WARN cpu']\nfor line in errors(log):\n    print(line)        # ERROR disk",
+          "how": "Each `yield` hands one value to the loop and pauses the function. The next loop pass resumes it right after the yield.",
+          "use": "Filtering logs, scan output or event streams before counting or alerting on them."
+        },
+        {
+          "id": "d02",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Pull out the errors",
+          "instruction": "Finish `errors(lines)` so it yields only the lines containing 'ERROR'. It should print: ['ERROR disk', 'ERROR net']",
+          "initial_code": "def errors(lines):\n    # TODO: yield lines that contain 'ERROR'\n    pass\n\nlog = ['INFO boot', 'ERROR disk', 'WARN cpu', 'ERROR net']\nprint(list(errors(log)))",
+          "expected_output": "['ERROR disk', 'ERROR net']",
+          "hint": "for line in lines:\n    if 'ERROR' in line:\n        yield line",
+          "support": [
+            {
+              "heading": "Loop and test",
+              "content": "Go through `lines` with a for loop and check `'ERROR' in line` for each.",
+              "example_code": "print('ERROR' in 'ERROR disk', 'ERROR' in 'INFO boot')  # True False"
+            },
+            {
+              "heading": "yield instead of append",
+              "content": "Where a normal function would append to a list, a generator writes `yield line`. `list(...)` at the bottom collects what it yields.",
+              "example_code": "def odds(nums):\n    for n in nums:\n        if n % 2:\n            yield n\n\nprint(list(odds([1, 2, 3])))"
+            }
+          ]
+        },
+        {
+          "id": "d03",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Pipelines: generators feeding generators",
+          "content": "Generators chain: one reads lines, the next parses them, the next filters. Nothing runs until the final loop asks for a value, and then each item flows through every stage before the next item starts. Memory stays tiny however long the data is.",
+          "example_code": "def read(lines):\n    for line in lines:\n        yield line.strip()\n\ndef parse(lines):\n    for line in lines:\n        level, message = line.split(' ', 1)\n        yield level, message\n\nraw = ['ERROR disk full\\n', 'INFO ok\\n']\nfor level, message in parse(read(raw)):\n    print(level, '->', message)",
+          "how": "Calling a generator function only builds a paused generator object. Its body starts on the first `next()`, which the for loop makes.",
+          "use": "Log processing tools are built exactly like this: small stages you can test and recombine."
+        },
+        {
+          "id": "d04",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "When does the code inside a generator function start running?",
+          "options": [
+            "When the first value is requested with next() or a loop",
+            "As soon as the function is called",
+            "When the generator is garbage-collected"
+          ],
+          "answer": "When the first value is requested with next() or a loop",
+          "explanation": "Calling it returns a generator object without running any of the body."
+        },
+        {
+          "id": "d05",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "itertools: tools for iterators",
+          "content": "The `itertools` module has building blocks for generators. `count(start)` counts up forever, `islice(it, n)` takes the first n items from any iterator (even an endless one), and `chain(a, b)` walks one iterable after another.",
+          "example_code": "from itertools import count, islice, chain\n\nprint(list(islice(count(100), 3)))      # [100, 101, 102]\nprint(list(chain(['a', 'b'], ['c'])))     # ['a', 'b', 'c']",
+          "how": "These functions are themselves lazy: they produce items only as they're asked for, so `islice(count(100), 3)` stops after three.",
+          "use": "Generating IDs, reading the first N records of a feed, or treating several log files as one stream."
+        },
+        {
+          "id": "d06",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Take the first three ticket IDs",
+          "instruction": "`ticket_ids(start)` yields IDs forever. Use `islice` to print a list of the first three, starting at 1001. It should print: ['INC-1001', 'INC-1002', 'INC-1003']",
+          "initial_code": "from itertools import count, islice\n\ndef ticket_ids(start):\n    for n in count(start):\n        yield f'INC-{n}'\n\n# TODO: print the first three IDs\n",
+          "expected_output": "['INC-1001', 'INC-1002', 'INC-1003']",
+          "hint": "print(list(islice(ticket_ids(1001), 3)))",
+          "support": [
+            {
+              "heading": "Never list an endless generator",
+              "content": "`list(ticket_ids(1001))` would run forever. `islice(gen, 3)` stops after three items.",
+              "example_code": "from itertools import count, islice\nprint(list(islice(count(5), 2)))  # [5, 6]"
+            },
+            {
+              "heading": "Wrap it in list() to print",
+              "content": "islice returns another lazy iterator. `list(...)` collects its three items so print can show them.",
+              "example_code": "from itertools import islice\nprint(list(islice('abcdef', 3)))"
+            }
+          ]
+        },
+        {
+          "id": "d07",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "A generator runs only once",
+          "content": "Once a generator has handed out every value, it's exhausted: looping over it again gives nothing, with no error. If you need the values twice, store them in a list first.",
+          "example_code": "failed = (line for line in ['FAIL ada', 'OK bob'] if 'FAIL' in line)\nprint(list(failed))   # ['FAIL ada']\nprint(list(failed))   # []: already used up\n\nsaved = [line for line in ['FAIL ada', 'OK bob'] if 'FAIL' in line]\nprint(len(saved), saved)   # a list can be read again",
+          "how": "A generator keeps its position. After the last value it stays at the end, so a second loop starts there and finds nothing.",
+          "use": "A common source of \"why is my report empty?\" bugs, and a favorite interview predict-the-output question."
+        },
+        {
+          "id": "d08",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "What does this code print?",
+          "options": [
+            "3 0",
+            "3 3",
+            "6 0"
+          ],
+          "answer": "3 0",
+          "explanation": "The first `sum` uses up the generator. The second gets no values, and the sum of nothing is 0.",
+          "code": "g = (x for x in [1, 2])\nprint(sum(g), sum(g))",
+          "feedback": {
+            "3 3": "A generator can be looped over only once. The second sum sees it already empty."
+          }
+        },
+        {
+          "id": "d09",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Count and list the failures",
+          "instruction": "The report should print how many logins failed, then who failed. But the second line prints [] because the generator is already used up. Make `failed` a list so it prints: 2, then ['ada', 'bob']",
+          "initial_code": "log = ['FAIL ada', 'OK cy', 'FAIL bob']\nfailed = (line for line in log if line.startswith('FAIL'))\nprint(len(list(failed)))\nprint([line.split()[1] for line in failed])",
+          "expected_output": "2\n['ada', 'bob']",
+          "hint": "failed = [line for line in log if line.startswith('FAIL')]\nprint(len(failed))",
+          "support": [
+            {
+              "heading": "Brackets make a list",
+              "content": "Change the round brackets to square ones: `[line for line in log if ...]` builds a list you can read as often as you like.",
+              "example_code": "nums = [n for n in range(3)]\nprint(len(nums), nums)"
+            },
+            {
+              "heading": "Then simplify the count",
+              "content": "With a list, `len(failed)` works directly; `list(failed)` is no longer needed.",
+              "example_code": "items = ['a', 'b']\nprint(len(items))"
+            }
+          ]
+        },
+        {
+          "id": "d10",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Memory: lists vs generators",
+          "content": "A list comprehension builds every item before you use any. A generator expression makes one at a time. For a million numbers the list holds a million values in memory; the generator holds one. `sys.getsizeof` shows the difference.",
+          "example_code": "import sys\n\nbig_list = [n for n in range(1_000_000)]\nbig_gen = (n for n in range(1_000_000))\nprint(sys.getsizeof(big_list) > 1_000_000)   # True: megabytes\nprint(sys.getsizeof(big_gen) < 1_000)        # True: a couple hundred bytes",
+          "how": "The generator stores only its paused position and local variables, not the results.",
+          "use": "Totals and counts over big data: `sum(x for x in ...)` instead of `sum([x for x in ...])`."
+        },
+        {
+          "id": "d11",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "Which line totals a huge sequence using constant memory?",
+          "options": [
+            "`sum(x * 2 for x in data)`",
+            "`sum([x * 2 for x in data])`",
+            "Both use the same memory"
+          ],
+          "answer": "`sum(x * 2 for x in data)`",
+          "explanation": "The brackets build the whole list first. Without them, sum pulls one value at a time."
+        },
+        {
+          "id": "d12",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "More from zip",
+          "content": "`zip` stops at the shortest input. `dict(zip(keys, values))` pairs a header row with a data row, and `zip(*rows)` turns rows into columns.",
+          "example_code": "headers = ['host', 'os']\nrow = ['web-01', 'linux']\nprint(dict(zip(headers, row)))     # {'host': 'web-01', 'os': 'linux'}\n\nrows = [(1, 'a'), (2, 'b')]\nprint(list(zip(*rows)))            # [(1, 2), ('a', 'b')]",
+          "how": "zip is lazy: it pulls one item from each input per step and stops as soon as any input runs out. `*rows` passes each row as a separate argument.",
+          "use": "Turning CSV-style lines into records, and pairing hostnames with scan results."
+        },
+        {
+          "id": "d13",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Build a device record",
+          "instruction": "Use `zip` to pair `headers` with the values in `line`, and print the result as a dictionary. It should print: {'host': 'web-01', 'os': 'linux', 'owner': 'ops'}",
+          "initial_code": "headers = ['host', 'os', 'owner']\nline = 'web-01,linux,ops'\n# TODO: print a dict pairing each header with its value\n",
+          "expected_output": "{'host': 'web-01', 'os': 'linux', 'owner': 'ops'}",
+          "hint": "print(dict(zip(headers, line.split(','))))",
+          "support": [
+            {
+              "heading": "Split first",
+              "content": "`line.split(',')` gives `['web-01', 'linux', 'ops']`, one value per header.",
+              "example_code": "print('a,b'.split(','))"
+            },
+            {
+              "heading": "zip, then dict",
+              "content": "`zip(headers, values)` makes (header, value) pairs, and `dict(...)` turns pairs into a dictionary.",
+              "example_code": "print(dict(zip(['x', 'y'], [1, 2])))"
+            }
+          ]
+        },
+        {
+          "id": "d14",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "What does this code print?",
+          "options": [
+            "[(1, 'a'), (2, 'b')]",
+            "[(1, 'a'), (2, 'b'), (3, None)]",
+            "It raises ValueError"
+          ],
+          "answer": "[(1, 'a'), (2, 'b')]",
+          "explanation": "zip stops when the shortest input ('ab', two items) runs out. The 3 is silently dropped, which can hide missing data.",
+          "code": "print(list(zip([1, 2, 3], 'ab')))"
+        },
+        {
+          "id": "d15",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Policy checks with any and all",
+          "content": "`any(...)` is True if at least one value is True; `all(...)` is True only if every value is. With a generator expression they stop as soon as the answer is known. Password policies are a natural fit: does the password contain a digit? an uppercase letter? a symbol?",
+          "example_code": "pw = 'Summer2025!'\nprint(any(c.isdigit() for c in pw))        # True\nprint(any(c.isupper() for c in pw))        # True\nprint(any(not c.isalnum() for c in pw))    # True: '!' is a symbol\nprint(all(c.isalpha() for c in pw))        # False",
+          "how": "`any` stops at the first True and `all` stops at the first False, so long inputs are often decided early.",
+          "use": "Password and configuration policy checks, and validating every row of an import."
+        },
+        {
+          "id": "d16",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Password policy checker",
+          "instruction": "Finish `strong(pw)`: True when the password is at least 12 characters and has a digit, an uppercase letter, a lowercase letter and a symbol (a character that isn't a letter or digit). It should print False, True, True for the three passwords.",
+          "initial_code": "def strong(pw):\n    # TODO: length >= 12 and digit, upper, lower and symbol\n    pass\n\nfor pw in ['password123', 'Tr0ub4dor&3x', 'CorrectHorse9!']:\n    print(pw, strong(pw))",
+          "expected_output": "password123 False\nTr0ub4dor&3x True\nCorrectHorse9! True",
+          "hint": "return (\n    len(pw) >= 12\n    and any(c.isdigit() for c in pw)\n    and any(c.isupper() for c in pw)\n    and any(c.islower() for c in pw)\n    and any(not c.isalnum() for c in pw)\n)",
+          "support": [
+            {
+              "heading": "One any() per rule",
+              "content": "Each character rule is `any(test for c in pw)`: `c.isdigit()`, `c.isupper()`, `c.islower()`, and `not c.isalnum()` for symbols.",
+              "example_code": "print(any(c.isdigit() for c in 'abc1'), any(c.isupper() for c in 'abc'))  # True False"
+            },
+            {
+              "heading": "Join them with and",
+              "content": "Return the length check and all four any() calls joined with `and`. Brackets around the whole expression let it span several lines.",
+              "example_code": "x = 5\nok = (\n    x > 1\n    and x < 10\n)\nprint(ok)"
+            }
+          ]
+        },
+        {
+          "id": "d17",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "What does this code print?",
+          "options": [
+            "False True",
+            "True False",
+            "False False"
+          ],
+          "answer": "False True",
+          "explanation": "`any` of nothing is False: there's no True value. `all` of nothing is True: there's no False value. Watch for empty inputs passing an all() check.",
+          "code": "print(any([]), all([]))"
+        },
+        {
+          "id": "i01",
+          "type": "quiz",
+          "track": "interview",
+          "question": "Interview question: when would you use a generator instead of a list?",
+          "options": [
+            "For large or streaming data you go through once, so you don't hold it all in memory",
+            "Whenever you need to sort the data",
+            "When you need to read the values several times"
+          ],
+          "answer": "For large or streaming data you go through once, so you don't hold it all in memory",
+          "explanation": "Lists win when you need indexing, sorting, `len()` or several passes."
+        },
+        {
+          "id": "i02",
+          "type": "quiz",
+          "track": "interview",
+          "question": "What's the difference between `yield` and `return`?",
+          "options": [
+            "`yield` hands back a value and pauses so the function can continue later; `return` ends the function",
+            "They're the same in Python 3",
+            "`return` is only for generators"
+          ],
+          "answer": "`yield` hands back a value and pauses so the function can continue later; `return` ends the function",
+          "explanation": "A generator can yield many times. A `return` inside a generator ends it, like reaching the end."
+        },
+        {
+          "id": "i03",
+          "type": "quiz",
+          "track": "interview",
+          "question": "You scan a log of n lines with a generator, keeping only a running count. How much extra memory does that use?",
+          "options": [
+            "O(1)",
+            "O(n)",
+            "O(log n)"
+          ],
+          "answer": "O(1)",
+          "explanation": "One line and one counter at a time, however long the log is."
+        },
+        {
+          "id": "i04",
+          "type": "quiz",
+          "track": "interview",
+          "question": "What does this code print?",
+          "options": [
+            "['made', 'start', 1]",
+            "['start', 'made', 1]",
+            "['made', 1, 'start']"
+          ],
+          "answer": "['made', 'start', 1]",
+          "explanation": "Calling `gen()` doesn't run the body, so 'made' is recorded first. `next(g)` then runs it up to the yield, recording 'start', and returns 1.",
+          "code": "steps = []\n\ndef gen():\n    steps.append('start')\n    yield 1\n\ng = gen()\nsteps.append('made')\nsteps.append(next(g))\nprint(steps)"
+        },
+        {
+          "id": "i05",
+          "type": "quiz",
+          "track": "interview",
+          "question": "What does `next(g, None)` return when `g` is already exhausted?",
+          "options": [
+            "None",
+            "It raises StopIteration",
+            "The first value again"
+          ],
+          "answer": "None",
+          "explanation": "The second argument is a default returned instead of raising StopIteration. Handy for \"first match or nothing\"."
+        },
+        {
+          "id": "i06",
+          "type": "code",
+          "track": "interview",
+          "heading": "Classic: top attacking addresses",
+          "instruction": "Finish the generator `failed_ips(lines)` so it yields the IP of each FAIL line, then print the two most common with `Counter`. It should print: [('10.0.0.5', 3), ('10.0.0.7', 2)]",
+          "initial_code": "from collections import Counter\n\nlog = ['FAIL 10.0.0.5 ada', 'OK 10.0.0.9 bob', 'FAIL 10.0.0.5 ada', 'FAIL 10.0.0.7 cy', 'FAIL 10.0.0.5 root', 'FAIL 10.0.0.7 cy']\n\ndef failed_ips(lines):\n    # TODO: yield the IP from each FAIL line\n    pass\n\nprint(Counter(failed_ips(log)).most_common(2))",
+          "expected_output": "[('10.0.0.5', 3), ('10.0.0.7', 2)]",
+          "hint": "def failed_ips(lines):\n    for line in lines:\n        status, ip, user = line.split()\n        if status == 'FAIL':\n            yield ip",
+          "support": [
+            {
+              "heading": "Unpack each line",
+              "content": "`status, ip, user = line.split()` names the three fields of a line like 'FAIL 10.0.0.5 ada'.",
+              "example_code": "a, b, c = 'FAIL 1.2.3.4 root'.split()\nprint(a, b)"
+            },
+            {
+              "heading": "Counter takes any iterable",
+              "content": "`Counter(failed_ips(log))` counts what the generator yields, one IP at a time, without building a list first.",
+              "example_code": "from collections import Counter\nprint(Counter(x for x in 'aab').most_common(1))"
+            }
+          ]
+        },
+        {
+          "id": "i07",
+          "type": "code",
+          "track": "interview",
+          "heading": "Classic: moving average",
+          "instruction": "Write a generator `moving_average(values, window)` that yields the average of each run of `window` consecutive values, to smooth noisy CPU readings. It should print: [60.0, 80.0, 70.0]",
+          "initial_code": "# TODO: def moving_average(values, window):\n\n\nprint(list(moving_average([40, 60, 80, 100, 30], 3)))",
+          "expected_output": "[60.0, 80.0, 70.0]",
+          "hint": "def moving_average(values, window):\n    for i in range(len(values) - window + 1):\n        yield sum(values[i:i + window]) / window",
+          "support": [
+            {
+              "heading": "How many windows?",
+              "content": "With 5 values and a window of 3 there are 3 windows, starting at 0, 1 and 2: `range(len(values) - window + 1)`.",
+              "example_code": "print(list(range(5 - 3 + 1)))  # [0, 1, 2]"
+            },
+            {
+              "heading": "Slice, sum, divide",
+              "content": "`values[i:i + window]` is one window. Yield its sum divided by `window`. (Keeping a running total instead makes each step O(1), a good follow-up answer.)",
+              "example_code": "v = [40, 60, 80]\nprint(sum(v[0:2]) / 2)  # 50.0"
+            }
+          ]
+        },
+        {
+          "id": "i08",
+          "type": "code",
+          "track": "interview",
+          "heading": "Classic: parse key=value logs",
+          "instruction": "Some systems log `key=value` pairs. Finish the generator `parse(lines)` so it yields a dictionary per line, then print the users of failed actions. It should print: ['bob', 'root']",
+          "initial_code": "log = [\n    'user=ada action=login status=ok',\n    'user=bob action=login status=fail',\n    'user=root action=sudo status=fail',\n]\n\ndef parse(lines):\n    # TODO: yield a dict for each line\n    pass\n\nprint([r['user'] for r in parse(log) if r['status'] == 'fail'])",
+          "expected_output": "['bob', 'root']",
+          "hint": "def parse(lines):\n    for line in lines:\n        yield dict(pair.split('=') for pair in line.split())",
+          "support": [
+            {
+              "heading": "Split twice",
+              "content": "`line.split()` gives pairs like 'user=ada'; `pair.split('=')` splits each into ['user', 'ada'].",
+              "example_code": "print([p.split('=') for p in 'a=1 b=2'.split()])"
+            },
+            {
+              "heading": "dict() takes pairs",
+              "content": "`dict(...)` builds a dictionary from two-item pairs, so `dict(pair.split('=') for pair in line.split())` makes one record.",
+              "example_code": "print(dict([['a', '1'], ['b', '2']]))"
+            }
+          ]
+        },
+        {
+          "id": "i09",
+          "type": "code",
+          "track": "interview",
+          "heading": "Debug: the generator that returns",
+          "instruction": "This should list the IP at the start of each line, but it prints single characters. The function returns on the first line instead of yielding each one. Fix it so it prints: ['10.0.0.5', '10.0.0.9']",
+          "initial_code": "def first_fields(lines):\n    for line in lines:\n        return line.split()[0]\n\nprint(list(first_fields(['10.0.0.5 GET /', '10.0.0.9 POST /login'])))",
+          "expected_output": "['10.0.0.5', '10.0.0.9']",
+          "hint": "Change return to yield:\nyield line.split()[0]",
+          "support": [
+            {
+              "heading": "return ends everything",
+              "content": "The first loop pass returns the string '10.0.0.5' and the function is over. `list()` of a string splits it into characters.",
+              "example_code": "print(list('10.0'))  # ['1', '0', '.', '0']"
+            },
+            {
+              "heading": "yield keeps going",
+              "content": "With `yield`, the function hands back one IP per line and continues with the next line.",
+              "example_code": "def each(words):\n    for w in words:\n        yield w.upper()\n\nprint(list(each(['a', 'b'])))"
+            }
+          ]
         }
       ]
     },
@@ -11848,6 +12662,407 @@
             "An automation script"
           ],
           "explanation": "Great pick. Every one of these starts with the skills you just practised: variables, loops, functions, classes, files, and tests."
+        },
+        {
+          "id": "d01",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Same design, new data: a compliance scorecard",
+          "content": "The grade book's design fits IT work unchanged. Swap students for hosts and test scores for compliance scan results (the percentage of security checks a machine passes), and GradeBook becomes a Scorecard: hosts in a dictionary keyed by name, each with its own scan history and average.",
+          "example_code": "class Host:\n    def __init__(self, name):\n        self.name = name\n        self.scores = []      # one compliance % per scan\n\n    def average(self):\n        if not self.scores:\n            return 0\n        return sum(self.scores) / len(self.scores)\n\nweb = Host('web-01')\nweb.scores = [82, 90]\nprint(web.average())   # 86.0",
+          "how": "Nothing in the classes depends on what the numbers mean. Good designs model the shape of the data (a named thing with a list of measurements), so they carry over to new problems.",
+          "use": "Patch compliance, vulnerability scan results and backup success rates are all \"named thing with a score history\"."
+        },
+        {
+          "id": "d02",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Is the host improving?",
+          "instruction": "Add `trend()` to Host: return 'improving' if the last scan beats the one before, 'declining' if it's lower, and 'flat' if they're equal or there are fewer than two scans. It should print: improving then flat",
+          "initial_code": "class Host:\n    def __init__(self, name):\n        self.name = name\n        self.scores = []\n\n    def average(self):\n        if not self.scores:\n            return 0\n        return sum(self.scores) / len(self.scores)\n\n    # TODO: add trend(self)\n\nh = Host('web-01')\nh.scores = [70, 85]\nprint(h.trend())\nprint(Host('db-02').trend())",
+          "expected_output": "improving\nflat",
+          "hint": "def trend(self):\n    if len(self.scores) < 2:\n        return 'flat'\n    if self.scores[-1] > self.scores[-2]:\n        return 'improving'\n    if self.scores[-1] < self.scores[-2]:\n        return 'declining'\n    return 'flat'",
+          "support": [
+            {
+              "heading": "Guard the short case first",
+              "content": "With fewer than two scans there's nothing to compare, and `self.scores[-2]` would raise IndexError. Return 'flat' before looking.",
+              "example_code": "scores = [90]\nprint(len(scores) < 2)  # True"
+            },
+            {
+              "heading": "Compare the last two",
+              "content": "`self.scores[-1]` is the latest scan and `self.scores[-2]` the one before. Indent the method inside the class, below average.",
+              "example_code": "s = [70, 85]\nprint(s[-1] > s[-2])  # True"
+            }
+          ]
+        },
+        {
+          "id": "d03",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Validate where data enters",
+          "content": "Scanners glitch. A score of 140% or -5 should never get into the scorecard, because every average and report after that would be wrong. Check values in `add_score`, the one place data comes in, and raise a ValueError for bad input.",
+          "example_code": "def add_score(self, name, score):\n    if not 0 <= score <= 100:\n        raise ValueError(f'bad score {score}')\n    if name not in self.hosts:\n        self.hosts[name] = Host(name)\n    self.hosts[name].scores.append(score)",
+          "how": "Rejecting the value before storing it means the object never holds invalid data, so nothing downstream needs to re-check.",
+          "use": "Any import or API boundary: validate once at the entrance instead of everywhere the data is used."
+        },
+        {
+          "id": "d04",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Reject impossible scores",
+          "instruction": "Make `add_score` raise `ValueError(f'bad score {score}')` unless the score is between 0 and 100. The test then prints: bad score 140, then [88]",
+          "initial_code": "class Host:\n    def __init__(self, name):\n        self.name = name\n        self.scores = []\n\n    def average(self):\n        if not self.scores:\n            return 0\n        return sum(self.scores) / len(self.scores)\n\nclass Scorecard:\n    def __init__(self):\n        self.hosts = {}\n\n    def add_score(self, name, score):\n        # TODO: raise ValueError unless 0 <= score <= 100\n        if name not in self.hosts:\n            self.hosts[name] = Host(name)\n        self.hosts[name].scores.append(score)\n\ncard = Scorecard()\ncard.add_score('web-01', 88)\ntry:\n    card.add_score('web-01', 140)\nexcept ValueError as e:\n    print(e)\nprint(card.hosts['web-01'].scores)",
+          "expected_output": "bad score 140\n[88]",
+          "hint": "if not 0 <= score <= 100:\n    raise ValueError(f'bad score {score}')",
+          "support": [
+            {
+              "heading": "Check before anything changes",
+              "content": "Put the check at the top of `add_score`, so a bad score never reaches the list and the host keeps only [88].",
+              "example_code": "score = 140\nprint(0 <= score <= 100)  # False"
+            },
+            {
+              "heading": "Build the message",
+              "content": "`f'bad score {score}'` puts the rejected value in the message, which is what `print(e)` shows.",
+              "example_code": "try:\n    raise ValueError(f'bad value {7}')\nexcept ValueError as e:\n    print(e)"
+            }
+          ]
+        },
+        {
+          "id": "d05",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "Why validate in `add_score` instead of when printing the report?",
+          "options": [
+            "Bad data never gets stored, so every later calculation can trust it",
+            "Reports can't raise errors",
+            "It makes add_score faster"
+          ],
+          "answer": "Bad data never gets stored, so every later calculation can trust it",
+          "explanation": "Validating at the entrance protects every use of the data, including ones written later."
+        },
+        {
+          "id": "d06",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Ranking hosts",
+          "content": "`sorted` with a key ranks hosts by average. To break ties consistently, return a tuple from the key: Python compares the first items, then the second. A minus sign on a number sorts it high to low while names stay A to Z.",
+          "example_code": "averages = {'web-01': 92, 'db-02': 64, 'app-03': 92}\nranked = sorted(averages, key=lambda h: (-averages[h], h))\nprint(ranked)    # ['app-03', 'web-01', 'db-02']",
+          "how": "Tuples compare item by item, so `(-92, 'app-03')` comes before `(-92, 'web-01')`. Negating the number flips its order without affecting the names.",
+          "use": "Worst-first patch lists, top-N risk reports and leaderboards with stable ordering."
+        },
+        {
+          "id": "d07",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "What does this code print?",
+          "options": [
+            "['b', 'a', 'c']",
+            "['a', 'b', 'c']",
+            "['c', 'a', 'b']"
+          ],
+          "answer": "['b', 'a', 'c']",
+          "explanation": "The keys are (0, 'b'), (1, 'a') and (1, 'c'). b's 0 sorts first; a and c tie on 1, so their names decide.",
+          "code": "scores = {'a': 1, 'b': 0, 'c': 1}\nprint(sorted(scores, key=lambda k: (scores[k], k)))"
+        },
+        {
+          "id": "d08",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Worst three hosts",
+          "instruction": "Print the names of the three hosts with the lowest averages, worst first, to build the patch-first list. It should print: ['kiosk-2', 'db-02', 'vpn-gw']",
+          "initial_code": "class Host:\n    def __init__(self, name):\n        self.name = name\n        self.scores = []\n\n    def average(self):\n        if not self.scores:\n            return 0\n        return sum(self.scores) / len(self.scores)\n\nclass Scorecard:\n    def __init__(self):\n        self.hosts = {}\n\n    def add_score(self, name, score):\n        if name not in self.hosts:\n            self.hosts[name] = Host(name)\n        self.hosts[name].scores.append(score)\n\ncard = Scorecard()\nfor name, score in [('web-01', 95), ('db-02', 60), ('vpn-gw', 72), ('kiosk-2', 40), ('app-03', 88), ('db-02', 66)]:\n    card.add_score(name, score)\n# TODO: print the three lowest-average host names\n",
+          "expected_output": "['kiosk-2', 'db-02', 'vpn-gw']",
+          "hint": "worst = sorted(card.hosts.values(), key=lambda h: h.average())[:3]\nprint([h.name for h in worst])",
+          "support": [
+            {
+              "heading": "Sort the Host objects",
+              "content": "`card.hosts.values()` gives the Host objects. Sort them with `key=lambda h: h.average()`, lowest first.",
+              "example_code": "class H:\n    def __init__(self, n, a):\n        self.n, self.a = n, a\n\nhs = [H('x', 5), H('y', 1)]\nprint([h.n for h in sorted(hs, key=lambda h: h.a)])"
+            },
+            {
+              "heading": "Slice the first three",
+              "content": "`[:3]` keeps the three worst, then a comprehension pulls out the names. db-02 averages 63.",
+              "example_code": "print([4, 1, 3, 2][:3])"
+            }
+          ]
+        },
+        {
+          "id": "d09",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Mean or median?",
+          "content": "One failed scan can drag a host's mean down sharply. The **median** (middle value) ignores a single outlier, so it often describes a host's usual state better. Report both when outliers matter.",
+          "example_code": "import statistics\n\nscans = [90, 92, 10, 91]     # one scan failed to run properly\nprint(statistics.mean(scans))     # 70.75\nprint(statistics.median(scans))   # 90.5",
+          "how": "The mean adds every value, so one extreme value moves it. The median only looks at the middle of the sorted list.",
+          "use": "Response times, scan scores and anything with occasional glitches. Interviewers like asking when each is the right choice."
+        },
+        {
+          "id": "d10",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "What does this code print?",
+          "options": [
+            "64 90",
+            "90 64",
+            "64 64"
+          ],
+          "answer": "64 90",
+          "explanation": "The mean is (90 + 92 + 10) / 3 = 64. The median is the middle of [10, 90, 92], which is 90.",
+          "code": "import statistics\nprint(statistics.mean([90, 92, 10]), statistics.median([90, 92, 10]))"
+        },
+        {
+          "id": "d11",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Loading back into objects",
+          "content": "Saving turned the scorecard into plain data: `{name: scores}`. Loading reverses it with a classmethod constructor, `from_dict`, that builds a new Scorecard and adds every score through `add_score`, so loaded data goes through the same validation as new data.",
+          "example_code": "@classmethod\ndef from_dict(cls, data):\n    card = cls()\n    for name, scores in data.items():\n        for score in scores:\n            card.add_score(name, score)\n    return card",
+          "how": "`cls()` makes an empty scorecard; `add_score` fills it. A corrupted file with a 140 in it raises the same ValueError as bad live data.",
+          "use": "Any save-and-restore: settings files, caches, exported reports read back in."
+        },
+        {
+          "id": "d12",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Rebuild from saved JSON",
+          "instruction": "Add a classmethod `from_dict(cls, data)` to Scorecard, then use it on the parsed JSON and print each host's name and average. It should print: web-01 85.0, then db-02 60.0",
+          "initial_code": "import json\n\nclass Host:\n    def __init__(self, name):\n        self.name = name\n        self.scores = []\n\n    def average(self):\n        if not self.scores:\n            return 0\n        return sum(self.scores) / len(self.scores)\n\nclass Scorecard:\n    def __init__(self):\n        self.hosts = {}\n\n    def add_score(self, name, score):\n        if name not in self.hosts:\n            self.hosts[name] = Host(name)\n        self.hosts[name].scores.append(score)\n\n    # TODO: @classmethod from_dict(cls, data)\n\ntext = '{\"web-01\": [90, 80], \"db-02\": [60]}'\ncard = Scorecard.from_dict(json.loads(text))\nfor host in card.hosts.values():\n    print(host.name, host.average())",
+          "expected_output": "web-01 85.0\ndb-02 60.0",
+          "hint": "@classmethod\ndef from_dict(cls, data):\n    card = cls()\n    for name, scores in data.items():\n        for score in scores:\n            card.add_score(name, score)\n    return card",
+          "support": [
+            {
+              "heading": "Start empty, then fill",
+              "content": "`card = cls()` creates an empty Scorecard. Loop over `data.items()` to get each name and its list of scores.",
+              "example_code": "data = {'a': [1, 2]}\nfor name, scores in data.items():\n    print(name, scores)"
+            },
+            {
+              "heading": "Reuse add_score",
+              "content": "Call `card.add_score(name, score)` for each score so loaded data follows the same rules, then return the card. Indent the method inside Scorecard.",
+              "example_code": "class Box:\n    def __init__(self):\n        self.items = []\n\n    @classmethod\n    def of(cls, items):\n        b = cls()\n        b.items.extend(items)\n        return b\n\nprint(Box.of([1, 2]).items)"
+            }
+          ]
+        },
+        {
+          "id": "d13",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Exporting a CSV report",
+          "content": "Managers open reports in a spreadsheet, so export CSV. `csv.writer(f)` writes rows from lists with `writerow`, quoting values that contain commas. Open the file with `newline=''` so line endings come out right on every system.",
+          "example_code": "import csv\n\nwith open('report.csv', 'w', newline='') as f:\n    w = csv.writer(f)\n    w.writerow(['host', 'average', 'status'])\n    w.writerow(['web-01', 85.0, 'PASS'])\nprint(open('report.csv').read())",
+          "how": "Each `writerow` call turns a list into one line of comma-separated values. Numbers are converted to text for you.",
+          "use": "Compliance summaries, audit evidence and anything a non-programmer needs to filter and sort."
+        },
+        {
+          "id": "d14",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Export the scorecard",
+          "instruction": "Write 'report.csv' with a header row `host,average,status`, then one row per host, with status 'PASS' when the average is at least 80 and 'FAIL' otherwise. The verification prints the file.",
+          "initial_code": "import csv\n\nclass Host:\n    def __init__(self, name):\n        self.name = name\n        self.scores = []\n\n    def average(self):\n        if not self.scores:\n            return 0\n        return sum(self.scores) / len(self.scores)\n\nclass Scorecard:\n    def __init__(self):\n        self.hosts = {}\n\n    def add_score(self, name, score):\n        if name not in self.hosts:\n            self.hosts[name] = Host(name)\n        self.hosts[name].scores.append(score)\n\ncard = Scorecard()\nfor name, score in [('web-01', 90), ('web-01', 80), ('db-02', 60)]:\n    card.add_score(name, score)\n\n# TODO: write report.csv\n\n# Verification (do not change)\nprint(open('report.csv').read())",
+          "expected_output": "host,average,status\nweb-01,85.0,PASS\ndb-02,60.0,FAIL",
+          "hint": "with open('report.csv', 'w', newline='') as f:\n    w = csv.writer(f)\n    w.writerow(['host', 'average', 'status'])\n    for h in card.hosts.values():\n        w.writerow([h.name, h.average(), 'PASS' if h.average() >= 80 else 'FAIL'])",
+          "support": [
+            {
+              "heading": "Header first",
+              "content": "Make the writer with `csv.writer(f)` and write `['host', 'average', 'status']` before the host rows.",
+              "example_code": "import csv\nwith open('t.csv', 'w', newline='') as f:\n    csv.writer(f).writerow(['a', 'b'])\nprint(open('t.csv').read())"
+            },
+            {
+              "heading": "One row per host",
+              "content": "Loop over `card.hosts.values()` and write `[h.name, h.average(), status]`, choosing the status with a conditional expression.",
+              "example_code": "avg = 85.0\nprint(['web-01', avg, 'PASS' if avg >= 80 else 'FAIL'])"
+            }
+          ]
+        },
+        {
+          "id": "d15",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Tests for the scorecard",
+          "content": "The rules that matter most are thresholds and empty data. A table of cases tests the status rule at and around its boundary, and a host with no scans checks the edge case that would otherwise divide by zero.",
+          "example_code": "class Host:\n    def __init__(self, name):\n        self.name = name\n        self.scores = []\n\n    def average(self):\n        if not self.scores:\n            return 0\n        return sum(self.scores) / len(self.scores)\n\ndef status(avg):\n    return 'PASS' if avg >= 80 else 'FAIL'\n\nfor avg, want in [(80, 'PASS'), (79.9, 'FAIL'), (100, 'PASS'), (0, 'FAIL')]:\n    assert status(avg) == want, f'{avg}: got {status(avg)}'\nassert Host('new').average() == 0\nprint('all scorecard tests passed')",
+          "how": "Testing exactly 80 and just below it catches the classic `>` vs `>=` mistake. Each assert names the failing case in its message.",
+          "use": "Any rule with a threshold: password age, disk alerts, pass/fail grading."
+        },
+        {
+          "id": "d16",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "Which test is most likely to catch a crash in `average()`?",
+          "options": [
+            "A host with no scans",
+            "A host with one scan of 100",
+            "A host with ten scans"
+          ],
+          "answer": "A host with no scans",
+          "explanation": "An empty list makes `len(self.scores)` zero. Without the guard, that's a ZeroDivisionError."
+        },
+        {
+          "id": "d17",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "The Scorecard stores hosts in a dictionary keyed by name. How long does looking up one host take?",
+          "options": [
+            "O(1)",
+            "O(n)",
+            "O(n log n)"
+          ],
+          "answer": "O(1)",
+          "explanation": "A dictionary goes straight to the key. A list of hosts would need a scan, O(n)."
+        },
+        {
+          "id": "i01",
+          "type": "quiz",
+          "track": "interview",
+          "question": "Interview question: how would you store failed scans per host so you can add new ones and look up a host quickly?",
+          "options": [
+            "A dictionary mapping host name to a list of results",
+            "One long list of (host, result) tuples",
+            "A separate variable for each host"
+          ],
+          "answer": "A dictionary mapping host name to a list of results",
+          "explanation": "O(1) lookup by host and O(1) appends. `defaultdict(list)` removes the \"is the host there yet?\" check."
+        },
+        {
+          "id": "i02",
+          "type": "quiz",
+          "track": "interview",
+          "question": "A host has no scans yet. Should `average()` return 0 or None?",
+          "options": [
+            "None is clearer: 0 looks like a real, failing score, while None says there's no data",
+            "Always 0: None causes errors",
+            "It should raise an error"
+          ],
+          "answer": "None is clearer: 0 looks like a real, failing score, while None says there's no data",
+          "explanation": "The grade book returns 0 for simplicity, but in a compliance report a 0 would wrongly flag a new host. Naming the trade-off is the point."
+        },
+        {
+          "id": "i03",
+          "type": "quiz",
+          "track": "interview",
+          "question": "Why turn the Scorecard into a plain dictionary before `json.dump`?",
+          "options": [
+            "json only knows dicts, lists, strings, numbers, booleans and None, not your classes",
+            "Dictionaries are smaller",
+            "json.dump can't write classes that have methods"
+          ],
+          "answer": "json only knows dicts, lists, strings, numbers, booleans and None, not your classes",
+          "explanation": "Converting to plain data on save, and back with `from_dict` on load, keeps the file format independent of the code."
+        },
+        {
+          "id": "i04",
+          "type": "quiz",
+          "track": "interview",
+          "question": "Finding the single worst host with `min(hosts, key=...)` takes:",
+          "options": [
+            "O(n)",
+            "O(n log n)",
+            "O(1)"
+          ],
+          "answer": "O(n)",
+          "explanation": "One pass. Sorting first would be O(n log n): only worth it if you need the whole ranking."
+        },
+        {
+          "id": "i05",
+          "type": "quiz",
+          "track": "interview",
+          "question": "What does this code print?",
+          "options": [
+            "{'web-01': 2}",
+            "{'web-01': 2, 'db-02': 0}",
+            "{'db-02': 0}"
+          ],
+          "answer": "{'web-01': 2}",
+          "explanation": "The `if scans` filter drops hosts with an empty list, so db-02 never makes it into the new dictionary.",
+          "code": "data = {'web-01': [80, 90], 'db-02': []}\nprint({h: len(scans) for h, scans in data.items() if scans})"
+        },
+        {
+          "id": "i06",
+          "type": "code",
+          "track": "interview",
+          "heading": "Classic: top talkers",
+          "instruction": "Network flow records list (ip, bytes). Total the bytes per IP and print the two IPs that sent the most, highest first. It should print: ['10.0.0.7', '10.0.0.5']",
+          "initial_code": "flows = [('10.0.0.5', 1200), ('10.0.0.9', 300), ('10.0.0.5', 800), ('10.0.0.7', 5000), ('10.0.0.9', 100)]\n# TODO: print the top two IPs by total bytes\n",
+          "expected_output": "['10.0.0.7', '10.0.0.5']",
+          "hint": "from collections import defaultdict\ntotals = defaultdict(int)\nfor ip, size in flows:\n    totals[ip] += size\nprint(sorted(totals, key=totals.get, reverse=True)[:2])",
+          "support": [
+            {
+              "heading": "Total first",
+              "content": "Add each flow's bytes to its IP's running total with `defaultdict(int)`.",
+              "example_code": "from collections import defaultdict\nt = defaultdict(int)\nfor k, v in [('a', 1), ('a', 2)]:\n    t[k] += v\nprint(dict(t))"
+            },
+            {
+              "heading": "Sort the keys by their totals",
+              "content": "`sorted(totals, key=totals.get, reverse=True)` lists IPs from most to fewest bytes; `[:2]` keeps two.",
+              "example_code": "d = {'x': 5, 'y': 9}\nprint(sorted(d, key=d.get, reverse=True))"
+            }
+          ]
+        },
+        {
+          "id": "i07",
+          "type": "code",
+          "track": "interview",
+          "heading": "Classic: percent non-compliant",
+          "instruction": "Print the share of hosts whose average is below 70, as a percentage with one decimal place. It should print: 50.0% below 70",
+          "initial_code": "averages = {'web-01': 92, 'db-02': 64, 'vpn-gw': 71, 'kiosk-2': 55}\n# TODO: print the percentage below 70\n",
+          "expected_output": "50.0% below 70",
+          "hint": "below = len([a for a in averages.values() if a < 70])\npct = below / len(averages) * 100\nprint(f'{pct:.1f}% below 70')",
+          "support": [
+            {
+              "heading": "Count, then divide",
+              "content": "Count the averages under 70 (2 of 4), divide by the number of hosts, and multiply by 100.",
+              "example_code": "vals = [92, 64, 71, 55]\nprint(len([v for v in vals if v < 70]) / len(vals))  # 0.5"
+            },
+            {
+              "heading": "One decimal place",
+              "content": "`f'{pct:.1f}%'` shows 50.0%. The `%` after the braces is ordinary text.",
+              "example_code": "p = 33.333\nprint(f'{p:.1f}%')"
+            }
+          ]
+        },
+        {
+          "id": "i08",
+          "type": "code",
+          "track": "interview",
+          "heading": "Classic: alerts per day",
+          "instruction": "Count alerts per calendar day from their ISO timestamps and print the counts as a dict. It should print: {'2025-10-01': 2, '2025-10-02': 1, '2025-10-03': 2}",
+          "initial_code": "from datetime import datetime\nfrom collections import defaultdict\n\nstamps = ['2025-10-01T09:14:00', '2025-10-01T22:40:00', '2025-10-02T03:05:00', '2025-10-03T11:00:00', '2025-10-03T11:30:00']\n# TODO: count alerts per day\n",
+          "expected_output": "{'2025-10-01': 2, '2025-10-02': 1, '2025-10-03': 2}",
+          "hint": "counts = defaultdict(int)\nfor s in stamps:\n    counts[datetime.fromisoformat(s).date().isoformat()] += 1\nprint(dict(counts))",
+          "support": [
+            {
+              "heading": "Parse, then keep the day",
+              "content": "`datetime.fromisoformat(s).date()` drops the time; `.isoformat()` turns the date back into text like '2025-10-01' for the key.",
+              "example_code": "from datetime import datetime\nprint(datetime.fromisoformat('2025-01-02T10:00:00').date().isoformat())"
+            },
+            {
+              "heading": "Count per key",
+              "content": "`counts[day] += 1` with `defaultdict(int)`. Printing `dict(counts)` keeps the order in which days first appeared.",
+              "example_code": "from collections import defaultdict\nc = defaultdict(int)\nfor d in ['x', 'x', 'y']:\n    c[d] += 1\nprint(dict(c))"
+            }
+          ]
+        },
+        {
+          "id": "i09",
+          "type": "code",
+          "track": "interview",
+          "heading": "Debug: every vulnerability is medium",
+          "instruction": "This maps CVSS scores to severity, but almost everything comes out 'medium'. The checks run in the wrong order: a 9.8 passes `>= 4` first. Reorder them so it prints: ['critical', 'high', 'medium', 'low']",
+          "initial_code": "def severity(score):\n    if score >= 4:\n        return 'medium'\n    elif score >= 7:\n        return 'high'\n    elif score >= 9:\n        return 'critical'\n    return 'low'\n\nprint([severity(s) for s in [9.8, 7.5, 5.0, 2.1]])",
+          "expected_output": "['critical', 'high', 'medium', 'low']",
+          "hint": "Check the highest threshold first:\nif score >= 9: critical, elif score >= 7: high, elif score >= 4: medium",
+          "support": [
+            {
+              "heading": "The first true branch wins",
+              "content": "An if/elif chain stops at the first condition that's True. 9.8 >= 4 is True, so it never reaches the 'critical' check.",
+              "example_code": "x = 9.8\nif x >= 4:\n    print('stopped here')\nelif x >= 9:\n    print('never reached')"
+            },
+            {
+              "heading": "Highest first",
+              "content": "Order the thresholds from 9 down to 4 (the CVSS bands: 9+ critical, 7+ high, 4+ medium). Anything lower falls through to 'low'.",
+              "example_code": "def size(n):\n    if n >= 100:\n        return 'big'\n    elif n >= 10:\n        return 'medium'\n    return 'small'\n\nprint(size(150), size(20))"
+            }
+          ]
         }
       ]
     }
