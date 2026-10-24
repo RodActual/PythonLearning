@@ -189,7 +189,10 @@ function explainBody(err: PyError, attempt: Attempt): string {
       if (/can only concatenate str \(not "(\w+)"\) to str/.test(msg) || /unsupported operand type\(s\) for \+: '(int|float)' and 'str'|'str' and '(int|float)'/.test(msg))
         return `${where}${quote('+')} can't combine text and a number. To join text, convert the number with ${quote('str()')} or use an f-string like ${quote("f'Score: {score}'")}; to do math, convert the text with ${quote('int()')} or ${quote('float()')}.`;
       const missing = /(\w+)\(\) missing (\d+) required positional arguments?: (.*)/.exec(msg);
-      if (missing) return `${where}${quote(`${missing[1]}()`)} needs ${missing[2]} more argument${missing[2] === '1' ? '' : 's'} (${missing[3]}). Pass a value for each parameter.`;
+      if (missing) {
+        const first = /'(\w+)'/.exec(missing[3])?.[1] ?? 'name';
+        return `${where}${quote(`${missing[1]}()`)} needs ${missing[2]} more argument${missing[2] === '1' ? '' : 's'} (${missing[3]}). Pass a value for each parameter, or give it a default in the def line, like ${quote(`${first}=...`)}.`;
+      }
       const extra = /(\w+)\(\) takes (\d+) positional arguments? but (\d+) (?:was|were) given/.exec(msg);
       if (extra) return `${where}${quote(`${extra[1]}()`)} takes ${extra[2]} argument(s) but got ${extra[3]}. (Methods count ${quote('self')} too.)`;
       const noArgs = /(\w+)\(\) takes no arguments/.exec(msg);
@@ -202,22 +205,33 @@ function explainBody(err: PyError, attempt: Attempt): string {
       if (/object is not callable/.test(msg)) return `${where}${msg}. Something that isn't a function is being called with ( ). Check for a variable that reuses a function's name.`;
       if (/can't multiply sequence by non-int/.test(msg))
         return `${where}${quote('*')} can only repeat text (or a list) by a whole number, and here the count isn't an int. Use a number without quotes, like ${quote("'=' * 3")}.`;
+      const compare = /'([<>]=?)' not supported between instances of '(\w+)' and '(\w+)'/.exec(msg);
+      if (compare && compare[2] === compare[3] && !BUILTIN_TYPES.has(compare[2]))
+        return `${where}Python doesn't know how to compare two ${compare[2]} objects with ${quote(compare[1])}. Sorting, ${quote('min()')} and ${quote('max()')} need a ${quote('__lt__(self, other)')} method on the class that says which one is smaller.`;
       if (/object is not subscriptable/.test(msg)) return `${where}${msg}. Square brackets [ ] only work on lists, strings, tuples and dictionaries.`;
       return `${where}a value has the wrong type for this operation (${msg}).`;
     }
     case 'AttributeError': {
       if (/'NoneType' object/.test(msg))
         return `${where}a value is None, so it has no attributes (${msg}). A function with no ${quote('return')} gives back None.`;
+      const onClass = /type object '(\w+)' has no attribute '(\w+)'/.exec(msg);
+      if (onClass)
+        return `${where}the class ${quote(onClass[1])} has no ${quote(onClass[2])}. Define it inside the class, indented under ${quote(`class ${onClass[1]}:`)}.`;
       const m = /'(\w+)' object has no attribute '(\w+)'(?:\. Did you mean: '(\w+)'\?)?/.exec(msg);
       if (!m) break;
+      const a = article(m[1]);
       // `import math` followed by `math = ...` hides the module behind the new value.
       const owner = new RegExp(`(\\w+)\\.${m[2]}\\b`).exec(src)?.[1];
       if (owner && new RegExp(`^\\s*import\\s+${owner}\\b`, 'm').test(code) && new RegExp(`^\\s*${owner}\\s*=[^=]`, 'm').test(code))
         return `${where}${quote(owner)} was imported as a module, but ${quote(`${owner} = ...`)} later replaced it with a ${m[1]}, which has no ${quote(m[2])}. Give that variable a different name.`;
-      if (m[3]) return `${where}a ${m[1]} has no ${quote(m[2])}. Did you mean ${quote(m[3])}?`;
-      return BUILTIN_TYPES.has(m[1])
-        ? `${where}a ${m[1]} has no ${quote(m[2])}. Check the spelling, and that the variable holds the value you expect.`
-        : `${where}a ${m[1]} has no ${quote(m[2])}. Check the spelling, and that it was set on the object (for example in __init__).`;
+      if (m[3]) return `${where}${a} ${m[1]} has no ${quote(m[2])}. Did you mean ${quote(m[3])}?`;
+      if (BUILTIN_TYPES.has(m[1])) return `${where}${a} ${m[1]} has no ${quote(m[2])}. Check the spelling, and that the variable holds the value you expect.`;
+      // Called like a method: point at the class body, and catch a def that ended up outside it.
+      if (new RegExp(`\\.${m[2]}\\(`).test(src))
+        return new RegExp(`^def\\s+${m[2]}\\(`, 'm').test(code)
+          ? `${where}${quote(`${m[2]}()`)} is defined, but outside the class, so ${a} ${m[1]} doesn't have it. Indent the whole ${quote(`def ${m[2]}`)} block under ${quote(`class ${m[1]}:`)}.`
+          : `${where}${a} ${m[1]} has no method ${quote(m[2])}. Define it inside the class with ${quote(`def ${m[2]}(self, ...):`)}, indented under ${quote(`class ${m[1]}:`)}.`;
+      return `${where}${a} ${m[1]} has no ${quote(m[2])}. Check the spelling, and that it was set on the object (for example in __init__).`;
     }
     case 'IndexError':
       return `${where}the index is past the end (${msg}). Indexes start at 0, so the last item of a list with 3 items is [2], or [-1].`;
