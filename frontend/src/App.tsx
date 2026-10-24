@@ -51,9 +51,23 @@ const Loading = () => (
   </div>
 );
 
+const LoadFailed = ({ onSignOut }: { onSignOut: () => void }) => (
+  <div className="loading-state" role="alert">
+    <p>Your saved progress couldn't be loaded, so nothing is shown that could overwrite it.</p>
+    <p>
+      <button type="button" className="secondary-button" onClick={() => window.location.reload()}>Try again</button>{' '}
+      <button type="button" className="secondary-button" onClick={onSignOut}>Log out</button>
+    </p>
+  </div>
+);
+
 function App() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  // Set when saved progress can't be loaded. The map stays hidden so empty progress is never shown as real.
+  const [loadFailed, setLoadFailed] = useState(false);
+  // The signed-in user whose progress has arrived, so a repeat sign-in callback doesn't reset the app.
+  const readyUid = useRef<string | null>(null);
   const [view, setView] = useState<View>({ name: 'map' });
   const [stepIndex, setStepIndex] = useState(0);
   const [progress, setProgress] = useState<UserProgress>(EMPTY_PROGRESS);
@@ -137,16 +151,24 @@ function App() {
       setSaveState('idle');
 
       if (!currentUser) {
+        readyUid.current = null;
         applyProgress(EMPTY_PROGRESS);
         setView({ name: 'map' });
+        setLoadFailed(false);
         setLoading(false);
         return;
       }
 
       // Keep the loading screen until saved progress arrives, so the map never flashes as empty.
-      // If Firestore stays silent (offline with nothing cached), show the app anyway after a while.
-      setLoading(true);
-      giveUp = setTimeout(() => setLoading(false), 8000);
+      // If Firestore stays silent (offline with nothing cached), say so instead of showing empty progress.
+      if (readyUid.current !== currentUser.uid) {
+        setLoadFailed(false);
+        setLoading(true);
+        giveUp = setTimeout(() => {
+          setLoadFailed(true);
+          setLoading(false);
+        }, 8000);
+      }
 
       const ref = doc(db, USER_PROGRESS_COLLECTION, currentUser.uid);
       let migrated = false;
@@ -155,8 +177,13 @@ function App() {
         { includeMetadataChanges: true },
         (snap) => {
           const { progress: next, needsMigration } = fromDoc(snap.data() as ProgressDoc | undefined);
+          // A cache-only snapshot with no document may just mean this device has nothing cached yet:
+          // wait for the server's answer rather than showing empty progress.
+          if (snap.metadata.fromCache && !snap.exists()) return;
           applyProgress(next);
           clearTimeout(giveUp);
+          readyUid.current = currentUser.uid;
+          setLoadFailed(false);
           setLoading(false);
           if (needsMigration && !migrated) {
             // Rewrite old position-based progress as step ids. Old fields stay for rollback.
@@ -170,6 +197,7 @@ function App() {
         },
         (error) => {
           clearTimeout(giveUp);
+          if (readyUid.current !== currentUser.uid) setLoadFailed(true);
           setLoading(false);
           setSaveState('error');
           reportError(error, { context: 'progress listener' });
@@ -291,6 +319,7 @@ function App() {
   const backToMap = () => setView({ name: 'map' });
 
   if (loading) return <Loading />;
+  if (loadFailed) return <LoadFailed onSignOut={() => signOut(auth)} />;
 
   const currentStep = currentLesson?.steps[stepIndex];
 

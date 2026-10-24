@@ -75,10 +75,43 @@ test('the map waits for saved progress instead of flashing as empty', async ({ p
     (window as unknown as { __SNAPSHOT_DELAY: number }).__SNAPSHOT_DELAY = 600;
   }, allIds('lesson-01'));
   await page.goto('/');
-  await expect(page.getByRole('status')).toContainText('Loading');
+  await expect(page.locator('.loading-state')).toContainText('Loading');
   await expect(page.locator('.map-node')).toHaveCount(0);
   // When the map first appears, the saved lesson is already marked done.
   await expect(page.locator('.map-node').first()).toHaveClass(/state-completed/);
+});
+
+test('an empty cache-only snapshot does not end loading', async ({ page }) => {
+  await page.addInitScript((ids) => {
+    (window as unknown as { __MOCK_STORE: unknown }).__MOCK_STORE = { version: 2, done: { 'lesson-01': ids }, first_try_ids: {} };
+    (window as unknown as { __CACHE_FIRST: boolean }).__CACHE_FIRST = true;
+  }, allIds('lesson-01'));
+  await page.goto('/');
+  await expect(page.locator('.loading-state')).toContainText('Loading');
+  // The empty cache snapshot arrives first; the map must wait for the server's answer.
+  await expect(page.locator('.map-node').first()).toHaveClass(/state-completed/);
+});
+
+test('progress that never loads shows a message, not an empty map', async ({ page }) => {
+  await page.clock.install();
+  await page.addInitScript(() => {
+    (window as unknown as { __SNAPSHOT_DELAY: number }).__SNAPSHOT_DELAY = 600000;
+  });
+  await page.goto('/');
+  await expect(page.locator('.loading-state')).toContainText('Loading');
+  await page.clock.fastForward(8500);
+  await expect(page.getByRole('alert')).toContainText("couldn't be loaded");
+  await expect(page.locator('.map-node')).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Try again' })).toBeVisible();
+});
+
+test('a failed progress listener shows a message, not an empty map', async ({ page }) => {
+  await page.addInitScript(() => {
+    (window as unknown as { __SNAPSHOT_ERROR: boolean }).__SNAPSHOT_ERROR = true;
+  });
+  await page.goto('/');
+  await expect(page.getByRole('alert')).toContainText("couldn't be loaded");
+  await expect(page.locator('.map-node')).toHaveCount(0);
 });
 
 function escape(s: string) {
