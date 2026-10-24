@@ -2,7 +2,7 @@ import type { CourseAbout as About, Lesson, Unit, UserProgress } from '../types/
 import CourseAbout from './CourseAbout';
 import { lessonState, recommendedLessonIndex, type LessonState } from '../game/summary';
 import { lessonXp } from '../game/xp';
-import { doneCount, resumeIndex } from '../game/progress';
+import { doneCount, isStepDone, resumeIndex } from '../game/progress';
 import { useDocumentTitle, useFocusOnMount } from '../a11y/hooks';
 
 interface SkillMapProps {
@@ -77,6 +77,8 @@ function UnitPath({ lessons, allLessons, progress, recommendedId, onOpenLesson, 
           const state = lessonState(lesson, progress);
           const reached = doneCount(progress, lesson);
           const resumeAt = resumeIndex(progress, lesson);
+          const optional = lesson.steps.filter((s) => s.track);
+          const optionalDone = optional.filter((s) => isStepDone(progress, lesson.id, s.id)).length;
           const isNext = lesson.id === recommendedId;
           const number = allLessons.indexOf(lesson) + 1;
           const xp = lessonXp(lesson, progress);
@@ -97,6 +99,9 @@ function UnitPath({ lessons, allLessons, progress, recommendedId, onOpenLesson, 
                   <span className="node-status">
                     {isNext && <span className="chip chip-next">Up next</span>}
                     {state === 'in-progress' ? `Step ${resumeAt + 1} of ${lesson.steps.length}` : STATE_LABEL[state]}
+                    {state === 'completed' && optional.length > 0 && optionalDone < optional.length && (
+                      <> · Deep dive {optionalDone}/{optional.length}</>
+                    )}
                     {xp > 0 && <> · {xp} XP</>}
                   </span>
                 </span>

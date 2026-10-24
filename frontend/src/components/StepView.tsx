@@ -20,6 +20,8 @@ interface StepViewProps {
   courseComplete: boolean;
   about: CourseAbout;
   onNext: (firstTry: boolean) => void;
+  /** Moves past an optional (deep-dive or interview) step without completing it. */
+  onSkip: () => void;
   onPrev: () => void;
   onBackToMenu: () => void;
   onRestart: () => void;
@@ -29,6 +31,33 @@ interface StepViewProps {
 
 const stepLabel = (step: Step) =>
   step.type === 'text' ? 'Lesson' : step.type === 'code' ? 'Coding challenge' : step.code ? 'Predict the output' : 'Quiz';
+
+const TRACK_LABEL = { 'deep-dive': 'Deep dive', interview: 'Interview practice' } as const;
+
+/** Introduces an optional section on its first step. */
+function TrackBanner({ track, count, onBackToMenu }: { track: 'deep-dive' | 'interview'; count: number; onBackToMenu: () => void }) {
+  return (
+    <aside className={`track-banner track-${track}`} aria-label={`${TRACK_LABEL[track]}, optional`}>
+      <p className="track-title">
+        <span aria-hidden="true">{track === 'deep-dive' ? '🤿 ' : '💼 '}</span>
+        {TRACK_LABEL[track]} <span className="chip">Optional</span>
+      </p>
+      {track === 'deep-dive' ? (
+        <p>
+          You've finished the core lesson, so it already counts as complete. The next {count} steps go further: how
+          things work under the hood, common mistakes, and more practice. They earn XP, and you can skip any question
+          or challenge.
+        </p>
+      ) : (
+        <p>
+          {count} steps in the style of real Python interviews: explain a concept, judge how fast code is, solve a
+          classic problem, and find the bug in someone else's code. They earn XP, and you can skip any of them.
+        </p>
+      )}
+      <button type="button" className="secondary-button" onClick={onBackToMenu}>Back to the map</button>
+    </aside>
+  );
+}
 
 type CompletionProps = Pick<
   StepViewProps,
@@ -102,6 +131,7 @@ function StepView({
   courseComplete,
   about,
   onNext,
+  onSkip,
   onPrev,
   onBackToMenu,
   onRestart,
@@ -135,6 +165,10 @@ function StepView({
   const needsCheckIn = step.type === 'code' && !alreadyCompleted && !checkedIn && !!step.support?.length;
   const canProceed = step.type === 'text' || solved !== null;
   const isLast = stepIndex === total - 1;
+  const track = step.track;
+  const trackStart = track && lesson.steps.findIndex((s) => s.track === track) === stepIndex;
+  const trackCount = track ? lesson.steps.filter((s) => s.track === track).length : 0;
+  const canSkip = !!track && step.type !== 'text' && !canProceed;
   const handleNext = () => {
     if (canProceed) onNext(solved?.firstTry ?? false);
   };
@@ -151,7 +185,7 @@ function StepView({
 
       <h2 className="lesson-title">{lesson.title}</h2>
       <div
-        className="step-progress"
+        className={`step-progress${total > 24 ? ' dense' : ''}`}
         role="progressbar"
         aria-label="Lesson progress"
         aria-valuemin={0}
@@ -160,7 +194,10 @@ function StepView({
         aria-valuetext={`Step ${stepIndex + 1} of ${total}`}
       >
         {lesson.steps.map((s, i) => (
-          <span key={i} className={`seg seg-${s.type} ${i < stepIndex ? 'done' : i === stepIndex ? 'current' : ''}`} />
+          <span
+            key={i}
+            className={`seg seg-${s.type}${s.track ? ' seg-optional' : ''} ${i < stepIndex ? 'done' : i === stepIndex ? 'current' : ''}`}
+          />
         ))}
       </div>
 
@@ -172,9 +209,13 @@ function StepView({
         </aside>
       )}
 
+      {track && trackStart && <TrackBanner track={track} count={trackCount} onBackToMenu={onBackToMenu} />}
+
       <div className={`step-card step-${step.type}`}>
         <h3 ref={headingRef} tabIndex={-1} className="step-heading">
-          <span className="step-kicker">Step {stepIndex + 1} of {total} · {stepLabel(step)}</span>
+          <span className="step-kicker">
+            Step {stepIndex + 1} of {total} · {track && <>{TRACK_LABEL[track]} · </>}{stepLabel(step)}
+          </span>
           {step.type !== 'quiz' && step.heading && (
             <span className="step-heading-text"><span className="visually-hidden">: </span>{step.heading}</span>
           )}
@@ -241,7 +282,12 @@ function StepView({
           <span aria-hidden="true">← </span>Previous
         </button>
         <div className="next-wrap">
-          {!canProceed && <span id={hintId} className="next-hint">{hint}</span>}
+          {!canProceed && <span id={hintId} className="next-hint">{hint}{canSkip && ' This one is optional, so you can skip it.'}</span>}
+          {canSkip && (
+            <button type="button" onClick={onSkip} className="secondary-button skip-button">
+              Skip{isLast ? ' and finish' : ''}
+            </button>
+          )}
           <button
             type="button"
             onClick={handleNext}

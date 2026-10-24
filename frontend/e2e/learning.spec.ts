@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 import { allIds, lesson, nextButton, passCheckIn, solutions, store } from './helpers';
 
 test('complete lesson 1: quizzes, hints, predict-the-output, and real Python', async ({ page }) => {
-  test.setTimeout(120_000);
+  test.setTimeout(300_000);
   const l = lesson('lesson-01');
   await page.goto('/');
   await page.locator('.continue-card .primary-button').click();

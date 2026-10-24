@@ -183,7 +183,7 @@ function explainBody(err: PyError, attempt: Attempt): string {
     }
     case 'TypeError': {
       if (/can only concatenate str \(not "(\w+)"\) to str/.test(msg) || /unsupported operand type\(s\) for \+: '(int|float)' and 'str'|'str' and '(int|float)'/.test(msg))
-        return `${where}${quote('+')} can't join text and a number. Convert the number with ${quote('str()')}, or use an f-string like ${quote("f'Score: {score}'")}.`;
+        return `${where}${quote('+')} can't combine text and a number. To join text, convert the number with ${quote('str()')} or use an f-string like ${quote("f'Score: {score}'")}; to do math, convert the text with ${quote('int()')} or ${quote('float()')}.`;
       const missing = /(\w+)\(\) missing (\d+) required positional arguments?: (.*)/.exec(msg);
       if (missing) return `${where}${quote(`${missing[1]}()`)} needs ${missing[2]} more argument${missing[2] === '1' ? '' : 's'} (${missing[3]}). Pass a value for each parameter.`;
       const extra = /(\w+)\(\) takes (\d+) positional arguments? but (\d+) (?:was|were) given/.exec(msg);
@@ -194,6 +194,8 @@ function explainBody(err: PyError, attempt: Attempt): string {
       if (/'NoneType' object/.test(msg))
         return `${where}a value is None, so it can't be used here (${msg}). A function with no ${quote('return')} (or ${quote('yield')}) gives back None.`;
       if (/object is not callable/.test(msg)) return `${where}${msg}. Something that isn't a function is being called with ( ). Check for a variable that reuses a function's name.`;
+      if (/can't multiply sequence by non-int/.test(msg))
+        return `${where}${quote('*')} can only repeat text (or a list) by a whole number, and here the count isn't an int. Use a number without quotes, like ${quote("'=' * 3")}.`;
       if (/object is not subscriptable/.test(msg)) return `${where}${msg}. Square brackets [ ] only work on lists, strings, tuples and dictionaries.`;
       return `${where}a value has the wrong type for this operation (${msg}).`;
     }
@@ -230,10 +232,15 @@ function explainBody(err: PyError, attempt: Attempt): string {
 const show = (s: string) => (s === '' ? 'an empty line' : quote(s));
 
 /** Explains how printed output differs from the expected output. */
-export function compareOutput(stdout: string, expectedOutput: string): string {
+export function compareOutput(stdout: string, expectedOutput: string, code = ''): string {
   const got = normalize(stdout);
   const want = normalize(expectedOutput);
-  if (!got) return 'Your code ran without errors but printed nothing. Use print() to show the result.';
+  if (!got) {
+    // A print() outside comments that produced nothing means its line never ran.
+    return /^[^#\n]*\bprint\(/m.test(code)
+      ? "Your code ran without errors but printed nothing. It does call print(), so that line never ran: check your loop's range and your if conditions."
+      : 'Your code ran without errors but printed nothing. Use print() to show the result.';
+  }
   if (got.toLowerCase() === want.toLowerCase()) return 'Almost: the words are right but the capital letters differ. Match the capitalization exactly.';
   if (got.replace(/\s+/g, '') === want.replace(/\s+/g, '')) return 'Almost: the characters are right but the spaces or line breaks differ.';
 
@@ -280,5 +287,5 @@ export function diagnose(attempt: Attempt): string {
   // Timeouts and the output limit already explain themselves.
   if (stderr.trim() && !err) return stderr.trim();
   if (err) return unchanged + explainError(err, attempt);
-  return unchanged + compareOutput(stdout, expectedOutput ?? '');
+  return unchanged + compareOutput(stdout, expectedOutput ?? '', code);
 }

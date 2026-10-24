@@ -380,6 +380,428 @@
             ".java": "That's for Java files.",
             ".python": "Close, but the standard extension is the short .py."
           }
+        },
+        {
+          "id": "d01",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "More math operators",
+          "content": "Besides `+ - * /`, Python has three more math operators you'll use constantly. `//` is **floor division**: it divides and throws away the fraction. `%` (modulo) gives the **remainder** left over after dividing. `**` raises a number to a **power**.",
+          "example_code": "print(7 / 2)    # 3.5  normal division\nprint(7 // 2)   # 3    whole times 2 fits into 7\nprint(7 % 2)    # 1    what's left over\nprint(2 ** 10)  # 1024 2 multiplied by itself 10 times",
+          "how": "`//` and `%` are two halves of the same division: 7 is 2 × 3 with 1 left over, so `7 // 2` is 3 and `7 % 2` is 1. `**` repeats multiplication, so `2 ** 3` is 2 × 2 × 2.",
+          "use": "Splitting things into groups (how many full boxes of 12 eggs), checking even or odd (`n % 2` is 0 for even numbers), turning seconds into minutes, and growth calculations like interest."
+        },
+        {
+          "id": "d02",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "What does this code print?",
+          "options": [
+            "3",
+            "2",
+            "3.4"
+          ],
+          "answer": "2",
+          "explanation": "17 divided by 5 is 3 with 2 left over. `%` gives the leftover, so the answer is 2.",
+          "code": "print(17 % 5)",
+          "feedback": {
+            "3": "3 is `17 // 5`, the number of whole fives. `%` gives what's left over.",
+            "3.4": "3.4 is `17 / 5`, normal division."
+          }
+        },
+        {
+          "id": "d03",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Minutes to hours",
+          "instruction": "135 minutes is how many whole hours, and how many minutes left over? Print the hours on one line and the leftover minutes on the next.",
+          "initial_code": "# 135 minutes: print the whole hours, then the leftover minutes\n",
+          "expected_output": "2\n15",
+          "hint": "There are 60 minutes in an hour.\nprint(135 // 60)  # whole hours\nprint(135 % 60)   # minutes left over",
+          "support": [
+            {
+              "heading": "Floor division counts the whole groups",
+              "content": "`//` tells you how many whole groups fit, and `%` tells you what's left. To split 50 eggs into boxes of 12: `50 // 12` full boxes and `50 % 12` loose eggs.",
+              "example_code": "print(50 // 12)  # 4 full boxes\nprint(50 % 12)   # 2 eggs left over"
+            },
+            {
+              "heading": "Two prints, same two numbers",
+              "content": "Both lines use 135 and 60. The first line uses `//` (whole hours), the second uses `%` (minutes left). Each `print()` puts its result on its own line.",
+              "example_code": "print(100 // 60)  # 1 hour\nprint(100 % 60)   # 40 minutes"
+            }
+          ]
+        },
+        {
+          "id": "d04",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Order of operations",
+          "content": "When an expression has several operators, Python follows math rules: `**` first, then `* / // %`, then `+ -`. Operators at the same level run left to right. **Parentheses** always go first, so use them whenever the order matters or isn't obvious.",
+          "example_code": "print(2 + 3 * 4)     # 14: multiply first\nprint((2 + 3) * 4)   # 20: parentheses first\nprint(10 - 4 - 3)    # 3:  left to right\nprint(2 * 3 ** 2)    # 18: power before multiply",
+          "how": "Python builds the answer in rounds: it works out the highest-priority pieces, replaces them with their results, and repeats until one value is left. `2 + 3 * 4` becomes `2 + 12`, then `14`.",
+          "use": "Getting formulas right: averages, prices with tax, unit conversions. A missing pair of parentheses is one of the most common real bugs, and a favorite interview trick question."
+        },
+        {
+          "id": "d05",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "What does this code print?",
+          "options": [
+            "24",
+            "4",
+            "7"
+          ],
+          "answer": "4",
+          "explanation": "Multiplication happens before subtraction: `2 * 3` is 6, then `10 - 6` is 4.",
+          "code": "print(10 - 2 * 3)",
+          "feedback": {
+            "24": "That's `(10 - 2) * 3`. Without parentheses, `*` runs first."
+          }
+        },
+        {
+          "id": "d06",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "print() with several values",
+          "content": "Give `print()` several values separated by commas and it prints them all on one line with a space between. Two optional settings change that: `sep=` sets what goes **between** values, and `end=` sets what goes **after** the last one (normally a new line).",
+          "example_code": "print('Total:', 42)                 # Total: 42\nprint('2025', '07', '04', sep='/')  # 2025/07/04\nprint('Loading', end='...')\nprint('done')                       # Loading...done",
+          "how": "`print` turns each value into text, joins them with `sep` (a space unless you say otherwise), and adds `end` (a newline unless you say otherwise). Numbers don't need converting first.",
+          "use": "Labeled output like `Score: 10`, building dates and times from parts, and writing several pieces on one line, such as a progress message."
+        },
+        {
+          "id": "d07",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Print a date",
+          "instruction": "Use a single `print()` with three values and `sep` to print: 2025-07-04",
+          "initial_code": "# Print 2025-07-04 with one print() and sep\n",
+          "expected_output": "2025-07-04",
+          "hint": "Pass the three parts as separate values and set the separator to a dash:\nprint('2025', '07', '04', sep='-')",
+          "support": [
+            {
+              "heading": "sep goes between values",
+              "content": "`sep` is the glue between the values you pass. With `sep=':'`, the values 10, 30 and 00 print as a clock time.",
+              "example_code": "print('10', '30', '00', sep=':')  # 10:30:00"
+            },
+            {
+              "heading": "Why '07' is in quotes",
+              "content": "The number `07` isn't allowed in Python (no leading zeros), and `7` would print without the zero. Writing the month as the string `'07'` keeps the zero. Pass year, month and day as three separate values, then `sep=` with a dash in quotes.",
+              "example_code": "print('1999', '12', '31', sep='.')  # 1999.12.31"
+            }
+          ]
+        },
+        {
+          "id": "d08",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Escape characters",
+          "content": "A backslash `\\` inside a string starts an **escape**: a two-character code for something hard to type. `\\n` is a new line, `\\t` is a tab, `\\'` and `\\\"` are quote marks that don't end the string, and `\\\\` is one real backslash.",
+          "example_code": "print('Line 1\\nLine 2')       # two lines\nprint('Name:\\tAda')          # tab gap\nprint('It\\'s fine')           # It's fine\nprint(\"She said \\\"hi\\\"\")      # She said \"hi\"\nprint('C:\\\\Users')             # C:\\Users",
+          "how": "When Python reads a string, a backslash means \"the next character is special\". It swaps the pair for the real character, so `\\n` becomes one invisible newline character, not two letters.",
+          "use": "Multi-line messages, lining up columns with tabs, putting quotes inside text, and Windows file paths."
+        },
+        {
+          "id": "d09",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "Which line prints It's mine without an error?",
+          "options": [
+            "print('It's mine')",
+            "print('It\\'s mine')",
+            "print(It's mine)"
+          ],
+          "answer": "print('It\\'s mine')",
+          "explanation": "`\\'` is an escaped quote, so it's part of the text instead of ending the string. In the first option the string ends at `It`, which is a SyntaxError. (Switching to double quotes, `print(\"It's mine\")`, also works.)",
+          "feedback": {
+            "print('It's mine')": "The `'` in `It's` closes the string early, so Python sees leftover text and raises a SyntaxError."
+          }
+        },
+        {
+          "id": "d10",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Two lines, one print",
+          "instruction": "Use one `print()` with `\\n` to print `Name: Ada` and `Role: Engineer` on two separate lines.",
+          "initial_code": "# One print() that shows two lines\n",
+          "expected_output": "Name: Ada\nRole: Engineer",
+          "hint": "Put \\n where the line should break:\nprint('Name: Ada\\nRole: Engineer')",
+          "support": [
+            {
+              "heading": "\\n is a line break inside the text",
+              "content": "Everything after `\\n` starts on a new line. It sits inside the quotes like any other character.",
+              "example_code": "print('Roses are red\\nViolets are blue')"
+            },
+            {
+              "heading": "Write the two lines, then join them",
+              "content": "Write the first line's text, then `\\n`, then the second line's text, all inside one pair of quotes. Don't add a space after `\\n`, or the second line starts with a space.",
+              "example_code": "print('Top\\nBottom')"
+            }
+          ]
+        },
+        {
+          "id": "d11",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Repeating text, and mixing text with numbers",
+          "content": "`*` with a string and a whole number repeats the string: `'-' * 10` is ten dashes. But `+` only joins two strings: `'Age: ' + 5` raises a **TypeError**, because Python won't guess whether you meant text or math. Convert the number first with `str()`: `'Age: ' + str(5)`.",
+          "example_code": "print('-' * 12)            # ------------\nprint('ha' * 3)            # hahaha\nprint('Age: ' + str(5))    # Age: 5\n# print('Age: ' + 5)       # TypeError",
+          "how": "Operators depend on types. `str * int` means repeat; `str + str` means join; `str + int` has no meaning, so Python stops with a TypeError. `str(5)` builds the text '5' from the number 5.",
+          "use": "Dividers and simple text layouts, and building messages that include numbers, like scores or prices."
+        },
+        {
+          "id": "d12",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "What does this code print?",
+          "options": [
+            "9",
+            "333",
+            "3 3 3"
+          ],
+          "answer": "333",
+          "explanation": "`'3'` is a string because of the quotes, so `* 3` repeats it three times. Without quotes, `3 * 3` would be 9.",
+          "code": "print('3' * 3)"
+        },
+        {
+          "id": "d13",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Fix the TypeError",
+          "instruction": "This crashes with a TypeError. Fix it so it prints: Score: 10",
+          "initial_code": "print('Score: ' + 10)",
+          "expected_output": "Score: 10",
+          "hint": "Convert the number to text before joining:\nprint('Score: ' + str(10))",
+          "support": [
+            {
+              "heading": "+ needs two strings",
+              "content": "Joining with `+` only works when both sides are strings. `str()` turns a number into a string so the join works.",
+              "example_code": "print('Level ' + str(3))  # Level 3"
+            },
+            {
+              "heading": "Change one piece",
+              "content": "Keep `'Score: '` as it is. Wrap the number in `str( )` so the right side becomes `str(10)`. Another fix is `print('Score:', 10)`, since print adds the space for you.",
+              "example_code": "print('Lives: ' + str(2))"
+            }
+          ]
+        },
+        {
+          "id": "d14",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Reading a traceback",
+          "content": "When a program crashes, Python prints a **traceback**. Read it from the bottom: the last line names the error type and gives a short message, and the line above shows the code that failed and its line number. Lines before the crash already ran.",
+          "example_code": "print('start')\nprint(10 / 0)\n# start\n# Traceback (most recent call last):\n#   File \"main.py\", line 2, in <module>\n#     print(10 / 0)\n# ZeroDivisionError: division by zero",
+          "how": "Python stops at the first line it can't run and reports where it was. The error type (ZeroDivisionError, TypeError, SyntaxError...) tells you what kind of problem it is; the message gives details.",
+          "use": "Debugging every program you'll ever write. Searching the last line of a traceback online is how most developers start fixing an unfamiliar error."
+        },
+        {
+          "id": "d15",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "In a traceback, where do you find the error type and its message?",
+          "options": [
+            "On the first line",
+            "On the last line",
+            "It isn't shown"
+          ],
+          "answer": "On the last line",
+          "explanation": "The last line reads like `ZeroDivisionError: division by zero`. The lines above it show where in the code it happened."
+        },
+        {
+          "id": "d16",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Floats aren't exact",
+          "content": "Computers store floats in binary, and many decimals (like 0.1) can't be stored exactly, the same way 1/3 can't be written exactly in decimal. So `0.1 + 0.2` prints `0.30000000000000004`. The built-in `round(number, digits)` rounds for display.",
+          "example_code": "print(0.1 + 0.2)             # 0.30000000000000004\nprint(round(0.1 + 0.2, 2))   # 0.3\nprint(round(3.14159, 3))     # 3.142",
+          "how": "A float holds the closest binary value it can, which is off by a tiny amount. Usually the error is invisible, but adding values can make it show up in the last digits. `round` gives back a float rounded to the number of decimal places you ask for.",
+          "use": "Anything with decimals: prices, measurements, scientific values. Real banking code avoids floats for money and counts whole cents instead."
+        },
+        {
+          "id": "d17",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Clean up a float",
+          "instruction": "`1.1 + 2.2` prints 3.3000000000000003. Print it rounded to 1 decimal place so it shows 3.3",
+          "initial_code": "print(1.1 + 2.2)",
+          "expected_output": "3.3",
+          "hint": "Wrap the sum in round() with 1 as the number of places:\nprint(round(1.1 + 2.2, 1))",
+          "support": [
+            {
+              "heading": "round(value, places)",
+              "content": "`round` takes the value first and the number of decimal places second, separated by a comma.",
+              "example_code": "print(round(2.675, 1))  # 2.7\nprint(round(9.87654, 2))  # 9.88"
+            },
+            {
+              "heading": "Wrap, don't rewrite",
+              "content": "Keep `1.1 + 2.2` as it is and put it inside `round( , 1)`, then put that inside `print()`. That's three layers: print, round, then the sum. Count the parentheses: two open, two close.",
+              "example_code": "print(round(0.7 + 0.1, 1))  # 0.8"
+            }
+          ]
+        },
+        {
+          "id": "i01",
+          "type": "quiz",
+          "track": "interview",
+          "question": "Interview question: what's the difference between `/` and `//` in Python?",
+          "options": [
+            "`/` always gives a float; `//` divides and rounds down to a whole number",
+            "They do the same thing",
+            "`//` starts a comment"
+          ],
+          "answer": "`/` always gives a float; `//` divides and rounds down to a whole number",
+          "explanation": "`7 / 2` is 3.5 and `7 // 2` is 3. Even `6 / 2` gives the float 3.0. A strong answer mentions both, plus that `%` gives the remainder.",
+          "feedback": {
+            "`//` starts a comment": "Comments start with `#`. `//` is floor division (it's a comment in languages like JavaScript, which is why it's a common mix-up)."
+          }
+        },
+        {
+          "id": "i02",
+          "type": "quiz",
+          "track": "interview",
+          "question": "Line 1 is `print('A')` and line 2 is `print('B'` (missing its closing parenthesis). What happens when you run the file?",
+          "options": [
+            "Nothing prints: Python finds the SyntaxError before running any line",
+            "A prints, then a SyntaxError",
+            "A and B both print"
+          ],
+          "answer": "Nothing prints: Python finds the SyntaxError before running any line",
+          "explanation": "Python checks the whole file's grammar before running it, so a SyntaxError anywhere stops everything. Errors like ZeroDivisionError are different: they only happen when that line runs, so earlier lines do print.",
+          "feedback": {
+            "A prints, then a SyntaxError": "That's how runtime errors like ZeroDivisionError behave. Syntax is checked for the whole file first."
+          }
+        },
+        {
+          "id": "i03",
+          "type": "quiz",
+          "track": "interview",
+          "question": "Why does `print(0.1 + 0.2)` show 0.30000000000000004?",
+          "options": [
+            "Floats are stored in binary, and 0.1 and 0.2 can't be stored exactly",
+            "It's a bug in Python",
+            "print() adds extra digits"
+          ],
+          "answer": "Floats are stored in binary, and 0.1 and 0.2 can't be stored exactly",
+          "explanation": "This happens in almost every language, not just Python. Interviewers like it because the follow-up is how to handle money: round for display, or store whole cents as integers."
+        },
+        {
+          "id": "i04",
+          "type": "quiz",
+          "track": "interview",
+          "question": "Which expression gives 0 exactly when 14 is even?",
+          "options": [
+            "14 % 2",
+            "14 // 2",
+            "14 / 2"
+          ],
+          "answer": "14 % 2",
+          "explanation": "`%` gives the remainder. Even numbers leave a remainder of 0 when divided by 2; odd numbers leave 1. This is the standard even/odd check."
+        },
+        {
+          "id": "i05",
+          "type": "quiz",
+          "track": "interview",
+          "question": "What does this code print?",
+          "options": [
+            "14",
+            "100",
+            "22"
+          ],
+          "answer": "14",
+          "explanation": "`**` first: `2 ** 2` is 4. Then `*`: `3 * 4` is 12. Then `+`: `2 + 12` is 14.",
+          "code": "print(2 + 3 * 2 ** 2)",
+          "feedback": {
+            "100": "That's `((2 + 3) * 2) ** 2`, working left to right. Python does `**` first, then `*`, then `+`.",
+            "22": "Close: that treats it as `(2 + 3 * 2) * 2`. Power runs before everything else here."
+          }
+        },
+        {
+          "id": "i06",
+          "type": "code",
+          "track": "interview",
+          "heading": "Classic: temperature converter",
+          "instruction": "Convert 100 degrees Celsius to Fahrenheit and print the result. The formula is F = C × 9 / 5 + 32.",
+          "initial_code": "# Convert 100 Celsius to Fahrenheit\n",
+          "expected_output": "212.0",
+          "hint": "Turn the formula into Python with the Celsius value in place of C:\nprint(100 * 9 / 5 + 32)",
+          "support": [
+            {
+              "heading": "Formulas map straight to operators",
+              "content": "× becomes `*`, ÷ becomes `/`. Python's order of operations matches math, so `* /` happen before `+`.",
+              "example_code": "print(10 * 9 / 5 + 32)  # 10 C is 50.0 F"
+            },
+            {
+              "heading": "Why the answer has .0",
+              "content": "`/` always gives a float, so the result prints with `.0` on the end. That's expected. Put 100 where C goes and print the whole expression.",
+              "example_code": "print(0 * 9 / 5 + 32)  # 32.0"
+            }
+          ]
+        },
+        {
+          "id": "i07",
+          "type": "code",
+          "track": "interview",
+          "heading": "Classic: seconds to h:m:s",
+          "instruction": "Convert 3725 seconds into hours, minutes and seconds, and print them separated by colons: 1:2:5",
+          "initial_code": "# 3725 seconds as hours:minutes:seconds\n",
+          "expected_output": "1:2:5",
+          "hint": "An hour is 3600 seconds and a minute is 60.\nhours: 3725 // 3600\nminutes: 3725 % 3600 // 60\nseconds: 3725 % 60\nPrint all three with sep=':'.",
+          "support": [
+            {
+              "heading": "Peel off the biggest unit first",
+              "content": "Take out whole hours with `// 3600`. What's left, `% 3600`, is less than an hour; divide that by 60 for minutes. Seconds are whatever is left after whole minutes, `% 60`.",
+              "example_code": "print(7384 // 3600)        # 2 hours\nprint(7384 % 3600 // 60)   # 3 minutes\nprint(7384 % 60)           # 4 seconds"
+            },
+            {
+              "heading": "Then print the three parts together",
+              "content": "Pass the three expressions to one `print()`, separated by commas, and add `sep=':'` at the end.",
+              "example_code": "print(2, 3, 4, sep=':')  # 2:3:4"
+            }
+          ]
+        },
+        {
+          "id": "i08",
+          "type": "code",
+          "track": "interview",
+          "heading": "Debug: the wrong average",
+          "instruction": "This should print the average of 80, 90 and 100, which is 90.0, but it prints 203.33333333333334. Fix the bug.",
+          "initial_code": "print(80 + 90 + 100 / 3)",
+          "expected_output": "90.0",
+          "hint": "Division runs before addition, so only 100 is divided by 3. Add parentheses around the sum:\nprint((80 + 90 + 100) / 3)",
+          "support": [
+            {
+              "heading": "Find what runs first",
+              "content": "`/` has higher priority than `+`, so `100 / 3` is worked out first and the other numbers are added to it. Parentheses force the sum to happen first.",
+              "example_code": "print(4 + 6 / 2)    # 7.0: only 6 is halved\nprint((4 + 6) / 2)  # 5.0: the sum is halved"
+            },
+            {
+              "heading": "One pair of parentheses",
+              "content": "The average is the total divided by the count. Put `(` before 80 and `)` after 100 so the whole total is divided by 3.",
+              "example_code": "print((1 + 2 + 3) / 3)  # 2.0"
+            }
+          ]
+        },
+        {
+          "id": "i09",
+          "type": "code",
+          "track": "interview",
+          "heading": "Code review: the menu banner",
+          "instruction": "This crashes with a TypeError. Fix it so it prints: ===Menu===",
+          "initial_code": "print('=' * 3 + 'Menu' + '=' * '3')",
+          "expected_output": "===Menu===",
+          "hint": "A string can only be repeated by a whole number, not by the string '3':\nprint('=' * 3 + 'Menu' + '=' * 3)",
+          "support": [
+            {
+              "heading": "Repeat needs a number",
+              "content": "`'=' * 3` repeats the string three times. `'=' * '3'` tries to multiply text by text, which has no meaning, so Python raises a TypeError.",
+              "example_code": "print('*' * 4)  # ****"
+            },
+            {
+              "heading": "Compare the two halves",
+              "content": "The left side does it right: `'=' * 3`. Make the right side match by removing the quotes around the second 3.",
+              "example_code": "print('-' * 2 + 'Hi' + '-' * 2)  # --Hi--"
+            }
+          ]
         }
       ]
     },
@@ -614,6 +1036,422 @@
             "check(x)": "There's no built-in check function.",
             "typeof(x)": "That's JavaScript. Python uses type(x)."
           }
+        },
+        {
+          "id": "d01",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Variables are labels, not boxes",
+          "content": "A more accurate picture than a box: a variable is a **label** stuck on a value. `b = a` sticks a second label on the same value. Reassigning `a` later moves only the `a` label; `b` still points at the old value.",
+          "example_code": "a = 5\nb = a        # b labels the same 5\na = 10       # move the a label to 10\nprint(a, b)  # 10 5",
+          "how": "Python works out the right side of `=` first, then attaches the name on the left to that value. `b = a` means \"attach b to whatever a points at right now\", not \"keep b in sync with a\".",
+          "use": "Knowing what a copy really does. It matters even more with lists and dictionaries later, where two labels on one list means changing it through one name changes it for both."
+        },
+        {
+          "id": "d02",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "What does this code print?",
+          "options": [
+            "3",
+            "4",
+            "Error"
+          ],
+          "answer": "3",
+          "explanation": "`y = x` makes y point at the value 3. Then `x = x + 1` points x at a new value, 4. y still points at 3.",
+          "code": "x = 3\ny = x\nx = x + 1\nprint(y)",
+          "feedback": {
+            "4": "y isn't linked to x. It got the value x had at that moment, 3, and keeps it."
+          }
+        },
+        {
+          "id": "d03",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Assigning several variables at once",
+          "content": "Python can assign several names in one line: `x, y = 1, 2`. The same trick swaps two values without a temporary variable: `a, b = b, a`.",
+          "example_code": "x, y = 1, 2\nprint(x, y)    # 1 2\n\na = 'left'\nb = 'right'\na, b = b, a    # swap\nprint(a, b)    # right left",
+          "how": "Python builds the whole right side first (here, the pair of current values of b and a), then hands them out to the names on the left in order. Because both values are read before either name changes, nothing gets overwritten too early.",
+          "use": "Swapping values (sorting algorithms do this constantly), and later, unpacking several results returned from one function."
+        },
+        {
+          "id": "d04",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Swap two variables",
+          "instruction": "Swap the values of `first` and `second` in one line, so the print shows: B A",
+          "initial_code": "first = 'A'\nsecond = 'B'\n# TODO: swap them in one line\n\nprint(first, second)",
+          "expected_output": "B A",
+          "hint": "Put both names on the left and both, in swapped order, on the right:\nfirst, second = second, first",
+          "support": [
+            {
+              "heading": "Read the right side first",
+              "content": "`x, y = y, x` first reads the current values of y and x, then gives the first one to x and the second to y.",
+              "example_code": "p = 1\nq = 2\np, q = q, p\nprint(p, q)  # 2 1"
+            },
+            {
+              "heading": "Why two separate lines don't work",
+              "content": "`first = second` then `second = first` loses the original value of `first` on the first line, so both end up as 'B'. Doing it in one line avoids that. Write `first, second = ` and then the two names in the opposite order.",
+              "example_code": "top = 'up'\nbottom = 'down'\ntop, bottom = bottom, top\nprint(top)  # down"
+            }
+          ]
+        },
+        {
+          "id": "d05",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Converting between types",
+          "content": "You can convert values with the type's name: `int('42')` turns text into a whole number, `float('3.5')` into a decimal, and `str(7)` into text. `int(3.9)` chops off the fraction (giving 3); it does not round. Text that isn't a number, like `int('abc')`, raises a **ValueError**.",
+          "example_code": "print(int('42') + 1)    # 43\nprint(float('3.5') * 2) # 7.0\nprint(str(7) + '!')     # 7!\nprint(int(3.9))         # 3, not 4",
+          "how": "Each conversion builds a brand-new value of the target type; the original isn't changed. `int()` reads the digits from a string, or drops everything after the decimal point of a float.",
+          "use": "Data from users, files and websites almost always arrives as text, so converting it to numbers before doing math is one of the most common steps in real programs."
+        },
+        {
+          "id": "d06",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "What does this code print?",
+          "options": [
+            "7",
+            "8",
+            "7.9"
+          ],
+          "answer": "7",
+          "explanation": "`int()` truncates: it drops the fraction instead of rounding, so 7.9 becomes 7. Use `round(7.9)` if you want 8.",
+          "code": "print(int(7.9))",
+          "feedback": {
+            "8": "That would be rounding. `int()` just chops off the decimal part."
+          }
+        },
+        {
+          "id": "d07",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Add numbers stored as text",
+          "instruction": "`a` and `b` hold numbers as text, so `+` joins them and prints 1230. Make it print their sum: 42",
+          "initial_code": "a = '12'\nb = '30'\nprint(a + b)",
+          "expected_output": "42",
+          "hint": "Convert both to whole numbers before adding:\nprint(int(a) + int(b))",
+          "support": [
+            {
+              "heading": "Text + text joins, numbers + numbers add",
+              "content": "`'1' + '2'` is `'12'`, but `1 + 2` is `3`. Converting with `int()` changes which one you get.",
+              "example_code": "print('5' + '5')            # 55\nprint(int('5') + int('5'))  # 10"
+            },
+            {
+              "heading": "Convert each side",
+              "content": "Both values need converting, so wrap each one: `int(a)` and `int(b)`, with `+` between them inside the print.",
+              "example_code": "x = '7'\ny = '3'\nprint(int(x) + int(y))  # 10"
+            }
+          ]
+        },
+        {
+          "id": "d08",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Shortcut operators",
+          "content": "You've seen `+=` and `-=`. Every math operator has one: `*=`, `/=`, `//=`, `%=`, `**=`. They work on strings too: `name += '!'` adds to the end of the text.",
+          "example_code": "score = 10\nscore *= 3      # 30\nscore -= 5      # 25\nprint(score)\n\nword = 'hi'\nword += '!'\nprint(word)     # hi!",
+          "how": "`x op= y` is shorthand for `x = x op y`: read the current value, do the math, and store the result back under the same name.",
+          "use": "Counters, running totals, scores, and building up text piece by piece."
+        },
+        {
+          "id": "d09",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "What does this code print?",
+          "options": [
+            "25",
+            "15",
+            "35"
+          ],
+          "answer": "25",
+          "explanation": "Start at 10, `*= 3` makes it 30, then `-= 5` makes it 25. Each line updates the stored value.",
+          "code": "total = 10\ntotal *= 3\ntotal -= 5\nprint(total)"
+        },
+        {
+          "id": "d10",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Running total",
+          "instruction": "`price` starts at 20. Add 5 for shipping with `+=`, then double it with `*=`, so it prints 50.",
+          "initial_code": "price = 20\n# TODO: add 5 with +=\n\n# TODO: double it with *=\n\nprint(price)",
+          "expected_output": "50",
+          "hint": "price += 5   # 25\nprice *= 2   # 50",
+          "support": [
+            {
+              "heading": "Each shortcut updates the variable",
+              "content": "`x += 5` adds 5 to x and keeps the result in x. The next line starts from that new value.",
+              "example_code": "steps = 100\nsteps += 50\nsteps *= 2\nprint(steps)  # 300"
+            },
+            {
+              "heading": "Order matters",
+              "content": "Adding first and then doubling gives (20 + 5) × 2 = 50. Doubling first would give 20 × 2 + 5 = 45. Put the `+=` line before the `*=` line.",
+              "example_code": "n = 1\nn += 1\nn *= 10\nprint(n)  # 20"
+            }
+          ]
+        },
+        {
+          "id": "d11",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Naming conventions",
+          "content": "Python's official style guide, **PEP 8**, says: `snake_case` for normal variables, `UPPER_CASE` for constants (values meant never to change, like `MAX_LIVES = 3`), and descriptive names over single letters. Never reuse a built-in name like `str`, `list`, `print` or `type` as a variable: it hides the built-in.",
+          "example_code": "MAX_LIVES = 3          # a constant, by convention\nplayer_name = 'Sam'    # snake_case\n\n# str = 'oops'         # this would hide str()...\n# print(str(5))        # ...so this would then crash",
+          "how": "Python doesn't enforce constants or naming styles; they're agreements between programmers. Built-in names, though, are ordinary names: assigning to `str` points it at your value, so the original `str()` function is no longer reachable by that name.",
+          "use": "Readable code that other developers (and interviewers) can follow quickly, and avoiding a confusing class of bugs where a built-in suddenly stops working."
+        },
+        {
+          "id": "d12",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "After which line would `str(5)` stop working?",
+          "options": [
+            "str = 'hello'",
+            "my_str = 'hello'",
+            "STR_LEN = 5"
+          ],
+          "answer": "str = 'hello'",
+          "explanation": "Assigning to `str` reuses the built-in's name, so `str` now means the text 'hello', and calling it raises a TypeError. The other names are different words and don't affect `str`."
+        },
+        {
+          "id": "d13",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "None: the value for \"nothing yet\"",
+          "content": "`None` is a special value meaning \"no value\". Its type is `NoneType`. Use it as a placeholder before you have a real value, like a winner that hasn't been decided yet.",
+          "example_code": "winner = None\nprint(winner)        # None\nprint(type(winner))  # <class 'NoneType'>\nwinner = 'Ada'\nprint(winner)        # Ada",
+          "how": "There is exactly one `None` object in a running program, and every variable set to None points at it. It is not 0, not an empty string, and not False; it's its own type.",
+          "use": "Placeholders, \"not found\" results, optional settings, and (later) the value a function returns when it has no `return`."
+        },
+        {
+          "id": "d14",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "What does this code print?",
+          "options": [
+            "<class 'NoneType'>",
+            "None",
+            "<class 'str'>"
+          ],
+          "answer": "<class 'NoneType'>",
+          "explanation": "`type()` reports the type, and None's type is `NoneType`. Printing None itself would show `None`.",
+          "code": "print(type(None))"
+        },
+        {
+          "id": "d15",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "The basic types at a glance",
+          "content": "Five types cover most everyday values: `int` (whole numbers), `float` (decimals), `str` (text), `bool` (`True` or `False`) and `NoneType` (`None`). Quotes, a decimal point, or the exact words True/False/None decide which type you get.",
+          "example_code": "print(type(3))      # <class 'int'>\nprint(type(3.0))    # <class 'float'>\nprint(type('3'))    # <class 'str'>\nprint(type(True))   # <class 'bool'>\nprint(type(None))   # <class 'NoneType'>",
+          "how": "Python decides a value's type from how it is written. `3` and `3.0` and `'3'` look similar but are three different types, and they behave differently with operators.",
+          "use": "Picking the right type is the first design decision for any piece of data: counts are ints, money is often a float (or whole cents as an int), names are strings, yes/no settings are bools."
+        },
+        {
+          "id": "d16",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Inspect the types",
+          "instruction": "Print the type of `7`, then `7.5`, then `'7'`, then `False`, one per line.",
+          "initial_code": "# Print the type of 7, 7.5, '7' and False, one per line\n",
+          "expected_output": "<class 'int'>\n<class 'float'>\n<class 'str'>\n<class 'bool'>",
+          "hint": "Use type() inside print() four times:\nprint(type(7))\nprint(type(7.5))\n...",
+          "support": [
+            {
+              "heading": "type() reports the kind of value",
+              "content": "Put any value inside `type()` and print the result to see its class.",
+              "example_code": "print(type(42))       # <class 'int'>\nprint(type('hello'))  # <class 'str'>"
+            },
+            {
+              "heading": "Four lines, same pattern",
+              "content": "Each line is `print(type(` + one value + `))`. Keep the quotes on `'7'` so it's a string, and write `False` with a capital F and no quotes so it's a bool.",
+              "example_code": "print(type(1.25))  # <class 'float'>\nprint(type(True))  # <class 'bool'>"
+            }
+          ]
+        },
+        {
+          "id": "d17",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Build a full name",
+          "instruction": "Join `first` and `last` with a space between them, store it in `full_name`, and print it: Ada Lovelace",
+          "initial_code": "first = 'Ada'\nlast = 'Lovelace'\n# TODO: full_name = ...\n\nprint(full_name)",
+          "expected_output": "Ada Lovelace",
+          "hint": "Join three strings: first, a space, and last.\nfull_name = first + ' ' + last",
+          "support": [
+            {
+              "heading": "+ joins strings in order",
+              "content": "You can chain `+` as many times as you need. Each piece is added to the end of the text so far.",
+              "example_code": "city = 'New' + ' ' + 'York'\nprint(city)  # New York"
+            },
+            {
+              "heading": "Don't forget the space",
+              "content": "`first + last` gives 'AdaLovelace'. Add `' '`, a string containing one space, between them, and store the result before the print line uses it.",
+              "example_code": "a = 'Ice'\nb = 'cream'\nprint(a + ' ' + b)  # Ice cream"
+            }
+          ]
+        },
+        {
+          "id": "i01",
+          "type": "quiz",
+          "track": "interview",
+          "question": "Interview question: Python is \"dynamically typed\". What does that mean?",
+          "options": [
+            "Types belong to values; a variable can hold any type and you never declare it",
+            "Python has no types",
+            "You must declare each variable's type before using it"
+          ],
+          "answer": "Types belong to values; a variable can hold any type and you never declare it",
+          "explanation": "`x = 5` then `x = 'five'` is allowed: the name just moves to a value of a different type. Values still have strict types, which is why `'5' + 5` is an error. Languages like Java are statically typed: you declare `int x` and it can only ever hold ints.",
+          "feedback": {
+            "Python has no types": "Every value has a type, and Python enforces it: `'5' + 5` raises a TypeError. What's dynamic is that names aren't tied to one type."
+          }
+        },
+        {
+          "id": "i02",
+          "type": "quiz",
+          "track": "interview",
+          "question": "What's the difference between `=` and `==`?",
+          "options": [
+            "`=` stores a value in a name; `==` compares two values and gives True or False",
+            "They are the same",
+            "`==` stores a value twice"
+          ],
+          "answer": "`=` stores a value in a name; `==` compares two values and gives True or False",
+          "explanation": "`x = 5` is a statement that changes x. `x == 5` is a question that produces True or False. Mixing them up in a condition is one of the most common beginner bugs, and Python raises a SyntaxError for `if x = 5:` to protect you."
+        },
+        {
+          "id": "i03",
+          "type": "quiz",
+          "track": "interview",
+          "question": "What does this code print?",
+          "options": [
+            "55 10",
+            "10 10",
+            "55 55"
+          ],
+          "answer": "55 10",
+          "explanation": "`a` is the string '5', so `* 2` repeats it: '55'. `b` is the number 5, so `* 2` multiplies: 10. Same operator, different types, different behavior.",
+          "code": "a = '5'\nb = 5\nprint(a * 2, b * 2)"
+        },
+        {
+          "id": "i04",
+          "type": "quiz",
+          "track": "interview",
+          "question": "Which variable name follows PEP 8 style for a normal variable?",
+          "options": [
+            "userScore",
+            "user_score",
+            "UserScore"
+          ],
+          "answer": "user_score",
+          "explanation": "PEP 8 uses snake_case for variables and functions. camelCase is common in JavaScript and Java, and CapitalizedWords is used for class names in Python."
+        },
+        {
+          "id": "i05",
+          "type": "quiz",
+          "track": "interview",
+          "question": "What does this code print?",
+          "options": [
+            "<class 'float'>",
+            "<class 'int'>",
+            "5"
+          ],
+          "answer": "<class 'float'>",
+          "explanation": "`/` always produces a float, even when the division is exact. 10 / 2 is 5.0, so x becomes a float. Use `//` to keep an int.",
+          "code": "x = 10\nx = x / 2\nprint(type(x))",
+          "feedback": {
+            "<class 'int'>": "10 / 2 looks like a whole number, but `/` always gives a float (5.0)."
+          }
+        },
+        {
+          "id": "i06",
+          "type": "code",
+          "track": "interview",
+          "heading": "Classic: rectangle area and perimeter",
+          "instruction": "Using `width` and `height`, print the area and then the perimeter on one line, separated by a space: 21 20",
+          "initial_code": "width = 7\nheight = 3\n# TODO: print the area and the perimeter\n",
+          "expected_output": "21 20",
+          "hint": "area = width * height\nperimeter = 2 * (width + height)\nprint(area, perimeter)",
+          "support": [
+            {
+              "heading": "Formulas with variables",
+              "content": "Area is width × height. Perimeter is all four sides added: 2 × (width + height). Variables work in formulas exactly like numbers.",
+              "example_code": "w = 4\nh = 5\nprint(w * h)  # 20"
+            },
+            {
+              "heading": "Two values in one print",
+              "content": "Work out each value (store them in variables if that helps), then pass both to `print()` separated by a comma. The parentheses in the perimeter make the addition happen before the doubling.",
+              "example_code": "side = 2\nprint(side * side, 4 * side)  # 4 8"
+            }
+          ]
+        },
+        {
+          "id": "i07",
+          "type": "code",
+          "track": "interview",
+          "heading": "Classic: digits of a number",
+          "instruction": "For the two-digit number `n`, print its last digit, then on the next line the sum of its two digits: 7 then 11",
+          "initial_code": "n = 47\n# TODO: print the last digit, then the sum of both digits\n",
+          "expected_output": "7\n11",
+          "hint": "n % 10 is the last digit (7).\nn // 10 is the first digit (4).\nprint(n % 10)\nprint(n // 10 + n % 10)",
+          "support": [
+            {
+              "heading": "% 10 and // 10 split off digits",
+              "content": "Dividing by 10 moves the decimal point one place. The remainder, `% 10`, is the last digit; the whole part, `// 10`, is everything before it.",
+              "example_code": "x = 93\nprint(x % 10)   # 3\nprint(x // 10)  # 9"
+            },
+            {
+              "heading": "Add the two parts",
+              "content": "Print the last digit first. For the sum, add the first digit (`n // 10`) and the last digit (`n % 10`) in a second print.",
+              "example_code": "x = 25\nprint(x // 10 + x % 10)  # 7"
+            }
+          ]
+        },
+        {
+          "id": "i08",
+          "type": "code",
+          "track": "interview",
+          "heading": "Debug: the counter that never counts",
+          "instruction": "This should count to 2, but it prints 0. Fix it so it prints 2.",
+          "initial_code": "count = 0\ncount + 1\ncount + 1\nprint(count)",
+          "expected_output": "2",
+          "hint": "`count + 1` works out a value and throws it away. Store the result:\ncount += 1",
+          "support": [
+            {
+              "heading": "An expression alone doesn't change anything",
+              "content": "`x + 1` calculates a new value, but nothing stores it, so x stays the same. Only assignment (`=`, `+=`, ...) changes a variable.",
+              "example_code": "lives = 3\nlives - 1       # calculated, then thrown away\nprint(lives)    # still 3\nlives -= 1\nprint(lives)    # 2"
+            },
+            {
+              "heading": "Fix both lines",
+              "content": "Both `count + 1` lines have the same bug. Change each to `count += 1` (or `count = count + 1`).",
+              "example_code": "n = 0\nn += 1\nprint(n)  # 1"
+            }
+          ]
+        },
+        {
+          "id": "i09",
+          "type": "code",
+          "track": "interview",
+          "heading": "Debug: the birthday bug",
+          "instruction": "This crashes with a TypeError. Fix it so it prints next year's age: 31",
+          "initial_code": "age = '30'\nnext_year = age + 1\nprint(next_year)",
+          "expected_output": "31",
+          "hint": "age is text, so convert it before adding:\nnext_year = int(age) + 1",
+          "support": [
+            {
+              "heading": "The error names the problem",
+              "content": "The message says it can only concatenate str to str: `age` holds text ('30'), and you can't add a number to text.",
+              "example_code": "years = '9'\nprint(int(years) + 1)  # 10"
+            },
+            {
+              "heading": "Convert where you do the math",
+              "content": "Change the middle line so it adds 1 to `int(age)` instead of `age`. Leave `age` itself as it is.",
+              "example_code": "score = '99'\nnew = int(score) + 1\nprint(new)  # 100"
+            }
+          ]
         }
       ]
     },
@@ -934,6 +1772,416 @@
             "print('Hi, {name}!')": "Without the f prefix, {name} is printed literally.",
             "print(f'Hi, name!')": "Without braces, name is just ordinary text."
           }
+        },
+        {
+          "id": "d01",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Slices can step",
+          "content": "A slice can take a third number, the **step**: `text[start:stop:step]`. `text[::2]` takes every second character. A negative step walks backwards, so `text[::-1]` is the whole string reversed.",
+          "example_code": "word = 'Python'\nprint(word[::2])    # Pto\nprint(word[1::2])   # yhn\nprint(word[::-1])   # nohtyP",
+          "how": "Python starts at `start`, adds `step` each time, and stops before `stop`. Leaving start and stop blank means \"the whole string\"; with a negative step, blank start means \"from the end\".",
+          "use": "Reversing text (palindrome checks are a classic interview task), taking every nth character, and later the same syntax on lists."
+        },
+        {
+          "id": "d02",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "What does this code print?",
+          "options": [
+            "pto",
+            "yhn",
+            "python"
+          ],
+          "answer": "pto",
+          "explanation": "Start at index 0 ('p'), then every second character: 'p', 't', 'o'.",
+          "code": "print('python'[::2])",
+          "feedback": {
+            "yhn": "That would be `[1::2]`, starting at index 1."
+          }
+        },
+        {
+          "id": "d03",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Reverse a word",
+          "instruction": "Print `word` reversed using a slice. It should print: desserts",
+          "initial_code": "word = 'stressed'\n# TODO: print word reversed\n",
+          "expected_output": "desserts",
+          "hint": "A step of -1 walks backwards through the whole string:\nprint(word[::-1])",
+          "support": [
+            {
+              "heading": "[::-1] means \"all of it, backwards\"",
+              "content": "Leave start and stop empty so the slice covers the whole string, and use -1 as the step to go from the end to the start.",
+              "example_code": "print('drawer'[::-1])  # reward"
+            },
+            {
+              "heading": "Two colons, then -1",
+              "content": "Write the variable name, then `[::-1]`: two colons with nothing between them, then -1. Wrap it in `print()`.",
+              "example_code": "s = 'abc'\nprint(s[::-1])  # cba"
+            }
+          ]
+        },
+        {
+          "id": "d04",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Searching inside a string",
+          "content": "`.find(sub)` returns the index where `sub` first appears, or **-1** if it isn't there. `.count(sub)` counts how many times it appears. `.startswith()` and `.endswith()` check the beginning or end and give True or False.",
+          "example_code": "email = 'ada@example.com'\nprint(email.find('@'))        # 3\nprint(email.find('#'))        # -1, not found\nprint('banana'.count('an'))   # 2\nprint(email.endswith('.com')) # True",
+          "how": "Each method scans the string from the left and stops as soon as it has an answer. `.find` reports a position, so -1 (never a real position) means \"not found\".",
+          "use": "Parsing text: finding the @ in an email, checking a file's extension, counting words or characters, validating that input starts with a required prefix."
+        },
+        {
+          "id": "d05",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "What does this code print?",
+          "options": [
+            "3",
+            "1",
+            "aaa"
+          ],
+          "answer": "3",
+          "explanation": "`.count('a')` counts every 'a' in 'banana': b-a-n-a-n-a has three.",
+          "code": "print('banana'.count('a'))"
+        },
+        {
+          "id": "d06",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Check a file name",
+          "instruction": "Print whether `filename` ends with '.pdf', then on the next line print the position of the dot using `.find()`. It should print True then 6.",
+          "initial_code": "filename = 'report.pdf'\n# TODO: print whether it ends with '.pdf'\n# TODO: print the index of '.'\n",
+          "expected_output": "True\n6",
+          "hint": "print(filename.endswith('.pdf'))\nprint(filename.find('.'))",
+          "support": [
+            {
+              "heading": "Methods that answer questions",
+              "content": "`.endswith('x')` answers yes or no. `.find('x')` answers where. Both are called with a dot after the string and take the text to look for in the parentheses.",
+              "example_code": "name = 'photo.png'\nprint(name.endswith('.png'))  # True\nprint(name.find('.'))         # 5"
+            },
+            {
+              "heading": "Count to check your answer",
+              "content": "r-e-p-o-r-t is six characters, at indexes 0 to 5, so the dot is at index 6. Write two prints, one for each method.",
+              "example_code": "print('notes.txt'.find('.'))  # 5"
+            }
+          ]
+        },
+        {
+          "id": "d07",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Checking what a string contains",
+          "content": "Methods starting with `is` check every character: `.isdigit()` (only digits), `.isalpha()` (only letters), `.isupper()` / `.islower()` (letter case), `.isspace()` (only whitespace). They return True or False, and an empty string gives False.",
+          "example_code": "print('2025'.isdigit())    # True\nprint('20.5'.isdigit())    # False: the dot isn't a digit\nprint('Ada'.isalpha())     # True\nprint('Ada Lovelace'.isalpha())  # False: the space\nprint('HELLO'.isupper())   # True",
+          "how": "Each method looks at the characters one by one and returns False the moment one doesn't fit the rule.",
+          "use": "Validating input before converting it, like checking that text is all digits before calling `int()` so you don't get a ValueError."
+        },
+        {
+          "id": "d08",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "Which line prints True?",
+          "options": [
+            "print('42'.isdigit())",
+            "print('4.2'.isdigit())",
+            "print('42a'.isdigit())"
+          ],
+          "answer": "print('42'.isdigit())",
+          "explanation": "`.isdigit()` is True only when every character is a digit. The dot in '4.2' and the 'a' in '42a' are not digits."
+        },
+        {
+          "id": "d09",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "What \"immutable\" really means",
+          "content": "You can read one character with `text[0]`, but you can't change it: `text[0] = 'J'` raises a **TypeError**. To \"change\" a string you build a new one from pieces, for example `'J' + text[1:]`, and store it.",
+          "example_code": "name = 'python'\n# name[0] = 'P'           # TypeError\nname = 'P' + name[1:]     # build a new string\nprint(name)               # Python",
+          "how": "Once a string exists, its characters are fixed. Every \"edit\" (slicing, `+`, methods like `.upper()`) produces a new string; assigning it back to the same name just moves the label to the new string.",
+          "use": "Explains why string methods return results instead of changing the original, and it's a common interview question. Immutability also makes strings safe to use as dictionary keys later."
+        },
+        {
+          "id": "d10",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Capitalize the first letter",
+          "instruction": "Without using `.title()` or `.capitalize()`, print `name` with only its first letter capitalized: Python",
+          "initial_code": "name = 'python'\n# TODO: print it with a capital first letter\n",
+          "expected_output": "Python",
+          "hint": "Uppercase the first character and add the rest unchanged:\nprint(name[0].upper() + name[1:])",
+          "support": [
+            {
+              "heading": "Split it into two pieces",
+              "content": "`name[0]` is the first character and `name[1:]` is everything after it. Change only the first piece, then join them back with `+`.",
+              "example_code": "w = 'hello'\nprint(w[0])    # h\nprint(w[1:])   # ello"
+            },
+            {
+              "heading": "Upper only the first piece",
+              "content": "Call `.upper()` on `name[0]`, then add `name[1:]` with `+`. The whole expression goes inside `print()`.",
+              "example_code": "w = 'world'\nprint(w[0].upper() + w[1:])  # World"
+            }
+          ]
+        },
+        {
+          "id": "d11",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Lining up text in columns",
+          "content": "Inside an f-string, a number after the colon sets a **width**, and `<`, `>` or `^` choose left, right or centered. `{name:<10}` pads name to 10 characters on the right; `{n:05}` pads a number with zeros. You can combine width with decimals: `{price:>8.2f}`.",
+          "example_code": "print(f'[{\"ab\":<5}]')     # [ab   ]\nprint(f'[{\"ab\":>5}]')     # [   ab]\nprint(f'[{\"ab\":^6}]')     # [  ab  ]\nprint(f'{7:03}')          # 007\nprint(f'{3.5:>8.2f}')     #     3.50",
+          "how": "Python works out the text for the value, then adds spaces (or zeros) until it reaches the width, placing them according to the alignment character.",
+          "use": "Receipts, tables in the terminal, reports, and fixed-width IDs like order numbers."
+        },
+        {
+          "id": "d12",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "What does this code print?",
+          "options": [
+            "[007]",
+            "[7  ]",
+            "[  7]"
+          ],
+          "answer": "[007]",
+          "explanation": "`03` means: width 3, padded with zeros. So 7 becomes 007.",
+          "code": "print(f'[{7:03}]')"
+        },
+        {
+          "id": "d13",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Line up a receipt line",
+          "instruction": "Print `item` left-aligned in 10 columns, followed by `price` right-aligned in 6 columns with 2 decimals, in one f-string. It should print: Coffee      3.50",
+          "initial_code": "item = 'Coffee'\nprice = 3.5\n# TODO: one f-string with both columns\n",
+          "expected_output": "Coffee      3.50",
+          "hint": "print(f'{item:<10}{price:>6.2f}')",
+          "support": [
+            {
+              "heading": "Width and alignment go after the colon",
+              "content": "`<10` means left-align in 10 columns. `>6.2f` means right-align in 6 columns, with 2 decimals.",
+              "example_code": "print(f'{\"Tea\":<8}|')      # Tea     |\nprint(f'{2.0:>6.2f}|')      #   2.00|"
+            },
+            {
+              "heading": "Two placeholders side by side",
+              "content": "Put both `{...}` blocks next to each other in one f-string with no space between them; the widths provide the spacing. 'Coffee' is 6 characters, so `<10` adds 4 spaces; '3.50' is 4, so `>6` adds 2 in front.",
+              "example_code": "a = 'Tea'\nb = 2\nprint(f'{a:<6}{b:>4.1f}')  # Tea    2.0"
+            }
+          ]
+        },
+        {
+          "id": "d14",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Multi-line and raw strings",
+          "content": "Triple quotes (`'''...'''` or `\"\"\"...\"\"\"`) make a string that spans several lines, keeping the line breaks. Putting `r` before a string makes it **raw**: backslashes are kept as plain characters, so `r'C:\\new'` doesn't turn `\\n` into a newline.",
+          "example_code": "poem = '''Roses are red,\nviolets are blue.'''\nprint(poem)\nprint(r'C:\\new\\table')   # C:\\new\\table\nprint(len('a\\nb'))        # 3: \\n is one character",
+          "how": "Inside triple quotes, the line breaks you type become `\\n` characters in the string. A raw string skips escape processing entirely.",
+          "use": "Long messages and documentation strings (docstrings), Windows paths, and regular expressions, which use many backslashes."
+        },
+        {
+          "id": "d15",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "What does this code print?",
+          "options": [
+            "3",
+            "4",
+            "2"
+          ],
+          "answer": "3",
+          "explanation": "`\\n` is written with two characters but stores one newline character, so the string is 'a', newline, 'b': length 3.",
+          "code": "print(len('a\\nb'))",
+          "feedback": {
+            "4": "The backslash and n together make one character, not two."
+          }
+        },
+        {
+          "id": "d16",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Comparing strings",
+          "content": "`==` asks whether two values are equal and gives True or False. For strings it is **case-sensitive**: `'Apple' == 'apple'` is False. To compare ignoring case, lowercase both sides first. `<` and `>` compare alphabetically, character by character, with all uppercase letters sorting before lowercase ones.",
+          "example_code": "print('Apple' == 'apple')                  # False\nprint('Apple'.lower() == 'apple'.lower())  # True\nprint('apple' < 'banana')                  # True\nprint('Zebra' < 'apple')                   # True: Z is uppercase",
+          "how": "Each character has a number (its Unicode code point), and Python compares those numbers from the first character on. 'A' to 'Z' have smaller numbers than 'a' to 'z', which is why case changes the order.",
+          "use": "Login and search features that ignore case, sorting names, and checking user answers."
+        },
+        {
+          "id": "d17",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Case-insensitive match",
+          "instruction": "Print whether `a` and `b` are the same word, ignoring case. It should print: True",
+          "initial_code": "a = 'Python'\nb = 'PYTHON'\n# TODO: compare them, ignoring case\n",
+          "expected_output": "True",
+          "hint": "Lowercase both before comparing:\nprint(a.lower() == b.lower())",
+          "support": [
+            {
+              "heading": "Make the case match first",
+              "content": "`'Hi' == 'HI'` is False. Converting both with `.lower()` (or both with `.upper()`) removes the difference before comparing.",
+              "example_code": "print('Hi'.lower() == 'HI'.lower())  # True"
+            },
+            {
+              "heading": "Compare the cleaned versions",
+              "content": "Call `.lower()` on each variable and put `==` between them, inside `print()`.",
+              "example_code": "x = 'Cat'\ny = 'cAT'\nprint(x.lower() == y.lower())  # True"
+            }
+          ]
+        },
+        {
+          "id": "i01",
+          "type": "quiz",
+          "track": "interview",
+          "question": "Interview question: what happens when you run `s = 'cat'` and then `s[0] = 'b'`?",
+          "options": [
+            "A TypeError: strings are immutable",
+            "s becomes 'bat'",
+            "s becomes 'b'"
+          ],
+          "answer": "A TypeError: strings are immutable",
+          "explanation": "You can't assign to a position in a string. The idiomatic fix is to build a new string: `s = 'b' + s[1:]`, or `s.replace('c', 'b')` for this case."
+        },
+        {
+          "id": "i02",
+          "type": "quiz",
+          "track": "interview",
+          "question": "What's the difference between `.find()` and `.index()` when the text isn't in the string?",
+          "options": [
+            "`.find()` returns -1; `.index()` raises a ValueError",
+            "Both return -1",
+            "Both raise an error"
+          ],
+          "answer": "`.find()` returns -1; `.index()` raises a ValueError",
+          "explanation": "They behave the same when the text is found. Use `.find()` when \"not found\" is normal and you'll check for -1; use `.index()` when missing text is a real error you want to notice."
+        },
+        {
+          "id": "i03",
+          "type": "quiz",
+          "track": "interview",
+          "question": "What does this code print?",
+          "options": [
+            "ell o",
+            "Hell o",
+            "ell H"
+          ],
+          "answer": "ell o",
+          "explanation": "`s[1:4]` takes indexes 1, 2 and 3 ('e', 'l', 'l'), stopping before 4. `s[-1]` is the last character, 'o'.",
+          "code": "s = 'Hello'\nprint(s[1:4], s[-1])"
+        },
+        {
+          "id": "i04",
+          "type": "quiz",
+          "track": "interview",
+          "question": "Why are f-strings usually preferred over joining with `+`, as in `name + ' is ' + str(age)`?",
+          "options": [
+            "They convert values automatically and are easier to read",
+            "They run on more Python versions",
+            "`+` can't join strings"
+          ],
+          "answer": "They convert values automatically and are easier to read",
+          "explanation": "`f'{name} is {age}'` needs no `str()` calls and shows the final text's shape at a glance. It also supports formatting like `{price:.2f}`."
+        },
+        {
+          "id": "i05",
+          "type": "quiz",
+          "track": "interview",
+          "question": "What does this code print?",
+          "options": [
+            "abcabccba",
+            "abcabcabc",
+            "cbacbaabc"
+          ],
+          "answer": "abcabccba",
+          "explanation": "`'abc' * 2` is 'abcabc'. `'abc'[::-1]` is 'cba'. Joined: 'abcabccba'.",
+          "code": "print('abc' * 2 + 'abc'[::-1])"
+        },
+        {
+          "id": "i06",
+          "type": "code",
+          "track": "interview",
+          "heading": "Classic: palindrome check",
+          "instruction": "A palindrome reads the same backwards. Print whether `word` is a palindrome, ignoring case. It should print: True",
+          "initial_code": "word = 'Racecar'\n# TODO: print True if word is a palindrome (ignore case)\n",
+          "expected_output": "True",
+          "hint": "Lowercase it, then compare it with its reverse:\nclean = word.lower()\nprint(clean == clean[::-1])",
+          "support": [
+            {
+              "heading": "Compare the word with its reverse",
+              "content": "`[::-1]` reverses a string. If the reversed string equals the original, it's a palindrome.",
+              "example_code": "w = 'level'\nprint(w == w[::-1])  # True"
+            },
+            {
+              "heading": "Handle the capital R",
+              "content": "'Racecar' reversed is 'racecaR', which isn't equal because of case. Lowercase first and store it, then compare the lowercased word with its reverse.",
+              "example_code": "w = 'Noon'\nlow = w.lower()\nprint(low == low[::-1])  # True"
+            }
+          ]
+        },
+        {
+          "id": "i07",
+          "type": "code",
+          "track": "interview",
+          "heading": "Classic: count the vowels",
+          "instruction": "Print how many vowels (a, e, i, o, u) are in `text`, without a loop. It should print: 5",
+          "initial_code": "text = 'programming is fun'\n# TODO: count the vowels\n",
+          "expected_output": "5",
+          "hint": "Add up .count() for each vowel:\ntext.count('a') + text.count('e') + ...",
+          "support": [
+            {
+              "heading": "count() handles one letter at a time",
+              "content": "`.count('a')` counts only 'a'. To count several letters, call it once per letter and add the results.",
+              "example_code": "s = 'banana'\nprint(s.count('a') + s.count('n'))  # 5"
+            },
+            {
+              "heading": "Five counts added together",
+              "content": "Write `text.count('a')`, then `+ text.count('e')`, and so on for i, o and u, all inside one print. (In the Loops lesson you'll see a shorter way.)",
+              "example_code": "s = 'hello'\nprint(s.count('e') + s.count('o'))  # 2"
+            }
+          ]
+        },
+        {
+          "id": "i08",
+          "type": "code",
+          "track": "interview",
+          "heading": "Debug: the wrong initials",
+          "instruction": "This should print the initials GH, but it prints GO. Find and fix the bug.",
+          "initial_code": "name = 'grace hopper'\nparts = name.split()\nprint((parts[0][0] + parts[1][1]).upper())",
+          "expected_output": "GH",
+          "hint": "The second index picks a letter from the second word. Index 1 is its second letter; the first letter is index 0:\nparts[1][0]",
+          "support": [
+            {
+              "heading": "Two indexes: word, then letter",
+              "content": "`parts[1]` is the second word, 'hopper'. `parts[1][1]` is that word's second letter, 'o'. Indexes start at 0, so the first letter is `[0]`.",
+              "example_code": "words = 'big cat'.split()\nprint(words[1][0])  # c\nprint(words[1][1])  # a"
+            },
+            {
+              "heading": "Change one number",
+              "content": "Only the last index is wrong. Change `parts[1][1]` to `parts[1][0]` and run it again.",
+              "example_code": "w = 'ada lovelace'.split()\nprint((w[0][0] + w[1][0]).upper())  # AL"
+            }
+          ]
+        },
+        {
+          "id": "i09",
+          "type": "code",
+          "track": "interview",
+          "heading": "Debug: the file extension",
+          "instruction": "This should print the extension without the dot (jpeg) but prints .jpeg. Fix the off-by-one bug.",
+          "initial_code": "filename = 'photo.jpeg'\ndot = filename.find('.')\nprint(filename[dot:])",
+          "expected_output": "jpeg",
+          "hint": "The slice starts at the dot itself. Start one position later:\nprint(filename[dot + 1:])",
+          "support": [
+            {
+              "heading": "A slice includes its start index",
+              "content": "`text[5:]` includes the character at index 5. If index 5 is the dot, the dot is included.",
+              "example_code": "f = 'song.mp3'\nd = f.find('.')\nprint(f[d:])      # .mp3\nprint(f[d + 1:])  # mp3"
+            },
+            {
+              "heading": "Off by one",
+              "content": "Add 1 to the starting index so the slice begins just after the dot. This kind of bug, being one position off, is so common it has a name: an off-by-one error.",
+              "example_code": "f = 'a.txt'\nprint(f[f.find('.') + 1:])  # txt"
+            }
+          ]
         }
       ]
     },
@@ -1178,6 +2426,434 @@
             ";": "Python doesn't end lines with semicolons.",
             "{": "Python uses indentation instead of curly braces."
           }
+        },
+        {
+          "id": "d01",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Truthy and falsy",
+          "content": "An `if` doesn't need a real True or False. Python treats some values as false: `0`, `0.0`, the empty string `''`, `None`, and empty collections. Everything else counts as true. `bool(value)` shows which way a value goes.",
+          "example_code": "print(bool(0))       # False\nprint(bool(''))      # False\nprint(bool(None))    # False\nprint(bool(42))      # True\nprint(bool('hi'))    # True\n\nname = ''\nif name:\n    print('Hi', name)\nelse:\n    print('No name given')",
+          "how": "When a condition isn't already a bool, Python asks the value \"are you empty or zero?\". Empty or zero means falsy; anything with content is truthy.",
+          "use": "Short, readable checks like `if name:` (is it filled in?) or `if not items:` (is the list empty?). You'll see this style everywhere in real Python code."
+        },
+        {
+          "id": "d02",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "What does this code print?",
+          "options": [
+            "False True",
+            "False False",
+            "True True"
+          ],
+          "answer": "False True",
+          "explanation": "`''` is empty, so it's falsy. `'0'` is a string with one character in it, so it's truthy, even though the character is a zero.",
+          "code": "print(bool(''), bool('0'))",
+          "feedback": {
+            "False False": "`'0'` is not the number 0. It's a non-empty string, and non-empty strings are truthy."
+          }
+        },
+        {
+          "id": "d03",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Check for an empty name",
+          "instruction": "If `name` is not empty, print `Hello, ` followed by the name. Otherwise print `Name required`. With the empty name given, it should print: Name required",
+          "initial_code": "name = ''\n# TODO: greet the name, or print 'Name required' if it's empty\n",
+          "expected_output": "Name required",
+          "hint": "An empty string is falsy, so `if name:` is False here:\nif name:\n    print('Hello, ' + name)\nelse:\n    print('Name required')",
+          "support": [
+            {
+              "heading": "Use the value itself as the condition",
+              "content": "`if text:` runs its block only when text has at least one character. You don't need `len(text) > 0`.",
+              "example_code": "city = 'Oslo'\nif city:\n    print('City:', city)\nelse:\n    print('No city')"
+            },
+            {
+              "heading": "An if/else pair",
+              "content": "Write `if name:` with the greeting indented under it, then `else:` lined up with `if`, with the other message indented under it.",
+              "example_code": "pet = ''\nif pet:\n    print('Pet:', pet)\nelse:\n    print('No pet')"
+            }
+          ]
+        },
+        {
+          "id": "d04",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Chained comparisons",
+          "content": "Python lets you chain comparisons like in math: `0 < x < 10` means x is between 0 and 10. It's the same as `0 < x and x < 10`, just shorter.",
+          "example_code": "x = 7\nprint(0 < x < 10)      # True\nprint(1 <= x <= 5)     # False\nage = 15\nprint(13 <= age <= 19)  # True: a teenager",
+          "how": "Python checks each pair from left to right and combines them with `and`, stopping at the first one that's False. The middle value is only worked out once.",
+          "use": "Range checks: valid ages, scores within limits, temperatures in a safe band, dates within a window."
+        },
+        {
+          "id": "d05",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "What does this code print?",
+          "options": [
+            "True False",
+            "True True",
+            "False False"
+          ],
+          "answer": "True False",
+          "explanation": "15 is between 10 and 20, so the first is True. 15 is not between 1 and 5, so the second is False.",
+          "code": "x = 15\nprint(10 < x < 20, 1 < x < 5)"
+        },
+        {
+          "id": "d06",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Comfortable temperature",
+          "instruction": "If `temperature` is from 18 to 25 (both included), print `Comfortable`, otherwise print `Adjust thermostat`. Use a chained comparison. It should print: Comfortable",
+          "initial_code": "temperature = 22\n# TODO: check the range with a chained comparison\n",
+          "expected_output": "Comfortable",
+          "hint": "if 18 <= temperature <= 25:\n    print('Comfortable')\nelse:\n    print('Adjust thermostat')",
+          "support": [
+            {
+              "heading": "Low <= value <= high",
+              "content": "Put the variable between the two limits. `<=` includes the limits themselves; `<` would leave them out.",
+              "example_code": "speed = 50\nif 30 <= speed <= 60:\n    print('In range')"
+            },
+            {
+              "heading": "Then add the else",
+              "content": "Under the `if` line, indent the Comfortable print. Line `else:` up with `if` and indent the other print under it.",
+              "example_code": "level = 3\nif 1 <= level <= 5:\n    print('Easy')\nelse:\n    print('Hard')"
+            }
+          ]
+        },
+        {
+          "id": "d07",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Nested ifs and when to flatten them",
+          "content": "An `if` can sit inside another `if` (indented one more level). When the inner one only runs if both conditions are true, `and` usually says the same thing more clearly on one line.",
+          "example_code": "member = True\ntotal = 120\n\n# Nested\nif member:\n    if total > 100:\n        print('Free shipping')\n\n# Flattened: same result\nif member and total > 100:\n    print('Free shipping')",
+          "how": "Each level of indentation is another condition that must be true. `a and b` is True only when both are, which is exactly what two nested ifs require.",
+          "use": "Readable business rules. Deep nesting (\"arrow code\") is a common code-review complaint; flattening with `and`, or handling special cases early, keeps code easy to follow."
+        },
+        {
+          "id": "d08",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Free shipping rule",
+          "instruction": "Print `Free shipping` if the customer is a member **and** the total is over 100; otherwise print `Shipping: $5`. Use one `if` with `and`. It should print: Free shipping",
+          "initial_code": "member = True\ntotal = 120\n# TODO: one if with and, plus an else\n",
+          "expected_output": "Free shipping",
+          "hint": "if member and total > 100:\n    print('Free shipping')\nelse:\n    print('Shipping: $5')",
+          "support": [
+            {
+              "heading": "and needs both sides",
+              "content": "`a and b` is True only if both are True. `member` is already a bool, so it can be used directly.",
+              "example_code": "vip = True\nspent = 30\nprint(vip and spent > 20)  # True"
+            },
+            {
+              "heading": "Build it in two branches",
+              "content": "Write the `if` with both conditions joined by `and`, indent the free-shipping print, then `else:` with the other print.",
+              "example_code": "student = False\nage = 70\nif student or age > 65:\n    print('Discount')\nelse:\n    print('Full price')"
+            }
+          ]
+        },
+        {
+          "id": "d09",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "One-line if: conditional expressions",
+          "content": "To choose between two values, Python has a one-line form: `value_if_true if condition else value_if_false`. It produces a value you can store or print.",
+          "example_code": "n = 7\nkind = 'even' if n % 2 == 0 else 'odd'\nprint(kind)       # odd\n\nitems = 1\nprint(f\"{items} item{'' if items == 1 else 's'}\")  # 1 item",
+          "how": "Python checks the condition in the middle first. If it's True, the whole expression becomes the left value; otherwise the right value.",
+          "use": "Picking labels, singular or plural words, default values, and other small choices that would be clunky as a four-line if/else."
+        },
+        {
+          "id": "d10",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "What does this code print?",
+          "options": [
+            "odd",
+            "even",
+            "7"
+          ],
+          "answer": "odd",
+          "explanation": "7 % 2 is 1, so `n % 2 == 0` is False and the expression takes the value after `else`.",
+          "code": "n = 7\nprint('even' if n % 2 == 0 else 'odd')"
+        },
+        {
+          "id": "d11",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Ice or water",
+          "instruction": "Set `state` to `'ice'` if `temp` is 0 or below, otherwise `'water'`, using a one-line conditional expression. Then print it. It should print: ice",
+          "initial_code": "temp = -3\n# TODO: state = ... if ... else ...\n\nprint(state)",
+          "expected_output": "ice",
+          "hint": "state = 'ice' if temp <= 0 else 'water'",
+          "support": [
+            {
+              "heading": "Value, if, condition, else, value",
+              "content": "Read it as a sentence: \"state is ice if temp is at most 0, else water\". The condition sits in the middle.",
+              "example_code": "hour = 20\nmeal = 'dinner' if hour >= 17 else 'lunch'\nprint(meal)  # dinner"
+            },
+            {
+              "heading": "One assignment",
+              "content": "Write `state =`, then `'ice'`, then `if temp <= 0`, then `else 'water'`, all on one line before the print.",
+              "example_code": "x = 5\nsign = 'positive' if x > 0 else 'not positive'\nprint(sign)"
+            }
+          ]
+        },
+        {
+          "id": "d12",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Short-circuit evaluation",
+          "content": "`and` stops as soon as it finds something false, and `or` stops as soon as it finds something true; the rest is never run. That makes `x != 0 and 10 / x > 1` safe. Also, `or` gives back the first truthy value itself, so `name or 'Guest'` is a quick default.",
+          "example_code": "x = 0\nprint(x != 0 and 10 / x > 1)   # False, and no ZeroDivisionError\n\nname = ''\nprint(name or 'Guest')         # Guest\nprint('Ada' or 'Guest')        # Ada",
+          "how": "For `a and b`, if a is falsy the answer must be falsy, so Python returns a without looking at b. For `a or b`, if a is truthy the answer must be truthy, so it returns a. Only otherwise does it evaluate b.",
+          "use": "Guarding risky checks (check something exists before using it), and supplying defaults for missing values."
+        },
+        {
+          "id": "d13",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "What does this code print?",
+          "options": [
+            "False",
+            "True",
+            "ZeroDivisionError"
+          ],
+          "answer": "False",
+          "explanation": "`x != 0` is False, so `and` stops right there and never runs `10 / x`. The result is False with no error.",
+          "code": "x = 0\nprint(x != 0 and 10 / x > 1)",
+          "feedback": {
+            "ZeroDivisionError": "The division never runs: `and` short-circuits after the first False."
+          }
+        },
+        {
+          "id": "d14",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Default name with or",
+          "instruction": "`username` is empty. Use `or` to set `display` to the username, or to `'Guest'` if it's empty, then print it. It should print: Guest",
+          "initial_code": "username = ''\n# TODO: display = ...\n\nprint(display)",
+          "expected_output": "Guest",
+          "hint": "display = username or 'Guest'",
+          "support": [
+            {
+              "heading": "or picks the first truthy value",
+              "content": "`a or b` returns a if a is truthy, otherwise b. An empty string is falsy, so the fallback wins.",
+              "example_code": "nickname = ''\nprint(nickname or 'No nickname')"
+            },
+            {
+              "heading": "One line before the print",
+              "content": "Assign `display = username or 'Guest'`. If username were 'Ada', display would be 'Ada'.",
+              "example_code": "color = 'red'\nprint(color or 'black')  # red"
+            }
+          ]
+        },
+        {
+          "id": "d15",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Checking for None, and comparing floats",
+          "content": "Check for None with `is`: `if result is None:`. `is` asks whether two names point at the **same object**, and there's only one None. For floats, `==` can fail because of tiny rounding errors (`0.1 + 0.2 == 0.3` is False), so compare rounded values or check that the difference is tiny with `abs()`.",
+          "example_code": "result = None\nprint(result is None)             # True\n\nprint(0.1 + 0.2 == 0.3)           # False!\nprint(round(0.1 + 0.2, 9) == 0.3) # True\nprint(abs((0.1 + 0.2) - 0.3) < 1e-9)  # True",
+          "how": "`==` compares values; `is` compares identity (the same object in memory). `abs()` gives a number's distance from zero, so `abs(a - b) < tiny` means \"a and b are practically equal\".",
+          "use": "`is None` is the standard way to test for a missing value. Float tolerance checks matter in any code with measurements, money or science."
+        },
+        {
+          "id": "d16",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "Which is the correct way to check whether `result` is None?",
+          "options": [
+            "result is None",
+            "result == 'None'",
+            "result = None"
+          ],
+          "answer": "result is None",
+          "explanation": "`is None` checks for the None object. `== 'None'` compares with the four-letter string 'None', and `=` would assign instead of compare.",
+          "feedback": {
+            "result = None": "A single `=` stores None in result. It doesn't ask a question."
+          }
+        },
+        {
+          "id": "d17",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Close enough",
+          "instruction": "`a` should equal `b`, but float rounding makes `==` say False. Print whether they're equal when both are rounded to 9 decimal places. It should print: True",
+          "initial_code": "a = 0.1 + 0.2\nb = 0.3\nprint(a == b)",
+          "expected_output": "True",
+          "hint": "Round both before comparing:\nprint(round(a, 9) == round(b, 9))",
+          "support": [
+            {
+              "heading": "Round away the tiny error",
+              "content": "The difference between 0.1 + 0.2 and 0.3 is about 0.00000000000000004. Rounding to 9 places removes it.",
+              "example_code": "print(round(0.1 + 0.2, 9))  # 0.3"
+            },
+            {
+              "heading": "Round both sides",
+              "content": "Wrap each side of `==` in `round( , 9)`. Rounding only one side usually works too, but rounding both is the safe habit.",
+              "example_code": "x = 1.1 + 2.2\nprint(round(x, 9) == round(3.3, 9))  # True"
+            }
+          ]
+        },
+        {
+          "id": "i01",
+          "type": "quiz",
+          "track": "interview",
+          "question": "Interview question: what's the difference between `is` and `==`?",
+          "options": [
+            "`==` compares values; `is` checks whether both refer to the same object",
+            "They are identical",
+            "`is` is only for strings"
+          ],
+          "answer": "`==` compares values; `is` checks whether both refer to the same object",
+          "explanation": "Two separate lists `[1, 2]` and `[1, 2]` are `==` but not `is`. Use `is` mainly for `None` (and True/False); use `==` for comparing values."
+        },
+        {
+          "id": "i02",
+          "type": "quiz",
+          "track": "interview",
+          "question": "Which values are falsy in Python?",
+          "options": [
+            "0, '', None and empty collections (plus False)",
+            "Only False",
+            "0 and False only"
+          ],
+          "answer": "0, '', None and empty collections (plus False)",
+          "explanation": "Zero numbers, empty strings, None and empty lists, dictionaries, sets and tuples are all falsy. Everything else is truthy, including `'0'` and `' '` (a space)."
+        },
+        {
+          "id": "i03",
+          "type": "quiz",
+          "track": "interview",
+          "question": "What does this code print?",
+          "options": [
+            "C",
+            "A",
+            "C then A"
+          ],
+          "answer": "C",
+          "explanation": "95 >= 70 is True, so the first branch runs and the chain stops. The `elif` is never checked. The more specific test (>= 90) needed to come first.",
+          "code": "score = 95\nif score >= 70:\n    print('C')\nelif score >= 90:\n    print('A')",
+          "feedback": {
+            "C then A": "Only one branch of an if/elif chain ever runs: the first one whose condition is True."
+          }
+        },
+        {
+          "id": "i04",
+          "type": "quiz",
+          "track": "interview",
+          "question": "What does this code print?",
+          "options": [
+            "a",
+            "b",
+            "True"
+          ],
+          "answer": "a",
+          "explanation": "`or` returns the first truthy value, not True. 'a' is truthy, so the result is 'a' and 'b' is never looked at.",
+          "code": "print('a' or 'b')"
+        },
+        {
+          "id": "i05",
+          "type": "quiz",
+          "track": "interview",
+          "question": "Why should the most specific condition come first in an if/elif chain?",
+          "options": [
+            "Only the first true branch runs, so a broader check placed earlier would catch the case first",
+            "Python requires conditions in alphabetical order",
+            "It makes the program run faster"
+          ],
+          "answer": "Only the first true branch runs, so a broader check placed earlier would catch the case first",
+          "explanation": "If `score >= 60` comes before `score >= 90`, a 95 gets the wrong grade. Order from most specific to least specific (or highest threshold to lowest)."
+        },
+        {
+          "id": "i06",
+          "type": "code",
+          "track": "interview",
+          "heading": "Classic: FizzBuzz for one number",
+          "instruction": "For `n`, print `FizzBuzz` if it's divisible by both 3 and 5, `Fizz` if only by 3, `Buzz` if only by 5, and the number itself otherwise. With n = 15 it should print: FizzBuzz",
+          "initial_code": "n = 15\n# TODO: FizzBuzz for one number\n",
+          "expected_output": "FizzBuzz",
+          "hint": "Check \"both\" first, since 15 is also divisible by 3:\nif n % 3 == 0 and n % 5 == 0:\n    print('FizzBuzz')\nelif n % 3 == 0: ...",
+          "support": [
+            {
+              "heading": "Divisible means remainder 0",
+              "content": "`n % 3 == 0` is True when n divides evenly by 3. Combine checks with `and`.",
+              "example_code": "x = 9\nprint(x % 3 == 0)  # True\nprint(x % 5 == 0)  # False"
+            },
+            {
+              "heading": "Order the branches",
+              "content": "A number divisible by both is also divisible by 3, so if the Fizz check came first, 15 would print Fizz. Put the both-check first, then 3, then 5, then `else` prints the number.",
+              "example_code": "x = 10\nif x % 3 == 0 and x % 5 == 0:\n    print('both')\nelif x % 5 == 0:\n    print('five')  # this runs"
+            }
+          ]
+        },
+        {
+          "id": "i07",
+          "type": "code",
+          "track": "interview",
+          "heading": "Classic: leap year",
+          "instruction": "A year is a leap year if it's divisible by 4, except years divisible by 100, unless they're also divisible by 400. Print whether `year` is a leap year. For 1900 it should print: False",
+          "initial_code": "year = 1900\n# TODO: print True or False\n",
+          "expected_output": "False",
+          "hint": "year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)",
+          "support": [
+            {
+              "heading": "Turn each rule into a check",
+              "content": "\"Divisible by 4\" is `year % 4 == 0`. \"Not divisible by 100\" is `year % 100 != 0`. \"Divisible by 400\" is `year % 400 == 0`.",
+              "example_code": "y = 2024\nprint(y % 4 == 0)    # True\nprint(y % 100 != 0)  # True"
+            },
+            {
+              "heading": "Group the exception",
+              "content": "It's a leap year when it's divisible by 4 AND (it's not a century OR it's divisible by 400). The parentheses keep the `or` together. 1900 is a century not divisible by 400, so it's False; 2000 would be True.",
+              "example_code": "y = 2000\nprint(y % 4 == 0 and (y % 100 != 0 or y % 400 == 0))  # True"
+            }
+          ]
+        },
+        {
+          "id": "i08",
+          "type": "code",
+          "track": "interview",
+          "heading": "Debug: the grade ladder",
+          "instruction": "Every score above 60 gets a D. Fix the order of the checks so a score of 85 prints: B",
+          "initial_code": "score = 85\nif score >= 60:\n    print('D')\nelif score >= 70:\n    print('C')\nelif score >= 80:\n    print('B')\nelif score >= 90:\n    print('A')\nelse:\n    print('F')",
+          "expected_output": "B",
+          "hint": "Check the highest threshold first:\nif score >= 90: A\nelif score >= 80: B\nelif score >= 70: C\nelif score >= 60: D",
+          "support": [
+            {
+              "heading": "The first true branch wins",
+              "content": "85 >= 60 is True, so D prints and Python skips the rest. Put the strictest test first so higher scores are caught by it.",
+              "example_code": "t = 30\nif t >= 25:\n    print('hot')\nelif t >= 15:\n    print('warm')"
+            },
+            {
+              "heading": "Reverse the ladder",
+              "content": "Keep the same prints, but order the conditions 90, 80, 70, 60. The `if` gets the 90 check; the others become `elif`s; `else` stays last.",
+              "example_code": "n = 5\nif n >= 10:\n    print('big')\nelif n >= 5:\n    print('medium')  # this runs\nelse:\n    print('small')"
+            }
+          ]
+        },
+        {
+          "id": "i09",
+          "type": "code",
+          "track": "interview",
+          "heading": "Debug: the always-true check",
+          "instruction": "This prints `warm` for every color. Fix the condition so blue prints: cool",
+          "initial_code": "color = 'blue'\nif color == 'red' or 'green':\n    print('warm')\nelse:\n    print('cool')",
+          "expected_output": "cool",
+          "hint": "`or 'green'` is always truthy. Repeat the comparison:\nif color == 'red' or color == 'green':",
+          "support": [
+            {
+              "heading": "or joins two separate conditions",
+              "content": "Python reads `color == 'red' or 'green'` as `(color == 'red') or ('green')`. A non-empty string is truthy, so the whole thing is always truthy.",
+              "example_code": "print(bool('green'))  # True, which is the bug"
+            },
+            {
+              "heading": "Compare on both sides",
+              "content": "Each side of `or` must be a full comparison: `color == 'red' or color == 'green'`.",
+              "example_code": "pet = 'cat'\nif pet == 'dog' or pet == 'cat':\n    print('mammal')"
+            }
+          ]
         }
       ]
     },
@@ -1412,6 +3088,417 @@
             "break": "break exits the whole loop.",
             "skip": "skip isn't a Python keyword."
           }
+        },
+        {
+          "id": "d01",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "The accumulator pattern",
+          "content": "Most loops build up an answer. Start a variable before the loop (0 for a total, an empty string for text), then update it inside the loop each round. After the loop, the variable holds the result.",
+          "example_code": "total = 0\nfor n in range(1, 6):\n    total += n\nprint(total)       # 15 (1+2+3+4+5)\n\nshout = ''\nfor ch in 'hey':\n    shout += ch.upper()\nprint(shout)       # HEY",
+          "how": "The variable outlives each round because it's created outside the loop. Each round reads its current value, changes it, and stores it back, so the answer grows step by step.",
+          "use": "Totals, counts, averages, building text or lists, finding the biggest or smallest item. It's the most common loop shape in real code."
+        },
+        {
+          "id": "d02",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "What does this code print?",
+          "options": [
+            "6",
+            "3",
+            "0"
+          ],
+          "answer": "6",
+          "explanation": "range(1, 4) gives 1, 2, 3. The total goes 0 → 1 → 3 → 6.",
+          "code": "total = 0\nfor n in range(1, 4):\n    total += n\nprint(total)",
+          "feedback": {
+            "3": "3 is the last number added, but the total keeps the sum of all of them: 1 + 2 + 3."
+          }
+        },
+        {
+          "id": "d03",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Sum 1 to 100",
+          "instruction": "Use a loop to add up every whole number from 1 to 100 and print the total. It should print: 5050",
+          "initial_code": "# TODO: add 1 + 2 + ... + 100 with a loop\n",
+          "expected_output": "5050",
+          "hint": "total = 0\nfor n in range(1, 101):\n    total += n\nprint(total)",
+          "support": [
+            {
+              "heading": "Start, loop, update, print",
+              "content": "Set a total to 0 before the loop, add each number inside it, and print after the loop (not indented), so it prints once.",
+              "example_code": "total = 0\nfor n in range(1, 11):\n    total += n\nprint(total)  # 55"
+            },
+            {
+              "heading": "Mind the stop value",
+              "content": "`range` stops before its second number, so to include 100 you need `range(1, 101)`. `range(1, 100)` would stop at 99 and give 4950.",
+              "example_code": "print(list(range(1, 4)))  # [1, 2, 3]"
+            }
+          ]
+        },
+        {
+          "id": "d04",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Counting with a condition",
+          "content": "Put an `if` inside the loop to count or add only some items. `in` also checks whether a single character appears in a string, so `ch in 'aeiou'` asks \"is this a vowel?\".",
+          "example_code": "count = 0\nfor ch in 'banana':\n    if ch == 'a':\n        count += 1\nprint(count)        # 3\n\nprint('e' in 'aeiou')   # True",
+          "how": "Every round, the `if` decides whether this item counts. Only the rounds where it's True update the counter.",
+          "use": "Counting matches: errors in a log, vowels in a word, passing scores, items over a price limit."
+        },
+        {
+          "id": "d05",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Count vowels with a loop",
+          "instruction": "Count the vowels in `text` with a loop (check each character against 'aeiou', ignoring case) and print the count. It should print: 11",
+          "initial_code": "text = 'Loops make repetition easy'\n# TODO: count the vowels with a loop\n",
+          "expected_output": "11",
+          "hint": "count = 0\nfor ch in text.lower():\n    if ch in 'aeiou':\n        count += 1\nprint(count)",
+          "support": [
+            {
+              "heading": "Check each character",
+              "content": "Loop over the string; for each character ask `ch in 'aeiou'`. Lowercase the text first so capital vowels count too.",
+              "example_code": "count = 0\nfor ch in 'AbE'.lower():\n    if ch in 'aeiou':\n        count += 1\nprint(count)  # 2"
+            },
+            {
+              "heading": "Three levels of indentation",
+              "content": "The `for` line is at the left edge, the `if` is indented once, and `count += 1` twice. The print goes back to the left edge so it runs after the loop.",
+              "example_code": "n = 0\nfor c in 'tree':\n    if c == 'e':\n        n += 1\nprint(n)  # 2"
+            }
+          ]
+        },
+        {
+          "id": "d06",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Loops inside loops",
+          "content": "A loop can contain another loop. For **each** round of the outer loop, the inner loop runs all the way through. With 3 outer rounds and 4 inner rounds, the inner body runs 3 × 4 = 12 times.",
+          "example_code": "for row in range(1, 4):\n    line = ''\n    for col in range(1, 4):\n        line += str(row * col) + ' '\n    print(line)\n# 1 2 3\n# 2 4 6\n# 3 6 9",
+          "how": "When the inner loop finishes, Python goes back to the outer loop for its next value, and the inner loop starts again from the beginning.",
+          "use": "Grids and tables (rows and columns), comparing every item with every other item, and game boards."
+        },
+        {
+          "id": "d07",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "What does this code print?",
+          "options": [
+            "6",
+            "5",
+            "3"
+          ],
+          "answer": "6",
+          "explanation": "The inner loop runs 2 times for each of the 3 outer rounds: 3 × 2 = 6.",
+          "code": "count = 0\nfor i in range(3):\n    for j in range(2):\n        count += 1\nprint(count)",
+          "feedback": {
+            "5": "That's 3 + 2. The inner loop runs fully once per outer round, so the counts multiply."
+          }
+        },
+        {
+          "id": "d08",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Print a triangle",
+          "instruction": "Print a triangle of stars with 4 rows: 1 star, then 2, then 3, then 4.",
+          "initial_code": "# TODO: print a 4-row triangle of stars\n",
+          "expected_output": "*\n**\n***\n****",
+          "hint": "Repeat '*' as many times as the row number:\nfor i in range(1, 5):\n    print('*' * i)",
+          "support": [
+            {
+              "heading": "String repetition does the inner work",
+              "content": "`'*' * 3` is '***'. If the loop variable is the row number, `'*' * row` gives that row.",
+              "example_code": "for i in range(1, 4):\n    print('#' * i)"
+            },
+            {
+              "heading": "Pick the right range",
+              "content": "Rows go from 1 to 4, so use `range(1, 5)`. Starting at 0 would print an empty first line.",
+              "example_code": "for i in range(2, 4):\n    print('-' * i)  # -- then ---"
+            }
+          ]
+        },
+        {
+          "id": "d09",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Loops with else",
+          "content": "A `for` or `while` loop can have an `else:` block. It runs only if the loop finished **without** hitting `break`. That's handy for searches: break when you find it, and let `else` handle \"not found\".",
+          "example_code": "for n in range(2, 10):\n    if n * n == 49:\n        print('found', n)\n        break\nelse:\n    print('no square root found')\n# found 7",
+          "how": "Python remembers whether the loop was stopped by `break`. If it ran out of items normally, it runs the `else` block; after a `break`, it skips it.",
+          "use": "Searching without an extra \"found\" variable, and checking that no item failed a rule (for example, that a number has no divisors)."
+        },
+        {
+          "id": "d10",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "What does this code print?",
+          "options": [
+            "not found",
+            "10",
+            "Nothing"
+          ],
+          "answer": "not found",
+          "explanation": "range(2, 5) gives 2, 3, 4. None equals 10, so `break` never runs and the `else` block prints 'not found'.",
+          "code": "for n in range(2, 5):\n    if n == 10:\n        break\nelse:\n    print('not found')"
+        },
+        {
+          "id": "d11",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Repeat until: while True and break",
+          "content": "When the stopping point is easiest to test in the middle of the loop, write `while True:` (loop forever) and `break` when you're done. Make sure some path always reaches the `break`.",
+          "example_code": "n = 1\nwhile True:\n    n *= 2\n    if n > 100:\n        break\nprint(n)    # 128",
+          "how": "`while True` never becomes false on its own, so the only way out is `break`. Python jumps to the first line after the loop when it hits `break`.",
+          "use": "Menus and games that run until the user quits, retrying until something works, and reading data until there is none left."
+        },
+        {
+          "id": "d12",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "First power of 2 over 1000",
+          "instruction": "Starting from 1, keep doubling `n` until it's greater than 1000, then print it. It should print: 1024",
+          "initial_code": "n = 1\n# TODO: double n until it's over 1000\n\nprint(n)",
+          "expected_output": "1024",
+          "hint": "while n <= 1000:\n    n *= 2",
+          "support": [
+            {
+              "heading": "Loop while the goal isn't reached",
+              "content": "`while n <= 1000:` keeps going as long as n is still too small. Inside, double n. The loop stops the first time n passes 1000.",
+              "example_code": "x = 1\nwhile x <= 20:\n    x *= 3\nprint(x)  # 27"
+            },
+            {
+              "heading": "Or use while True with break",
+              "content": "Both work: `while True:` with `n *= 2` and then `if n > 1000: break`. Either way the print goes after the loop.",
+              "example_code": "x = 1\nwhile True:\n    x *= 2\n    if x > 50:\n        break\nprint(x)  # 64"
+            }
+          ]
+        },
+        {
+          "id": "d13",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "How fast is my code? Big-O basics",
+          "content": "**Big-O** describes how the amount of work grows as the input grows. **O(1)** (constant): the same work whatever the size, like reading `text[0]`. **O(n)** (linear): one loop over n items; double the input, double the work. **O(n²)** (quadratic): a loop inside a loop over the same items; double the input, four times the work.",
+          "example_code": "word = 'python'\nprint(word[0])            # O(1): one step, any length\n\nfor ch in word:           # O(n): one step per character\n    print(ch)\n\nfor a in word:            # O(n^2): every character\n    for b in word:        # paired with every character\n        pass",
+          "how": "Count how many times the innermost line runs as the input grows, and keep only the biggest term. A loop that does 3 things per item is still O(n); constants and smaller terms are dropped because they matter little for big inputs.",
+          "use": "Almost every coding interview asks for the Big-O of your solution. In real work it tells you whether code that's fast on 100 items will still be fast on a million."
+        },
+        {
+          "id": "d14",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "A loop over `range(n)` sits inside another loop over `range(n)`. How does the number of times the inner body runs grow?",
+          "options": [
+            "O(n)",
+            "O(n²)",
+            "O(1)"
+          ],
+          "answer": "O(n²)",
+          "explanation": "The inner loop runs n times for each of the n outer rounds: n × n = n². With n = 1,000 that's a million runs.",
+          "feedback": {
+            "O(n)": "That's for a single loop. Nested loops over the same size multiply."
+          }
+        },
+        {
+          "id": "d15",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Don't repeat work inside a loop",
+          "content": "Anything that gives the same result every round should be worked out once, before the loop. Loop over the items directly (`for ch in word`) instead of over positions (`for i in range(len(word))`) unless you really need the position.",
+          "example_code": "text = 'Hello World'\n\n# Wasteful: lowercases the whole text on every round\nfor ch in text:\n    if ch in text.lower():\n        pass\n\n# Better: do it once\nlower = text.lower()\nfor ch in lower:\n    pass",
+          "how": "Code inside a loop runs once per item. An expensive call there is multiplied by the number of items; moved outside, it runs once.",
+          "use": "Faster programs, and cleaner code that interviewers and reviewers read as \"knows what they're doing\"."
+        },
+        {
+          "id": "d16",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "Which code is O(n), where n is the length of `word`?",
+          "options": [
+            "for ch in word: print(ch)",
+            "for a in word: for b in word: print(a, b)",
+            "print(word[0])"
+          ],
+          "answer": "for ch in word: print(ch)",
+          "explanation": "One pass over the characters is O(n). The nested version is O(n²), and reading one index is O(1)."
+        },
+        {
+          "id": "d17",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Sum the digits with a loop",
+          "instruction": "Using a `while` loop with `% 10` and `// 10`, add up the digits of `n` and print the sum. It should print: 29",
+          "initial_code": "n = 9875\n# TODO: add up the digits of n\n",
+          "expected_output": "29",
+          "hint": "total = 0\nwhile n > 0:\n    total += n % 10   # last digit\n    n //= 10          # drop it\nprint(total)",
+          "support": [
+            {
+              "heading": "Peel off the last digit each round",
+              "content": "`n % 10` is the last digit and `n // 10` removes it. Repeat until n reaches 0.",
+              "example_code": "n = 123\nprint(n % 10)   # 3\nn //= 10\nprint(n)        # 12"
+            },
+            {
+              "heading": "Accumulate while peeling",
+              "content": "Start `total` at 0. While n is above 0, add `n % 10` to the total and then shrink n with `n //= 10`. Print the total after the loop.",
+              "example_code": "n = 46\ntotal = 0\nwhile n > 0:\n    total += n % 10\n    n //= 10\nprint(total)  # 10"
+            }
+          ]
+        },
+        {
+          "id": "i01",
+          "type": "quiz",
+          "track": "interview",
+          "question": "Interview question: what's the difference between `break` and `continue`?",
+          "options": [
+            "`break` exits the loop entirely; `continue` skips to the next round",
+            "They do the same thing",
+            "`continue` exits the loop; `break` pauses it"
+          ],
+          "answer": "`break` exits the loop entirely; `continue` skips to the next round",
+          "explanation": "After `break`, Python runs the first line after the loop. After `continue`, it goes straight back to the top of the loop for the next item."
+        },
+        {
+          "id": "i02",
+          "type": "quiz",
+          "track": "interview",
+          "question": "A loop looks at each character of a string once. If the string becomes 10 times longer, roughly how much longer does the loop take?",
+          "options": [
+            "About 10 times longer: O(n)",
+            "About 100 times longer: O(n²)",
+            "The same: O(1)"
+          ],
+          "answer": "About 10 times longer: O(n)",
+          "explanation": "One pass over n items is linear: the work grows in step with the input."
+        },
+        {
+          "id": "i03",
+          "type": "quiz",
+          "track": "interview",
+          "question": "A function compares every item in a list of n items with every other item. What's its time complexity?",
+          "options": [
+            "O(n)",
+            "O(n²)",
+            "O(1)"
+          ],
+          "answer": "O(n²)",
+          "explanation": "Comparing all pairs needs a loop inside a loop: about n × n comparisons. Interviewers often ask you to improve a solution like this, for example with a set (coming in a later lesson)."
+        },
+        {
+          "id": "i04",
+          "type": "quiz",
+          "track": "interview",
+          "question": "What does this code print?",
+          "options": [
+            "1 2 3 4",
+            "1 2 3 4 5",
+            "0 1 2 3 4"
+          ],
+          "answer": "1 2 3 4",
+          "explanation": "`range(1, 5)` starts at 1 and stops before 5. Forgetting that the stop value is excluded is the classic off-by-one bug.",
+          "code": "for i in range(1, 5):\n    print(i, end=' ')"
+        },
+        {
+          "id": "i05",
+          "type": "quiz",
+          "track": "interview",
+          "question": "When is a `while` loop a better fit than a `for` loop?",
+          "options": [
+            "When you don't know in advance how many times to repeat",
+            "When looping over a string",
+            "Never; they're interchangeable"
+          ],
+          "answer": "When you don't know in advance how many times to repeat",
+          "explanation": "`for` is best for going through a known sequence. `while` fits \"keep going until something changes\": until the user quits, until a value passes a limit, until there's no more data."
+        },
+        {
+          "id": "i06",
+          "type": "code",
+          "track": "interview",
+          "heading": "Classic: FizzBuzz",
+          "instruction": "Print the numbers 1 to 15, but print `Fizz` for multiples of 3, `Buzz` for multiples of 5, and `FizzBuzz` for multiples of both.",
+          "initial_code": "# TODO: FizzBuzz from 1 to 15\n",
+          "expected_output": "1\n2\nFizz\n4\nBuzz\nFizz\n7\n8\nFizz\nBuzz\n11\nFizz\n13\n14\nFizzBuzz",
+          "hint": "for n in range(1, 16):\n    if n % 3 == 0 and n % 5 == 0:\n        print('FizzBuzz')\n    elif n % 3 == 0:\n        print('Fizz')\n    elif n % 5 == 0:\n        print('Buzz')\n    else:\n        print(n)",
+          "support": [
+            {
+              "heading": "It's the one-number version, in a loop",
+              "content": "You wrote FizzBuzz for a single number in the Logic lesson. Put that if/elif/else inside `for n in range(1, 16):`.",
+              "example_code": "for n in range(1, 4):\n    if n % 3 == 0:\n        print('Fizz')\n    else:\n        print(n)"
+            },
+            {
+              "heading": "Check \"both\" first",
+              "content": "Inside the loop, test divisible-by-both first, then 3, then 5, then print the number. Indent the whole if/elif/else once, inside the loop.",
+              "example_code": "for n in [10, 15]:\n    if n % 15 == 0:\n        print('both')\n    elif n % 5 == 0:\n        print('five')"
+            }
+          ]
+        },
+        {
+          "id": "i07",
+          "type": "code",
+          "track": "interview",
+          "heading": "Classic: reverse a string without slicing",
+          "instruction": "Build the reverse of `word` with a loop (no `[::-1]`) and print it. It should print: nohtyp",
+          "initial_code": "word = 'python'\n# TODO: reverse it with a loop\n",
+          "expected_output": "nohtyp",
+          "hint": "Put each new character in front of the result so far:\nresult = ''\nfor ch in word:\n    result = ch + result",
+          "support": [
+            {
+              "heading": "Add to the front, not the back",
+              "content": "`result + ch` keeps the original order. `ch + result` puts each new character before the others, so the last character ends up first.",
+              "example_code": "r = ''\nfor ch in 'abc':\n    r = ch + r\n    print(r)  # a, ba, cba"
+            },
+            {
+              "heading": "Start empty",
+              "content": "Begin with `result = ''`, update it inside the loop, and print it once after the loop. Interviewers ask for this version to see that you understand loops, not just slicing.",
+              "example_code": "r = ''\nfor ch in 'hi':\n    r = ch + r\nprint(r)  # ih"
+            }
+          ]
+        },
+        {
+          "id": "i08",
+          "type": "code",
+          "track": "interview",
+          "heading": "Classic: is it prime?",
+          "instruction": "A prime number is only divisible by 1 and itself. Print whether `n` is prime by checking every number from 2 up to n - 1. For 29 it should print: True",
+          "initial_code": "n = 29\n# TODO: print True if n is prime, otherwise False\n",
+          "expected_output": "True",
+          "hint": "is_prime = True\nfor d in range(2, n):\n    if n % d == 0:\n        is_prime = False\n        break\nprint(is_prime)",
+          "support": [
+            {
+              "heading": "Assume prime, look for a divisor",
+              "content": "Start by assuming it's prime. Loop over possible divisors; if any divides n evenly, it isn't prime and you can stop looking.",
+              "example_code": "n = 9\nprime = True\nfor d in range(2, n):\n    if n % d == 0:\n        prime = False\n        break\nprint(prime)  # False"
+            },
+            {
+              "heading": "Or use for/else",
+              "content": "A `for` loop's `else` runs only when no `break` happened, which here means no divisor was found. Either style works. (Checking only up to the square root of n is faster, a common interview follow-up.)",
+              "example_code": "n = 7\nfor d in range(2, n):\n    if n % d == 0:\n        print(False)\n        break\nelse:\n    print(True)"
+            }
+          ]
+        },
+        {
+          "id": "i09",
+          "type": "code",
+          "track": "interview",
+          "heading": "Debug: the countdown that never starts",
+          "instruction": "This should count down 5, 4, 3, 2, 1 (one per line), but it prints nothing. Fix the range.",
+          "initial_code": "for i in range(5, 0):\n    print(i)",
+          "expected_output": "5\n4\n3\n2\n1",
+          "hint": "range counts up unless you give a negative step:\nrange(5, 0, -1)",
+          "support": [
+            {
+              "heading": "range counts up by default",
+              "content": "`range(5, 0)` starts at 5 and goes up toward 0, so it's empty right away. A third number sets the step; -1 counts down.",
+              "example_code": "print(list(range(3, 0)))      # []\nprint(list(range(3, 0, -1)))  # [3, 2, 1]"
+            },
+            {
+              "heading": "Add the step",
+              "content": "Keep 5 and 0 (0 is the stop, so it isn't printed) and add `, -1` as the third value.",
+              "example_code": "for i in range(3, 0, -1):\n    print(i)"
+            }
+          ]
         }
       ]
     },

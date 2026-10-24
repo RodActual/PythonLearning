@@ -1,5 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
-import { allIds, expectAccessible, lesson, seedProgress, store } from './helpers';
+import { allIds, coreIds, expectAccessible, lesson, seedProgress, store } from './helpers';
 
 type Card = { box: number; due: string };
 type Saved = { review?: Record<string, Card> };
@@ -32,10 +32,10 @@ async function answerCard(page: Page, wantRight: boolean): Promise<boolean> {
 
 test('completed steps become review cards, scheduled by the result', async ({ page }) => {
   test.setTimeout(90_000);
-  await seedProgress(page, { version: 2, done: { 'lesson-01': allIds('lesson-01') }, first_try_ids: {} });
+  await seedProgress(page, { version: 2, done: { 'lesson-01': coreIds('lesson-01') }, first_try_ids: {} });
   await page.goto('/');
 
-  // Lesson 1 has 7 answerable quizzes and 4 coding challenges.
+  // Lesson 1's core has 7 answerable quizzes and 4 coding challenges.
   await expect(page.locator('.review-card')).toContainText('11 review cards are due');
   await expect(page.locator('.nav-badge')).toContainText('11');
   await page.locator('.review-card').getByRole('button', { name: 'Start review' }).click();

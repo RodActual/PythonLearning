@@ -1,6 +1,6 @@
 import type { Lesson, UserProgress } from '../types/lesson';
 import { units } from '../data/lessons';
-import { firstTrySet, isLessonComplete, isStepDone } from './progress';
+import { coreSteps, firstTrySet, isLessonComplete, isStepDone } from './progress';
 
 export interface Badge {
   id: string;
@@ -25,13 +25,23 @@ const firstTryCount = (lessons: Lesson[], progress: UserProgress, type: 'quiz' |
     return n + l.steps.filter((s) => s.type === type && firstTry.has(s.id)).length;
   }, 0);
 
-/** A completed lesson where every quiz and code step was solved first try. */
+/** A completed lesson where every core quiz and code step was solved first try. */
 const hasFlawlessLesson = (lessons: Lesson[], progress: UserProgress) =>
   lessons.some((l) => {
     if (!isComplete(lessons, progress, l.id)) return false;
     const firstTry = firstTrySet(progress, l.id);
-    return l.steps.every((s) => s.type === 'text' || firstTry.has(s.id));
+    return coreSteps(l).every((s) => s.type === 'text' || firstTry.has(s.id));
   });
+
+/** A lesson with optional sections where every step, optional ones included, is done. */
+const hasFullDeepDive = (lessons: Lesson[], progress: UserProgress) =>
+  lessons.some((l) => l.steps.some((s) => s.track) && l.steps.every((s) => isStepDone(progress, l.id, s.id)));
+
+const interviewChallengesSolved = (lessons: Lesson[], progress: UserProgress) =>
+  lessons.reduce(
+    (n, l) => n + l.steps.filter((s) => s.track === 'interview' && s.type === 'code' && isStepDone(progress, l.id, s.id)).length,
+    0,
+  );
 
 const BASE_BADGES: Badge[] = [
   {
@@ -69,6 +79,20 @@ const BASE_BADGES: Badge[] = [
     description: 'Finish a lesson with every question and challenge solved first try.',
     icon: '💎',
     earned: hasFlawlessLesson,
+  },
+  {
+    id: 'deep-diver',
+    name: 'Deep Diver',
+    description: 'Finish every step of a lesson, deep dive and interview practice included.',
+    icon: '🤿',
+    earned: hasFullDeepDive,
+  },
+  {
+    id: 'interview-ready',
+    name: 'Interview Ready',
+    description: 'Solve 10 interview coding challenges.',
+    icon: '💼',
+    earned: (lessons, p) => interviewChallengesSolved(lessons, p) >= 10,
   },
   {
     id: 'loop-master',

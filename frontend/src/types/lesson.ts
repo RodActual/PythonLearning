@@ -1,7 +1,16 @@
+/**
+ * Optional sections that follow a lesson's core steps. They earn XP but don't count toward
+ * finishing the lesson, so expanding a lesson never reopens it for people who already finished.
+ * Their quizzes and challenges can be skipped.
+ */
+export type StepTrack = 'deep-dive' | 'interview';
+
 export interface TextStep {
   /** Permanent id, unique within its lesson. Progress is saved by this id, so never change or reuse it. */
   id: string;
   type: 'text';
+  /** Omitted for core steps. */
+  track?: StepTrack;
   heading?: string;
   content: string;
   example_code?: string;
@@ -22,6 +31,8 @@ export interface QuizStep {
   /** Permanent id, unique within its lesson. Progress is saved by this id, so never change or reuse it. */
   id: string;
   type: 'quiz';
+  /** Omitted for core steps. */
+  track?: StepTrack;
   question: string;
   options: string[];
   /** Omit for opinion questions where any option is accepted. */
@@ -38,6 +49,8 @@ export interface CodeStep {
   /** Permanent id, unique within its lesson. Progress is saved by this id, so never change or reuse it. */
   id: string;
   type: 'code';
+  /** Omitted for core steps. */
+  track?: StepTrack;
   heading?: string;
   instruction: string;
   initial_code: string;
