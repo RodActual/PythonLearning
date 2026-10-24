@@ -17,12 +17,13 @@ export class FieldPath {
   }
 }
 
-type Snapshot = { data: () => unknown; metadata: { hasPendingWrites: boolean } };
+type Snapshot = { data: () => unknown; exists: () => boolean; metadata: { hasPendingWrites: boolean; fromCache: boolean } };
 const listeners = new Set<() => void>();
 const emit = () => listeners.forEach((l) => l());
 const snapshot = (): Snapshot => ({
   data: () => (w.__store === undefined ? undefined : JSON.parse(JSON.stringify(w.__store))),
-  metadata: { hasPendingWrites: !!w.__MOCK_PENDING },
+  exists: () => w.__store !== undefined,
+  metadata: { hasPendingWrites: !!w.__MOCK_PENDING, fromCache: false },
 });
 
 function merge(target: any, src: any) {
@@ -50,11 +51,20 @@ export const arrayUnion = (...items: unknown[]) => new Union(items);
 
 export function onSnapshot(_ref: string, ...args: any[]) {
   const [next, error] = typeof args[0] === 'function' ? args : [args[1], args[2]];
-  void error;
+  const opts = window as unknown as { __SNAPSHOT_DELAY?: number; __SNAPSHOT_ERROR?: boolean; __CACHE_FIRST?: boolean };
   const l = () => next(snapshot());
   listeners.add(l);
-  setTimeout(l, 0);
-  return () => listeners.delete(l);
+  // __SNAPSHOT_DELAY (ms) slows the first snapshot; __SNAPSHOT_ERROR makes the listener fail instead.
+  // __CACHE_FIRST sends an empty cache-only snapshot first, then the real one 400 ms later (a new device).
+  const cacheTimer = opts.__CACHE_FIRST
+    ? setTimeout(() => next({ data: () => undefined, exists: () => false, metadata: { hasPendingWrites: false, fromCache: true } }), 0)
+    : undefined;
+  const timer = setTimeout(() => (opts.__SNAPSHOT_ERROR ? error?.(new Error('permission-denied (mock)')) : l()), opts.__CACHE_FIRST ? 400 : opts.__SNAPSHOT_DELAY ?? 0);
+  return () => {
+    clearTimeout(timer);
+    clearTimeout(cacheTimer);
+    listeners.delete(l);
+  };
 }
 
 export async function setDoc(_ref: string, data: any, opts?: { merge?: boolean }) {
