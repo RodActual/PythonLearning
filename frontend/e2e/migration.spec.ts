@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { allIds, lesson, seedProgress, store } from './helpers';
+import { coreIds, lesson, seedProgress, store } from './helpers';
 
 test('old position-based progress is migrated to step ids', async ({ page }) => {
   const l1 = lesson('lesson-01');
@@ -15,7 +15,7 @@ test('old position-based progress is migrated to step ids', async ({ page }) => 
     first_try_ids: Record<string, string[]>;
     completed_steps: Record<string, number>;
   };
-  expect(saved.done['lesson-01']).toEqual(allIds('lesson-01'));
+  expect(saved.done['lesson-01']).toEqual(coreIds('lesson-01'));
   expect(saved.done['lesson-02']).toEqual(['s01', 's02', 's03']);
   expect(saved.first_try_ids['lesson-01']).toEqual(['s02', 's04']);
   // Old fields are kept so a rollback can't lose anyone's progress.

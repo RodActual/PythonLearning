@@ -1127,6 +1127,45 @@ button[aria-disabled='true'] {
   box-shadow: 0 0 10px -2px var(--yellow);
 }
 
+/* Long lessons (with deep-dive and interview steps) get thinner gaps so segments stay visible. */
+.step-progress.dense {
+  gap: 2px;
+}
+
+/* Optional steps: an outline until done, so the core part of the bar stands out. */
+.seg.seg-optional:not(.done):not(.current) {
+  background: transparent;
+  box-shadow: inset 0 0 0 1px var(--border-strong);
+}
+
+.track-banner {
+  margin: 0 0 1.25rem;
+  padding: 1rem 1.25rem;
+  border-radius: var(--radius);
+  background: var(--primary-soft);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--primary);
+}
+
+.track-banner.track-interview {
+  border-left-color: var(--yellow);
+}
+
+.track-banner p {
+  margin: 0 0 0.75rem;
+}
+
+.track-title {
+  font-weight: 700;
+  color: var(--ink-strong);
+}
+
+.track-title .chip {
+  margin-left: 0.35rem;
+  background: var(--surface-3);
+  color: var(--ink);
+}
+
 .why-banner {
   margin: 0 0 1.25rem;
   padding: 1rem 1.25rem;

@@ -16,6 +16,7 @@ A basic application that teaches Python.
 - Levels and titles come from total XP. Trophies are defined in `src/game/badges.ts`.
 - Firestore stores `completed_steps` and `first_try` (step indices solved on the first attempt) per user.
 - The lesson map recommends the first unfinished lesson but every lesson stays open.
+- A lesson is complete once its core steps are done. Optional deep-dive and interview steps (see Editing lessons) earn XP but never reopen a finished lesson; their quizzes and challenges can be skipped. The Flawless trophy counts core steps only; Deep Diver and Interview Ready reward the optional sections.
 
 ## Accessibility
 Target: WCAG 2.1/2.2 AA. Skip link, landmarks, one focus target per view (headings receive focus on navigation), unique page titles, live-region feedback for quizzes, code runs and rewards, visible focus rings, 44px buttons, reduced-motion support (no confetti or pulsing), forced-colors support, and reflow down to 320px. The code editor uses Tab for indenting; Esc then Tab leaves it. `npm run check:contrast` verifies the palette.
@@ -47,6 +48,8 @@ Step types:
 **Check-ins.** Before an exercise the learner hasn't finished, the lesson asks how they feel. "Feeling good" opens the exercise. "Not sure yet" shows support tier 1 and asks again; "Still unsure" shows tier 2; still unsure after the last tier offers to restart the lesson from step 1 (saved progress and XP are kept). The tiers are capped at two so the extra help never repeats or loops. Finished exercises skip the check-in, and so does Review.
 
 Every coding step needs a reference solution in `frontend/tests/solutions.json`, keyed `lessonId:stepId`. Run `npm run check:lessons` (needs Python) after editing: it runs every solution, confirms starters don't already pass, checks that predict-the-output answers match what the code really prints, and checks that every explanation has `how`/`use` and every exercise has 1-2 support tiers whose examples run cleanly and don't give away the solution.
+
+**Optional sections.** Any step can have `"track": "deep-dive"` or `"track": "interview"`. Steps run in order: core steps (no `track`), then deep-dive steps, then interview steps; the app and `check:lessons` reject any other order. By convention their ids are `d01`... and `i01`.... Deep dives add explanation and practice past the core; interview practice covers explain-the-concept questions, Big-O questions (introduced in the Loops deep dive), classic coding problems and debug-this-code exercises. Each optional section starts with a banner, and finished lessons resume at the first undone optional step.
 
 **Progress is saved by lesson id and step id.** Every step has a permanent `id` (unique within its lesson). You can add, remove, and reorder steps freely; never rename a lesson id, and never change or reuse a step id. Progress saved before step ids existed is migrated automatically using `frontend/src/data/legacy-step-ids.json`, which must never be edited.
 

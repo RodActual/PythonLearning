@@ -184,7 +184,8 @@ function App() {
       applyProgress(next);
 
       const lesson = getLesson(lessonId);
-      const justFinished = lesson && isLessonComplete(next, lesson) ? lesson.title : undefined;
+      // Only the step that finishes the core counts; optional steps after it don't re-announce.
+      const justFinished = lesson && !isLessonComplete(prev, lesson) && isLessonComplete(next, lesson) ? lesson.title : undefined;
       announceRewards(summarize(lessons, prev), summarize(lessons, next), justFinished);
 
       const update: Record<string, unknown> = {
@@ -256,6 +257,12 @@ function App() {
   };
 
   const prevStep = () => setStepIndex((i) => Math.max(i - 1, 0));
+
+  /** Moves past an optional (deep-dive or interview) step without completing it. */
+  const skipStep = () => {
+    if (!currentLesson) return;
+    setStepIndex(Math.min(stepIndex + 1, currentLesson.steps.length));
+  };
 
   // Moves the cursor only; saved progress and XP are kept.
   const restartLesson = () => {
@@ -359,6 +366,7 @@ function App() {
                   courseComplete={summary.lessonsCompleted === lessons.length}
                   about={about}
                   onNext={nextStep}
+                  onSkip={skipStep}
                   onPrev={prevStep}
                   onBackToMenu={backToMap}
                   onRestart={restartLesson}

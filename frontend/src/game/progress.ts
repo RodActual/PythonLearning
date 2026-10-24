@@ -96,8 +96,14 @@ export const doneCount = (p: UserProgress, lesson: Lesson) => {
   return lesson.steps.filter((s) => done.has(s.id)).length;
 };
 
-export const isLessonComplete = (p: UserProgress, lesson: Lesson) =>
-  lesson.steps.length > 0 && doneCount(p, lesson) === lesson.steps.length;
+/** The steps that count toward finishing a lesson (deep-dive and interview steps are optional). */
+export const coreSteps = (lesson: Lesson) => lesson.steps.filter((s) => !s.track);
+
+export const isLessonComplete = (p: UserProgress, lesson: Lesson) => {
+  const core = coreSteps(lesson);
+  const done = new Set(p.done[lesson.id] ?? []);
+  return core.length > 0 && core.every((s) => done.has(s.id));
+};
 
 /** Where to resume: the first unfinished step, or the start for a finished lesson (review). */
 export const resumeIndex = (p: UserProgress, lesson: Lesson) => {

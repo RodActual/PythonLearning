@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import AxeBuilder from '@axe-core/playwright';
 import { expect, type Page } from '@playwright/test';
 
-type Step = { id: string; type: string; options?: string[]; answer?: string };
+type Step = { id: string; type: string; track?: string; options?: string[]; answer?: string };
 type Lesson = { id: string; title: string; unit: string; steps: Step[] };
 
 export const course = JSON.parse(readFileSync(new URL('../src/data/lessons.json', import.meta.url), 'utf8')) as {
@@ -14,6 +14,8 @@ export const solutions = JSON.parse(readFileSync(new URL('../tests/solutions.jso
 >;
 export const lesson = (id: string) => course.lessons.find((l) => l.id === id)!;
 export const allIds = (id: string) => lesson(id).steps.map((s) => s.id);
+/** Ids of the steps that count toward finishing a lesson (not deep-dive or interview). */
+export const coreIds = (id: string) => lesson(id).steps.filter((s) => !s.track).map((s) => s.id);
 
 /** Seeds the mock Firestore progress document before the app loads. */
 export async function seedProgress(page: Page, data: unknown) {
