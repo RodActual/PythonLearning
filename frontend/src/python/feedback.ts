@@ -134,6 +134,10 @@ function explainBody(err: PyError, attempt: Attempt): string {
   const quotesFix = (text: string) =>
     `${where}${quote(text)} has no quotation marks, so Python reads it as code (variable names) instead of text. Put the text inside quotes: ${quote(`print('${text}')`)}.`;
 
+  // json.loads raises json.decoder.JSONDecodeError, a ValueError with a module path in its name.
+  if (/JSONDecodeError$/.test(err.type))
+    return `${where}the text isn't valid JSON (${msg}). JSON needs double quotes and complete brackets; to skip bad records, wrap ${quote('json.loads')} in try/except ${quote('json.JSONDecodeError')}.`;
+
   switch (err.type) {
     case 'SyntaxError': {
       if (missingQuotes) return quotesFix(missingQuotes);
@@ -223,9 +227,15 @@ function explainBody(err: PyError, attempt: Attempt): string {
       return `${where}the index is past the end (${msg}). Indexes start at 0, so the last item of a list with 3 items is [2], or [-1].`;
     case 'KeyError':
       return `${where}the dictionary has no key ${msg}. Check the spelling and quotes, or use ${quote('.get()')} to avoid the crash.`;
-    case 'ValueError':
+    case 'ValueError': {
       if (/invalid literal for int\(\)/.test(msg)) return `${where}${quote('int()')} can only convert text made of digits (${msg}).`;
+      const pattern = /time data '(.*)' does not match format '(.*)'/.exec(msg);
+      if (pattern)
+        return `${where}the text ${quote(pattern[1])} doesn't fit the pattern ${quote(pattern[2])}. Line them up part by part: ${quote('%Y')} year, ${quote('%m')} month, ${quote('%d')} day, ${quote('%H')} hour, ${quote('%M')} minute, ${quote('%S')} second.`;
+      const leftover = /unconverted data remains: (.*)/.exec(msg);
+      if (leftover) return `${where}the pattern ends before the text does: ${quote(leftover[1])} is left over. Add codes for that part to the pattern.`;
       break;
+    }
     case 'ZeroDivisionError':
       return `${where}the code divides by zero, which Python can't do.`;
     case 'FileNotFoundError':
@@ -274,7 +284,7 @@ export function compareOutput(stdout: string, expectedOutput: string, code = '')
   const detail = (() => {
     if (/^(['"]).*\1$/.test(a) && a.slice(1, -1) === b) return ' The quote marks are showing in the output: print the text itself, not a string inside a string.';
     if (/^<__main__\.\w+ object at 0x[0-9a-f]+>$/.test(a)) return ` That's Python's default text for an object. Add a ${quote('__str__')} method to control what print() shows.`;
-    if (a === 'None') return ` None usually means a function has no ${quote('return')}, so it gives back None.`;
+    if (/\bNone\b/.test(a) && !/\bNone\b/.test(b)) return ` None usually means a function has no ${quote('return')}, so it gives back None.`;
     const isNum = (x: string) => x.trim() !== '' && !Number.isNaN(Number(x));
     if (isNum(a) && isNum(b))
       return Number(a) === Number(b) ? ` The number is right but formatted differently (for example ${quote('4')} vs ${quote('4.0')}, or missing decimal places).` : '';
