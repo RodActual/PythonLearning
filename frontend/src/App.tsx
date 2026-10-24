@@ -26,7 +26,6 @@ import AuthForm from './components/AuthForm';
 import ThemeToggle from './components/ThemeToggle';
 import Hud from './components/Hud';
 import Toasts, { type Toast } from './components/Toasts';
-import CourseAbout from './components/CourseAbout';
 import ErrorBoundary from './components/ErrorBoundary';
 import SaveStatus, { type SaveState } from './components/SaveStatus';
 
@@ -344,10 +343,7 @@ function App() {
           <ErrorBoundary key={view.name === 'lesson' ? view.lessonId : view.name} onReset={backToMap}>
             <Suspense fallback={<Loading />}>
               {!user ? (
-                <>
-                  <AuthForm />
-                  <CourseAbout about={about} defaultOpen />
-                </>
+                <AuthForm />
               ) : view.name === 'trophies' ? (
                 <TrophyCase earned={summary.badges} onBack={backToMap} />
               ) : view.name === 'review' ? (

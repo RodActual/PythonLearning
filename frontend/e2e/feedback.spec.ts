@@ -86,6 +86,17 @@ test.describe('diagnose (no browser)', () => {
     const shadow = "import math\nmath = 'circle'\nprint(math.pi)";
     expect(run(shadow, tb(3, 'print(math.pi)', "AttributeError: 'str' object has no attribute 'pi'"), '3.14')).toMatch(/imported as a module.*different name/);
     expect(run("name = 'x'\nprint(name.size)", tb(2, 'print(name.size)', "AttributeError: 'str' object has no attribute 'size'"), '1')).not.toMatch(/__init__/);
+    // Methods: missing, or defined outside the class.
+    const noMethod = 'class Disk:\n    pass\n\nprint(Disk().used())';
+    expect(run(noMethod, tb(4, 'print(Disk().used())', "AttributeError: 'Disk' object has no attribute 'used'"), '1')).toMatch(/has no method `used`.*class Disk:/);
+    const outside = 'class Disk:\n    pass\n\ndef used(self):\n    return 1\n\nprint(Disk().used())';
+    expect(run(outside, tb(7, 'print(Disk().used())', "AttributeError: 'Disk' object has no attribute 'used'"), '1')).toMatch(/outside the class/);
+    expect(run('print(Inventory().find())', tb(1, 'print(Inventory().find())', "AttributeError: 'Inventory' object has no attribute 'find'"), '1')).toMatch(/^Line 1 .*: an Inventory/);
+    // Sorting objects with no __lt__, and a missing classmethod.
+    expect(run('sorted([A(), A()])', tb(1, 'sorted([A(), A()])', "TypeError: '<' not supported between instances of 'A' and 'A'"), '1')).toMatch(/__lt__/);
+    expect(run("A.load('x')", tb(1, "A.load('x')", "AttributeError: type object 'A' has no attribute 'load'"), '1')).toMatch(/the class `A` has no `load`/);
+    // A missing argument can also be fixed with a default value.
+    expect(run("Ticket('Jam')", tb(1, "Ticket('Jam')", "TypeError: Ticket.__init__() missing 1 required positional argument: 'priority'"), 'low')).toMatch(/`priority=\.\.\.`/);
     // strptime errors, with the messages Python 3.13 really prints for this code.
     const mismatch = "datetime.strptime('2025-07-31 14:05:00', '%Y-%d-%m %H:%M:%S')";
     expect(run(mismatch, tb(1, mismatch, "ValueError: time data '2025-07-31 14:05:00' does not match format '%Y-%d-%m %H:%M:%S'"), 'x')).toMatch(/doesn't fit the pattern.*%m.*month/);

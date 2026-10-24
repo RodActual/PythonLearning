@@ -22,7 +22,6 @@ export const signInWithEmailAndPassword = async () => {
   current = USER;
   listener?.(USER);
 };
-export const createUserWithEmailAndPassword = signInWithEmailAndPassword;
 export const sendPasswordResetEmail = async (_auth: unknown, email: string) => {
   (w.__resetEmails ??= []).push(email);
 };

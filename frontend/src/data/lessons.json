@@ -9530,6 +9530,415 @@
             "The Class itself": "That would be cls in a class method. self is one object.",
             "The global scope": "self has nothing to do with globals."
           }
+        },
+        {
+          "id": "d01",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "What self really is",
+          "content": "When you write `rex.bark()`, Python actually runs `Dog.bark(rex)`: it looks up `bark` on the class and passes the object in as the first argument. That argument is `self`. Forget the `self` parameter and Python complains that the method got one argument too many.",
+          "example_code": "class Dog:\n    def __init__(self, name):\n        self.name = name\n\n    def bark(self):\n        print(self.name, 'says woof')\n\nrex = Dog('Rex')\nrex.bark()        # Rex says woof\nDog.bark(rex)     # exactly the same call",
+          "how": "Methods are plain functions stored on the class. The dot syntax `object.method()` is a shortcut that fills in the first argument with the object.",
+          "use": "Understanding this explains most method errors, like \"takes 0 positional arguments but 1 was given\" when `self` is missing."
+        },
+        {
+          "id": "d02",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "`rex` is a Dog. What does `Dog.bark(rex)` do?",
+          "options": [
+            "The same as `rex.bark()`",
+            "It raises an error: methods can't be called on the class",
+            "It creates a new Dog"
+          ],
+          "answer": "The same as `rex.bark()`",
+          "explanation": "`rex.bark()` is shorthand for `Dog.bark(rex)`: the object is passed in as `self`."
+        },
+        {
+          "id": "d03",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Methods that return values",
+          "content": "A method that prints can only show a result. A method that **returns** gives the result back, so the caller can store it, compare it or print it. Most methods that compute something should return.",
+          "example_code": "class Circle:\n    def __init__(self, radius):\n        self.radius = radius\n\n    def area(self):\n        return 3.14 * self.radius ** 2\n\nc = Circle(2)\nprint(c.area())          # 12.56\nprint(c.area() > 10)     # True: the value can be used",
+          "how": "Same as with functions: `return` ends the method and hands a value to whoever called it. `self` gives the method the object's data to compute from.",
+          "use": "Calculations on an object's data: totals, areas, ages, scores. Keep printing for the code that uses the object."
+        },
+        {
+          "id": "d04",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Disk usage",
+          "instruction": "Add a `percent_used` method to Disk that **returns** used divided by total, times 100. The last line checks it against an alert threshold and prints: 80.0 True",
+          "initial_code": "class Disk:\n    def __init__(self, total_gb, used_gb):\n        self.total_gb = total_gb\n        self.used_gb = used_gb\n\n    # TODO: add percent_used(self)\n\nd = Disk(500, 400)\nprint(d.percent_used(), d.percent_used() > 75)",
+          "expected_output": "80.0 True",
+          "hint": "def percent_used(self):\n    return self.used_gb / self.total_gb * 100",
+          "support": [
+            {
+              "heading": "Read the object's own data",
+              "content": "Inside the method, the sizes are `self.used_gb` and `self.total_gb`. `self` is the disk the method was called on.",
+              "example_code": "class Box:\n    def __init__(self, size):\n        self.size = size\n\n    def double(self):\n        return self.size * 2\n\nprint(Box(5).double())"
+            },
+            {
+              "heading": "Return, don't print",
+              "content": "The last line uses the result twice, once in a comparison. If the method printed instead, the comparison would get None and crash.",
+              "example_code": "def half(n):\n    return n / 2\n\nprint(half(8) + 1)  # 5.0"
+            }
+          ]
+        },
+        {
+          "id": "d05",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Default values in __init__",
+          "content": "`__init__` takes parameters like any function, so they can have defaults. Callers then only pass what differs from the usual.",
+          "example_code": "class Player:\n    def __init__(self, name, level=1):\n        self.name = name\n        self.level = level\n\nnew = Player('Ada')\npro = Player('Bob', 30)\nprint(new.level, pro.level)   # 1 30",
+          "how": "Default values are filled in when an argument is left out, exactly as in plain functions.",
+          "use": "Settings with a common value: a starting score, a default color, an empty list of items (created inside __init__)."
+        },
+        {
+          "id": "d06",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Default ticket priority",
+          "instruction": "Most help desk tickets are routine. Give `priority` a default of 'low' in Ticket's `__init__`. The prints should show low then high.",
+          "initial_code": "class Ticket:\n    def __init__(self, title, priority):\n        # TODO: make priority default to 'low'\n        self.title = title\n        self.priority = priority\n\nprint(Ticket('Printer jam').priority)\nprint(Ticket('Server down', 'high').priority)",
+          "expected_output": "low\nhigh",
+          "hint": "def __init__(self, title, priority='low'):",
+          "support": [
+            {
+              "heading": "Defaults go in the parameter list",
+              "content": "Write `priority='low'` in the `def __init__(...)` line. Then `Ticket('Printer jam')` works without a second argument.",
+              "example_code": "def greet(name, punctuation='!'):\n    return 'Hi ' + name + punctuation\n\nprint(greet('Ada'), greet('Bob', '?'))"
+            },
+            {
+              "heading": "Passing a value still wins",
+              "content": "`Ticket('Server down', 'high')` passes 'high', which replaces the default. Only change the def line; the body stays the same.",
+              "example_code": "def area(w, h=1):\n    return w * h\n\nprint(area(3), area(3, 2))  # 3 6"
+            }
+          ]
+        },
+        {
+          "id": "d07",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Class attributes vs instance attributes",
+          "content": "An attribute set on `self` belongs to one object. A variable written directly in the class body is a **class attribute**, shared by every object of that class. When you read `obj.x`, Python checks the object first, then the class.",
+          "example_code": "class Dog:\n    species = 'canine'          # class attribute: shared\n\n    def __init__(self, name):\n        self.name = name        # instance attribute: per dog\n\na = Dog('Rex')\nb = Dog('Fido')\nprint(a.species, b.species)   # canine canine\nprint(a.name, b.name)         # Rex Fido",
+          "how": "Each object keeps its own attributes in a small dictionary. If a name isn't found there, the lookup falls back to the class's dictionary.",
+          "use": "Constants that every object shares, like a species name, a tax rate or a count of objects created."
+        },
+        {
+          "id": "d08",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "What does this code print?",
+          "options": [
+            "wolf canine",
+            "wolf wolf",
+            "canine canine"
+          ],
+          "answer": "wolf canine",
+          "explanation": "`a.species = 'wolf'` creates an instance attribute on `a` only. `b` has no attribute of its own, so it still finds the class's 'canine'.",
+          "code": "class Dog:\n    species = 'canine'\n\na = Dog()\nb = Dog()\na.species = 'wolf'\nprint(a.species, b.species)",
+          "feedback": {
+            "wolf wolf": "Assigning through `a` creates an attribute on `a` alone. The class attribute, which `b` still reads, doesn't change."
+          }
+        },
+        {
+          "id": "d09",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "The shared-list trap",
+          "content": "A list written as a class attribute is one list shared by all objects. Appending to it through one object changes it for all of them. Mutable data that each object should own belongs in `__init__`, on `self`.",
+          "example_code": "class Team:\n    members = []                # shared by every Team!\n\nred = Team()\nblue = Team()\nred.members.append('Ada')\nprint(blue.members)             # ['Ada']: surprise\n\nclass FixedTeam:\n    def __init__(self):\n        self.members = []       # a new list per team",
+          "how": "`red.members.append` doesn't assign anything: it finds `members` on the class and changes that one list in place.",
+          "use": "Any per-object collection: a cart's items, a player's inventory, a team's members. It's a favorite interview trap, alongside the mutable default argument."
+        },
+        {
+          "id": "d10",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "What does this code print?",
+          "options": [
+            "['sit']",
+            "[]",
+            "It raises AttributeError"
+          ],
+          "answer": "['sit']",
+          "explanation": "`tricks` is a class attribute, so both dogs share one list. Rex's append shows up for Fido.",
+          "code": "class Dog:\n    tricks = []\n\nrex = Dog()\nfido = Dog()\nrex.tricks.append('sit')\nprint(fido.tricks)"
+        },
+        {
+          "id": "d11",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Fix the shared port list",
+          "instruction": "An audit shows the database server with port 443 open, but only the web server opened it: both servers share one list. Move `open_ports` into an `__init__` as `self.open_ports = []`, so it prints [443] then []",
+          "initial_code": "class Server:\n    open_ports = []\n\n    def open_port(self, port):\n        self.open_ports.append(port)\n\nweb = Server()\ndb = Server()\nweb.open_port(443)\nprint(web.open_ports)\nprint(db.open_ports)",
+          "expected_output": "[443]\n[]",
+          "hint": "def __init__(self):\n    self.open_ports = []",
+          "support": [
+            {
+              "heading": "Where the list is created matters",
+              "content": "A list in the class body is made once, when the class is defined. A list in `__init__` is made again for every new object.",
+              "example_code": "class Bag:\n    def __init__(self):\n        self.items = []\n\na, b = Bag(), Bag()\na.items.append(1)\nprint(a.items, b.items)  # [1] []"
+            },
+            {
+              "heading": "Replace, don't add",
+              "content": "Delete the `open_ports = []` line and put an `__init__(self)` method in its place that sets `self.open_ports = []`. open_port can stay as it is.",
+              "example_code": "class Shelf:\n    def __init__(self):\n        self.books = []\n\nprint(Shelf().books)"
+            }
+          ]
+        },
+        {
+          "id": "d12",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Objects are shared by reference",
+          "content": "A variable holds a reference to an object, not a copy. `b = a` makes a second name for the same object, so a change through `b` shows through `a`. `a is b` checks for the same object; `==` checks for equal values (which, for your own classes, means the same object unless you add `__eq__`).",
+          "example_code": "class Box:\n    def __init__(self):\n        self.items = []\n\na = Box()\nb = a                # same box, two names\nb.items.append('pen')\nprint(a.items)       # ['pen']\nprint(a is b)        # True\nprint(Box() is Box())   # False: two different boxes",
+          "how": "Assignment never copies an object. It points another name at the existing one, like two labels on the same jar.",
+          "use": "Passing objects to functions (the function can change them), storing the same object in two lists, and spotting aliasing bugs."
+        },
+        {
+          "id": "d13",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "What does this code print?",
+          "options": [
+            "1",
+            "0",
+            "It raises an error"
+          ],
+          "answer": "1",
+          "explanation": "`b = a` doesn't copy the box. Both names point at one object, so its list has one item.",
+          "code": "class Box:\n    def __init__(self):\n        self.items = []\n\na = Box()\nb = a\nb.items.append(1)\nprint(len(a.items))"
+        },
+        {
+          "id": "d14",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Protecting an object's data",
+          "content": "Check arguments in `__init__` and raise an error for bad values, so an invalid object can never exist. A leading underscore, like `self._balance`, is a convention meaning \"internal: use the methods instead\". Python doesn't block access; it's a signal to other programmers.",
+          "example_code": "class Account:\n    def __init__(self, balance):\n        if balance < 0:\n            raise ValueError(\"balance can't be negative\")\n        self._balance = balance\n\n    def balance(self):\n        return self._balance\n\nprint(Account(50).balance())",
+          "how": "Raising inside `__init__` stops the object from being created, so the caller gets the error instead of a broken object.",
+          "use": "Bank accounts, ages, prices and anything with rules. This idea is called **encapsulation**: the object guards its own data."
+        },
+        {
+          "id": "d15",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Reject a bad port",
+          "instruction": "Valid ports run from 1 to 65535. Make FirewallRule raise `ValueError('port must be 1-65535')` for anything outside that range. The test at the bottom then prints: port must be 1-65535",
+          "initial_code": "class FirewallRule:\n    def __init__(self, port):\n        # TODO: raise ValueError for a port outside 1-65535\n        self._port = port\n\ntry:\n    FirewallRule(70000)\n    print('No error')\nexcept ValueError as e:\n    print(e)",
+          "expected_output": "port must be 1-65535",
+          "hint": "if not 1 <= port <= 65535:\n    raise ValueError('port must be 1-65535')",
+          "support": [
+            {
+              "heading": "Check before storing",
+              "content": "Put the check at the top of `__init__`, before `self._port = port`. A chained comparison like `1 <= port <= 65535` tests both ends at once.",
+              "example_code": "n = 70\nprint(1 <= n <= 100, 1 <= 500 <= 100)  # True False"
+            },
+            {
+              "heading": "The message is what gets printed",
+              "content": "`print(e)` shows the text you pass to ValueError, so it must match exactly: `'port must be 1-65535'`.",
+              "example_code": "try:\n    raise ValueError('oops')\nexcept ValueError as e:\n    print(e)  # oops"
+            }
+          ]
+        },
+        {
+          "id": "d16",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "What does the underscore in `self._balance` tell other programmers?",
+          "options": [
+            "It's internal: use the object's methods instead of touching it directly",
+            "Python makes it read-only",
+            "It's a private variable that can't be accessed"
+          ],
+          "answer": "It's internal: use the object's methods instead of touching it directly",
+          "explanation": "It's only a naming convention. `acct._balance` still works, but it says \"this may change; don't rely on it\"."
+        },
+        {
+          "id": "d17",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Methods that use other methods",
+          "instruction": "Add a `describe` method to Server that returns a status line using `self.uptime_hours()`. The print should show: web-01 up 26.0 h",
+          "initial_code": "class Server:\n    def __init__(self, hostname, uptime_seconds):\n        self.hostname = hostname\n        self.uptime_seconds = uptime_seconds\n\n    def uptime_hours(self):\n        return self.uptime_seconds / 3600\n\n    # TODO: add describe(self) that returns 'HOSTNAME up N h'\n\nprint(Server('web-01', 93600).describe())",
+          "expected_output": "web-01 up 26.0 h",
+          "hint": "def describe(self):\n    return f'{self.hostname} up {self.uptime_hours()} h'",
+          "support": [
+            {
+              "heading": "Call methods through self",
+              "content": "Inside a method, another method of the same object is `self.uptime_hours()`. Plain `uptime_hours()` raises NameError.",
+              "example_code": "class Pair:\n    def __init__(self, a, b):\n        self.a, self.b = a, b\n\n    def total(self):\n        return self.a + self.b\n\n    def report(self):\n        return f'total {self.total()}'\n\nprint(Pair(2, 3).report())"
+            },
+            {
+              "heading": "Build the line",
+              "content": "An f-string can hold both values: `f'{self.hostname} up {self.uptime_hours()} h'`. Return it, since the last line prints what describe gives back.",
+              "example_code": "name = 'db-02'\nprint(f'{name} ok')"
+            }
+          ]
+        },
+        {
+          "id": "i01",
+          "type": "quiz",
+          "track": "interview",
+          "question": "Interview question: what's the difference between a class and an object?",
+          "options": [
+            "A class is the blueprint; an object is one instance built from it, with its own data",
+            "They're two words for the same thing",
+            "A class holds data and an object holds methods"
+          ],
+          "answer": "A class is the blueprint; an object is one instance built from it, with its own data",
+          "explanation": "`Dog` describes what every dog has and does. `Dog('Rex')` and `Dog('Fido')` are two separate objects made from it."
+        },
+        {
+          "id": "i02",
+          "type": "quiz",
+          "track": "interview",
+          "question": "What is `self` in a method?",
+          "options": [
+            "The object the method was called on, passed in automatically",
+            "A keyword that Python reserves for classes",
+            "The class itself"
+          ],
+          "answer": "The object the method was called on, passed in automatically",
+          "explanation": "`self` is just the conventional name for the first parameter. `obj.method()` fills it in with `obj`."
+        },
+        {
+          "id": "i03",
+          "type": "quiz",
+          "track": "interview",
+          "question": "A class has `count = 0` in its body and `self.name = name` in `__init__`. Which is shared by every object?",
+          "options": [
+            "`count`",
+            "`name`",
+            "Both",
+            "Neither"
+          ],
+          "answer": "`count`",
+          "explanation": "Variables in the class body are class attributes, shared by all objects. Attributes set on `self` belong to one object."
+        },
+        {
+          "id": "i04",
+          "type": "quiz",
+          "track": "interview",
+          "question": "An object's attributes are stored in a dictionary (`obj.__dict__`). How long does reading `obj.name` take, as objects get more attributes?",
+          "options": [
+            "O(1)",
+            "O(n)",
+            "O(log n)"
+          ],
+          "answer": "O(1)",
+          "explanation": "Attribute lookup is a dictionary lookup, which takes about the same time however many attributes there are."
+        },
+        {
+          "id": "i05",
+          "type": "quiz",
+          "track": "interview",
+          "question": "What does this code print?",
+          "options": [
+            "TypeError",
+            "hi",
+            "Nothing"
+          ],
+          "answer": "TypeError",
+          "explanation": "`hi` was defined without `self`, but `A().hi()` passes the object in anyway: \"hi() takes 0 positional arguments but 1 was given\".",
+          "code": "class A:\n    def hi():\n        print('hi')\n\ntry:\n    A().hi()\nexcept TypeError:\n    print('TypeError')",
+          "feedback": {
+            "hi": "Calling a method always passes the object as the first argument, and `hi` has no parameter to receive it."
+          }
+        },
+        {
+          "id": "i06",
+          "type": "code",
+          "track": "interview",
+          "heading": "Classic: build a stack",
+          "instruction": "Write a Stack class with `push(item)`, `pop()` (remove and return the top item), `peek()` (return the top without removing it) and `is_empty()`. The prints should show: 3, 3, 2, False",
+          "initial_code": "class Stack:\n    # TODO: __init__, push, pop, peek, is_empty\n    pass\n\ns = Stack()\ns.push(1)\ns.push(2)\ns.push(3)\nprint(s.peek())\nprint(s.pop())\nprint(s.pop())\nprint(s.is_empty())",
+          "expected_output": "3\n3\n2\nFalse",
+          "hint": "def __init__(self):\n    self.items = []\n\ndef push(self, item):\n    self.items.append(item)\n\ndef pop(self):\n    return self.items.pop()\n\ndef peek(self):\n    return self.items[-1]\n\ndef is_empty(self):\n    return len(self.items) == 0",
+          "support": [
+            {
+              "heading": "A list does the work",
+              "content": "Keep a list in `self.items`. The end of the list is the top of the stack: `append` adds there and `pop()` removes from there, both O(1).",
+              "example_code": "items = []\nitems.append('a')\nitems.append('b')\nprint(items.pop(), items)  # b ['a']"
+            },
+            {
+              "heading": "Peek reads the last item",
+              "content": "`self.items[-1]` is the top without removing it. `is_empty` returns whether the length is 0.",
+              "example_code": "items = [4, 5, 6]\nprint(items[-1], len(items) == 0)  # 6 False"
+            }
+          ]
+        },
+        {
+          "id": "i07",
+          "type": "code",
+          "track": "interview",
+          "heading": "Classic: account lockout",
+          "instruction": "Write `login(password)` for UserAccount: return True for the right password (and reset the failure count), False for a wrong one. After 3 wrong passwords in a row, lock the account so every later login raises `PermissionError('account locked')`. It should print: False, False, True, then account locked",
+          "initial_code": "class UserAccount:\n    def __init__(self, username, password):\n        self.username = username\n        self._password = password\n        self.failures = 0\n        self.locked = False\n\n    # TODO: login(self, password)\n\nacct = UserAccount('ada', 's3cret')\nprint(acct.login('guess1'))\nprint(acct.login('guess2'))\nprint(acct.login('s3cret'))\nfor guess in ['a', 'b', 'c']:\n    acct.login(guess)\ntry:\n    acct.login('s3cret')\nexcept PermissionError as e:\n    print(e)",
+          "expected_output": "False\nFalse\nTrue\naccount locked",
+          "hint": "def login(self, password):\n    if self.locked:\n        raise PermissionError('account locked')\n    if password == self._password:\n        self.failures = 0\n        return True\n    self.failures += 1\n    if self.failures >= 3:\n        self.locked = True\n    return False",
+          "support": [
+            {
+              "heading": "Check the lock first",
+              "content": "A locked account must refuse even the right password, so test `self.locked` before comparing passwords. PermissionError is a built-in error, raised like ValueError.",
+              "example_code": "locked = True\ntry:\n    if locked:\n        raise PermissionError('no entry')\nexcept PermissionError as e:\n    print(e)"
+            },
+            {
+              "heading": "Count consecutive failures",
+              "content": "A right password sets `self.failures = 0`. A wrong one adds 1, and at 3 it sets `self.locked = True`. That's why two misses, a success, then three misses locks the account.",
+              "example_code": "failures = 0\nfor ok in [False, False, True, False]:\n    failures = 0 if ok else failures + 1\nprint(failures)  # 1"
+            }
+          ]
+        },
+        {
+          "id": "i08",
+          "type": "code",
+          "track": "interview",
+          "heading": "Classic: failed login tracker",
+          "instruction": "Write FailedLoginTracker with `record(ip)` to note a failed login from an address and `top()` to return the address with the most failures. It should print: 10.0.0.5",
+          "initial_code": "class FailedLoginTracker:\n    # TODO: __init__, record, top\n    pass\n\nt = FailedLoginTracker()\nfor ip in ['10.0.0.5', '10.0.0.9', '10.0.0.5', '10.0.0.7', '10.0.0.5']:\n    t.record(ip)\nprint(t.top())",
+          "expected_output": "10.0.0.5",
+          "hint": "def __init__(self):\n    self.counts = {}\n\ndef record(self, ip):\n    self.counts[ip] = self.counts.get(ip, 0) + 1\n\ndef top(self):\n    return max(self.counts, key=self.counts.get)",
+          "support": [
+            {
+              "heading": "Store counts in a dictionary",
+              "content": "Create `self.counts = {}` in `__init__`. Each record adds 1 with `self.counts.get(ip, 0) + 1`.",
+              "example_code": "counts = {}\nfor w in ['a', 'b', 'a']:\n    counts[w] = counts.get(w, 0) + 1\nprint(counts)"
+            },
+            {
+              "heading": "Find the biggest count",
+              "content": "`max(self.counts, key=self.counts.get)` returns the key with the largest value. Each record is O(1) and top is O(n) in the number of addresses: the core of a brute-force detector.",
+              "example_code": "scores = {'x': 2, 'y': 9}\nprint(max(scores, key=scores.get))  # y"
+            }
+          ]
+        },
+        {
+          "id": "i09",
+          "type": "code",
+          "track": "interview",
+          "heading": "Debug: the missing hostname",
+          "instruction": "This crashes with AttributeError: Device has no attribute 'hostname'. `__init__` receives the hostname but never stores it on the object. Fix it so it prints: web-01",
+          "initial_code": "class Device:\n    def __init__(self, hostname):\n        hostname = hostname\n\nd = Device('web-01')\nprint(d.hostname)",
+          "expected_output": "web-01",
+          "hint": "Store it on self:\nself.hostname = hostname",
+          "support": [
+            {
+              "heading": "A plain name is a local variable",
+              "content": "`hostname = hostname` assigns the parameter to itself, a local variable that disappears when `__init__` ends. The object gets nothing.",
+              "example_code": "def f(x):\n    x = x       # changes nothing outside\n    return 'done'\n\nprint(f(1))"
+            },
+            {
+              "heading": "Attach it to the object",
+              "content": "Write `self.hostname = hostname`. The left side creates an attribute on this object; the right side is the parameter.",
+              "example_code": "class Tag:\n    def __init__(self, label):\n        self.label = label\n\nprint(Tag('new').label)"
+            }
+          ]
         }
       ]
     },
@@ -9778,6 +10187,409 @@
             "To make programs run faster": "Inheritance is about organising code, not speed.",
             "To save data to files": "That's file I/O or JSON."
           }
+        },
+        {
+          "id": "d01",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "__repr__: the developer's view",
+          "content": "`__str__` is the friendly text for print(). `__repr__` is the unambiguous, developer-facing text, ideally looking like the code that would rebuild the object. Lists and the interactive shell show items with `__repr__`, and print() falls back to it when there's no `__str__`.",
+          "example_code": "class Point:\n    def __init__(self, x, y):\n        self.x = x\n        self.y = y\n\n    def __repr__(self):\n        return f'Point({self.x}, {self.y})'\n\np = Point(1, 2)\nprint(p)           # Point(1, 2): no __str__, so repr is used\nprint([p, p])      # [Point(1, 2), Point(1, 2)]",
+          "how": "print() calls `str(obj)`, which uses `__str__` if it exists and `__repr__` otherwise. Containers like lists always call `repr()` on their items.",
+          "use": "Debugging and logging: a good `__repr__` turns `<__main__.Point object at 0x7f...>` into something you can read. If you write only one, write `__repr__`."
+        },
+        {
+          "id": "d02",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "A Cat class defines only `__str__`, returning 'Tom'. What does `print([obj])` show?",
+          "options": [
+            "Something like [<__main__.Cat object at 0x...>]",
+            "['Tom']",
+            "[Tom]"
+          ],
+          "answer": "Something like [<__main__.Cat object at 0x...>]",
+          "explanation": "Lists show their items with `__repr__`, not `__str__`. Without a `__repr__`, you get Python's default text."
+        },
+        {
+          "id": "d03",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "A readable list of ports",
+          "instruction": "Add a `__repr__` to Port so printing a scan result shows: [Port(22), Port(443)]",
+          "initial_code": "class Port:\n    def __init__(self, number):\n        self.number = number\n\n    # TODO: add __repr__ returning 'Port(N)'\n\nprint([Port(22), Port(443)])",
+          "expected_output": "[Port(22), Port(443)]",
+          "hint": "def __repr__(self):\n    return f'Port({self.number})'",
+          "support": [
+            {
+              "heading": "Same shape as __str__",
+              "content": "`__repr__(self)` takes only self and **returns** a string. Lists call it for each item.",
+              "example_code": "class Tag:\n    def __init__(self, name):\n        self.name = name\n\n    def __repr__(self):\n        return f'Tag({self.name!r})'\n\nprint([Tag('new')])"
+            },
+            {
+              "heading": "Match the text exactly",
+              "content": "The expected text is `Port(22)`: the class name, then the number in brackets, with no spaces.",
+              "example_code": "n = 8080\nprint(f'Socket({n})')"
+            }
+          ]
+        },
+        {
+          "id": "d04",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Chains of inheritance",
+          "content": "A class can inherit from a class that itself inherits. When you call a method, Python searches the object's class, then its parent, then the grandparent, and uses the first match. This search order is the **MRO** (method resolution order), which you can see with `Class.__mro__`.",
+          "example_code": "class Animal:\n    def move(self):\n        return 'moves'\n\n    def eat(self):\n        return 'eats'\n\nclass Bird(Animal):\n    def move(self):\n        return 'flies'\n\nclass Penguin(Bird):\n    def move(self):\n        return 'swims'\n\np = Penguin()\nprint(p.move(), p.eat())   # swims eats\nprint([c.__name__ for c in Penguin.__mro__])\n# ['Penguin', 'Bird', 'Animal', 'object']",
+          "how": "Every class ultimately inherits from `object`. The lookup walks up the chain and stops at the first class that defines the name.",
+          "use": "Frameworks build deep hierarchies (a view inherits from a base view that inherits from object), and knowing the lookup order explains which method actually runs."
+        },
+        {
+          "id": "d05",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "What does this code print?",
+          "options": [
+            "B A",
+            "C A",
+            "B B"
+          ],
+          "answer": "B A",
+          "explanation": "C doesn't define `who`, so the lookup moves to B, which does. Nobody overrides `kind`, so it comes from A.",
+          "code": "class A:\n    def who(self):\n        return 'A'\n\n    def kind(self):\n        return 'A'\n\nclass B(A):\n    def who(self):\n        return 'B'\n\nclass C(B):\n    pass\n\nc = C()\nprint(c.who(), c.kind())"
+        },
+        {
+          "id": "d06",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Polymorphism: one call, many behaviors",
+          "content": "**Polymorphism** means different classes answer the same method call in their own way. Code can loop over a mix of objects and call `shape.area()` on each, without checking which class it is.",
+          "example_code": "class Square:\n    def __init__(self, side):\n        self.side = side\n\n    def area(self):\n        return self.side ** 2\n\nclass Triangle:\n    def __init__(self, base, height):\n        self.base, self.height = base, height\n\n    def area(self):\n        return self.base * self.height / 2\n\nfor shape in [Square(3), Triangle(4, 5)]:\n    print(shape.area())   # 9, then 10.0",
+          "how": "Python looks up `area` on each object's own class at the moment of the call, so each object runs its own version. This is often called duck typing: if it has an `area` method, it can be used as a shape.",
+          "use": "Plugins, payment methods, file formats and game characters: new kinds can be added without changing the code that uses them."
+        },
+        {
+          "id": "d07",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Health checks that answer for themselves",
+          "instruction": "A monitoring loop calls `run()` on every check. Add `run` to PingCheck: return 'OK' when `latency_ms` is under 100, otherwise 'FAIL'. The loop then prints: disk: OK, then ping: FAIL",
+          "initial_code": "class DiskCheck:\n    name = 'disk'\n\n    def __init__(self, percent_used):\n        self.percent_used = percent_used\n\n    def run(self):\n        return 'OK' if self.percent_used < 90 else 'FAIL'\n\nclass PingCheck:\n    name = 'ping'\n\n    def __init__(self, latency_ms):\n        self.latency_ms = latency_ms\n\n    # TODO: add run(self)\n\nfor check in [DiskCheck(72), PingCheck(250)]:\n    print(f'{check.name}: {check.run()}')",
+          "expected_output": "disk: OK\nping: FAIL",
+          "hint": "def run(self):\n    return 'OK' if self.latency_ms < 100 else 'FAIL'",
+          "support": [
+            {
+              "heading": "Same name, own rule",
+              "content": "The loop calls `check.run()` on each object. PingCheck just needs its own method with that exact name; DiskCheck shows the pattern.",
+              "example_code": "class Dot:\n    def run(self):\n        return 'OK'\n\nprint(Dot().run())"
+            },
+            {
+              "heading": "Use the object's latency",
+              "content": "Compare `self.latency_ms` with 100. A conditional expression like DiskCheck's returns one of two strings in one line.",
+              "example_code": "ms = 40\nprint('fast' if ms < 100 else 'slow')"
+            }
+          ]
+        },
+        {
+          "id": "d08",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Abstract base classes",
+          "content": "Sometimes a parent class exists only to define what its children must do. Inherit from `ABC` and mark methods with `@abstractmethod`: Python then refuses to create an object of any class that hasn't implemented them all.",
+          "example_code": "from abc import ABC, abstractmethod\n\nclass Shape(ABC):\n    @abstractmethod\n    def area(self):\n        ...\n\nclass Square(Shape):\n    def __init__(self, side):\n        self.side = side\n\n    def area(self):\n        return self.side ** 2\n\nprint(Square(3).area())   # 9\n# Shape() would raise TypeError: can't instantiate abstract class",
+          "how": "`@abstractmethod` is a decorator: it marks the method as required. The check happens when an object is created, so a missing method is caught early, not when it's first called.",
+          "use": "Defining a contract for a family of classes, such as every storage backend must have `save` and `load`."
+        },
+        {
+          "id": "d09",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "`Shape` has an `@abstractmethod area`. `Blob(Shape)` doesn't define `area`. What happens on `Blob()`?",
+          "options": [
+            "TypeError: Blob can't be instantiated",
+            "It works, and Blob().area() returns None",
+            "NameError"
+          ],
+          "answer": "TypeError: Blob can't be instantiated",
+          "explanation": "An abstract method must be implemented before any object can be made, so the mistake shows up immediately."
+        },
+        {
+          "id": "d10",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Composition: has-a instead of is-a",
+          "content": "Inheritance models **is-a**: a Dog is an Animal. **Composition** models **has-a**: a Car has an Engine, so the Car stores an Engine object as an attribute and calls its methods. Composition keeps classes small and lets you swap parts.",
+          "example_code": "class Engine:\n    def start(self):\n        return 'vroom'\n\nclass Car:\n    def __init__(self):\n        self.engine = Engine()    # a car HAS an engine\n\n    def drive(self):\n        return self.engine.start() + ', off we go'\n\nprint(Car().drive())",
+          "how": "The Car hands work to the object it holds (called delegation). Nothing is inherited; the Engine is just another attribute.",
+          "use": "Most real designs mix both. A common rule of thumb is \"prefer composition\": inherit only when the child truly is a kind of the parent."
+        },
+        {
+          "id": "d11",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "A Library keeps a collection of Book objects. Which relationship fits?",
+          "options": [
+            "Composition: a library has books",
+            "Inheritance: a library is a book",
+            "Neither: they can't be connected"
+          ],
+          "answer": "Composition: a library has books",
+          "explanation": "A library isn't a kind of book, it contains them. Store a list of Book objects on the Library."
+        },
+        {
+          "id": "d12",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Build with composition",
+          "instruction": "Give Server an `__init__` that stores `Firewall()` as `self.firewall`, and make `start` enable the firewall first. It should print: Firewall on, then Server ready",
+          "initial_code": "class Firewall:\n    def enable(self):\n        print('Firewall on')\n\nclass Server:\n    # TODO: __init__ that stores a Firewall\n\n    def start(self):\n        # TODO: enable the firewall first\n        print('Server ready')\n\nServer().start()",
+          "expected_output": "Firewall on\nServer ready",
+          "hint": "def __init__(self):\n    self.firewall = Firewall()\n\n# and in start:\nself.firewall.enable()",
+          "support": [
+            {
+              "heading": "The part is an attribute",
+              "content": "In `__init__`, create the firewall and keep it: `self.firewall = Firewall()`. A server has a firewall; it isn't one.",
+              "example_code": "class Battery:\n    def charge(self):\n        return 'full'\n\nclass Phone:\n    def __init__(self):\n        self.battery = Battery()\n\nprint(Phone().battery.charge())"
+            },
+            {
+              "heading": "Delegate the work",
+              "content": "In Server's `start`, call `self.firewall.enable()` before the print. The server asks its firewall to do the job.",
+              "example_code": "class Light:\n    def on(self):\n        print('light on')\n\nclass Room:\n    def __init__(self):\n        self.light = Light()\n\n    def enter(self):\n        self.light.on()\n\nRoom().enter()"
+            }
+          ]
+        },
+        {
+          "id": "d13",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Sorting and membership with dunders",
+          "content": "`__lt__(self, other)` defines `<`, and once it exists `sorted()` and `min()` work on your objects. `__contains__(self, item)` defines the `in` operator.",
+          "example_code": "class Song:\n    def __init__(self, title, plays):\n        self.title = title\n        self.plays = plays\n\n    def __lt__(self, other):\n        return self.plays < other.plays\n\nclass Playlist:\n    def __init__(self, songs):\n        self.songs = songs\n\n    def __contains__(self, title):\n        return any([s.title == title for s in self.songs])\n\nsongs = [Song('B', 9), Song('A', 2)]\nprint([s.title for s in sorted(songs)])   # ['A', 'B']\nprint('A' in Playlist(songs))             # True",
+          "how": "`sorted` only ever asks \"is this one less than that one?\", so `__lt__` is all it needs. `x in obj` turns into `obj.__contains__(x)`.",
+          "use": "Making your objects feel built-in: sortable tasks by priority, cards by rank, and collections that support `in`."
+        },
+        {
+          "id": "d14",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Sort alerts by severity",
+          "instruction": "Add `__lt__` to Alert so `sorted(alerts)` orders by severity, lowest first. It should print: ['cert expiring', 'disk full', 'brute force']",
+          "initial_code": "class Alert:\n    def __init__(self, name, severity):\n        self.name = name\n        self.severity = severity\n\n    # TODO: add __lt__ comparing severities\n\nalerts = [Alert('disk full', 3), Alert('brute force', 5), Alert('cert expiring', 2)]\nprint([a.name for a in sorted(alerts)])",
+          "expected_output": "['cert expiring', 'disk full', 'brute force']",
+          "hint": "def __lt__(self, other):\n    return self.severity < other.severity",
+          "support": [
+            {
+              "heading": "Without __lt__, sorting fails",
+              "content": "Python doesn't know how to compare two Alerts and raises TypeError: '<' not supported. `__lt__` answers \"is self less than other?\"",
+              "example_code": "class N:\n    def __init__(self, v):\n        self.v = v\n\n    def __lt__(self, other):\n        return self.v < other.v\n\nprint(N(1) < N(2))  # True"
+            },
+            {
+              "heading": "Compare one attribute",
+              "content": "Return `self.severity < other.severity`. `other` is the second Alert in each comparison.",
+              "example_code": "a, b = 2, 5\nprint(a < b)"
+            }
+          ]
+        },
+        {
+          "id": "d15",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Class methods and static methods",
+          "content": "A method marked `@classmethod` receives the class (`cls`) instead of an object. It's the standard way to write extra constructors, like building an object from a string. `@staticmethod` receives neither: it's a plain helper function kept inside the class.",
+          "example_code": "class Date:\n    def __init__(self, year, month, day):\n        self.year, self.month, self.day = year, month, day\n\n    @classmethod\n    def from_string(cls, text):\n        y, m, d = text.split('-')\n        return cls(int(y), int(m), int(d))\n\n    @staticmethod\n    def is_valid_month(m):\n        return 1 <= m <= 12\n\nd = Date.from_string('2024-05-01')\nprint(d.year, d.month, Date.is_valid_month(13))   # 2024 5 False",
+          "how": "`cls(...)` calls whichever class the method was called on. If a subclass calls `from_string`, it gets an object of the subclass, which a hard-coded `Date(...)` wouldn't do.",
+          "use": "Alternative constructors (`from_json`, `from_row`, `dict.fromkeys`) and small helpers that belong with a class but don't need an object."
+        },
+        {
+          "id": "d16",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Build log entries from lines",
+          "instruction": "Add a classmethod `from_line(cls, line)` to LogEntry that splits a line like '12:01|ERROR|disk full' on `|` and returns `cls(time, level, message)`. It should print: ERROR disk full",
+          "initial_code": "class LogEntry:\n    def __init__(self, time, level, message):\n        self.time, self.level, self.message = time, level, message\n\n    # TODO: @classmethod from_line\n\ne = LogEntry.from_line('12:01|ERROR|disk full')\nprint(e.level, e.message)",
+          "expected_output": "ERROR disk full",
+          "hint": "@classmethod\ndef from_line(cls, line):\n    time, level, message = line.split('|')\n    return cls(time, level, message)",
+          "support": [
+            {
+              "heading": "The decorator goes above the def",
+              "content": "Write `@classmethod` on the line before `def from_line(cls, line):`. Python then passes the class as `cls`.",
+              "example_code": "class Box:\n    def __init__(self, n):\n        self.n = n\n\n    @classmethod\n    def empty(cls):\n        return cls(0)\n\nprint(Box.empty().n)"
+            },
+            {
+              "heading": "Split, then construct",
+              "content": "`line.split('|')` gives three strings. Unpack them into three names and pass them to `cls(...)`, then return the new object.",
+              "example_code": "a, b = 'x|y'.split('|')\nprint(b, a)"
+            }
+          ]
+        },
+        {
+          "id": "d17",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "Why does a classmethod constructor return `cls(...)` instead of naming the class directly?",
+          "options": [
+            "So a subclass calling it gets an object of the subclass",
+            "Because the class name isn't defined yet",
+            "cls(...) is faster"
+          ],
+          "answer": "So a subclass calling it gets an object of the subclass",
+          "explanation": "`cls` is whichever class the method was called on. `Date(...)` would always build a Date, even when called as `Holiday.from_string(...)`."
+        },
+        {
+          "id": "i01",
+          "type": "quiz",
+          "track": "interview",
+          "question": "Interview question: when should you use inheritance instead of composition?",
+          "options": [
+            "When the child truly is a kind of the parent (is-a); for has-a relationships, prefer composition",
+            "Always: inheritance is more powerful",
+            "Never: composition is always better"
+          ],
+          "answer": "When the child truly is a kind of the parent (is-a); for has-a relationships, prefer composition",
+          "explanation": "Inheritance couples a child tightly to its parent's details. Composition keeps parts independent and swappable."
+        },
+        {
+          "id": "i02",
+          "type": "quiz",
+          "track": "interview",
+          "question": "What does `super().__init__(...)` do in a child class?",
+          "options": [
+            "Calls the next class in the MRO (usually the parent) so its setup runs too",
+            "Creates a second, parent object",
+            "Deletes the parent's __init__"
+          ],
+          "answer": "Calls the next class in the MRO (usually the parent) so its setup runs too",
+          "explanation": "Without it, a child that defines its own `__init__` skips the parent's, and attributes the parent sets never exist."
+        },
+        {
+          "id": "i03",
+          "type": "quiz",
+          "track": "interview",
+          "question": "What's the difference between `__str__` and `__repr__`?",
+          "options": [
+            "__str__ is friendly text for users; __repr__ is unambiguous text for developers, used in lists and as print's fallback",
+            "They're identical",
+            "__repr__ is only for numbers"
+          ],
+          "answer": "__str__ is friendly text for users; __repr__ is unambiguous text for developers, used in lists and as print's fallback",
+          "explanation": "A good habit is to always write `__repr__`, and add `__str__` when users need a different, friendlier format."
+        },
+        {
+          "id": "i04",
+          "type": "quiz",
+          "track": "interview",
+          "question": "What is polymorphism?",
+          "options": [
+            "Different classes responding to the same method call in their own way",
+            "A class having many attributes",
+            "Converting one type into another"
+          ],
+          "answer": "Different classes responding to the same method call in their own way",
+          "explanation": "Code calls `animal.speak()` without checking the type, and each class supplies its own `speak`."
+        },
+        {
+          "id": "i05",
+          "type": "quiz",
+          "track": "interview",
+          "question": "What does this code print?",
+          "options": [
+            "CBA",
+            "C",
+            "ABC"
+          ],
+          "answer": "CBA",
+          "explanation": "C's `hi` adds 'C' and calls B's, which adds 'B' and calls A's 'A'. Each `super()` moves one step up the MRO.",
+          "code": "class A:\n    def hi(self):\n        return 'A'\n\nclass B(A):\n    def hi(self):\n        return 'B' + super().hi()\n\nclass C(B):\n    def hi(self):\n        return 'C' + super().hi()\n\nprint(C().hi())",
+          "feedback": {
+            "ABC": "Each method puts its own letter first, then appends what the parent returns, so C's letter comes first."
+          }
+        },
+        {
+          "id": "i06",
+          "type": "code",
+          "track": "interview",
+          "heading": "Classic: risk scores with inheritance",
+          "instruction": "Device's `risk()` is 2 points per missing patch. Write InternetFacing as a child of Device whose `risk()` returns the parent's risk (use `super()`) plus 10, since it's exposed. The total should print: 20",
+          "initial_code": "class Device:\n    def __init__(self, name, missing_patches):\n        self.name = name\n        self.missing_patches = missing_patches\n\n    def risk(self):\n        return self.missing_patches * 2\n\nclass InternetFacing(Device):\n    # TODO: risk() = parent risk + 10\n    pass\n\nfleet = [Device('laptop-7', 3), InternetFacing('vpn-gw', 2)]\nprint(sum([d.risk() for d in fleet]))",
+          "expected_output": "20",
+          "hint": "def risk(self):\n    return super().risk() + 10",
+          "support": [
+            {
+              "heading": "Extend, don't copy",
+              "content": "Instead of repeating the patch math, call the parent's version with `super().risk()` and add to it. If the base scoring changes, exposed devices follow.",
+              "example_code": "class Base:\n    def price(self):\n        return 10\n\nclass Deluxe(Base):\n    def price(self):\n        return super().price() + 5\n\nprint(Deluxe().price())  # 15"
+            },
+            {
+              "heading": "Polymorphism does the rest",
+              "content": "The last line calls `risk()` on both devices. The laptop scores 3 * 2 = 6 and the VPN gateway 2 * 2 + 10 = 14, so 20.",
+              "example_code": "print(6 + 14)"
+            }
+          ]
+        },
+        {
+          "id": "i07",
+          "type": "code",
+          "track": "interview",
+          "heading": "Classic: comparing software versions",
+          "instruction": "Patch levels compare as numbers, not text: '1.10.0' is newer than '1.2.9'. Give Version `__lt__`, `__eq__` and `__repr__` (like `Version('1.2.9')`), comparing tuples of ints. It should print the sorted list, then True",
+          "initial_code": "class Version:\n    def __init__(self, text):\n        self.text = text\n        self.parts = tuple([int(p) for p in text.split('.')])\n\n    # TODO: __lt__, __eq__, __repr__\n\nprint(sorted([Version('1.10.0'), Version('1.2.9'), Version('1.2.10')]))\nprint(Version('2.0.0') == Version('2.0.0'))",
+          "expected_output": "[Version('1.2.9'), Version('1.2.10'), Version('1.10.0')]\nTrue",
+          "hint": "def __lt__(self, other):\n    return self.parts < other.parts\n\ndef __eq__(self, other):\n    return self.parts == other.parts\n\ndef __repr__(self):\n    return f\"Version('{self.text}')\"",
+          "support": [
+            {
+              "heading": "Tuples compare item by item",
+              "content": "`(1, 10, 0) < (1, 2, 9)` is False because 10 > 2, which is what you want. As text, '1.10.0' < '1.2.9' is True, the classic bug.",
+              "example_code": "print((1, 10, 0) < (1, 2, 9), '1.10.0' < '1.2.9')  # False True"
+            },
+            {
+              "heading": "Three methods, three jobs",
+              "content": "`__lt__` and `__eq__` compare `self.parts` with `other.parts`. `__repr__` returns the text lists show, with the version in quotes: use double quotes around the f-string.",
+              "example_code": "v = '3.1'\nprint(f\"Release('{v}')\")"
+            }
+          ]
+        },
+        {
+          "id": "i08",
+          "type": "code",
+          "track": "interview",
+          "heading": "Classic: a linked list",
+          "instruction": "Each Node holds a value and a link to the next node. Finish LinkedList's `append` (walk to the last node and link a new one) so it prints: [1, 2, 3] then 3",
+          "initial_code": "class Node:\n    def __init__(self, value):\n        self.value = value\n        self.next = None\n\nclass LinkedList:\n    def __init__(self):\n        self.head = None\n\n    def append(self, value):\n        # TODO: add a Node with value at the end\n        pass\n\n    def to_list(self):\n        out, node = [], self.head\n        while node:\n            out.append(node.value)\n            node = node.next\n        return out\n\nll = LinkedList()\nfor v in [1, 2, 3]:\n    ll.append(v)\nprint(ll.to_list())\nprint(len(ll.to_list()))",
+          "expected_output": "[1, 2, 3]\n3",
+          "hint": "new = Node(value)\nif self.head is None:\n    self.head = new\n    return\nnode = self.head\nwhile node.next:\n    node = node.next\nnode.next = new",
+          "support": [
+            {
+              "heading": "Empty list first",
+              "content": "If `self.head` is None, the new node becomes the head and you're done.",
+              "example_code": "class Node:\n    def __init__(self, v):\n        self.value, self.next = v, None\n\nhead = None\nif head is None:\n    head = Node(7)\nprint(head.value)"
+            },
+            {
+              "heading": "Otherwise walk to the end",
+              "content": "Start at the head and follow `.next` until a node's next is None. That's the last node: set its `.next` to the new node. This walk makes append O(n).",
+              "example_code": "class Node:\n    def __init__(self, v):\n        self.value, self.next = v, None\n\na, b = Node(1), Node(2)\na.next = b\nnode = a\nwhile node.next:\n    node = node.next\nprint(node.value)  # 2"
+            }
+          ]
+        },
+        {
+          "id": "i09",
+          "type": "code",
+          "track": "interview",
+          "heading": "Debug: the forgotten parent setup",
+          "instruction": "This crashes with AttributeError: Server has no 'hostname'. Server's `__init__` replaces Device's and never runs it. Call the parent's `__init__` so it prints: web-01 linux",
+          "initial_code": "class Device:\n    def __init__(self, hostname):\n        self.hostname = hostname\n\nclass Server(Device):\n    def __init__(self, hostname, os):\n        self.os = os\n\ns = Server('web-01', 'linux')\nprint(s.hostname, s.os)",
+          "expected_output": "web-01 linux",
+          "hint": "Add this as the first line of Server's __init__:\nsuper().__init__(hostname)",
+          "support": [
+            {
+              "heading": "A child's __init__ replaces the parent's",
+              "content": "Once Server defines `__init__`, Python runs only that one. Device's line `self.hostname = hostname` never happens.",
+              "example_code": "class A:\n    def __init__(self):\n        self.a = 1\n\nclass B(A):\n    def __init__(self):\n        self.b = 2\n\nprint(hasattr(B(), 'a'))  # False"
+            },
+            {
+              "heading": "Run the parent's setup too",
+              "content": "Start Server's `__init__` with `super().__init__(hostname)`, then set os as before.",
+              "example_code": "class A:\n    def __init__(self):\n        self.a = 1\n\nclass B(A):\n    def __init__(self):\n        super().__init__()\n        self.b = 2\n\nprint(B().a, B().b)"
+            }
+          ]
         }
       ]
     },
@@ -9952,6 +10764,410 @@
             "I'm a pro now"
           ],
           "explanation": "Every answer is fine. Next up: JSON, dates, generators, and one more project."
+        },
+        {
+          "id": "d01",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Step 6: Readable products",
+          "content": "The same classes run an IT equipment stockroom: laptops, monitors and licenses instead of apples. Give Product a `__str__` so print() shows a useful line. Inside an f-string, `:.2f` formats a number with exactly two decimal places, the usual way to show money.",
+          "example_code": "class Product:\n    def __init__(self, name, price, qty):\n        self.name, self.price, self.qty = name, price, qty\n\n    def __str__(self):\n        return f'{self.name}: {self.qty} @ ${self.price:.2f}'\n\nprint(Product('Monitor', 189.5, 12))   # Monitor: 12 @ $189.50",
+          "how": "print() calls `__str__`. The format spec after the colon, `.2f`, means fixed-point with two digits after the decimal point.",
+          "use": "Stock lists, receipts and reports, where every price should line up and show cents."
+        },
+        {
+          "id": "d02",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Readable products",
+          "instruction": "Add `__str__` to Product so the print shows: Laptop: 5 @ $899.00",
+          "initial_code": "class Product:\n    def __init__(self, name, price, qty):\n        self.name = name\n        self.price = price\n        self.qty = qty\n\n    # TODO: add __str__\n\nprint(Product('Laptop', 899, 5))",
+          "expected_output": "Laptop: 5 @ $899.00",
+          "hint": "def __str__(self):\n    return f'{self.name}: {self.qty} @ ${self.price:.2f}'",
+          "support": [
+            {
+              "heading": "Return the line",
+              "content": "`__str__(self)` returns a string built from the object's attributes. print() uses whatever it returns.",
+              "example_code": "class Tag:\n    def __init__(self, label):\n        self.label = label\n\n    def __str__(self):\n        return f'[{self.label}]'\n\nprint(Tag('sale'))"
+            },
+            {
+              "heading": "Two decimals for money",
+              "content": "`{self.price:.2f}` turns 899 into 899.00. Put a literal `$` before the braces.",
+              "example_code": "price = 12.5\nprint(f'${price:.2f}')  # $12.50"
+            }
+          ]
+        },
+        {
+          "id": "d03",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Step 7: Guard the stock",
+          "content": "Right now `sell` happily takes the quantity below zero. Make the method enforce the rule itself: raise a ValueError when asked for more than is in stock, and change nothing in that case.",
+          "example_code": "class Product:\n    def __init__(self, name, qty):\n        self.name, self.qty = name, qty\n\n    def sell(self, amount):\n        if amount > self.qty:\n            raise ValueError(f'only {self.qty} {self.name} left')\n        self.qty -= amount\n\ndock = Product('Dock', 1)\ntry:\n    dock.sell(3)\nexcept ValueError as e:\n    print(e)        # only 1 Dock left\nprint(dock.qty)     # still 1",
+          "how": "Raising before the subtraction means a failed sale leaves the object exactly as it was. The caller decides what to do with the error.",
+          "use": "Any object with rules, like stock that can't go negative or seats that can't be over-assigned. This is encapsulation: the object protects its own data."
+        },
+        {
+          "id": "d04",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Refuse an impossible sale",
+          "instruction": "Make `sell` raise `ValueError(f'only {self.qty} {self.name} left')` when the amount is more than the stock. The test then prints: only 2 Monitor left, then 2",
+          "initial_code": "class Product:\n    def __init__(self, name, qty):\n        self.name = name\n        self.qty = qty\n\n    def sell(self, amount):\n        # TODO: refuse to sell more than self.qty\n        self.qty -= amount\n\nm = Product('Monitor', 2)\ntry:\n    m.sell(5)\nexcept ValueError as e:\n    print(e)\nprint(m.qty)",
+          "expected_output": "only 2 Monitor left\n2",
+          "hint": "if amount > self.qty:\n    raise ValueError(f'only {self.qty} {self.name} left')",
+          "support": [
+            {
+              "heading": "Check before subtracting",
+              "content": "Put the `if amount > self.qty:` test above `self.qty -= amount`, so a refused sale changes nothing and qty stays 2.",
+              "example_code": "stock = 2\nwant = 5\nif want > stock:\n    print('refuse')\nelse:\n    stock -= want\nprint(stock)"
+            },
+            {
+              "heading": "Build the message from the object",
+              "content": "The f-string uses the object's own data: `f'only {self.qty} {self.name} left'`. `print(e)` shows exactly that text.",
+              "example_code": "qty, name = 3, 'Mouse'\nprint(f'only {qty} {name} left')"
+            }
+          ]
+        },
+        {
+          "id": "d05",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "Where should the rule \"you can't sell more than you have\" live?",
+          "options": [
+            "Inside Product.sell, so every caller gets it",
+            "In each place that calls sell",
+            "In a comment above the class"
+          ],
+          "answer": "Inside Product.sell, so every caller gets it",
+          "explanation": "Putting the rule in the method means no caller can forget it. Copies of a rule in many places drift apart."
+        },
+        {
+          "id": "d06",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Step 8: An Inventory class",
+          "content": "A bare list of products works, but every operation (add, find, total) ends up as loose code scattered around. Wrap the list in an Inventory class: it **has** products (composition) and offers methods for everything you do with them.",
+          "example_code": "class Inventory:\n    def __init__(self):\n        self.products = []\n\n    def add(self, product):\n        self.products.append(product)\n\n    def total_value(self):\n        return sum([p.price * p.qty for p in self.products])",
+          "how": "The Inventory object holds the list as an attribute and its methods loop over it. Callers use `inv.total_value()` instead of rewriting the loop.",
+          "use": "Every real system has a class like this: a cart, an asset register, a user directory. It's also where rules that involve several products belong."
+        },
+        {
+          "id": "d07",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "What's the main benefit of wrapping the list in an Inventory class?",
+          "options": [
+            "Every operation on the stock lives in one place with one interface",
+            "Lists can't hold objects otherwise",
+            "It makes the code run faster"
+          ],
+          "answer": "Every operation on the stock lives in one place with one interface",
+          "explanation": "Callers say what they want (`inv.find('Laptop')`) and the class decides how. You can change the inside later without touching them."
+        },
+        {
+          "id": "d08",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Find a product by name",
+          "instruction": "Add `find(name)` to Inventory: return the product with that name, or None if there isn't one. It should print: Monitor then None",
+          "initial_code": "class Product:\n    def __init__(self, name, qty):\n        self.name = name\n        self.qty = qty\n\nclass Inventory:\n    def __init__(self):\n        self.products = []\n\n    def add(self, product):\n        self.products.append(product)\n\n    # TODO: find(self, name)\n\ninv = Inventory()\ninv.add(Product('Laptop', 5))\ninv.add(Product('Monitor', 12))\nprint(inv.find('Monitor').name)\nprint(inv.find('Tablet'))",
+          "expected_output": "Monitor\nNone",
+          "hint": "def find(self, name):\n    for p in self.products:\n        if p.name == name:\n            return p\n    return None",
+          "support": [
+            {
+              "heading": "Return as soon as it matches",
+              "content": "Loop over `self.products`. When a product's name matches, `return p` ends the method right there.",
+              "example_code": "def first_even(nums):\n    for n in nums:\n        if n % 2 == 0:\n            return n\n    return None\n\nprint(first_even([3, 8, 5]))"
+            },
+            {
+              "heading": "None after the loop",
+              "content": "If the loop finishes without a match, nothing was found: put `return None` after the loop, not inside it.",
+              "example_code": "def find(words, target):\n    for w in words:\n        if w == target:\n            return w\n    return None\n\nprint(find(['a'], 'z'))"
+            }
+          ]
+        },
+        {
+          "id": "d09",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Step 9: Reports from the stock",
+          "content": "Reports are queries over the list. A list comprehension filters (`[p.name for p in products if p.qty < 3]`), and `sorted(..., key=lambda p: p.qty)` orders by any attribute.",
+          "example_code": "class Product:\n    def __init__(self, name, qty):\n        self.name, self.qty = name, qty\n\nproducts = [Product('Laptop', 8), Product('Dock', 2), Product('Mouse', 1)]\nnames_low = [p.name for p in products if p.qty < 3]\nby_qty = sorted(products, key=lambda p: p.qty)\nprint(names_low)                    # ['Dock', 'Mouse']\nprint([p.name for p in by_qty])     # fewest first",
+          "how": "The key function tells sorted what to compare for each product. The comprehension builds a new list and leaves the inventory unchanged.",
+          "use": "Reorder lists, the most valuable items, anything under warranty: one line each once the data lives in objects."
+        },
+        {
+          "id": "d10",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "What does this code print?",
+          "options": [
+            "['Mouse', 'Laptop', 'Monitor']",
+            "['Laptop', 'Monitor', 'Mouse']",
+            "['Monitor', 'Laptop', 'Mouse']"
+          ],
+          "answer": "['Mouse', 'Laptop', 'Monitor']",
+          "explanation": "The key is each product's qty (1, 5, 12), so sorted orders Mouse, Laptop, Monitor.",
+          "code": "class P:\n    def __init__(self, name, qty):\n        self.name, self.qty = name, qty\n\nstock = [P('Laptop', 5), P('Monitor', 12), P('Mouse', 1)]\nprint([p.name for p in sorted(stock, key=lambda p: p.qty)])"
+        },
+        {
+          "id": "d11",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Reorder report",
+          "instruction": "Add `low_stock(threshold)` to Inventory: return the names of products whose qty is below the threshold, in inventory order. It should print: ['Docking station', 'Webcam']",
+          "initial_code": "class Product:\n    def __init__(self, name, qty):\n        self.name = name\n        self.qty = qty\n\nclass Inventory:\n    def __init__(self, products):\n        self.products = products\n\n    # TODO: low_stock(self, threshold)\n\ninv = Inventory([Product('Laptop', 8), Product('Docking station', 2), Product('Monitor', 12), Product('Webcam', 0)])\nprint(inv.low_stock(3))",
+          "expected_output": "['Docking station', 'Webcam']",
+          "hint": "def low_stock(self, threshold):\n    return [p.name for p in self.products if p.qty < threshold]",
+          "support": [
+            {
+              "heading": "Filter with a comprehension",
+              "content": "`[p.name for p in self.products if p.qty < threshold]` keeps only the names that pass the test.",
+              "example_code": "nums = [8, 2, 12, 0]\nprint([n for n in nums if n < 3])  # [2, 0]"
+            },
+            {
+              "heading": "Return the list",
+              "content": "The method returns the new list and the last line prints it. The inventory itself isn't changed.",
+              "example_code": "def small(nums):\n    return [n for n in nums if n < 5]\n\nprint(small([1, 9, 3]))"
+            }
+          ]
+        },
+        {
+          "id": "d12",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Step 10: Fast lookups with a dictionary",
+          "content": "`find` loops over every product: O(n). Keeping a dictionary keyed by name makes it O(1), at the cost of updating the dictionary whenever a product is added.",
+          "example_code": "class Inventory:\n    def __init__(self):\n        self.by_name = {}\n\n    def add(self, product):\n        self.by_name[product.name] = product\n\n    def find(self, name):\n        return self.by_name.get(name)   # None when missing",
+          "how": "A dictionary jumps straight to a key's value with a hash, instead of checking items one by one. `.get` returns None for a missing key instead of raising KeyError.",
+          "use": "Any lookup that runs often: asset tags, usernames, hostnames. Trading a little memory for speed like this is a standard interview answer."
+        },
+        {
+          "id": "d13",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "With n products, how long does `find` take with the list loop, and with the dictionary?",
+          "options": [
+            "O(n) with the list, O(1) with the dictionary",
+            "O(1) both ways",
+            "O(log n) both ways"
+          ],
+          "answer": "O(n) with the list, O(1) with the dictionary",
+          "explanation": "The loop may check every product. The dictionary hashes the name and goes straight to it."
+        },
+        {
+          "id": "d14",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Step 11: Loading stock from a file",
+          "content": "Real stock arrives as a CSV export from procurement. `csv.DictReader` turns each row into a dictionary, and you build a Product from each one, converting the number columns.",
+          "example_code": "import csv\n\nclass Product:\n    def __init__(self, name, price, qty):\n        self.name, self.price, self.qty = name, price, qty\n\nwith open('stock.csv', 'w') as f:\n    f.write('name,price,qty\\nLaptop,899,5\\nMonitor,189.5,12\\n')\n\nwith open('stock.csv', newline='') as f:\n    products = [Product(r['name'], float(r['price']), int(r['qty'])) for r in csv.DictReader(f)]\nprint(len(products))   # 2",
+          "how": "Each row's values are strings, so the conversions happen once, at the edge, and the rest of the program works with real numbers.",
+          "use": "Imports from spreadsheets, asset-management exports and monitoring tools all follow this read-convert-construct pattern."
+        },
+        {
+          "id": "d15",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Load and value the stock",
+          "instruction": "Read 'stock.csv' with `csv.DictReader`, build a Product for each row (price as float, qty as int), and print the total value of all stock. It should print: 6904.0",
+          "initial_code": "import csv\n\nclass Product:\n    def __init__(self, name, price, qty):\n        self.name = name\n        self.price = price\n        self.qty = qty\n\nwith open('stock.csv', 'w') as f:\n    f.write('name,price,qty\\nLaptop,899,5\\nMonitor,189.5,12\\nWebcam,45,3\\n')\n\n# TODO: build products from stock.csv, then print the total value\n",
+          "expected_output": "6904.0",
+          "hint": "with open('stock.csv', newline='') as f:\n    products = [Product(r['name'], float(r['price']), int(r['qty'])) for r in csv.DictReader(f)]\nprint(sum([p.price * p.qty for p in products]))",
+          "support": [
+            {
+              "heading": "One Product per row",
+              "content": "Each `r` from DictReader is like `{'name': 'Laptop', 'price': '899', 'qty': '5'}`. Pass the converted values to `Product(...)`.",
+              "example_code": "row = {'name': 'Pen', 'price': '1.5', 'qty': '4'}\nprint(row['name'], float(row['price']) * int(row['qty']))"
+            },
+            {
+              "heading": "Then total it",
+              "content": "Once you have the list, `sum([p.price * p.qty for p in products])` adds up each line's value: 4495 + 2274 + 135.",
+              "example_code": "print(4495 + 2274.0 + 135)"
+            }
+          ]
+        },
+        {
+          "id": "d16",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Step 12: Aligned reports",
+          "content": "A format spec can also pad text into columns: `{name:<16}` left-aligns in 16 characters, `{qty:>4}` right-aligns in 4. Lined-up columns make a printed report easy to scan.",
+          "example_code": "rows = [('Laptop', 5), ('Docking station', 2)]\nfor name, qty in rows:\n    print(f'{name:<16}{qty:>4}')\n# Laptop             5\n# Docking station    2",
+          "how": "`<` pads on the right, `>` pads on the left, and the number is the total width. Longer values aren't cut off; they just push the column.",
+          "use": "Console reports, emails with plain-text tables, and log lines that need to line up."
+        },
+        {
+          "id": "d17",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "What does this code print?",
+          "options": [
+            "ab  |",
+            "  ab|",
+            "ab|"
+          ],
+          "answer": "ab  |",
+          "explanation": "`<4` makes the text 4 characters wide, padded on the right, so two spaces follow 'ab'.",
+          "code": "print(f'{\"ab\":<4}|')"
+        },
+        {
+          "id": "i01",
+          "type": "quiz",
+          "track": "interview",
+          "question": "Interview question: the inventory grows to a million assets and `find` is slow. What's the standard fix?",
+          "options": [
+            "Index products in a dictionary keyed by name for O(1) lookups",
+            "Sort the list before every search",
+            "Split the list into ten smaller lists"
+          ],
+          "answer": "Index products in a dictionary keyed by name for O(1) lookups",
+          "explanation": "Keep the dict up to date in `add` and `remove`. Sorting once and using binary search (O(log n)) is a reasonable second answer."
+        },
+        {
+          "id": "i02",
+          "type": "quiz",
+          "track": "interview",
+          "question": "Should Inventory store a `total_value` attribute, updated on every change, or compute it when asked?",
+          "options": [
+            "Compute it when asked unless it's too slow; a stored total can go stale if any update path forgets it",
+            "Always store it: computing is wasteful",
+            "It makes no difference"
+          ],
+          "answer": "Compute it when asked unless it's too slow; a stored total can go stale if any update path forgets it",
+          "explanation": "Computed values are always correct. Caching is an optimization with a cost, and naming that trade-off is what interviewers listen for."
+        },
+        {
+          "id": "i03",
+          "type": "quiz",
+          "track": "interview",
+          "question": "In this project, what does encapsulation mean?",
+          "options": [
+            "Product's own methods change its stock and enforce the rules; other code calls them instead of editing qty directly",
+            "Putting every class in its own file",
+            "Hiding the code so no one can read it"
+          ],
+          "answer": "Product's own methods change its stock and enforce the rules; other code calls them instead of editing qty directly",
+          "explanation": "The object owns its data and the rules about it, so there's one place to check and fix."
+        },
+        {
+          "id": "i04",
+          "type": "quiz",
+          "track": "interview",
+          "question": "What does this code print?",
+          "options": [
+            "7 7",
+            "10 7",
+            "7 10"
+          ],
+          "answer": "7 7",
+          "explanation": "Both list entries are the same Product object, so the sale through the first entry shows through the second. A classic aliasing bug in stock systems.",
+          "code": "class Product:\n    def __init__(self, qty):\n        self.qty = qty\n\nlaptop = Product(10)\nshelf = [laptop, laptop]\nshelf[0].qty -= 3\nprint(shelf[0].qty, shelf[1].qty)",
+          "feedback": {
+            "7 10": "`[laptop, laptop]` stores two references to one object, not two copies."
+          }
+        },
+        {
+          "id": "i05",
+          "type": "quiz",
+          "track": "interview",
+          "question": "`total_value()` loops over every product once. Its time complexity is:",
+          "options": [
+            "O(n)",
+            "O(1)",
+            "O(n²)"
+          ],
+          "answer": "O(n)",
+          "explanation": "One pass, constant work per product."
+        },
+        {
+          "id": "i06",
+          "type": "code",
+          "track": "interview",
+          "heading": "Classic: a license seat pool",
+          "instruction": "Write LicensePool with `assign(user)` (return True and record the user if a seat is free, else False) and `release(user)`. A user who already has a seat should get True without using another. It should print: True, True, False, True",
+          "initial_code": "class LicensePool:\n    def __init__(self, seats):\n        self.seats = seats\n        self.users = set()\n\n    # TODO: assign(self, user) and release(self, user)\n\npool = LicensePool(2)\nprint(pool.assign('ada'))\nprint(pool.assign('bob'))\nprint(pool.assign('cy'))\npool.release('ada')\nprint(pool.assign('cy'))",
+          "expected_output": "True\nTrue\nFalse\nTrue",
+          "hint": "def assign(self, user):\n    if user in self.users:\n        return True\n    if len(self.users) >= self.seats:\n        return False\n    self.users.add(user)\n    return True\n\ndef release(self, user):\n    self.users.discard(user)",
+          "support": [
+            {
+              "heading": "A set holds who has a seat",
+              "content": "`user in self.users` is an O(1) check, and the set can't hold the same user twice. `len(self.users)` is how many seats are taken.",
+              "example_code": "taken = {'ada'}\nprint('ada' in taken, len(taken))"
+            },
+            {
+              "heading": "Order the checks",
+              "content": "First: already has a seat, return True. Then: full, return False. Otherwise add and return True. `discard` removes a user without failing if they're absent.",
+              "example_code": "s = {'a', 'b'}\ns.discard('a')\ns.discard('z')\nprint(s)"
+            }
+          ]
+        },
+        {
+          "id": "i07",
+          "type": "code",
+          "track": "interview",
+          "heading": "Classic: totals by category",
+          "instruction": "Use `defaultdict(int)` to add up the quantity of each category in `assets`, then print it as a normal dict. It should print: {'laptop': 7, 'monitor': 12, 'dock': 2}",
+          "initial_code": "from collections import defaultdict\nassets = [('laptop', 5), ('monitor', 12), ('laptop', 2), ('dock', 2)]\n# TODO: total qty per category\n",
+          "expected_output": "{'laptop': 7, 'monitor': 12, 'dock': 2}",
+          "hint": "totals = defaultdict(int)\nfor category, qty in assets:\n    totals[category] += qty\nprint(dict(totals))",
+          "support": [
+            {
+              "heading": "Missing keys start at 0",
+              "content": "With `defaultdict(int)`, `totals['laptop'] += 5` works even the first time 'laptop' appears.",
+              "example_code": "from collections import defaultdict\nd = defaultdict(int)\nd['x'] += 3\nprint(dict(d))"
+            },
+            {
+              "heading": "Unpack each pair",
+              "content": "`for category, qty in assets:` gives the two parts of each tuple. Wrap the result in `dict()` so it prints as a plain dictionary.",
+              "example_code": "for name, n in [('a', 1)]:\n    print(name, n)"
+            }
+          ]
+        },
+        {
+          "id": "i08",
+          "type": "code",
+          "track": "interview",
+          "heading": "Classic: stale device report",
+          "instruction": "Devices that haven't checked in for over 30 days may be lost or unpatched. Print the names of devices with `days_since_seen` over 30, most overdue first. It should print: ['kiosk-2', 'laptop-14']",
+          "initial_code": "devices = [\n    {'name': 'laptop-3', 'days_since_seen': 2},\n    {'name': 'laptop-14', 'days_since_seen': 45},\n    {'name': 'kiosk-2', 'days_since_seen': 90},\n    {'name': 'printer-1', 'days_since_seen': 30},\n]\n# TODO: names over 30 days, most overdue first\n",
+          "expected_output": "['kiosk-2', 'laptop-14']",
+          "hint": "stale = [d for d in devices if d['days_since_seen'] > 30]\nstale = sorted(stale, key=lambda d: d['days_since_seen'], reverse=True)\nprint([d['name'] for d in stale])",
+          "support": [
+            {
+              "heading": "Filter, then sort",
+              "content": "Keep devices with `d['days_since_seen'] > 30` (30 itself isn't over), then sort what's left.",
+              "example_code": "nums = [2, 45, 90, 30]\nprint([n for n in nums if n > 30])  # [45, 90]"
+            },
+            {
+              "heading": "Biggest first",
+              "content": "`sorted(items, key=..., reverse=True)` puts the largest key first. Then pull out just the names.",
+              "example_code": "print(sorted([45, 90], reverse=True))  # [90, 45]"
+            }
+          ]
+        },
+        {
+          "id": "i09",
+          "type": "code",
+          "track": "interview",
+          "heading": "Debug: retiring stock skips an item",
+          "instruction": "This should remove every product with qty 0, but 'Webcam' survives. Removing items from a list while looping over it makes the loop skip the next one. Rebuild the list with a comprehension instead, so it prints: ['Laptop', 'Monitor']",
+          "initial_code": "class Product:\n    def __init__(self, name, qty):\n        self.name = name\n        self.qty = qty\n\ninventory = [Product('Laptop', 4), Product('Dock', 0), Product('Webcam', 0), Product('Monitor', 9)]\nfor p in inventory:\n    if p.qty == 0:\n        inventory.remove(p)\nprint([p.name for p in inventory])",
+          "expected_output": "['Laptop', 'Monitor']",
+          "hint": "Replace the loop with:\ninventory = [p for p in inventory if p.qty != 0]",
+          "support": [
+            {
+              "heading": "Why an item is skipped",
+              "content": "Removing Dock shifts Webcam into Dock's old position, but the loop has already moved past that position, so Webcam is never checked.",
+              "example_code": "items = [0, 0, 5]\nfor x in items:\n    if x == 0:\n        items.remove(x)\nprint(items)  # [0, 5]: one zero survived"
+            },
+            {
+              "heading": "Build a new list instead",
+              "content": "Keep the products you want: `[p for p in inventory if p.qty != 0]`, and assign it back to `inventory`. Nothing is removed mid-loop.",
+              "example_code": "items = [0, 0, 5]\nitems = [x for x in items if x != 0]\nprint(items)"
+            }
+          ]
         }
       ]
     },

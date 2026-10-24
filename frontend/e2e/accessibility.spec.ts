@@ -1,11 +1,17 @@
 import { expect, test } from '@playwright/test';
 import { expectAccessible, seedProgress, signedOut } from './helpers';
 
-test('sign-in page with course overview', async ({ page }) => {
+test('sign-in page is for the one existing account', async ({ page }) => {
   await signedOut(page);
   await page.goto('/');
   await expect(page.locator('.auth-card')).toBeVisible();
-  await expect(page.locator('.course-about')).toHaveAttribute('open', '');
+  // Single-user app: no sign-up path and no course pitch before signing in.
+  await expect(page.getByRole('button', { name: /sign up/i })).toHaveCount(0);
+  await expect(page.locator('.course-about')).toHaveCount(0);
+  await page.getByRole('button', { name: 'Forgot your password?' }).click();
+  await expect(page.getByRole('heading', { name: 'Reset Password' })).toBeVisible();
+  await page.getByRole('button', { name: 'Log In' }).click();
+  await expect(page.getByRole('heading', { name: 'Welcome back' })).toBeVisible();
   await expectAccessible(page);
 });
 
