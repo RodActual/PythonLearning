@@ -10893,7 +10893,7 @@
           "track": "deep-dive",
           "heading": "Step 9: Reports from the stock",
           "content": "Reports are queries over the list. A list comprehension filters (`[p.name for p in products if p.qty < 3]`), and `sorted(..., key=lambda p: p.qty)` orders by any attribute.",
-          "example_code": "names_low = [p.name for p in inv.products if p.qty < 3]\nby_qty = sorted(inv.products, key=lambda p: p.qty)\nprint([p.name for p in by_qty])     # fewest first",
+          "example_code": "class Product:\n    def __init__(self, name, qty):\n        self.name, self.qty = name, qty\n\nproducts = [Product('Laptop', 8), Product('Dock', 2), Product('Mouse', 1)]\nnames_low = [p.name for p in products if p.qty < 3]\nby_qty = sorted(products, key=lambda p: p.qty)\nprint(names_low)                    # ['Dock', 'Mouse']\nprint([p.name for p in by_qty])     # fewest first",
           "how": "The key function tells sorted what to compare for each product. The comprehension builds a new list and leaves the inventory unchanged.",
           "use": "Reorder lists, the most valuable items, anything under warranty: one line each once the data lives in objects."
         },
@@ -10962,7 +10962,7 @@
           "track": "deep-dive",
           "heading": "Step 11: Loading stock from a file",
           "content": "Real stock arrives as a CSV export from procurement. `csv.DictReader` turns each row into a dictionary, and you build a Product from each one, converting the number columns.",
-          "example_code": "import csv\nwith open('stock.csv', 'w') as f:\n    f.write('name,price,qty\\nLaptop,899,5\\nMonitor,189.5,12\\n')\n\nwith open('stock.csv', newline='') as f:\n    products = [Product(r['name'], float(r['price']), int(r['qty'])) for r in csv.DictReader(f)]\nprint(len(products))   # 2",
+          "example_code": "import csv\n\nclass Product:\n    def __init__(self, name, price, qty):\n        self.name, self.price, self.qty = name, price, qty\n\nwith open('stock.csv', 'w') as f:\n    f.write('name,price,qty\\nLaptop,899,5\\nMonitor,189.5,12\\n')\n\nwith open('stock.csv', newline='') as f:\n    products = [Product(r['name'], float(r['price']), int(r['qty'])) for r in csv.DictReader(f)]\nprint(len(products))   # 2",
           "how": "Each row's values are strings, so the conversions happen once, at the edge, and the rest of the program works with real numbers.",
           "use": "Imports from spreadsheets, asset-management exports and monitoring tools all follow this read-convert-construct pattern."
         },
