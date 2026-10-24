@@ -10,7 +10,7 @@ interface InterviewGoalProps {
 
 /** Goal: land a technical job. Interview challenge progress by unit, and the next one to try. */
 const InterviewGoal = ({ units, lessons, progress, onOpenStep }: InterviewGoalProps) => {
-  const rows = interviewByUnit(units, lessons, progress);
+  const rows = interviewByUnit(units, lessons, progress).filter((r) => r.total > 0);
   const solved = rows.reduce((n, r) => n + r.done, 0);
   const total = rows.reduce((n, r) => n + r.total, 0);
   const next = nextInterviewStep(lessons, progress);

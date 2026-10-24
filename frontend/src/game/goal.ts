@@ -1,5 +1,5 @@
 import type { CodeStep, Lesson, Unit, UserProgress } from '../types/lesson';
-import { isStepDone } from './progress';
+import { isInterviewChallenge, isStepDone } from './progress';
 
 /** The interview area each unit's practice rehearses. */
 const INTERVIEW_AREAS: Record<string, string> = {
@@ -16,8 +16,6 @@ export interface UnitInterview {
   done: number;
   total: number;
 }
-
-const isInterviewChallenge = (s: Lesson['steps'][number]): s is CodeStep => s.track === 'interview' && s.type === 'code';
 
 /** Interview coding challenges solved per unit (the same count the Interview Ready badge uses). */
 export function interviewByUnit(units: Unit[], lessons: Lesson[], progress: UserProgress): UnitInterview[] {

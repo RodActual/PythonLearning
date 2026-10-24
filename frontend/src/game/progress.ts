@@ -1,5 +1,5 @@
 import legacyMap from '../data/legacy-step-ids.json';
-import type { DoneSteps, Lesson, ReviewCard, UserProgress } from '../types/lesson';
+import type { CodeStep, DoneSteps, Lesson, ReviewCard, UserProgress } from '../types/lesson';
 
 export const PROGRESS_VERSION = 2;
 export const EMPTY_PROGRESS: UserProgress = { done: {}, firstTry: {}, review: {} };
@@ -95,6 +95,9 @@ export const doneCount = (p: UserProgress, lesson: Lesson) => {
   const done = new Set(p.done[lesson.id] ?? []);
   return lesson.steps.filter((s) => done.has(s.id)).length;
 };
+
+/** An interview coding challenge: what the Interview Ready badge and the goal card both count. */
+export const isInterviewChallenge = (s: Lesson['steps'][number]): s is CodeStep => s.track === 'interview' && s.type === 'code';
 
 /** The steps that count toward finishing a lesson (deep-dive and interview steps are optional). */
 export const coreSteps = (lesson: Lesson) => lesson.steps.filter((s) => !s.track);

@@ -1,6 +1,6 @@
 import type { Lesson, UserProgress } from '../types/lesson';
 import { units } from '../data/lessons';
-import { coreSteps, firstTrySet, isLessonComplete, isStepDone } from './progress';
+import { coreSteps, firstTrySet, isInterviewChallenge, isLessonComplete, isStepDone } from './progress';
 
 export interface Badge {
   id: string;
@@ -39,7 +39,7 @@ const hasFullDeepDive = (lessons: Lesson[], progress: UserProgress) =>
 
 const interviewChallengesSolved = (lessons: Lesson[], progress: UserProgress) =>
   lessons.reduce(
-    (n, l) => n + l.steps.filter((s) => s.track === 'interview' && s.type === 'code' && isStepDone(progress, l.id, s.id)).length,
+    (n, l) => n + l.steps.filter((s) => isInterviewChallenge(s) && isStepDone(progress, l.id, s.id)).length,
     0,
   );
 
