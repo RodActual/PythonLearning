@@ -1,5 +1,6 @@
 import type { CourseAbout as About, Lesson, Unit, UserProgress } from '../types/lesson';
 import CourseAbout from './CourseAbout';
+import InterviewGoal from './InterviewGoal';
 import { lessonState, recommendedLessonIndex, type LessonState } from '../game/summary';
 import { lessonXp } from '../game/xp';
 import { doneCount, isStepDone, resumeIndex } from '../game/progress';
@@ -11,6 +12,7 @@ interface SkillMapProps {
   lessons: Lesson[];
   progress: UserProgress;
   onOpenLesson: (lessonId: string) => void;
+  onOpenStep: (lessonId: string, stepId: string) => void;
   onResetLesson: (lessonId: string) => void;
   reviewsDue: number;
   onOpenReview: () => void;
@@ -124,7 +126,7 @@ function UnitPath({ lessons, allLessons, progress, recommendedId, onOpenLesson, 
   );
 }
 
-const SkillMap = ({ about, units, lessons, progress, onOpenLesson, onResetLesson, reviewsDue, onOpenReview }: SkillMapProps) => {
+const SkillMap = ({ about, units, lessons, progress, onOpenLesson, onOpenStep, onResetLesson, reviewsDue, onOpenReview }: SkillMapProps) => {
   useDocumentTitle('Learning path');
   const headingRef = useFocusOnMount<HTMLHeadingElement>();
   const recommended = recommendedLessonIndex(lessons, progress);
@@ -161,6 +163,8 @@ const SkillMap = ({ about, units, lessons, progress, onOpenLesson, onResetLesson
           <button type="button" className="secondary-button" onClick={onOpenReview}>Start review</button>
         </div>
       )}
+
+      <InterviewGoal units={units} lessons={lessons} progress={progress} onOpenStep={onOpenStep} />
 
       <CourseAbout about={about} defaultOpen={Object.values(progress.done).every((ids) => ids.length === 0)} />
 

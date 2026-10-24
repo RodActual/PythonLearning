@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { coreIds, expectAccessible, lesson, nextButton, seedProgress, store } from './helpers';
+import { coreIds, course, expectAccessible, lesson, nextButton, seedProgress, store } from './helpers';
 
 const steps = lesson('lesson-01').steps;
 const firstDeep = steps.findIndex((s) => s.track === 'deep-dive');
@@ -83,4 +83,20 @@ test('the interview section has its own introduction', async ({ page }) => {
   await expect(page.locator('.step-kicker')).toContainText('Interview practice');
   await expect(page.locator('.track-banner.track-interview')).toContainText('real Python interviews');
   await expectAccessible(page);
+});
+
+test('the goal card counts solved interview challenges and opens the next one', async ({ page }) => {
+  const l = lesson('lesson-01');
+  const interview = l.steps.filter((s) => s.track === 'interview' && s.type === 'code');
+  const unitTotal = course.lessons
+    .filter((x) => x.unit === l.unit)
+    .reduce((n, x) => n + x.steps.filter((s) => s.track === 'interview' && s.type === 'code').length, 0);
+  await seedProgress(page, { version: 2, done: { 'lesson-01': [interview[0].id] }, first_try_ids: {} });
+  await page.goto('/');
+  const card = page.locator('.goal-card');
+  await expect(card).toContainText('Land a technical job');
+  await expect(card.locator('.goal-row').first().locator('.goal-count')).toHaveText(`1/${unitTotal}`);
+  await card.getByRole('button', { name: /Try it/ }).click();
+  const index = l.steps.findIndex((s) => s.id === interview[1].id);
+  await expect(page.locator('.step-kicker')).toContainText(`Step ${index + 1} of ${l.steps.length} · Interview`);
 });

@@ -288,6 +288,14 @@ function App() {
     setView({ name: 'lesson', lessonId });
   };
 
+  const openStep = (lessonId: string, stepId: string) => {
+    const lesson = getLesson(lessonId);
+    const index = lesson?.steps.findIndex((s) => s.id === stepId) ?? -1;
+    if (!lesson || index === -1) return;
+    setStepIndex(index);
+    setView({ name: 'lesson', lessonId });
+  };
+
   const nextStep = (firstTry: boolean) => {
     if (!currentLesson) return;
     const step = currentLesson.steps[stepIndex];
@@ -416,6 +424,7 @@ function App() {
                   lessons={lessons}
                   progress={progress}
                   onOpenLesson={openLesson}
+                  onOpenStep={openStep}
                   onResetLesson={resetLessonProgress}
                   reviewsDue={reviewsDue}
                   onOpenReview={() => setView({ name: 'review' })}
