@@ -5,7 +5,7 @@ A basic application that teaches Python.
 - React + TypeScript frontend (Vite) in `frontend/`.
 - Lessons live in `frontend/src/data/lessons.json` and ship with the app. They are validated at startup (`src/data/lessons.ts`).
 - Learner code runs in the browser with [Pyodide](https://pyodide.org) inside a Web Worker. Runs time out after 10 seconds.
-- Firebase is used only for sign-in and saving progress (`user_progress/{uid}` in Firestore). Access rules are in `firestore.rules`.
+- This is a single-user app: the sign-in screen has no sign-up, and new accounts should also be disabled in the Firebase console (Authentication > Settings > User actions). Firebase is used only for sign-in and saving progress (`user_progress/{uid}` in Firestore). Access rules are in `firestore.rules`.
 
 ## Review and Playground
 - **Review** (`src/game/review.ts`): every completed quiz and coding challenge becomes a spaced-repetition card (Leitner boxes). Right on the first try moves a card up a box (next review in 3, 7, 14, then 30 days); a miss sends it back to tomorrow. Sessions show up to 10 due cards, at most 3 of them coding challenges, mixed across lessons. The schedule is saved in the progress document's `review` field. "Practice anyway" never changes the schedule.
@@ -36,7 +36,7 @@ npm run build
 Lessons live in `frontend/src/data/lessons.json`: an `about` block, a list of `units`, and an ordered list of `lessons` (each with a `unit`). The course has 5 units and 20 lessons.
 
 Learner-facing guidance about what the course prepares people for:
-- `about`: `tagline`, `outcomes`, `paths` (where the skills lead, e.g. automation, data, web), and `next_steps`. Shown under the sign-in form and at the top of the map.
+- `about`: `tagline`, `outcomes`, `paths` (where the skills lead, e.g. automation, data, web), and `next_steps`. Shown at the top of the map.
 - Each unit: `prepares` (skills) and `applications` (example programs). Shown in the unit header and when a unit is finished.
 - Each lesson: `why` (shown before step 1) and `unlocks` (shown on the completion screen).
 
