@@ -10385,9 +10385,9 @@
           "type": "code",
           "track": "deep-dive",
           "heading": "Incident duration",
-          "instruction": "Parse the first and last timestamps of the incident and print how many minutes it lasted. It should print: 108.5",
-          "initial_code": "from datetime import datetime\n\nfirst_alert = '2025-10-01 09:14:00'\ncontained = '2025-10-01 11:02:30'\n# TODO: print the duration in minutes\n",
-          "expected_output": "108.5",
+          "instruction": "This incident ran overnight. Parse the first and last timestamps and print how many minutes it lasted in total. It should print: 1548.5",
+          "initial_code": "from datetime import datetime\n\nfirst_alert = '2025-10-01 09:14:00'\ncontained = '2025-10-02 11:02:30'\n# TODO: print the duration in minutes\n",
+          "expected_output": "1548.5",
           "hint": "fmt = '%Y-%m-%d %H:%M:%S'\nduration = datetime.strptime(contained, fmt) - datetime.strptime(first_alert, fmt)\nprint(duration.total_seconds() / 60)",
           "support": [
             {
@@ -10397,7 +10397,7 @@
             },
             {
               "heading": "Seconds, then minutes",
-              "content": "Subtract to get a timedelta, then `.total_seconds() / 60`. Don't use `.seconds`: it would break for incidents over a day.",
+              "content": "Subtract to get a timedelta, then `.total_seconds() / 60`. `.seconds` would drop the whole day here and give 108.5.",
               "example_code": "from datetime import timedelta\nprint(timedelta(hours=1, minutes=30).total_seconds() / 60)  # 90.0"
             }
           ]
@@ -11664,7 +11664,7 @@
           "track": "deep-dive",
           "heading": "Tests for the scorecard",
           "content": "The rules that matter most are thresholds and empty data. A table of cases tests the status rule at and around its boundary, and a host with no scans checks the edge case that would otherwise divide by zero.",
-          "example_code": "def status(avg):\n    return 'PASS' if avg >= 80 else 'FAIL'\n\nfor avg, want in [(80, 'PASS'), (79.9, 'FAIL'), (100, 'PASS'), (0, 'FAIL')]:\n    assert status(avg) == want, f'{avg}: got {status(avg)}'\nassert Host('new').average() == 0\nprint('all scorecard tests passed')",
+          "example_code": "class Host:\n    def __init__(self, name):\n        self.name = name\n        self.scores = []\n\n    def average(self):\n        if not self.scores:\n            return 0\n        return sum(self.scores) / len(self.scores)\n\ndef status(avg):\n    return 'PASS' if avg >= 80 else 'FAIL'\n\nfor avg, want in [(80, 'PASS'), (79.9, 'FAIL'), (100, 'PASS'), (0, 'FAIL')]:\n    assert status(avg) == want, f'{avg}: got {status(avg)}'\nassert Host('new').average() == 0\nprint('all scorecard tests passed')",
           "how": "Testing exactly 80 and just below it catches the classic `>` vs `>=` mistake. Each assert names the failing case in its message.",
           "use": "Any rule with a threshold: password age, disk alerts, pass/fail grading."
         },

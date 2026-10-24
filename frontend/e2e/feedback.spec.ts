@@ -86,12 +86,25 @@ test.describe('diagnose (no browser)', () => {
     const shadow = "import math\nmath = 'circle'\nprint(math.pi)";
     expect(run(shadow, tb(3, 'print(math.pi)', "AttributeError: 'str' object has no attribute 'pi'"), '3.14')).toMatch(/imported as a module.*different name/);
     expect(run("name = 'x'\nprint(name.size)", tb(2, 'print(name.size)', "AttributeError: 'str' object has no attribute 'size'"), '1')).not.toMatch(/__init__/);
-    // Dates that don't fit their pattern, invalid JSON, and None in the output.
-    const strp = "datetime.strptime('2025-07-31', '%Y-%d-%m')";
-    expect(run(strp, tb(1, strp, "ValueError: time data '2025-07-31' does not match format '%Y-%d-%m'"), 'x')).toMatch(/doesn't fit the pattern.*%m.*month/);
-    const bad = "json.loads('{\"a\": ')";
-    expect(run(bad, tb(1, bad, 'json.decoder.JSONDecodeError: Expecting value: line 1 column 7 (char 6)'), 'x')).toMatch(/isn't valid JSON.*JSONDecodeError/);
+    // strptime errors, with the messages Python 3.13 really prints for this code.
+    const mismatch = "datetime.strptime('2025-07-31 14:05:00', '%Y-%d-%m %H:%M:%S')";
+    expect(run(mismatch, tb(1, mismatch, "ValueError: time data '2025-07-31 14:05:00' does not match format '%Y-%d-%m %H:%M:%S'"), 'x')).toMatch(/doesn't fit the pattern.*%m.*month/);
+    const quoted = "datetime.strptime(\"it's\", '%Y')";
+    expect(run(quoted, tb(1, quoted, `ValueError: time data "it's" does not match format '%Y'`), 'x')).toMatch(/the text `it's` doesn't fit the pattern `%Y`/);
+    const swapped = "datetime.strptime('2025-07-31', '%Y-%d-%m')";
+    expect(run(swapped, tb(1, swapped, 'ValueError: unconverted data remains: 1'), 'x')).toMatch(/day before the month.*swap `%d` and `%m`/);
+    const newline = "datetime.strptime(line, '%Y-%m-%d %H:%M:%S')";
+    expect(run(newline, tb(1, newline, 'ValueError: unconverted data remains: \n'), 'x')).toMatch(/whitespace.*\.strip\(\)/);
+    const short = "datetime.strptime('2025-10-01 09:14', '%Y-%m-%d')";
+    expect(run(short, tb(1, short, 'ValueError: unconverted data remains:  09:14'), 'x')).toMatch(/`09:14` is left over\. Add codes/);
+    // Invalid JSON: the decoder's position is inside the JSON text, not the program.
+    const bad = 'json.loads(text)';
+    const decoded = run(bad, tb(12, bad, 'json.decoder.JSONDecodeError: Expecting value: line 3 column 6 (char 15)'), 'x');
+    expect(decoded).toMatch(/^Line 12\b.*isn't valid JSON: Expecting value at line 3, column 6 of the JSON text \(not of your program\).*JSONDecodeError/);
+    // None standing in for a value gets the missing-return hint; None that belongs in the data doesn't.
     expect(run("print('pw', check('pw'))", '', 'pw False', 'pw None\n')).toMatch(/no `return`/);
+    expect(run("print({'ok': True, 'owner': None})", '', '{"ok": true, "owner": null}', "{'ok': True, 'owner': None}\n")).not.toMatch(/return/);
+    expect(run("print('None of the hosts failed')", '', 'No hosts failed', 'None of the hosts failed\n')).not.toMatch(/return/);
     // A `...` placeholder called like a function.
     expect(run('f = ...\nf()', tb(2, 'f()', "TypeError: 'ellipsis' object is not callable"), '1')).toMatch(/placeholder/);
   });

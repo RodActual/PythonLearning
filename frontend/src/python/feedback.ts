@@ -118,6 +118,25 @@ function appearsAsText(text: string, output: string): boolean {
 
 const quote = (s: string) => `\`${s}\``;
 
+const NO_RETURN = `A function with no ${quote('return')} (or ${quote('yield')}) gives back None.`;
+
+const DATE_CODES = `Line them up part by part: ${quote('%Y')} year, ${quote('%m')} month, ${quote('%d')} day, ${quote('%H')} hour, ${quote('%M')} minute, ${quote('%S')} second.`;
+
+/** True when the only difference between two output lines is a `None` word standing in for another value. */
+function noneInPlaceOf(got: string, want: string): boolean {
+  // Compare whole words, so a shared letter (the e in None and False) can't split a word.
+  const g = got.split(/(\w+)/);
+  const w = want.split(/(\w+)/);
+  let start = 0;
+  while (start < g.length && start < w.length && g[start] === w[start]) start++;
+  let end = 0;
+  while (end < g.length - start && end < w.length - start && g[g.length - 1 - end] === w[w.length - 1 - end]) end++;
+  const extra = g.slice(start, g.length - end).join('');
+  const missing = w.slice(start, w.length - end).join('');
+  // JSON's null for Python's None is a different mistake (printing a dict instead of json.dumps).
+  return extra === 'None' && missing !== '' && missing !== 'null';
+}
+
 /** Explains a Python error in terms of the learner's own code. */
 export function explainError(err: PyError, attempt: Attempt): string {
   const text = explainBody(err, attempt);
@@ -134,11 +153,8 @@ function explainBody(err: PyError, attempt: Attempt): string {
   const quotesFix = (text: string) =>
     `${where}${quote(text)} has no quotation marks, so Python reads it as code (variable names) instead of text. Put the text inside quotes: ${quote(`print('${text}')`)}.`;
 
-  // json.loads raises json.decoder.JSONDecodeError, a ValueError with a module path in its name.
-  if (/JSONDecodeError$/.test(err.type))
-    return `${where}the text isn't valid JSON (${msg}). JSON needs double quotes and complete brackets; to skip bad records, wrap ${quote('json.loads')} in try/except ${quote('json.JSONDecodeError')}.`;
-
-  switch (err.type) {
+  // Tracebacks name some exceptions with their module (json.decoder.JSONDecodeError); match the class name.
+  switch (err.type.split('.').pop()) {
     case 'SyntaxError': {
       if (missingQuotes) return quotesFix(missingQuotes);
       if (/unterminated (triple-quoted )?string/.test(msg))
@@ -200,7 +216,7 @@ function explainBody(err: PyError, attempt: Attempt): string {
       if (noArgs)
         return `${where}${quote(`${noArgs[1]}()`)} doesn't accept arguments yet. Give the class an ${quote('__init__')} that takes them, or make it inherit one from a parent class.`;
       if (/NoneType/.test(msg))
-        return `${where}a value is None, so it can't be used here (${msg}). A function with no ${quote('return')} (or ${quote('yield')}) gives back None.`;
+        return `${where}a value is None, so it can't be used here (${msg}). ${NO_RETURN}`;
       if (/'ellipsis' object is not callable/.test(msg))
         return `${where}${quote('...')} is a placeholder that's still in the code. Replace it with a real value or function.`;
       if (/object is not callable/.test(msg)) return `${where}${msg}. Something that isn't a function is being called with ( ). Check for a variable that reuses a function's name.`;
@@ -211,7 +227,7 @@ function explainBody(err: PyError, attempt: Attempt): string {
     }
     case 'AttributeError': {
       if (/'NoneType' object/.test(msg))
-        return `${where}a value is None, so it has no attributes (${msg}). A function with no ${quote('return')} gives back None.`;
+        return `${where}a value is None, so it has no attributes (${msg}). ${NO_RETURN}`;
       const m = /'(\w+)' object has no attribute '(\w+)'(?:\. Did you mean: '(\w+)'\?)?/.exec(msg);
       if (!m) break;
       // `import math` followed by `math = ...` hides the module behind the new value.
@@ -229,12 +245,27 @@ function explainBody(err: PyError, attempt: Attempt): string {
       return `${where}the dictionary has no key ${msg}. Check the spelling and quotes, or use ${quote('.get()')} to avoid the crash.`;
     case 'ValueError': {
       if (/invalid literal for int\(\)/.test(msg)) return `${where}${quote('int()')} can only convert text made of digits (${msg}).`;
-      const pattern = /time data '(.*)' does not match format '(.*)'/.exec(msg);
+      // Python quotes the text with %r, so it may use double quotes.
+      const pattern = /time data (['"])(.*)\1 does not match format (['"])(.*)\3/.exec(msg);
       if (pattern)
-        return `${where}the text ${quote(pattern[1])} doesn't fit the pattern ${quote(pattern[2])}. Line them up part by part: ${quote('%Y')} year, ${quote('%m')} month, ${quote('%d')} day, ${quote('%H')} hour, ${quote('%M')} minute, ${quote('%S')} second.`;
-      const leftover = /unconverted data remains: (.*)/.exec(msg);
-      if (leftover) return `${where}the pattern ends before the text does: ${quote(leftover[1])} is left over. Add codes for that part to the pattern.`;
+        return `${where}the text ${quote(pattern[2])} doesn't fit the pattern ${quote(pattern[4])}. ${DATE_CODES}`;
+      const leftover = /unconverted data remains:\s?(.*)/.exec(msg);
+      if (leftover) {
+        // Whitespace left over (trimmed away here) is usually the newline from reading a file.
+        if (!leftover[1].trim())
+          return `${where}the text ends with extra whitespace, often the newline from reading a line of a file. Call ${quote('.strip()')} on the text before parsing it.`;
+        const fmt = /strptime\(\s*[^,]+,\s*(['"])(.*?)\1/.exec(src)?.[2] ?? '';
+        if (fmt.includes('%d') && fmt.includes('%m') && fmt.indexOf('%d') < fmt.indexOf('%m'))
+          return `${where}${quote(leftover[1].trim())} is left over because the pattern reads the day before the month. In text like ${quote('2025-07-31')} the month comes first: swap ${quote('%d')} and ${quote('%m')}.`;
+        return `${where}the text goes on past the end of the pattern: ${quote(leftover[1].trim())} is left over. Add codes for that part, or check that no two codes are in the wrong order. ${DATE_CODES}`;
+      }
       break;
+    }
+    case 'JSONDecodeError': {
+      // The decoder's line and column count inside the JSON text, not the program.
+      const at = /^(.*): line (\d+) column (\d+) \(char \d+\)$/.exec(msg);
+      const problem = at ? `${at[1]} at line ${at[2]}, column ${at[3]} of the JSON text (not of your program)` : msg;
+      return `${where}the text isn't valid JSON: ${problem}. JSON needs double quotes and complete brackets; to skip bad records, wrap ${quote('json.loads')} in try/except ${quote('json.JSONDecodeError')}.`;
     }
     case 'ZeroDivisionError':
       return `${where}the code divides by zero, which Python can't do.`;
@@ -284,7 +315,7 @@ export function compareOutput(stdout: string, expectedOutput: string, code = '')
   const detail = (() => {
     if (/^(['"]).*\1$/.test(a) && a.slice(1, -1) === b) return ' The quote marks are showing in the output: print the text itself, not a string inside a string.';
     if (/^<__main__\.\w+ object at 0x[0-9a-f]+>$/.test(a)) return ` That's Python's default text for an object. Add a ${quote('__str__')} method to control what print() shows.`;
-    if (/\bNone\b/.test(a) && !/\bNone\b/.test(b)) return ` None usually means a function has no ${quote('return')}, so it gives back None.`;
+    if (noneInPlaceOf(a, b)) return ` ${quote('None')} is printed where a value should be. ${NO_RETURN} So does ${quote('.get()')} for a missing key.`;
     const isNum = (x: string) => x.trim() !== '' && !Number.isNaN(Number(x));
     if (isNum(a) && isNum(b))
       return Number(a) === Number(b) ? ` The number is right but formatted differently (for example ${quote('4')} vs ${quote('4.0')}, or missing decimal places).` : '';
