@@ -44,6 +44,8 @@ const BUILTINS = new Set(
   'print len range int str float bool list dict set tuple type input sum min max abs round sorted reversed enumerate zip map filter any all open isinstance super iter next object True False None self'.split(' '),
 );
 
+const BUILTIN_TYPES = new Set(['str', 'int', 'float', 'bool', 'list', 'dict', 'set', 'tuple']);
+
 /** Names the learner's code gives a value to: assignments, loop targets, functions, classes, imports, parameters. */
 function definedNames(code: string): Set<string> {
   const names = new Set<string>();
@@ -195,6 +197,8 @@ function explainBody(err: PyError, attempt: Attempt): string {
         return `${where}${quote(`${noArgs[1]}()`)} doesn't accept arguments yet. Give the class an ${quote('__init__')} that takes them, or make it inherit one from a parent class.`;
       if (/NoneType/.test(msg))
         return `${where}a value is None, so it can't be used here (${msg}). A function with no ${quote('return')} (or ${quote('yield')}) gives back None.`;
+      if (/'ellipsis' object is not callable/.test(msg))
+        return `${where}${quote('...')} is a placeholder that's still in the code. Replace it with a real value or function.`;
       if (/object is not callable/.test(msg)) return `${where}${msg}. Something that isn't a function is being called with ( ). Check for a variable that reuses a function's name.`;
       if (/can't multiply sequence by non-int/.test(msg))
         return `${where}${quote('*')} can only repeat text (or a list) by a whole number, and here the count isn't an int. Use a number without quotes, like ${quote("'=' * 3")}.`;
@@ -205,8 +209,15 @@ function explainBody(err: PyError, attempt: Attempt): string {
       if (/'NoneType' object/.test(msg))
         return `${where}a value is None, so it has no attributes (${msg}). A function with no ${quote('return')} gives back None.`;
       const m = /'(\w+)' object has no attribute '(\w+)'(?:\. Did you mean: '(\w+)'\?)?/.exec(msg);
-      if (m) return `${where}a ${m[1]} has no ${quote(m[2])}.${m[3] ? ` Did you mean ${quote(m[3])}?` : ' Check the spelling, and that it was set on the object (for example in __init__).'}`;
-      break;
+      if (!m) break;
+      // `import math` followed by `math = ...` hides the module behind the new value.
+      const owner = new RegExp(`(\\w+)\\.${m[2]}\\b`).exec(src)?.[1];
+      if (owner && new RegExp(`^\\s*import\\s+${owner}\\b`, 'm').test(code) && new RegExp(`^\\s*${owner}\\s*=[^=]`, 'm').test(code))
+        return `${where}${quote(owner)} was imported as a module, but ${quote(`${owner} = ...`)} later replaced it with a ${m[1]}, which has no ${quote(m[2])}. Give that variable a different name.`;
+      if (m[3]) return `${where}a ${m[1]} has no ${quote(m[2])}. Did you mean ${quote(m[3])}?`;
+      return BUILTIN_TYPES.has(m[1])
+        ? `${where}a ${m[1]} has no ${quote(m[2])}. Check the spelling, and that the variable holds the value you expect.`
+        : `${where}a ${m[1]} has no ${quote(m[2])}. Check the spelling, and that it was set on the object (for example in __init__).`;
     }
     case 'IndexError':
       return `${where}the index is past the end (${msg}). Indexes start at 0, so the last item of a list with 3 items is [2], or [-1].`;
@@ -238,6 +249,9 @@ export function compareOutput(stdout: string, expectedOutput: string, code = '')
   const got = normalize(stdout);
   const want = normalize(expectedOutput);
   if (!got) {
+    // Raw output that is only whitespace means print() ran with an empty value.
+    if (stdout.length > 0)
+      return 'Your code printed only blank lines. The print() ran, but the value it printed was empty: check that the variable, or the file you read, holds what you expect.';
     // A print() outside comments that produced nothing means its line never ran.
     return /^[^#\n]*\bprint\(/m.test(code)
       ? "Your code ran without errors but printed nothing. It does call print(), so that line never ran: check your loop's range and your if conditions."

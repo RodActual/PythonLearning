@@ -6981,6 +6981,408 @@
             "else": "else is skipped because the try block raised an error.",
             "Nothing": "The except block catches the error and prints."
           }
+        },
+        {
+          "id": "d01",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Catching several errors, and reading the error",
+          "content": "One `except` can catch several types in a tuple: `except (ValueError, TypeError):`. Add `as e` to get the exception object: `print(e)` shows its message and `type(e).__name__` its type name. With several `except` blocks, Python uses the first one that matches, so put specific ones first.",
+          "example_code": "try:\n    int('abc')\nexcept (ValueError, TypeError) as e:\n    print(type(e).__name__)   # ValueError\n    print(e)                  # invalid literal for int() with base 10: 'abc'",
+          "how": "When an error is raised, Python checks each `except` from top to bottom and runs the first whose type matches. `as e` stores the exception so you can inspect it inside the block.",
+          "use": "Showing helpful messages, logging what went wrong, and handling a few related errors the same way."
+        },
+        {
+          "id": "d02",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "What does this code print?",
+          "options": [
+            "ValueError",
+            "TypeError",
+            "invalid literal"
+          ],
+          "answer": "ValueError",
+          "explanation": "`int('x')` raises a ValueError. `type(e).__name__` gives the name of the exception's type.",
+          "code": "try:\n    int('x')\nexcept ValueError as e:\n    print(type(e).__name__)"
+        },
+        {
+          "id": "d03",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Report the error message",
+          "instruction": "Catch the ValueError and print `Bad number:` followed by the error's own message. It should print: Bad number: invalid literal for int() with base 10: 'abc'",
+          "initial_code": "try:\n    int('abc')\nexcept ValueError:\n    print('Bad number')",
+          "expected_output": "Bad number: invalid literal for int() with base 10: 'abc'",
+          "hint": "Name the exception with `as e` and print it after the label:\nexcept ValueError as e:\n    print('Bad number:', e)",
+          "support": [
+            {
+              "heading": "as e gives you the message",
+              "content": "Inside the except block, `e` is the exception. Printing it shows the message Python attached to it.",
+              "example_code": "try:\n    1 / 0\nexcept ZeroDivisionError as e:\n    print('Problem:', e)  # Problem: division by zero"
+            },
+            {
+              "heading": "Two changes",
+              "content": "Add `as e` to the except line, and pass `e` as a second value to print. print puts the space between them.",
+              "example_code": "try:\n    [][0]\nexcept IndexError as err:\n    print('Oops:', err)"
+            }
+          ]
+        },
+        {
+          "id": "d04",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "The exception family tree",
+          "content": "Exceptions are grouped: `KeyError` and `IndexError` are both kinds of `LookupError`, and almost every error is a kind of `Exception`. Catching a parent type catches all its children. A bare `except:` catches even more, including Ctrl+C (KeyboardInterrupt), which is why it's discouraged.",
+          "example_code": "try:\n    {'a': 1}['b']\nexcept LookupError:\n    print('missing key or index')   # catches KeyError\n\ntry:\n    [1, 2][9]\nexcept LookupError:\n    print('missing key or index')   # catches IndexError",
+          "how": "Exception types are classes arranged in a hierarchy. `except X` matches any error whose type is X or a descendant of X.",
+          "use": "Handling a whole category of problems at once, and knowing why catching `Exception` (or worse, everything) can hide real bugs."
+        },
+        {
+          "id": "d05",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "Which except clause would catch an IndexError?",
+          "options": [
+            "except LookupError:",
+            "except KeyError:",
+            "except ValueError:"
+          ],
+          "answer": "except LookupError:",
+          "explanation": "IndexError is a child of LookupError. KeyError is its sibling, so `except KeyError` doesn't match an IndexError."
+        },
+        {
+          "id": "d06",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Raising your own errors",
+          "content": "Use `raise` to signal a problem: `raise ValueError('quantity must be positive')`. The function stops immediately, and the caller can catch it. Inside an `except` block, a bare `raise` re-raises the error you caught, after you've logged it, for example.",
+          "example_code": "def set_age(age):\n    if age < 0:\n        raise ValueError('age cannot be negative')\n    return age\n\ntry:\n    set_age(-1)\nexcept ValueError as e:\n    print('Rejected:', e)    # Rejected: age cannot be negative",
+          "how": "`raise` creates the exception and starts the same search for a matching `except` that a built-in error does, going up through the callers until one handles it or the program stops.",
+          "use": "Refusing invalid input or impossible operations clearly instead of returning a wrong result."
+        },
+        {
+          "id": "d07",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Validate a quantity",
+          "instruction": "Make `order` raise `ValueError('quantity must be positive')` when `qty` is 0 or less. The code below then prints: Ordered 3, then quantity must be positive.",
+          "initial_code": "def order(qty):\n    # TODO: raise ValueError for qty <= 0\n    return f'Ordered {qty}'\n\nprint(order(3))\ntry:\n    print(order(0))\nexcept ValueError as e:\n    print(e)",
+          "expected_output": "Ordered 3\nquantity must be positive",
+          "hint": "    if qty <= 0:\n        raise ValueError('quantity must be positive')",
+          "support": [
+            {
+              "heading": "raise ErrorType('message')",
+              "content": "Inside an `if`, raise the error with your own message. The message is what `print(e)` will show.",
+              "example_code": "def check(n):\n    if n > 10:\n        raise ValueError('too big')\n    return n\n\nprint(check(5))"
+            },
+            {
+              "heading": "Guard before the return",
+              "content": "Put the check as the first lines of `order`, so invalid quantities never reach the return. The code at the bottom already catches the error and prints it.",
+              "example_code": "def pay(amount):\n    if amount <= 0:\n        raise ValueError('amount must be positive')\n    return 'paid'\n\ntry:\n    pay(0)\nexcept ValueError as e:\n    print(e)"
+            }
+          ]
+        },
+        {
+          "id": "d08",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Ask forgiveness or look before you leap",
+          "content": "There are two styles. **LBYL** (look before you leap) checks first: `if key in d: ...`. **EAFP** (easier to ask forgiveness than permission) just tries and handles the error: `try: d[key] except KeyError: ...`. Python code often prefers EAFP, especially when failure is rare or checking would mean doing the work twice.",
+          "example_code": "d = {'a': 1}\n\n# LBYL\nif 'b' in d:\n    print(d['b'])\nelse:\n    print('no b')\n\n# EAFP\ntry:\n    print(d['b'])\nexcept KeyError:\n    print('no b')",
+          "how": "LBYL can miss cases the check didn't think of (and the situation can change between the check and the action, as with files). EAFP lets the operation itself decide, and handles the failure if it happens.",
+          "use": "Converting text to numbers (just try `int()`), opening files that might not exist, and reading optional data."
+        },
+        {
+          "id": "d09",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "Which of these is the EAFP style?",
+          "options": [
+            "try: value = d[key] except KeyError: value = 0",
+            "if key in d: value = d[key] else: value = 0",
+            "value = 0"
+          ],
+          "answer": "try: value = d[key] except KeyError: value = 0",
+          "explanation": "EAFP attempts the operation and handles the error. Checking `key in d` first is LBYL. (For dictionaries specifically, `d.get(key, 0)` is the neatest of all.)"
+        },
+        {
+          "id": "d10",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "A safe conversion function",
+          "instruction": "Write `to_int(text, default=0)` that returns `int(text)`, or `default` if the conversion fails. The prints should show 42, 0 and -1.",
+          "initial_code": "# TODO: def to_int(text, default=0):\n\n\nprint(to_int('42'))\nprint(to_int('abc'))\nprint(to_int('', -1))",
+          "expected_output": "42\n0\n-1",
+          "hint": "def to_int(text, default=0):\n    try:\n        return int(text)\n    except ValueError:\n        return default",
+          "support": [
+            {
+              "heading": "return inside try works",
+              "content": "If `int(text)` succeeds, the return happens right there. If it raises ValueError, Python jumps to the except block, which can return something else.",
+              "example_code": "def first(items):\n    try:\n        return items[0]\n    except IndexError:\n        return None\n\nprint(first([]))  # None"
+            },
+            {
+              "heading": "The empty string fails too",
+              "content": "`int('')` raises ValueError, so the third call returns its default, -1.",
+              "example_code": "try:\n    int('')\nexcept ValueError:\n    print('empty is not a number')"
+            }
+          ]
+        },
+        {
+          "id": "d11",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Keep try blocks small",
+          "content": "Wrap only the line that can fail. A big `try` around lots of code can catch errors you didn't mean to handle, hiding real bugs. Put code that should run only on success in `else:`.",
+          "example_code": "text = '42'\n\n# Too broad: a typo below would also be 'caught'\n# try:\n#     n = int(text)\n#     print(n * 2)\n# except ValueError: ...\n\ntry:\n    n = int(text)        # only the risky line\nexcept ValueError:\n    print('not a number')\nelse:\n    print(n * 2)         # 84",
+          "how": "An except block handles any matching error raised anywhere in its try block. The less code in the try, the more certain you are about where the error came from.",
+          "use": "Code that fails loudly when something unexpected happens, which makes bugs much faster to find."
+        },
+        {
+          "id": "d12",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "What does this code print?",
+          "options": [
+            "b c",
+            "a c",
+            "c"
+          ],
+          "answer": "b c",
+          "explanation": "No error happens, so `except` is skipped, `else` runs (b), and `finally` always runs (c).",
+          "code": "try:\n    x = 1 / 1\nexcept ZeroDivisionError:\n    print('a', end=' ')\nelse:\n    print('b', end=' ')\nfinally:\n    print('c')"
+        },
+        {
+          "id": "d13",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Retry until the input is valid",
+          "instruction": "`attempts` simulates what a user typed. Loop over them, skip any that aren't whole numbers or are negative, and stop at the first valid one, printing `Using` and the number. It should print: Using 7",
+          "initial_code": "attempts = ['ten', '-3', '7', '9']\n# TODO: find the first valid non-negative number\n",
+          "expected_output": "Using 7",
+          "hint": "for text in attempts:\n    try:\n        n = int(text)\n    except ValueError:\n        continue\n    if n < 0:\n        continue\n    print('Using', n)\n    break",
+          "support": [
+            {
+              "heading": "continue skips a bad attempt",
+              "content": "Inside a loop, `continue` in the except block moves on to the next attempt instead of crashing.",
+              "example_code": "for t in ['x', '5']:\n    try:\n        print(int(t))\n    except ValueError:\n        continue  # prints only 5"
+            },
+            {
+              "heading": "Check, then stop",
+              "content": "After a successful conversion, also skip negatives with `continue`. For the first value that passes both checks, print it and `break`. This is how real programs keep asking until the input is valid.",
+              "example_code": "for n in [-1, 4, 6]:\n    if n < 0:\n        continue\n    print('first ok:', n)\n    break"
+            }
+          ]
+        },
+        {
+          "id": "d14",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "finally runs even after return",
+          "content": "`finally` runs no matter how the try block ends: normally, through an exception, or even through a `return`. That makes it the place for cleanup that must always happen. (For files, `with` does this for you.)",
+          "example_code": "def load():\n    try:\n        return 'data'\n    finally:\n        print('cleanup')\n\nprint(load())\n# cleanup\n# data",
+          "how": "When the try block returns, Python holds onto the return value, runs `finally`, and only then actually returns.",
+          "use": "Closing connections, releasing locks, saving logs, and resetting state, guaranteed even when something goes wrong."
+        },
+        {
+          "id": "d15",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "What does this code print?",
+          "options": [
+            "done 1",
+            "1 done",
+            "1"
+          ],
+          "answer": "done 1",
+          "explanation": "`return 1` is held while `finally` runs and prints 'done ' (with end=' '). Then the function returns 1, which the outer print shows.",
+          "code": "def f():\n    try:\n        return 1\n    finally:\n        print('done', end=' ')\n\nprint(f())"
+        },
+        {
+          "id": "d16",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Common built-in exceptions",
+          "content": "Knowing the usual suspects speeds up debugging: **TypeError** (wrong type for an operation), **ValueError** (right type, bad value), **KeyError** (missing dict key), **IndexError** (position out of range), **AttributeError** (no such method or attribute), **NameError** (name not defined), **ZeroDivisionError**, and **FileNotFoundError**.",
+          "example_code": "# TypeError:         'a' + 1\n# ValueError:        int('a')\n# KeyError:          {}['x']\n# IndexError:        [][0]\n# AttributeError:    'a'.push('b')\n# NameError:         print(undefined_name)\n# ZeroDivisionError: 1 / 0\n# FileNotFoundError: open('missing.txt')",
+          "how": "Each type describes a category of problem; the message adds details. The type tells you what to look for: a TypeError means check the types involved, a KeyError means check the key.",
+          "use": "Reading tracebacks quickly and choosing which specific exception to catch."
+        },
+        {
+          "id": "d17",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Safe list access",
+          "instruction": "Write `get_item(items, i)` that returns `items[i]`, or `None` if the index is out of range. The prints should show None then 2.",
+          "initial_code": "# TODO: def get_item(items, i):\n\n\nprint(get_item([1, 2], 5))\nprint(get_item([1, 2], 1))",
+          "expected_output": "None\n2",
+          "hint": "def get_item(items, i):\n    try:\n        return items[i]\n    except IndexError:\n        return None",
+          "support": [
+            {
+              "heading": "Which exception?",
+              "content": "An index past the end of a list raises IndexError, so that's the type to catch.",
+              "example_code": "try:\n    print(['a'][3])\nexcept IndexError:\n    print('no such position')"
+            },
+            {
+              "heading": "Same shape as to_int",
+              "content": "Try to return the item; in the except block, return None.",
+              "example_code": "def safe_key(d, k):\n    try:\n        return d[k]\n    except KeyError:\n        return None\n\nprint(safe_key({}, 'x'))  # None"
+            }
+          ]
+        },
+        {
+          "id": "i01",
+          "type": "quiz",
+          "track": "interview",
+          "question": "Interview question: why is a bare `except:` considered bad practice?",
+          "options": [
+            "It catches everything, including Ctrl+C and real bugs, so problems get hidden",
+            "It's slower",
+            "It's a SyntaxError in Python 3"
+          ],
+          "answer": "It catches everything, including Ctrl+C and real bugs, so problems get hidden",
+          "explanation": "Catch the specific exceptions you expect (ValueError, KeyError...). If you truly need a catch-all, use `except Exception as e:` and log `e`, so you still see what happened."
+        },
+        {
+          "id": "i02",
+          "type": "quiz",
+          "track": "interview",
+          "question": "In a try statement, what's the difference between `else` and `finally`?",
+          "options": [
+            "`else` runs only if no exception happened; `finally` always runs",
+            "They're the same",
+            "`finally` runs only after an exception"
+          ],
+          "answer": "`else` runs only if no exception happened; `finally` always runs",
+          "explanation": "`else` is for the success path that shouldn't be inside the try; `finally` is for cleanup."
+        },
+        {
+          "id": "i03",
+          "type": "quiz",
+          "track": "interview",
+          "question": "Python style often prefers EAFP. What does that mean?",
+          "options": [
+            "Try the operation and handle the exception if it fails",
+            "Always check conditions before acting",
+            "Avoid exceptions entirely"
+          ],
+          "answer": "Try the operation and handle the exception if it fails",
+          "explanation": "\"Easier to ask forgiveness than permission.\" It avoids duplicate checks and race conditions, for example a file disappearing between checking that it exists and opening it."
+        },
+        {
+          "id": "i04",
+          "type": "quiz",
+          "track": "interview",
+          "question": "What does this code print?",
+          "options": [
+            "lookup",
+            "IndexError",
+            "Nothing"
+          ],
+          "answer": "lookup",
+          "explanation": "`[1, 2][5]` raises IndexError, which is one of the types in the tuple, so that except block runs.",
+          "code": "try:\n    [1, 2][5]\nexcept (KeyError, IndexError):\n    print('lookup')"
+        },
+        {
+          "id": "i05",
+          "type": "quiz",
+          "track": "interview",
+          "question": "What does a bare `raise` (with no arguments) do inside an except block?",
+          "options": [
+            "Re-raises the exception that was just caught",
+            "Raises a new generic Exception",
+            "Does nothing"
+          ],
+          "answer": "Re-raises the exception that was just caught",
+          "explanation": "It's used when you want to react to an error (log it, clean up) but still let it continue up to the caller."
+        },
+        {
+          "id": "i06",
+          "type": "code",
+          "track": "interview",
+          "heading": "Classic: total the valid numbers",
+          "instruction": "`values` came from a messy file. Add up the ones that are valid whole numbers, skipping the rest, and print the total. It should print: 10",
+          "initial_code": "values = ['3', 'x', '5', '', '2']\n# TODO: sum the valid integers\n",
+          "expected_output": "10",
+          "hint": "total = 0\nfor v in values:\n    try:\n        total += int(v)\n    except ValueError:\n        pass\nprint(total)",
+          "support": [
+            {
+              "heading": "try inside the loop",
+              "content": "Put the try/except inside the loop so one bad value is skipped and the loop carries on. A try around the whole loop would stop at the first bad value.",
+              "example_code": "for v in ['1', 'z']:\n    try:\n        print(int(v))\n    except ValueError:\n        print('skip')"
+            },
+            {
+              "heading": "pass means do nothing",
+              "content": "In the except block, `pass` ignores the bad value. Add the good ones to a running total and print it after the loop.",
+              "example_code": "t = 0\nfor v in ['4', '?', '1']:\n    try:\n        t += int(v)\n    except ValueError:\n        pass\nprint(t)  # 5"
+            }
+          ]
+        },
+        {
+          "id": "i07",
+          "type": "code",
+          "track": "interview",
+          "heading": "Classic: average with validation",
+          "instruction": "Make `average` raise `ValueError('empty list')` for an empty list. The code below then prints: empty list, then 3.0.",
+          "initial_code": "def average(nums):\n    return sum(nums) / len(nums)\n\ntry:\n    print(average([]))\nexcept ValueError as e:\n    print(e)\nprint(average([2, 4]))",
+          "expected_output": "empty list\n3.0",
+          "hint": "    if not nums:\n        raise ValueError('empty list')",
+          "support": [
+            {
+              "heading": "A clearer error than ZeroDivisionError",
+              "content": "Without the check, an empty list divides by zero. Raising your own ValueError with a clear message tells the caller what they did wrong.",
+              "example_code": "def first(items):\n    if not items:\n        raise ValueError('no items')\n    return items[0]\n\ntry:\n    first([])\nexcept ValueError as e:\n    print(e)"
+            },
+            {
+              "heading": "Guard clause at the top",
+              "content": "`if not nums:` is True for an empty list. Raise there, before the division.",
+              "example_code": "print(not [])  # True"
+            }
+          ]
+        },
+        {
+          "id": "i08",
+          "type": "code",
+          "track": "interview",
+          "heading": "Debug: the swallowed bug",
+          "instruction": "This prints `No prices` even though there are prices. A too-broad `except` is hiding the real bug. Fix the bug, and narrow the except to `ZeroDivisionError`, so it prints: 20.0",
+          "initial_code": "prices = [10, 20, 30]\ntry:\n    average = sum(prices) / len(price)\n    print(average)\nexcept Exception:\n    print('No prices')",
+          "expected_output": "20.0",
+          "hint": "`len(price)` is a typo, which raises NameError, and `except Exception` catches it. Fix it to `len(prices)` and catch only ZeroDivisionError.",
+          "support": [
+            {
+              "heading": "Broad excepts hide typos",
+              "content": "`except Exception` catches NameError too, so a simple typo looks like \"no prices\". Narrowing the except would have let the NameError show.",
+              "example_code": "try:\n    print(undefined_thing)\nexcept ZeroDivisionError:\n    print('never runs')\nexcept NameError as e:\n    print('real problem:', e)"
+            },
+            {
+              "heading": "Two small edits",
+              "content": "Change `price` to `prices`, and change `Exception` to `ZeroDivisionError` (the only error an empty list could really cause here).",
+              "example_code": "nums = [4, 6]\nprint(sum(nums) / len(nums))  # 5.0"
+            }
+          ]
+        },
+        {
+          "id": "i09",
+          "type": "code",
+          "track": "interview",
+          "heading": "Debug: catching the wrong error",
+          "instruction": "This crashes instead of printing `missing`. Fix the except so it catches the error a missing dictionary key really raises.",
+          "initial_code": "settings = {'theme': 'dark'}\ntry:\n    print(settings['font'])\nexcept IndexError:\n    print('missing')",
+          "expected_output": "missing",
+          "hint": "A missing dictionary key raises KeyError, not IndexError:\nexcept KeyError:",
+          "support": [
+            {
+              "heading": "Read the traceback's last line",
+              "content": "Run it and look: the last line says KeyError. An except only catches the types it names (and their children).",
+              "example_code": "try:\n    {}['x']\nexcept KeyError:\n    print('KeyError caught')"
+            },
+            {
+              "heading": "Keys vs positions",
+              "content": "IndexError is for list and string positions; KeyError is for dictionary keys. Change the except type. (`except LookupError` would catch both.)",
+              "example_code": "try:\n    [][0]\nexcept IndexError:\n    print('IndexError caught')"
+            }
+          ]
         }
       ]
     },
@@ -7205,6 +7607,410 @@
           "feedback": {
             "No, only Python creators can": "You can write and import your own modules any time."
           }
+        },
+        {
+          "id": "d01",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "What import really does",
+          "content": "The first time a module is imported, Python finds its file, runs it top to bottom, and keeps the resulting module object in a cache. Every later `import` of the same module, from any file, just reuses the cached one. `dir(module)` lists the names it contains.",
+          "example_code": "import math\nimport math            # cached: the file doesn't run again\nprint('sqrt' in dir(math))   # True\nprint(type(math))            # <class 'module'>",
+          "how": "A module is an object whose attributes are the functions and variables its file defined. The cache (`sys.modules`) maps module names to these objects.",
+          "use": "Fast imports, and modules that act as shared singletons: settings or connections set up once in a module are seen by everything that imports it."
+        },
+        {
+          "id": "d02",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "Two of your files both `import math`. How many times does the math module's code run?",
+          "options": [
+            "Once",
+            "Twice",
+            "Once per function call"
+          ],
+          "answer": "Once",
+          "explanation": "The first import runs and caches the module. The second import finds it in the cache and reuses it."
+        },
+        {
+          "id": "d03",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "The random module in depth",
+          "content": "`random.random()` gives a float from 0 up to 1, `random.uniform(a, b)` a float in a range, and `random.randint(a, b)` a whole number including both ends. `random.shuffle(items)` mixes a list **in place** (returning None), and `random.sample(items, k)` picks k different items. `random.seed(n)` makes the sequence repeatable.",
+          "example_code": "import random\nrandom.seed(7)\nprint(random.randint(1, 6))          # same result every run with this seed\ndeck = ['A', 'K', 'Q', 'J']\nrandom.shuffle(deck)                 # changes deck itself\nprint(deck)\nprint(random.sample(range(1, 50), 3))  # 3 different numbers",
+          "how": "These are pseudo-random: a formula produces numbers that look random, starting from a seed. The same seed gives the same sequence, which is what makes tests with randomness possible.",
+          "use": "Games, simulations, sampling data, shuffling quiz questions, and generating test data."
+        },
+        {
+          "id": "d04",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Shuffle a deck",
+          "instruction": "With the seed set to 3, shuffle `cards` in place and print it.",
+          "initial_code": "import random\nrandom.seed(3)\ncards = ['A', 'K', 'Q', 'J', '10']\n# TODO: shuffle cards, then print them\n\nprint(cards)",
+          "expected_output": "['A', 'Q', 'J', '10', 'K']",
+          "hint": "random.shuffle(cards)",
+          "support": [
+            {
+              "heading": "shuffle changes the list itself",
+              "content": "Call `random.shuffle(cards)` on its own line. Don't write `cards = random.shuffle(cards)`: shuffle returns None, so cards would become None.",
+              "example_code": "import random\nnums = [1, 2, 3]\nrandom.shuffle(nums)\nprint(len(nums))  # still 3 items"
+            },
+            {
+              "heading": "Leave the seed alone",
+              "content": "The seed makes the shuffle come out the same every run, so the checker can compare your output. Add the shuffle between the list and the print.",
+              "example_code": "import random\nrandom.seed(1)\nprint(random.randint(1, 100))"
+            }
+          ]
+        },
+        {
+          "id": "d05",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "What does `random.shuffle(cards)` return?",
+          "options": [
+            "None",
+            "A shuffled copy",
+            "The first card"
+          ],
+          "answer": "None",
+          "explanation": "Like `list.sort()`, shuffle changes the list in place and returns None. Use `random.sample(cards, len(cards))` if you want a shuffled copy."
+        },
+        {
+          "id": "d06",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "A tour of math",
+          "content": "Beyond `sqrt`, `floor` and `ceil`: `math.isclose(a, b)` compares floats safely, `math.gcd(a, b)` gives the greatest common divisor, `math.factorial(n)`, `math.inf` (infinity, handy as a starting \"best\" value), and `math.trunc` which drops the fraction toward zero.",
+          "example_code": "import math\nprint(math.isclose(0.1 + 0.2, 0.3))  # True\nprint(math.gcd(48, 18))              # 6\nprint(math.factorial(5))             # 120\nprint(math.floor(-2.5), math.trunc(-2.5))  # -3 -2\nprint(5 < math.inf)                  # True",
+          "how": "These are implemented in C, so they're fast and carefully handle edge cases (like float tolerance in `isclose`).",
+          "use": "Geometry, fractions and ratios, statistics, and finding minimums (start with `math.inf` and look for anything smaller)."
+        },
+        {
+          "id": "d07",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Close enough, and common factors",
+          "instruction": "Using `math`, print whether `0.1 + 0.2` is close to `0.3`, then the greatest common divisor of 48 and 18. It should print: True then 6",
+          "initial_code": "import math\n# TODO: print the isclose check, then the gcd\n",
+          "expected_output": "True\n6",
+          "hint": "print(math.isclose(0.1 + 0.2, 0.3))\nprint(math.gcd(48, 18))",
+          "support": [
+            {
+              "heading": "isclose for floats",
+              "content": "`math.isclose(a, b)` is True when a and b are equal apart from tiny rounding errors.",
+              "example_code": "import math\nprint(math.isclose(1.1 + 2.2, 3.3))  # True"
+            },
+            {
+              "heading": "gcd for whole numbers",
+              "content": "`math.gcd(a, b)` is the biggest number that divides both evenly. Two prints, one per line.",
+              "example_code": "import math\nprint(math.gcd(12, 8))  # 4"
+            }
+          ]
+        },
+        {
+          "id": "d08",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Counting made easy: collections.Counter",
+          "content": "`Counter` from the `collections` module counts things for you: `Counter(items)` builds a dictionary-like object of counts. `.most_common(n)` returns the n most frequent items as (item, count) pairs.",
+          "example_code": "from collections import Counter\nwords = 'the cat and the hat and the bat'.split()\ncounts = Counter(words)\nprint(counts['the'])          # 3\nprint(counts.most_common(2))  # [('the', 3), ('and', 2)]\nprint(counts['zebra'])        # 0, no KeyError",
+          "how": "Counter loops over the items once, doing the `counts.get(x, 0) + 1` pattern for you. Missing items count as 0 instead of raising KeyError.",
+          "use": "Word frequencies, top-N lists, voting, and quick data exploration. It's usually the fastest way to answer \"how many of each?\" in an interview."
+        },
+        {
+          "id": "d09",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "What does this code print?",
+          "options": [
+            "3",
+            "2",
+            "1"
+          ],
+          "answer": "3",
+          "explanation": "'banana' has three 'a's, and Counter counted them.",
+          "code": "from collections import Counter\nprint(Counter('banana')['a'])"
+        },
+        {
+          "id": "d10",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Top two words",
+          "instruction": "Use `Counter` to print the two most common words in `words`. It should print: [('the', 3), ('cat', 2)]",
+          "initial_code": "words = ['the', 'cat', 'the', 'dog', 'cat', 'the']\n# TODO: print the two most common words\n",
+          "expected_output": "[('the', 3), ('cat', 2)]",
+          "hint": "from collections import Counter\nprint(Counter(words).most_common(2))",
+          "support": [
+            {
+              "heading": "Import, count, ask",
+              "content": "Import Counter from collections, build `Counter(words)`, and call `.most_common(2)` on it.",
+              "example_code": "from collections import Counter\nprint(Counter('aab').most_common(1))  # [('a', 2)]"
+            },
+            {
+              "heading": "Remember the import",
+              "content": "Without `from collections import Counter` at the top, Python raises NameError. The result is a list of (word, count) tuples, already sorted by count.",
+              "example_code": "from collections import Counter\nc = Counter([1, 1, 2])\nprint(c[1], c[2])  # 2 1"
+            }
+          ]
+        },
+        {
+          "id": "d11",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "defaultdict: dictionaries with automatic defaults",
+          "content": "`defaultdict(list)` is a dictionary that creates an empty list the first time you use a missing key, so grouping needs no `if key not in d` check. `defaultdict(int)` starts missing keys at 0 for counting.",
+          "example_code": "from collections import defaultdict\ngroups = defaultdict(list)\nfor word in ['ant', 'bee', 'ape']:\n    groups[word[0]].append(word)\nprint(dict(groups))   # {'a': ['ant', 'ape'], 'b': ['bee']}",
+          "how": "You pass a function that makes default values (`list`, `int`). When a missing key is read, defaultdict calls it, stores the result under that key, and returns it.",
+          "use": "Grouping and counting with less code. `dict(groups)` turns it back into a normal dictionary for printing or saving."
+        },
+        {
+          "id": "d12",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Group by length",
+          "instruction": "Use `defaultdict(list)` to group `words` by their length, then print it as a normal dict. It should print: {3: ['cat', 'dog'], 5: ['horse']}",
+          "initial_code": "from collections import defaultdict\nwords = ['cat', 'horse', 'dog']\n# TODO: group by len(word)\n",
+          "expected_output": "{3: ['cat', 'dog'], 5: ['horse']}",
+          "hint": "groups = defaultdict(list)\nfor w in words:\n    groups[len(w)].append(w)\nprint(dict(groups))",
+          "support": [
+            {
+              "heading": "No 'not in' check needed",
+              "content": "With `defaultdict(list)`, `groups[key].append(x)` works even the first time a key is used.",
+              "example_code": "from collections import defaultdict\nd = defaultdict(list)\nd['x'].append(1)\nprint(dict(d))  # {'x': [1]}"
+            },
+            {
+              "heading": "Print as a normal dict",
+              "content": "Printing a defaultdict directly shows `defaultdict(<class 'list'>, {...})`. Wrap it in `dict()` for the plain form.",
+              "example_code": "from collections import defaultdict\nd = defaultdict(int)\nd['a'] += 1\nprint(dict(d))  # {'a': 1}"
+            }
+          ]
+        },
+        {
+          "id": "d13",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "if __name__ == '__main__'",
+          "content": "Every module has a variable `__name__`. When you run a file directly, it's `'__main__'`; when the file is imported, it's the module's name. So code under `if __name__ == '__main__':` runs only when the file is run directly, not when another file imports it.",
+          "example_code": "# helpers.py\ndef greet(name):\n    return f'Hi, {name}'\n\nif __name__ == '__main__':\n    # quick manual test: runs with `python helpers.py`,\n    # but not on `import helpers`\n    print(greet('Ada'))",
+          "how": "Python sets `__name__` before running a module's code. The check lets one file be both an importable module and a runnable script.",
+          "use": "Keeping demo or test code in a module without it running every time something imports the module."
+        },
+        {
+          "id": "d14",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "A file `helpers.py` is imported with `import helpers`. What is `__name__` inside it?",
+          "options": [
+            "'helpers'",
+            "'__main__'",
+            "'import'"
+          ],
+          "answer": "'helpers'",
+          "explanation": "`__name__` is `'__main__'` only for the file you ran directly. An imported module gets its own name."
+        },
+        {
+          "id": "d15",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "More of the standard library",
+          "content": "A few more modules worth knowing: `statistics` (mean, median, mode), `datetime` (dates), `json` (data files), `pathlib` (file paths), `itertools` (combinations, permutations, chaining), and `os` (environment and files).",
+          "example_code": "import statistics\nfrom itertools import combinations\ndata = [3, 1, 4, 1, 5]\nprint(statistics.mean(data))      # 2.8\nprint(statistics.median(data))    # 3\nprint(list(combinations('abc', 2)))  # [('a', 'b'), ('a', 'c'), ('b', 'c')]",
+          "how": "Each module packages tested, documented code for one area. Learning what exists saves you from writing (and debugging) it yourself.",
+          "use": "\"Is there a built-in for this?\" is often the best first question, in real work and in interviews."
+        },
+        {
+          "id": "d16",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "What does this code print?",
+          "options": [
+            "3",
+            "2.8",
+            "1"
+          ],
+          "answer": "3",
+          "explanation": "The median is the middle value after sorting: [1, 1, 3, 4, 5], so 3. (2.8 is the mean.)",
+          "code": "import statistics\nprint(statistics.median([3, 1, 4, 1, 5]))"
+        },
+        {
+          "id": "d17",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Summary statistics",
+          "instruction": "Using `statistics`, print the mean, median and mode of `scores`, one per line. It should print 86, 90 and 90.",
+          "initial_code": "scores = [70, 80, 90, 90, 100]\n# TODO: print mean, median and mode\n",
+          "expected_output": "86\n90\n90",
+          "hint": "import statistics\nprint(statistics.mean(scores))\nprint(statistics.median(scores))\nprint(statistics.mode(scores))",
+          "support": [
+            {
+              "heading": "Three functions, one module",
+              "content": "`mean` is the average, `median` the middle value, `mode` the most common value.",
+              "example_code": "import statistics\nprint(statistics.mode([1, 2, 2]))  # 2"
+            },
+            {
+              "heading": "Import first",
+              "content": "Add `import statistics` at the top, then call each function with `statistics.` in front.",
+              "example_code": "import statistics\nprint(statistics.mean([1, 2, 3]))  # 2"
+            }
+          ]
+        },
+        {
+          "id": "i01",
+          "type": "quiz",
+          "track": "interview",
+          "question": "Interview question: what's the difference between `import math` and `from math import sqrt`?",
+          "options": [
+            "The first gives you the module (use `math.sqrt`); the second copies just the name `sqrt` into your file",
+            "The second is faster at runtime",
+            "They're identical"
+          ],
+          "answer": "The first gives you the module (use `math.sqrt`); the second copies just the name `sqrt` into your file",
+          "explanation": "Both run the module the same way. `math.sqrt` makes it obvious where a name came from; `from ... import` is shorter for names you use a lot."
+        },
+        {
+          "id": "i02",
+          "type": "quiz",
+          "track": "interview",
+          "question": "Why is `from module import *` usually avoided?",
+          "options": [
+            "It dumps unknown names into your file, can overwrite your own, and hides where names come from",
+            "It doesn't work in Python 3",
+            "It imports the module twice"
+          ],
+          "answer": "It dumps unknown names into your file, can overwrite your own, and hides where names come from",
+          "explanation": "Readers (and tools) can't tell which module a name belongs to, and a later star-import can silently replace an earlier name."
+        },
+        {
+          "id": "i03",
+          "type": "quiz",
+          "track": "interview",
+          "question": "What does `if __name__ == '__main__':` do?",
+          "options": [
+            "Runs that block only when the file is run directly, not when it's imported",
+            "Makes the file run faster",
+            "Marks the main function for Python to call"
+          ],
+          "answer": "Runs that block only when the file is run directly, not when it's imported",
+          "explanation": "It lets a file work both as an importable module and as a runnable script. Python has no special main function; this check is the convention."
+        },
+        {
+          "id": "i04",
+          "type": "quiz",
+          "track": "interview",
+          "question": "`Counter(words)` on a list of n words takes roughly how long?",
+          "options": [
+            "O(n)",
+            "O(n²)",
+            "O(1)"
+          ],
+          "answer": "O(n)",
+          "explanation": "It looks at each word once and does an O(1) dictionary update for each."
+        },
+        {
+          "id": "i05",
+          "type": "quiz",
+          "track": "interview",
+          "question": "What does this code print?",
+          "options": [
+            "-3 -2",
+            "-2 -3",
+            "-2 -2"
+          ],
+          "answer": "-3 -2",
+          "explanation": "`floor` rounds down (toward negative infinity), so -2.5 becomes -3. `ceil` rounds up, so it becomes -2. A classic trap is assuming floor just drops the fraction.",
+          "code": "from math import floor, ceil\nprint(floor(-2.5), ceil(-2.5))",
+          "feedback": {
+            "-2 -3": "Rounding down from -2.5 goes to the more negative number, -3."
+          }
+        },
+        {
+          "id": "i06",
+          "type": "code",
+          "track": "interview",
+          "heading": "Classic: most common character",
+          "instruction": "Print the most common character in `text`. It should print: l",
+          "initial_code": "text = 'hello world'\n# TODO: print the most common character\n",
+          "expected_output": "l",
+          "hint": "from collections import Counter\nprint(Counter(text).most_common(1)[0][0])",
+          "support": [
+            {
+              "heading": "most_common(1) gives a list of one pair",
+              "content": "`Counter(text).most_common(1)` is like `[('l', 3)]`. `[0]` takes the pair and another `[0]` takes the character.",
+              "example_code": "from collections import Counter\npair = Counter('aab').most_common(1)[0]\nprint(pair, pair[0])  # ('a', 2) a"
+            },
+            {
+              "heading": "Or do it by hand",
+              "content": "Without Counter: count with a dict, then use `max(counts, key=counts.get)`. Interviewers are happy with either, as long as you know the O(n) idea.",
+              "example_code": "counts = {'x': 1, 'y': 4}\nprint(max(counts, key=counts.get))  # y"
+            }
+          ]
+        },
+        {
+          "id": "i07",
+          "type": "code",
+          "track": "interview",
+          "heading": "Classic: dice simulation",
+          "instruction": "With seed 42, roll two six-sided dice 1000 times and count how often they add up to 7. Print the count.",
+          "initial_code": "import random\nrandom.seed(42)\n# TODO: count sevens in 1000 rolls of two dice\n",
+          "expected_output": "160",
+          "hint": "sevens = 0\nfor _ in range(1000):\n    if random.randint(1, 6) + random.randint(1, 6) == 7:\n        sevens += 1\nprint(sevens)",
+          "support": [
+            {
+              "heading": "Simulate, then count",
+              "content": "Each round, roll two dice with `random.randint(1, 6)` and check whether the sum is 7. Keep a counter.",
+              "example_code": "import random\nrandom.seed(1)\nroll = random.randint(1, 6) + random.randint(1, 6)\nprint(2 <= roll <= 12)  # True"
+            },
+            {
+              "heading": "Roll in the same order",
+              "content": "The seed only gives the expected count if you call randint exactly twice per round, in a loop of 1000. You should get about 1000 / 6, roughly 167.",
+              "example_code": "import random\nrandom.seed(0)\ncount = 0\nfor _ in range(10):\n    count += 1\nprint(count)"
+            }
+          ]
+        },
+        {
+          "id": "i08",
+          "type": "code",
+          "track": "interview",
+          "heading": "Classic: Euclid's GCD",
+          "instruction": "Without `math.gcd`, write `gcd(a, b)` using Euclid's algorithm: while b isn't 0, replace (a, b) with (b, a % b); then a is the answer. The prints should show 6 then 1.",
+          "initial_code": "# TODO: def gcd(a, b):\n\n\nprint(gcd(48, 18))\nprint(gcd(17, 5))",
+          "expected_output": "6\n1",
+          "hint": "def gcd(a, b):\n    while b != 0:\n        a, b = b, a % b\n    return a",
+          "support": [
+            {
+              "heading": "Each step shrinks the numbers",
+              "content": "48 and 18 → 18 and 12 → 12 and 6 → 6 and 0. When the second number hits 0, the first is the GCD.",
+              "example_code": "a, b = 48, 18\na, b = b, a % b\nprint(a, b)  # 18 12"
+            },
+            {
+              "heading": "The swap in one line",
+              "content": "`a, b = b, a % b` uses the old values of both on the right side. Loop while b isn't 0, then return a. This runs in O(log n) steps, a famous 2,300-year-old algorithm.",
+              "example_code": "a, b = 12, 6\nwhile b != 0:\n    a, b = b, a % b\nprint(a)  # 6"
+            }
+          ]
+        },
+        {
+          "id": "i09",
+          "type": "code",
+          "track": "interview",
+          "heading": "Debug: the shadowed module",
+          "instruction": "This crashes with an AttributeError. A variable has the same name as a module. Rename the variable to `shape` so it prints: circle 12.566370614359172",
+          "initial_code": "import math\nmath = 'circle'\nradius = 2\nprint(math, math.pi * radius ** 2)",
+          "expected_output": "circle 12.566370614359172",
+          "hint": "`math = 'circle'` replaces the module with a string, and a string has no `.pi`. Use a different name:\nshape = 'circle'",
+          "support": [
+            {
+              "heading": "Names can be reassigned, even modules",
+              "content": "After `math = 'circle'`, the name `math` points at the string. The module still exists, but your file can't reach it by that name any more.",
+              "example_code": "import math\nprint(math.pi > 3)  # True: math is still the module here"
+            },
+            {
+              "heading": "Rename two places",
+              "content": "Change the assignment to `shape = 'circle'` and use `shape` (not `math`) as the first value in the print. Leave `math.pi` as it is.",
+              "example_code": "import math\nlabel = 'area'\nprint(label, round(math.pi, 2))"
+            }
+          ]
         }
       ]
     },
@@ -7438,6 +8244,411 @@
             "It runs faster": "Speed is the same either way.",
             "It uses less memory": "Memory use is the same either way."
           }
+        },
+        {
+          "id": "d01",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "readline and readlines",
+          "content": "Besides looping over a file, `f.readline()` reads just the next line, and `f.readlines()` reads every line into a list. Both keep the `\\n` at the end of each line, so you usually `.strip()` it off.",
+          "example_code": "with open('pets.txt', 'w') as f:\n    f.write('cat\\ndog\\nowl\\n')\n\nwith open('pets.txt') as f:\n    first = f.readline()     # 'cat\\n'\n    rest = f.readlines()     # ['dog\\n', 'owl\\n']\nprint(first.strip(), rest)",
+          "how": "A file object remembers its position. Each read moves it forward, so after `readline()` the next read starts on line two.",
+          "use": "Reading a header line separately from the data below it, or grabbing all lines as a list when the file is small."
+        },
+        {
+          "id": "d02",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "What does this code print?",
+          "options": [
+            "['a\\n', 'b\\n']",
+            "['a', 'b']",
+            "'a\\nb\\n'"
+          ],
+          "answer": "['a\\n', 'b\\n']",
+          "explanation": "`readlines()` keeps each line's newline character. Use `[line.strip() for line in f]` to drop them.",
+          "code": "with open('x.txt', 'w') as f:\n    f.write('a\\nb\\n')\nwith open('x.txt') as f:\n    print(f.readlines())"
+        },
+        {
+          "id": "d03",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Writing several lines",
+          "content": "`.write()` adds exactly what you give it, with no newline. To write lines, add `'\\n'` yourself, join a list with `'\\n'.join(...)`, or use `print(..., file=f)`, which adds the newline like a normal print.",
+          "example_code": "names = ['Ada', 'Bob']\nwith open('names.txt', 'w') as f:\n    for name in names:\n        f.write(name + '\\n')\n    print('Cy', file=f)      # also writes 'Cy\\n'\nprint(open('names.txt').read())",
+          "how": "Files are just a stream of characters. A line break is the `\\n` character, so lines only exist where you write one.",
+          "use": "Logs, reports and exported lists, where each record needs its own line."
+        },
+        {
+          "id": "d04",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "One name per line",
+          "instruction": "Write each name in `names` to 'team.txt' on its own line. The verification should print the three names on three lines.",
+          "initial_code": "names = ['Ada', 'Bob', 'Cy']\nwith open('team.txt', 'w') as f:\n    # TODO: write each name followed by a newline\n    pass\n\n# Verification (do not change)\nprint(open('team.txt').read())",
+          "expected_output": "Ada\nBob\nCy",
+          "hint": "for name in names:\n    f.write(name + '\\n')",
+          "support": [
+            {
+              "heading": "write() doesn't add newlines",
+              "content": "`f.write('Ada')` then `f.write('Bob')` gives 'AdaBob'. Add `'\\n'` to each name.",
+              "example_code": "with open('demo.txt', 'w') as f:\n    f.write('x' + '\\n')\n    f.write('y' + '\\n')\nprint(open('demo.txt').read())"
+            },
+            {
+              "heading": "Loop inside the with block",
+              "content": "Replace `pass` with a for loop over names, indented under the `with` so the file is still open.",
+              "example_code": "with open('demo.txt', 'w') as f:\n    for n in [1, 2]:\n        print(n, file=f)\nprint(open('demo.txt').read())"
+            }
+          ]
+        },
+        {
+          "id": "d05",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "The csv module",
+          "content": "CSV files store tables as text: one row per line, values separated by commas. Splitting on `','` breaks when a value itself contains a comma inside quotes, like `\"Smith, Jo\"`. The `csv` module handles that. `csv.DictReader` turns each row into a dictionary keyed by the header line.",
+          "example_code": "import csv\nwith open('people.csv', 'w') as f:\n    f.write('name,city\\n\"Smith, Jo\",Paris\\nAda,London\\n')\n\nwith open('people.csv', newline='') as f:\n    for row in csv.DictReader(f):\n        print(row['name'], '-', row['city'])",
+          "how": "The csv reader follows the CSV rules: quotes group a value, doubled quotes are a literal quote, and `newline=''` lets it see the line endings exactly as written.",
+          "use": "Spreadsheet exports, data downloads, and reports. Values come back as strings, so convert numbers with `int()` or `float()`."
+        },
+        {
+          "id": "d06",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "Why use the `csv` module instead of `line.split(',')`?",
+          "options": [
+            "It handles commas inside quoted values correctly",
+            "It's the only way to read text files",
+            "split() can't handle numbers"
+          ],
+          "answer": "It handles commas inside quoted values correctly",
+          "explanation": "`'\"Smith, Jo\",Paris'.split(',')` gives three pieces instead of two. The csv module knows the quotes group one value."
+        },
+        {
+          "id": "d07",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Total from a CSV",
+          "instruction": "Use `csv.DictReader` to add up the `price` column and print the total. It should print: 12.5",
+          "initial_code": "import csv\nwith open('order.csv', 'w') as f:\n    f.write('item,price\\npen,1.5\\nbook,8\\ntape,3\\n')\n\ntotal = 0\n# TODO: read order.csv with DictReader and add each price\n\nprint(total)",
+          "expected_output": "12.5",
+          "hint": "with open('order.csv', newline='') as f:\n    for row in csv.DictReader(f):\n        total += float(row['price'])",
+          "support": [
+            {
+              "heading": "Each row is a dictionary",
+              "content": "`row['price']` is the text in that row's price column, like `'1.5'`.",
+              "example_code": "import csv\nwith open('t.csv', 'w') as f:\n    f.write('a,b\\n1,2\\n')\nwith open('t.csv', newline='') as f:\n    print(list(csv.DictReader(f)))"
+            },
+            {
+              "heading": "Convert before adding",
+              "content": "CSV values are strings. Adding `'1.5'` to a number raises TypeError, so wrap it: `float(row['price'])`.",
+              "example_code": "print(float('8') + float('1.5'))  # 9.5"
+            }
+          ]
+        },
+        {
+          "id": "d08",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "pathlib: paths as objects",
+          "content": "`pathlib.Path` represents a file path with handy methods: `.read_text()` and `.write_text()` read or write a whole file in one call, `.exists()` checks it's there, `.suffix` is the extension and `.stem` is the name without it.",
+          "example_code": "from pathlib import Path\np = Path('report.txt')\np.write_text('All good')\nprint(p.read_text())     # All good\nprint(p.exists())        # True\nprint(p.stem, p.suffix)  # report .txt",
+          "how": "A Path knows how to join (`Path('data') / 'a.txt'`), split and inspect paths for the current operating system, so you don't build paths with string tricks.",
+          "use": "Modern Python code uses pathlib for most file work: finding files by extension, building output paths, and quick reads or writes."
+        },
+        {
+          "id": "d09",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "What does this code print?",
+          "options": [
+            ".csv report.final",
+            ".final.csv report",
+            "csv report"
+          ],
+          "answer": ".csv report.final",
+          "explanation": "`.suffix` is only the last extension (with its dot), and `.stem` is everything before it.",
+          "code": "from pathlib import Path\np = Path('report.final.csv')\nprint(p.suffix, p.stem)"
+        },
+        {
+          "id": "d10",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Write and read with pathlib",
+          "instruction": "Using `Path`, write 'Saved!' to 'status.txt' with `write_text`, then print it back with `read_text`.",
+          "initial_code": "from pathlib import Path\np = Path('status.txt')\n# TODO: write 'Saved!' then print the file's text\n",
+          "expected_output": "Saved!",
+          "hint": "p.write_text('Saved!')\nprint(p.read_text())",
+          "support": [
+            {
+              "heading": "No open() needed",
+              "content": "`p.write_text(text)` opens, writes and closes the file in one call. `p.read_text()` does the same for reading.",
+              "example_code": "from pathlib import Path\nq = Path('demo.txt')\nq.write_text('hi')\nprint(q.read_text())"
+            },
+            {
+              "heading": "Two lines",
+              "content": "First the write, then a print of the read. Call them on `p`, the Path already made for you.",
+              "example_code": "from pathlib import Path\nprint(Path('demo2.txt').write_text('abc'))  # 3: number of characters written"
+            }
+          ]
+        },
+        {
+          "id": "d11",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Text, bytes and encodings",
+          "content": "Files store bytes, not letters. An **encoding** is the rule for turning text into bytes and back. UTF-8 is the standard: plain English letters take 1 byte each, but letters like `é` take 2 and emoji take 4. Pass `encoding='utf-8'` to `open()` so your program reads files the same way on every computer.",
+          "example_code": "word = 'café'\nprint(len(word))                    # 4 characters\nprint(len(word.encode('utf-8')))    # 5 bytes\nwith open('menu.txt', 'w', encoding='utf-8') as f:\n    f.write(word)",
+          "how": "Without an explicit encoding, `open()` uses the computer's default, which differs between systems. A file written on one machine can then come out garbled or raise UnicodeDecodeError on another.",
+          "use": "Any file containing names, accents or symbols, which is most real-world text."
+        },
+        {
+          "id": "d12",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "What does this code print?",
+          "options": [
+            "5",
+            "4",
+            "8"
+          ],
+          "answer": "5",
+          "explanation": "'naïf' has 4 characters, but `ï` takes 2 bytes in UTF-8, so the encoded form is 5 bytes.",
+          "code": "print(len('naïf'.encode('utf-8')))"
+        },
+        {
+          "id": "d13",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Check first, or just try?",
+          "content": "You can test `Path(name).exists()` before opening a file, or just open it inside `try` and catch `FileNotFoundError`. The try version is usually preferred: the file could be deleted between your check and your open, and try handles that case too.",
+          "example_code": "from pathlib import Path\n# Check first (LBYL)\nif Path('settings.txt').exists():\n    print(Path('settings.txt').read_text())\n\n# Just try (EAFP)\ntry:\n    print(open('settings.txt').read())\nexcept FileNotFoundError:\n    print('No settings yet, using defaults')",
+          "how": "These are the LBYL and EAFP styles from the Error Handling deep dive, applied to files, where the time gap between check and use is a real risk.",
+          "use": "Loading optional config or save files: try to open, and fall back to defaults when the file isn't there."
+        },
+        {
+          "id": "d14",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Big files: one line at a time",
+          "content": "`f.read()` loads the whole file into memory. Looping with `for line in f` reads one line at a time, so even a file far bigger than your memory works. `enumerate(f, 1)` gives line numbers starting at 1.",
+          "example_code": "with open('log.txt', 'w') as f:\n    f.write('ok\\nERROR disk\\nok\\nERROR net\\n')\n\nwith open('log.txt') as f:\n    for number, line in enumerate(f, 1):\n        if line.startswith('ERROR'):\n            print(number, line.strip())",
+          "how": "The file object reads a chunk from disk, hands out lines from it, and fetches the next chunk only when needed. Memory stays small no matter how long the file is.",
+          "use": "Server logs, data dumps and anything that might grow large. It's also the answer interviewers want to \"how would you process a 50 GB file?\""
+        },
+        {
+          "id": "d15",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Count the errors",
+          "instruction": "Loop over 'server.log' one line at a time and count lines that start with 'ERROR'. Print the count. It should print: 2",
+          "initial_code": "with open('server.log', 'w') as f:\n    f.write('ok\\nERROR disk full\\nok\\nERROR timeout\\nok\\n')\n\ncount = 0\n# TODO: loop over the file and count ERROR lines\n\nprint(count)",
+          "expected_output": "2",
+          "hint": "with open('server.log') as f:\n    for line in f:\n        if line.startswith('ERROR'):\n            count += 1",
+          "support": [
+            {
+              "heading": "Loop over the file object",
+              "content": "`for line in f:` gives one line per pass. Check each with `line.startswith('ERROR')`.",
+              "example_code": "print('ERROR x'.startswith('ERROR'), 'ok'.startswith('ERROR'))  # True False"
+            },
+            {
+              "heading": "Count inside the if",
+              "content": "Add 1 to `count` only when the line starts with ERROR. Keep the final print outside the loop.",
+              "example_code": "n = 0\nfor word in ['ERROR', 'ok', 'ERROR']:\n    if word == 'ERROR':\n        n += 1\nprint(n)  # 2"
+            }
+          ]
+        },
+        {
+          "id": "d16",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "What does `print('done', file=f)` write into the open file `f`?",
+          "options": [
+            "'done\\n'",
+            "'done'",
+            "Nothing; it prints to the screen"
+          ],
+          "answer": "'done\\n'",
+          "explanation": "With `file=f`, print sends its output to the file instead of the screen, including the newline it normally adds."
+        },
+        {
+          "id": "d17",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Number the lines",
+          "instruction": "Print each line of 'poem.txt' with its line number in front, starting at 1, like: 1: roses are red",
+          "initial_code": "with open('poem.txt', 'w') as f:\n    f.write('roses are red\\nviolets are blue\\n')\n\n# TODO: print each line with its number\n",
+          "expected_output": "1: roses are red\n2: violets are blue",
+          "hint": "with open('poem.txt') as f:\n    for number, line in enumerate(f, 1):\n        print(f'{number}: {line.strip()}')",
+          "support": [
+            {
+              "heading": "enumerate counts for you",
+              "content": "`enumerate(f, 1)` gives pairs like (1, 'roses are red\\n'). The 1 makes counting start at 1 instead of 0.",
+              "example_code": "for i, word in enumerate(['a', 'b'], 1):\n    print(i, word)"
+            },
+            {
+              "heading": "Strip the newline",
+              "content": "Each line ends in `\\n`. Use `line.strip()` inside the f-string so the output has no blank lines between.",
+              "example_code": "line = 'hello\\n'\nprint(f'1: {line.strip()}')"
+            }
+          ]
+        },
+        {
+          "id": "i01",
+          "type": "quiz",
+          "track": "interview",
+          "question": "Interview question: why pass `encoding='utf-8'` when opening a text file?",
+          "options": [
+            "So the file is read and written the same way on every system, instead of depending on the computer's default",
+            "It makes the file smaller",
+            "It's required or open() fails"
+          ],
+          "answer": "So the file is read and written the same way on every system, instead of depending on the computer's default",
+          "explanation": "Default encodings vary by operating system. Being explicit avoids garbled accents and UnicodeDecodeError when the file moves between machines."
+        },
+        {
+          "id": "i02",
+          "type": "quiz",
+          "track": "interview",
+          "question": "What does a `with open(...) as f:` block guarantee?",
+          "options": [
+            "The file is closed when the block ends, even if an error happens inside",
+            "The file can't raise errors",
+            "The file is copied into memory"
+          ],
+          "answer": "The file is closed when the block ends, even if an error happens inside",
+          "explanation": "It behaves like try/finally with `f.close()` in the finally. Unclosed files can lose unwritten data or run out of file handles."
+        },
+        {
+          "id": "i03",
+          "type": "quiz",
+          "track": "interview",
+          "question": "You need to process a 20 GB log file. Which approach is right?",
+          "options": [
+            "Loop with `for line in f`, handling one line at a time",
+            "Call `f.read()` and split it",
+            "Call `f.readlines()` and loop over the list"
+          ],
+          "answer": "Loop with `for line in f`, handling one line at a time",
+          "explanation": "read() and readlines() load the whole file into memory. Iterating keeps memory use constant: O(1) extra space, O(n) time."
+        },
+        {
+          "id": "i04",
+          "type": "quiz",
+          "track": "interview",
+          "question": "What does this code print?",
+          "options": [
+            "two",
+            "onetwo",
+            "one"
+          ],
+          "answer": "two",
+          "explanation": "Mode 'w' empties the file every time it opens, so the first write is erased. Mode 'a' would give 'onetwo'.",
+          "code": "with open('a.txt', 'w') as f:\n    f.write('one')\nwith open('a.txt', 'w') as f:\n    f.write('two')\nprint(open('a.txt').read())",
+          "feedback": {
+            "onetwo": "That's what 'a' (append) mode would give. 'w' wipes the file each time it opens."
+          }
+        },
+        {
+          "id": "i05",
+          "type": "quiz",
+          "track": "interview",
+          "question": "What happens if you `open('data.txt', 'x')` and data.txt already exists?",
+          "options": [
+            "It raises FileExistsError",
+            "It overwrites the file",
+            "It appends to the file"
+          ],
+          "answer": "It raises FileExistsError",
+          "explanation": "'x' means exclusive create: it only succeeds for a new file, which protects existing data from being overwritten by accident."
+        },
+        {
+          "id": "i06",
+          "type": "code",
+          "track": "interview",
+          "heading": "Classic: word count",
+          "instruction": "Like the `wc` command, print the number of lines, words and characters in 'story.txt', separated by spaces. It should print: 2 6 23",
+          "initial_code": "with open('story.txt', 'w') as f:\n    f.write('the cat sat\\non the mat\\n')\n\n# TODO: print lines, words and characters\n",
+          "expected_output": "2 6 23",
+          "hint": "with open('story.txt') as f:\n    text = f.read()\nprint(len(text.splitlines()), len(text.split()), len(text))",
+          "support": [
+            {
+              "heading": "Read once, measure three ways",
+              "content": "With the whole text in a string: `splitlines()` gives the lines, `split()` the words, and `len(text)` counts every character, newlines included.",
+              "example_code": "text = 'a b\\nc\\n'\nprint(len(text.splitlines()), len(text.split()), len(text))  # 2 3 6"
+            },
+            {
+              "heading": "Newlines count as characters",
+              "content": "'the cat sat\\n' is 12 characters, not 11. That's why the total is 23.",
+              "example_code": "print(len('abc\\n'))  # 4"
+            }
+          ]
+        },
+        {
+          "id": "i07",
+          "type": "code",
+          "track": "interview",
+          "heading": "Classic: longest line",
+          "instruction": "Print the longest line in 'lines.txt' (without its newline). It should print: a much longer line here",
+          "initial_code": "with open('lines.txt', 'w') as f:\n    f.write('short\\na much longer line here\\nmedium line\\n')\n\n# TODO: print the longest line\n",
+          "expected_output": "a much longer line here",
+          "hint": "with open('lines.txt') as f:\n    print(max([line.strip() for line in f], key=len))",
+          "support": [
+            {
+              "heading": "max with a key",
+              "content": "`max(items, key=len)` returns the item with the biggest length, not the length itself.",
+              "example_code": "print(max(['aa', 'b', 'cccc'], key=len))  # cccc"
+            },
+            {
+              "heading": "Or track it in a loop",
+              "content": "Keep a `longest = ''` variable and replace it whenever a stripped line is longer. Either way it's one pass over the file.",
+              "example_code": "longest = ''\nfor w in ['hi', 'hello', 'hey']:\n    if len(w) > len(longest):\n        longest = w\nprint(longest)"
+            }
+          ]
+        },
+        {
+          "id": "i08",
+          "type": "code",
+          "track": "interview",
+          "heading": "Classic: merge two files",
+          "instruction": "'a.txt' and 'b.txt' each hold numbers, one per line. Write all of them to 'merged.txt' in ascending order, one per line. The verification should print 1, 2, 3, 4, 9, 10 on separate lines.",
+          "initial_code": "with open('a.txt', 'w') as f:\n    f.write('1\\n4\\n9\\n')\nwith open('b.txt', 'w') as f:\n    f.write('2\\n3\\n10\\n')\n\n# TODO: read both files, sort the numbers, write merged.txt\n\n\n# Verification (do not change)\nprint(open('merged.txt').read())",
+          "expected_output": "1\n2\n3\n4\n9\n10",
+          "hint": "numbers = []\nfor name in ['a.txt', 'b.txt']:\n    with open(name) as f:\n        numbers += [int(line) for line in f]\nwith open('merged.txt', 'w') as f:\n    for n in sorted(numbers):\n        f.write(f'{n}\\n')",
+          "support": [
+            {
+              "heading": "Sort numbers, not text",
+              "content": "Convert each line with `int(line)` first. Sorted as text, '10' would come before '2'.",
+              "example_code": "print(sorted(['10', '2']), sorted([10, 2]))  # ['10', '2'] [2, 10]"
+            },
+            {
+              "heading": "Read both, then write once",
+              "content": "Collect every number from both files into one list, sort it, then open 'merged.txt' in 'w' mode and write each number with a newline.",
+              "example_code": "nums = [3, 1]\nnums += [2]\nprint(sorted(nums))  # [1, 2, 3]"
+            }
+          ]
+        },
+        {
+          "id": "i09",
+          "type": "code",
+          "track": "interview",
+          "heading": "Debug: only the last name survives",
+          "instruction": "This should save all three names, but the file ends up holding only 'Cy'. Open the file once, before the loop, so every write goes into the same open file.",
+          "initial_code": "names = ['Ada', 'Bob', 'Cy']\nfor name in names:\n    with open('names.txt', 'w') as f:\n        f.write(name + '\\n')\n\n# Verification (do not change)\nprint(open('names.txt').read())",
+          "expected_output": "Ada\nBob\nCy",
+          "hint": "Swap the two lines so the with comes first:\nwith open('names.txt', 'w') as f:\n    for name in names:\n        f.write(name + '\\n')",
+          "support": [
+            {
+              "heading": "'w' wipes the file each time it opens",
+              "content": "The `with open(..., 'w')` is inside the loop, so the file is emptied three times, and only the last write is left.",
+              "example_code": "for word in ['x', 'y']:\n    with open('t.txt', 'w') as f:\n        f.write(word)\nprint(open('t.txt').read())  # y"
+            },
+            {
+              "heading": "Open once, write many",
+              "content": "Put the `with` line first and the `for` loop inside it, indented one more level. Then the file opens (and empties) only once.",
+              "example_code": "with open('t.txt', 'w') as f:\n    for word in ['x', 'y']:\n        f.write(word)\nprint(open('t.txt').read())  # xy"
+            }
+          ]
         }
       ]
     },
@@ -7660,6 +8871,410 @@
             "Delete the test that fails": "That hides the bug instead of fixing it.",
             "Fix it and move on without a test": "It works, but nothing stops the bug from coming back."
           }
+        },
+        {
+          "id": "d01",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Arrange, act, assert",
+          "content": "Most good tests have three parts. **Arrange**: set up the inputs. **Act**: call the code being tested, once. **Assert**: check the result. Keeping them separate makes a failing test easy to read.",
+          "example_code": "def apply_discount(price, percent):\n    return price * (100 - percent) / 100\n\ndef test_apply_discount():\n    price, percent = 200, 25          # arrange\n    result = apply_discount(price, percent)   # act\n    assert result == 150              # assert\n\ntest_apply_discount()\nprint('ok')",
+          "how": "The pattern is a convention, not syntax. It forces each test to check one behavior, so when it fails you know exactly which behavior broke.",
+          "use": "Every unit test you'll write or read at work, whatever tool runs it."
+        },
+        {
+          "id": "d02",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "In arrange-act-assert, which part calls the function being tested?",
+          "options": [
+            "Act",
+            "Arrange",
+            "Assert"
+          ],
+          "answer": "Act",
+          "explanation": "Arrange prepares the inputs, act runs the code under test, and assert checks what came back."
+        },
+        {
+          "id": "d03",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Arrange, act, assert",
+          "instruction": "In `test_cart_total`, the arrange and assert lines are written. Replace `None` with the act: a call to `cart_total(items)`. Then the test passes and the last line prints ok.",
+          "initial_code": "def cart_total(items):\n    return sum([price * qty for price, qty in items])\n\ndef test_cart_total():\n    items = [(5, 2), (7, 1)]   # arrange\n    total = None               # TODO act: call cart_total(items)\n    assert total == 17         # assert\n\ntest_cart_total()\nprint('ok')",
+          "expected_output": "ok",
+          "hint": "total = cart_total(items)",
+          "support": [
+            {
+              "heading": "Act stores the result",
+              "content": "Call the function once and keep what it returns: `total = cart_total(items)`.",
+              "example_code": "def double(n):\n    return n * 2\nresult = double(4)\nprint(result)"
+            },
+            {
+              "heading": "Then the assert checks it",
+              "content": "With `total = None`, the assert compares None to 17 and fails. Once total holds the real result, it passes. If cart_total had a bug, this same line would catch it.",
+              "example_code": "value = 2 + 3\nassert value == 5\nprint('passed')"
+            }
+          ]
+        },
+        {
+          "id": "d04",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Table-driven tests",
+          "content": "When one function needs many checks, put the cases in a list of (input, expected) pairs and loop over them. Adding a case is one new line, and the loop reports every failure instead of stopping at the first.",
+          "example_code": "def is_leap(year):\n    return year % 4 == 0      # bug: forgets the century rule\n\ncases = [(2024, True), (2023, False), (1900, False), (2000, True)]\nfor year, expected in cases:\n    if is_leap(year) != expected:\n        print('FAIL', year)    # prints: FAIL 1900",
+          "how": "The cases are just data. The loop applies the same check to each one, so the test logic is written once.",
+          "use": "Functions with many edge cases: parsers, validators, date rules and math. pytest has the same idea built in as `@pytest.mark.parametrize`."
+        },
+        {
+          "id": "d05",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "What does this code print?",
+          "options": [
+            "FAIL -1",
+            "FAIL 0",
+            "Nothing"
+          ],
+          "answer": "FAIL -1",
+          "explanation": "`abs_value(-1)` returns -1, which isn't the expected 1. The other two cases pass.",
+          "code": "def abs_value(n):\n    return n if n >= 0 else n\n\ncases = [(3, 3), (0, 0), (-1, 1)]\nfor n, expected in cases:\n    if abs_value(n) != expected:\n        print('FAIL', n)"
+        },
+        {
+          "id": "d06",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Fix the leap-year rule",
+          "instruction": "Fix `is_leap` so every case passes. The rule: divisible by 4, except century years, which must also be divisible by 400. Then it prints: All passed",
+          "initial_code": "def is_leap(year):\n    return year % 4 == 0\n\ncases = [(2024, True), (2023, False), (1900, False), (2000, True)]\nfailed = False\nfor year, expected in cases:\n    if is_leap(year) != expected:\n        print('FAIL', year)\n        failed = True\nif not failed:\n    print('All passed')",
+          "expected_output": "All passed",
+          "hint": "return year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)",
+          "support": [
+            {
+              "heading": "Read the failing case",
+              "content": "1900 is divisible by 4 but isn't a leap year, because it's a century (divisible by 100) that isn't divisible by 400.",
+              "example_code": "print(1900 % 4, 1900 % 100, 1900 % 400)  # 0 0 300"
+            },
+            {
+              "heading": "Combine the conditions",
+              "content": "A year is leap when it's divisible by 4 AND (it's not a century OR it's divisible by 400). Use `and`, `or` and brackets.",
+              "example_code": "y = 2024\nprint(y % 4 == 0 and (y % 100 != 0 or y % 400 == 0))  # True"
+            }
+          ]
+        },
+        {
+          "id": "d07",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Floats and turned-off asserts",
+          "content": "Floats round slightly, so `0.1 + 0.2 == 0.3` is False. In tests, compare floats with `math.isclose` or `round`. Also, Python skips every `assert` when run with `python -O`, so asserts belong in tests only. To reject bad input in a real program, `raise` an error instead.",
+          "example_code": "import math\nassert math.isclose(0.1 + 0.2, 0.3)     # passes\nassert round(0.1 + 0.2, 2) == 0.3       # also passes\n\ndef set_age(age):\n    if age < 0:                           # not an assert:\n        raise ValueError('age must be >= 0')  # this always runs\n    return age",
+          "how": "The `-O` (optimize) flag removes assert statements before the code runs. A check that must always happen can't rely on them.",
+          "use": "Tests of anything with money, measurements or averages, and input validation that stays on in production."
+        },
+        {
+          "id": "d08",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "What does this code print?",
+          "options": [
+            "fail",
+            "pass",
+            "It crashes with a TypeError"
+          ],
+          "answer": "fail",
+          "explanation": "0.1 + 0.2 is 0.30000000000000004, so the == check is False and the assert raises AssertionError, which the except catches.",
+          "code": "try:\n    assert 0.1 + 0.2 == 0.3\n    print('pass')\nexcept AssertionError:\n    print('fail')"
+        },
+        {
+          "id": "d09",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Test tools: pytest and doctest",
+          "content": "Real projects run tests with a tool. **pytest** finds files named `test_*.py`, runs every `test_` function, and reports which failed and why. `pytest.raises(ValueError)` checks an error is raised. **doctest** (built in) runs examples written inside docstrings and checks their output. Both run from a terminal, so here we call test functions by hand.",
+          "example_code": "# test_prices.py, run with:  pytest\nimport pytest\nfrom prices import apply_discount\n\ndef test_quarter_off():\n    assert apply_discount(200, 25) == 150\n\ndef test_negative_percent():\n    with pytest.raises(ValueError):\n        apply_discount(200, -5)",
+          "how": "pytest rewrites your plain `assert` lines so a failure shows the actual values on both sides, which is why it needs no special assert methods.",
+          "use": "pytest is the most widely used Python test tool. You'll see it in almost every open-source project and most job descriptions that mention testing."
+        },
+        {
+          "id": "d10",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Fakes: control what your code depends on",
+          "content": "Code that reads the clock, the network or random numbers gives different results each run, which makes it hard to test. Pass the dependency in as a parameter, and in the test pass a **fake**: a tiny stand-in that returns a fixed value.",
+          "example_code": "def greeting(get_hour):\n    return 'Good morning' if get_hour() < 12 else 'Good afternoon'\n\n# In the real program: greeting(lambda: datetime.now().hour)\n# In the test, a fake clock:\nassert greeting(lambda: 9) == 'Good morning'\nassert greeting(lambda: 15) == 'Good afternoon'\nprint('ok')",
+          "how": "The function calls whatever it's given. A lambda that returns 9 behaves like a clock stuck at 9 o'clock, so the result is predictable.",
+          "use": "Testing code that uses time, randomness, files or web requests. Tools like `unittest.mock` build fakes for you, but the idea is the same."
+        },
+        {
+          "id": "d11",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Test with a fake",
+          "instruction": "`is_weekend(get_day)` calls `get_day()` for a day name. Replace each `...` with a fake day: `lambda: 'Sat'` in the first assert and `lambda: 'Mon'` in the second. Then it prints ok.",
+          "initial_code": "def is_weekend(get_day):\n    return get_day() in ('Sat', 'Sun')\n\nassert is_weekend(...)       # TODO: a fake Saturday\nassert not is_weekend(...)   # TODO: a fake Monday\nprint('ok')",
+          "expected_output": "ok",
+          "hint": "assert is_weekend(lambda: 'Sat')\nassert not is_weekend(lambda: 'Mon')",
+          "support": [
+            {
+              "heading": "A fake is just a function",
+              "content": "`lambda: 'Sat'` is a function that always returns 'Sat'. Pass it in place of a real calendar.",
+              "example_code": "fake = lambda: 'Tue'\nprint(fake())  # Tue"
+            },
+            {
+              "heading": "Replace the dots",
+              "content": "`...` isn't a function, so calling it raises TypeError. Put a lambda in its place: the first assert checks for True, and the one with `not` checks for False.",
+              "example_code": "def is_big(get_n):\n    return get_n() > 10\nassert is_big(lambda: 50)\nassert not is_big(lambda: 1)\nprint('checked')"
+            }
+          ]
+        },
+        {
+          "id": "d12",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Keep tests independent",
+          "content": "Each test should set up its own data and pass or fail on its own, in any order. If tests share a list or dictionary and one test changes it, a later test may pass or fail depending on what ran first.",
+          "example_code": "cart = []          # shared: risky\n\ndef test_add():\n    cart.append('pen')\n    assert len(cart) == 1\n\ndef test_starts_empty():\n    assert cart == []   # fails if test_add ran first\n\n# Better: each test makes its own cart\ndef test_add_fresh():\n    my_cart = []\n    my_cart.append('pen')\n    assert len(my_cart) == 1",
+          "how": "Tests run in one process, so module-level variables carry over from one test to the next. Fresh data per test removes that hidden link.",
+          "use": "Large test suites run tests in different orders or in parallel. Independent tests keep results the same either way."
+        },
+        {
+          "id": "d13",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "`test_a` adds an item to a shared list. `test_b` checks the list is empty. `test_b` passes alone but fails after `test_a`. What's the real problem?",
+          "options": [
+            "The tests share mutable state",
+            "test_b has a typo",
+            "Lists can't be used in tests"
+          ],
+          "answer": "The tests share mutable state",
+          "explanation": "`test_b` depends on what ran before it. Give each test its own fresh list."
+        },
+        {
+          "id": "d14",
+          "type": "text",
+          "track": "deep-dive",
+          "heading": "Test-driven development",
+          "content": "**TDD** flips the usual order: write a test for behavior that doesn't exist yet and watch it fail (red), write just enough code to make it pass (green), then tidy the code while the tests keep passing (refactor). Repeat for the next behavior.",
+          "example_code": "# 1. Red: the test comes first and fails\ndef test_initials():\n    assert initials('Ada Lovelace') == 'AL'\n\n# 2. Green: the simplest code that passes\ndef initials(name):\n    return ''.join([word[0] for word in name.split()])\n\ntest_initials()\nprint('green')",
+          "how": "Writing the test first makes you decide what \"done\" means before coding, and the failing run proves the test can actually catch a mistake.",
+          "use": "Many teams use it for tricky logic and bug fixes, and some interviews ask you to work this way: write the tests, then the code."
+        },
+        {
+          "id": "d15",
+          "type": "quiz",
+          "track": "deep-dive",
+          "question": "In TDD, what do you write first?",
+          "options": [
+            "A test that fails",
+            "The full function",
+            "The documentation"
+          ],
+          "answer": "A test that fails",
+          "explanation": "Red, green, refactor: a failing test first, then code to pass it, then cleanup."
+        },
+        {
+          "id": "d16",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "TDD: make the tests pass",
+          "instruction": "The tests are written. Implement `fizzbuzz(n)`: return 'FizzBuzz' if n is divisible by 15, 'Fizz' if by 3, 'Buzz' if by 5, otherwise the number as a string. Then it prints: All tests passed",
+          "initial_code": "def fizzbuzz(n):\n    # TODO: make the tests below pass\n    pass\n\nassert fizzbuzz(3) == 'Fizz'\nassert fizzbuzz(10) == 'Buzz'\nassert fizzbuzz(30) == 'FizzBuzz'\nassert fizzbuzz(7) == '7'\nprint('All tests passed')",
+          "expected_output": "All tests passed",
+          "hint": "if n % 15 == 0:\n    return 'FizzBuzz'\nif n % 3 == 0:\n    return 'Fizz'\nif n % 5 == 0:\n    return 'Buzz'\nreturn str(n)",
+          "support": [
+            {
+              "heading": "Check 15 first",
+              "content": "30 is divisible by 3, 5 and 15. If you check 3 first you'd return 'Fizz' for it, so test the most specific case first.",
+              "example_code": "n = 30\nprint(n % 15 == 0, n % 3 == 0)  # True True"
+            },
+            {
+              "heading": "Return a string every time",
+              "content": "The last test expects '7', not 7. Use `str(n)` for numbers that aren't divisible by 3 or 5.",
+              "example_code": "print(str(7) == '7', 7 == '7')  # True False"
+            }
+          ]
+        },
+        {
+          "id": "d17",
+          "type": "code",
+          "track": "deep-dive",
+          "heading": "Test the boundary",
+          "instruction": "The first two tests passed for months. Then someone added a test for exactly 90, and it fails. Fix the comparison in `grade` (not the tests) so it prints: All tests passed",
+          "initial_code": "def grade(score):\n    if score > 90:\n        return 'A'\n    return 'B'\n\nassert grade(95) == 'A'\nassert grade(50) == 'B'\nassert grade(90) == 'A'   # the new boundary test\n\nprint('All tests passed')",
+          "expected_output": "All tests passed",
+          "hint": "Change `>` to `>=`:\nif score >= 90:",
+          "support": [
+            {
+              "heading": "Boundaries hide bugs",
+              "content": "A score of exactly 90 should be an A, but `90 > 90` is False. Tests that only use 95 and 50 never notice.",
+              "example_code": "print(90 > 90, 90 >= 90)  # False True"
+            },
+            {
+              "heading": "One character",
+              "content": "Change `>` to `>=` so 90 itself counts as an A. The other two tests still pass.",
+              "example_code": "def passed(score):\n    return score >= 50\nassert passed(50)\nprint('boundary ok')"
+            }
+          ]
+        },
+        {
+          "id": "i01",
+          "type": "quiz",
+          "track": "interview",
+          "question": "Interview question: what's the difference between a unit test and an integration test?",
+          "options": [
+            "A unit test checks one small piece alone; an integration test checks several pieces working together",
+            "Unit tests use assert and integration tests don't",
+            "Integration tests are just slower unit tests"
+          ],
+          "answer": "A unit test checks one small piece alone; an integration test checks several pieces working together",
+          "explanation": "Unit tests are fast and pinpoint failures. Integration tests (say, your code plus a real database) catch problems in how parts connect. Projects need both."
+        },
+        {
+          "id": "i02",
+          "type": "quiz",
+          "track": "interview",
+          "question": "What is a regression test?",
+          "options": [
+            "A test that reproduces a fixed bug so it can't come back unnoticed",
+            "A test that checks performance",
+            "A test that's run only once"
+          ],
+          "answer": "A test that reproduces a fixed bug so it can't come back unnoticed",
+          "explanation": "When you fix a bug, first write a test that fails because of it. After the fix it passes, and it keeps guarding against that bug forever."
+        },
+        {
+          "id": "i03",
+          "type": "quiz",
+          "track": "interview",
+          "question": "Why shouldn't a program use `assert` to validate user input?",
+          "options": [
+            "Asserts are skipped when Python runs with -O, so the check could silently disappear",
+            "assert only works inside test functions",
+            "assert is slower than if"
+          ],
+          "answer": "Asserts are skipped when Python runs with -O, so the check could silently disappear",
+          "explanation": "Use `if ...: raise ValueError(...)` for checks that must always run. Keep assert for tests and for internal \"this should never happen\" checks."
+        },
+        {
+          "id": "i04",
+          "type": "quiz",
+          "track": "interview",
+          "question": "A test passes most runs but fails now and then. What's the most likely cause?",
+          "options": [
+            "It depends on time, randomness, or what other tests did first",
+            "Python is unreliable",
+            "The assert message is too long"
+          ],
+          "answer": "It depends on time, randomness, or what other tests did first",
+          "explanation": "A \"flaky\" test has a hidden input that changes between runs. Fakes, fixed seeds and fresh data per test make it deterministic."
+        },
+        {
+          "id": "i05",
+          "type": "quiz",
+          "track": "interview",
+          "question": "What does this code print?",
+          "options": [
+            "[-3]",
+            "[0, -3]",
+            "[]"
+          ],
+          "answer": "[-3]",
+          "explanation": "square(0) returns 0, which matches. square(-3) takes the `else` branch and returns -3, not 9, so only -3 is collected.",
+          "code": "def square(n):\n    return n * n if n > 0 else n\n\ncases = [(2, 4), (0, 0), (-3, 9)]\nfailures = [n for n, want in cases if square(n) != want]\nprint(failures)",
+          "feedback": {
+            "[0, -3]": "square(0) returns 0 through the else branch, and 0 is the expected value, so 0 passes."
+          }
+        },
+        {
+          "id": "i06",
+          "type": "code",
+          "track": "interview",
+          "heading": "Debug: make the tests pass",
+          "instruction": "`count_vowels` fails one of these tests. Find which, then fix the function (not the tests) so it prints: All tests passed",
+          "initial_code": "def count_vowels(text):\n    count = 0\n    for ch in text:\n        if ch in 'aeiou':\n            count += 1\n    return count\n\nassert count_vowels('hello') == 2\nassert count_vowels('AEIOU') == 5\nassert count_vowels('') == 0\nprint('All tests passed')",
+          "expected_output": "All tests passed",
+          "hint": "The capital letters aren't counted:\nif ch.lower() in 'aeiou':",
+          "support": [
+            {
+              "heading": "Let the error point you",
+              "content": "The AssertionError's line number shows which test failed. Here it's the 'AEIOU' one: what's different about those letters?",
+              "example_code": "print('A' in 'aeiou', 'a' in 'aeiou')  # False True"
+            },
+            {
+              "heading": "Normalize the case",
+              "content": "Compare `ch.lower()` instead of `ch`, so 'A' becomes 'a' before the check.",
+              "example_code": "for ch in 'Hi':\n    print(ch.lower())"
+            }
+          ]
+        },
+        {
+          "id": "i07",
+          "type": "code",
+          "track": "interview",
+          "heading": "Classic: test-first chunk()",
+          "instruction": "The tests are written first. Implement `chunk(items, size)` to split a list into pieces of `size` items, the last piece holding what's left. Then it prints: All tests passed",
+          "initial_code": "def chunk(items, size):\n    # TODO: make the tests pass\n    pass\n\nassert chunk([1, 2, 3, 4, 5], 2) == [[1, 2], [3, 4], [5]]\nassert chunk([1, 2, 3], 3) == [[1, 2, 3]]\nassert chunk([], 4) == []\nprint('All tests passed')",
+          "expected_output": "All tests passed",
+          "hint": "return [items[i:i + size] for i in range(0, len(items), size)]",
+          "support": [
+            {
+              "heading": "Step through start positions",
+              "content": "`range(0, len(items), size)` gives the index where each chunk starts: 0, 2, 4 for size 2.",
+              "example_code": "print(list(range(0, 5, 2)))  # [0, 2, 4]"
+            },
+            {
+              "heading": "Slice from each start",
+              "content": "`items[i:i + size]` takes one chunk. Slices past the end just stop early, so the last chunk can be shorter. Collect them in a list.",
+              "example_code": "nums = [1, 2, 3, 4, 5]\nprint(nums[4:6])  # [5]"
+            }
+          ]
+        },
+        {
+          "id": "i08",
+          "type": "code",
+          "track": "interview",
+          "heading": "Classic: write a raises() helper",
+          "instruction": "Write `raises(func, error)`: call `func()`, return True if it raises `error`, and False if it runs without one. The prints should show True then False.",
+          "initial_code": "# TODO: def raises(func, error):\n\n\nprint(raises(lambda: int('x'), ValueError))\nprint(raises(lambda: int('5'), ValueError))",
+          "expected_output": "True\nFalse",
+          "hint": "def raises(func, error):\n    try:\n        func()\n    except error:\n        return True\n    return False",
+          "support": [
+            {
+              "heading": "except can use a variable",
+              "content": "`except error:` works when `error` holds an exception class like ValueError, so the caller chooses what to catch.",
+              "example_code": "kind = ZeroDivisionError\ntry:\n    1 / 0\nexcept kind:\n    print('caught')"
+            },
+            {
+              "heading": "Return from each path",
+              "content": "Inside try, call `func()`. If it raises, the except returns True. If it finishes, execution reaches the `return False` after the try block. This is the idea behind `pytest.raises`.",
+              "example_code": "def check(n):\n    try:\n        1 / n\n    except ZeroDivisionError:\n        return 'error'\n    return 'fine'\nprint(check(2))"
+            }
+          ]
+        },
+        {
+          "id": "i09",
+          "type": "code",
+          "track": "interview",
+          "heading": "Debug: the float test",
+          "instruction": "`total` is correct, but its test fails. Fix the test (not the function) using `math.isclose` so it prints: All tests passed",
+          "initial_code": "import math\n\ndef total(prices):\n    return sum(prices)\n\nassert total([0.1, 0.2]) == 0.3\nprint('All tests passed')",
+          "expected_output": "All tests passed",
+          "hint": "assert math.isclose(total([0.1, 0.2]), 0.3)",
+          "support": [
+            {
+              "heading": "The function is fine",
+              "content": "0.1 + 0.2 is 0.30000000000000004 in binary floating point. The bug is the test's exact == comparison.",
+              "example_code": "print(0.1 + 0.2)"
+            },
+            {
+              "heading": "Swap == for isclose",
+              "content": "Replace `a == b` with `math.isclose(a, b)` inside the assert. math is already imported.",
+              "example_code": "import math\nassert math.isclose(1.1 + 2.2, 3.3)\nprint('close enough')"
+            }
+          ]
         }
       ]
     },

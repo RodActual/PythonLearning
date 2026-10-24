@@ -80,6 +80,14 @@ test.describe('diagnose (no browser)', () => {
     // Built-in suggestions only when the name is called.
     expect(run('print(flat)', tb(1, 'print(flat)', "NameError: name 'flat' is not defined. Did you mean: 'float'?"), '[1]')).not.toMatch(/float/);
     expect(run("print(lenn('ab'))", tb(1, "print(lenn('ab'))", "NameError: name 'lenn' is not defined. Did you mean: 'len'?"), '2')).toMatch(/Did you mean `len`/);
+    // A print() that ran but printed an empty value, such as an empty file.
+    expect(run("print(open('a.txt').read())", '', 'Ada', '\n')).toMatch(/only blank lines/);
+    // A module name reused for a variable.
+    const shadow = "import math\nmath = 'circle'\nprint(math.pi)";
+    expect(run(shadow, tb(3, 'print(math.pi)', "AttributeError: 'str' object has no attribute 'pi'"), '3.14')).toMatch(/imported as a module.*different name/);
+    expect(run("name = 'x'\nprint(name.size)", tb(2, 'print(name.size)', "AttributeError: 'str' object has no attribute 'size'"), '1')).not.toMatch(/__init__/);
+    // A `...` placeholder called like a function.
+    expect(run('f = ...\nf()', tb(2, 'f()', "TypeError: 'ellipsis' object is not callable"), '1')).toMatch(/placeholder/);
   });
 
   test('timeouts and the output limit pass through unchanged', () => {
