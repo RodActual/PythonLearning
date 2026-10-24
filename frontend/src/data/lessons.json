@@ -413,16 +413,16 @@
           "id": "d03",
           "type": "code",
           "track": "deep-dive",
-          "heading": "Minutes to hours",
-          "instruction": "135 minutes is how many whole hours, and how many minutes left over? Print the hours on one line and the leftover minutes on the next.",
-          "initial_code": "# 135 minutes: print the whole hours, then the leftover minutes\n",
+          "heading": "Uptime in hours and minutes",
+          "instruction": "A server has been up for 135 minutes. How many whole hours is that, and how many minutes are left over? Print the hours on one line and the leftover minutes on the next.",
+          "initial_code": "# uptime: 135 minutes. Print the whole hours, then the leftover minutes\n",
           "expected_output": "2\n15",
           "hint": "There are 60 minutes in an hour.\nprint(135 // 60)  # whole hours\nprint(135 % 60)   # minutes left over",
           "support": [
             {
               "heading": "Floor division counts the whole groups",
-              "content": "`//` tells you how many whole groups fit, and `%` tells you what's left. To split 50 eggs into boxes of 12: `50 // 12` full boxes and `50 % 12` loose eggs.",
-              "example_code": "print(50 // 12)  # 4 full boxes\nprint(50 % 12)   # 2 eggs left over"
+              "content": "`//` tells you how many whole groups fit, and `%` tells you what's left. To split 50 log lines into pages of 12: `50 // 12` full pages and `50 % 12` lines on the last one.",
+              "example_code": "print(50 // 12)  # 4 full pages\nprint(50 % 12)   # 2 lines left over"
             },
             {
               "heading": "Two prints, same two numbers",
@@ -521,10 +521,10 @@
           "type": "code",
           "track": "deep-dive",
           "heading": "Two lines, one print",
-          "instruction": "Use one `print()` with `\\n` to print `Name: Ada` and `Role: Engineer` on two separate lines.",
+          "instruction": "Use one `print()` with `\\n` to print `Host: web-01` and `Status: online` on two separate lines.",
           "initial_code": "# One print() that shows two lines\n",
-          "expected_output": "Name: Ada\nRole: Engineer",
-          "hint": "Put \\n where the line should break:\nprint('Name: Ada\\nRole: Engineer')",
+          "expected_output": "Host: web-01\nStatus: online",
+          "hint": "Put \\n where the line should break:\nprint('Host: web-01\\nStatus: online')",
           "support": [
             {
               "heading": "\\n is a line break inside the text",
@@ -567,10 +567,10 @@
           "type": "code",
           "track": "deep-dive",
           "heading": "Fix the TypeError",
-          "instruction": "This crashes with a TypeError. Fix it so it prints: Score: 10",
-          "initial_code": "print('Score: ' + 10)",
-          "expected_output": "Score: 10",
-          "hint": "Convert the number to text before joining:\nprint('Score: ' + str(10))",
+          "instruction": "This alert message crashes with a TypeError. Fix it so it prints: Failed logins: 10",
+          "initial_code": "print('Failed logins: ' + 10)",
+          "expected_output": "Failed logins: 10",
+          "hint": "Convert the number to text before joining:\nprint('Failed logins: ' + str(10))",
           "support": [
             {
               "heading": "+ needs two strings",
@@ -579,8 +579,8 @@
             },
             {
               "heading": "Change one piece",
-              "content": "Keep `'Score: '` as it is. Wrap the number in `str( )` so the right side becomes `str(10)`. Another fix is `print('Score:', 10)`, since print adds the space for you.",
-              "example_code": "print('Lives: ' + str(2))"
+              "content": "Keep `'Failed logins: '` as it is. Wrap the number in `str( )` so the right side becomes `str(10)`. Another fix is `print('Failed logins:', 10)`, since print adds the space for you.",
+              "example_code": "print('Open ports: ' + str(2))"
             }
           ]
         },
@@ -622,7 +622,7 @@
           "type": "code",
           "track": "deep-dive",
           "heading": "Clean up a float",
-          "instruction": "`1.1 + 2.2` prints 3.3000000000000003. Print it rounded to 1 decimal place so it shows 3.3",
+          "instruction": "Two CPU load readings, 1.1 and 2.2, add up to 3.3000000000000003. Print the total rounded to 1 decimal place so it shows 3.3",
           "initial_code": "print(1.1 + 2.2)",
           "expected_output": "3.3",
           "hint": "Wrap the sum in round() with 1 as the number of places:\nprint(round(1.1 + 2.2, 1))",
@@ -764,7 +764,7 @@
           "type": "code",
           "track": "interview",
           "heading": "Debug: the wrong average",
-          "instruction": "This should print the average of 80, 90 and 100, which is 90.0, but it prints 203.33333333333334. Fix the bug.",
+          "instruction": "This should print the average of three CPU readings, 80, 90 and 100, which is 90.0, but it prints 203.33333333333334. Fix the bug.",
           "initial_code": "print(80 + 90 + 100 / 3)",
           "expected_output": "90.0",
           "hint": "Division runs before addition, so only 100 is divided by 3. Add parentheses around the sum:\nprint((80 + 90 + 100) / 3)",
@@ -785,11 +785,11 @@
           "id": "i09",
           "type": "code",
           "track": "interview",
-          "heading": "Code review: the menu banner",
-          "instruction": "This crashes with a TypeError. Fix it so it prints: ===Menu===",
-          "initial_code": "print('=' * 3 + 'Menu' + '=' * '3')",
-          "expected_output": "===Menu===",
-          "hint": "A string can only be repeated by a whole number, not by the string '3':\nprint('=' * 3 + 'Menu' + '=' * 3)",
+          "heading": "Code review: the report banner",
+          "instruction": "This banner code crashes with a TypeError. Fix it so it prints: ===ALERT===",
+          "initial_code": "print('=' * 3 + 'ALERT' + '=' * '3')",
+          "expected_output": "===ALERT===",
+          "hint": "A string can only be repeated by a whole number, not by the string '3':\nprint('=' * 3 + 'ALERT' + '=' * 3)",
           "support": [
             {
               "heading": "Repeat needs a number",
@@ -1078,11 +1078,11 @@
           "id": "d04",
           "type": "code",
           "track": "deep-dive",
-          "heading": "Swap two variables",
-          "instruction": "Swap the values of `first` and `second` in one line, so the print shows: B A",
-          "initial_code": "first = 'A'\nsecond = 'B'\n# TODO: swap them in one line\n\nprint(first, second)",
-          "expected_output": "B A",
-          "hint": "Put both names on the left and both, in swapped order, on the right:\nfirst, second = second, first",
+          "heading": "Fail over: swap primary and backup",
+          "instruction": "Swap the values of `primary` and `backup` in one line, so the print shows: db-02 db-01",
+          "initial_code": "primary = 'db-01'\nbackup = 'db-02'\n# TODO: swap them in one line\n\nprint(primary, backup)",
+          "expected_output": "db-02 db-01",
+          "hint": "Put both names on the left and both, in swapped order, on the right:\nprimary, backup = backup, primary",
           "support": [
             {
               "heading": "Read the right side first",
@@ -1091,7 +1091,7 @@
             },
             {
               "heading": "Why two separate lines don't work",
-              "content": "`first = second` then `second = first` loses the original value of `first` on the first line, so both end up as 'B'. Doing it in one line avoids that. Write `first, second = ` and then the two names in the opposite order.",
+              "content": "`primary = backup` then `backup = primary` loses the original value of `primary` on the first line, so both end up as 'db-02'. Doing it in one line avoids that. Write `primary, backup = ` and then the two names in the opposite order.",
               "example_code": "top = 'up'\nbottom = 'down'\ntop, bottom = bottom, top\nprint(top)  # down"
             }
           ]
@@ -1127,8 +1127,8 @@
           "id": "d07",
           "type": "code",
           "track": "deep-dive",
-          "heading": "Add numbers stored as text",
-          "instruction": "`a` and `b` hold numbers as text, so `+` joins them and prints 1230. Make it print their sum: 42",
+          "heading": "Add counts stored as text",
+          "instruction": "A log parser read two failed-login counts as text, so `+` joins them and prints 1230. Make it print their sum: 42",
           "initial_code": "a = '12'\nb = '30'\nprint(a + b)",
           "expected_output": "42",
           "hint": "Convert both to whole numbers before adding:\nprint(int(a) + int(b))",
@@ -1173,11 +1173,11 @@
           "id": "d10",
           "type": "code",
           "track": "deep-dive",
-          "heading": "Running total",
-          "instruction": "`price` starts at 20. Add 5 for shipping with `+=`, then double it with `*=`, so it prints 50.",
-          "initial_code": "price = 20\n# TODO: add 5 with +=\n\n# TODO: double it with *=\n\nprint(price)",
+          "heading": "Disk usage after a backup",
+          "instruction": "`used_gb` starts at 20. Add 5 for a new backup with `+=`, then double it with `*=` when the volume is mirrored, so it prints 50.",
+          "initial_code": "used_gb = 20\n# TODO: add 5 with +=\n\n# TODO: double it with *=\n\nprint(used_gb)",
           "expected_output": "50",
-          "hint": "price += 5   # 25\nprice *= 2   # 50",
+          "hint": "used_gb += 5   # 25\nused_gb *= 2   # 50",
           "support": [
             {
               "heading": "Each shortcut updates the variable",
@@ -1274,11 +1274,11 @@
           "id": "d17",
           "type": "code",
           "track": "deep-dive",
-          "heading": "Build a full name",
-          "instruction": "Join `first` and `last` with a space between them, store it in `full_name`, and print it: Ada Lovelace",
-          "initial_code": "first = 'Ada'\nlast = 'Lovelace'\n# TODO: full_name = ...\n\nprint(full_name)",
-          "expected_output": "Ada Lovelace",
-          "hint": "Join three strings: first, a space, and last.\nfull_name = first + ' ' + last",
+          "heading": "Build a hostname",
+          "instruction": "Join `site`, a dash and `number` into `hostname`, then print it: web-01",
+          "initial_code": "site = 'web'\nnumber = '01'\n# TODO: hostname = ...\n\nprint(hostname)",
+          "expected_output": "web-01",
+          "hint": "Join three strings: site, a dash, and number.\nhostname = site + '-' + number",
           "support": [
             {
               "heading": "+ joins strings in order",
@@ -1286,8 +1286,8 @@
               "example_code": "city = 'New' + ' ' + 'York'\nprint(city)  # New York"
             },
             {
-              "heading": "Don't forget the space",
-              "content": "`first + last` gives 'AdaLovelace'. Add `' '`, a string containing one space, between them, and store the result before the print line uses it.",
+              "heading": "Don't forget the dash",
+              "content": "`site + number` gives 'web01'. Add `'-'`, a string containing one dash, between them, and store the result before the print line uses it.",
               "example_code": "a = 'Ice'\nb = 'cream'\nprint(a + ' ' + b)  # Ice cream"
             }
           ]
@@ -1413,11 +1413,11 @@
           "id": "i08",
           "type": "code",
           "track": "interview",
-          "heading": "Debug: the counter that never counts",
-          "instruction": "This should count to 2, but it prints 0. Fix it so it prints 2.",
-          "initial_code": "count = 0\ncount + 1\ncount + 1\nprint(count)",
+          "heading": "Debug: the failed-login counter that never counts",
+          "instruction": "This should count two failed logins, but it prints 0. Fix it so it prints 2.",
+          "initial_code": "failed = 0\nfailed + 1\nfailed + 1\nprint(failed)",
           "expected_output": "2",
-          "hint": "`count + 1` works out a value and throws it away. Store the result:\ncount += 1",
+          "hint": "`failed + 1` works out a value and throws it away. Store the result:\nfailed += 1",
           "support": [
             {
               "heading": "An expression alone doesn't change anything",
@@ -1426,7 +1426,7 @@
             },
             {
               "heading": "Fix both lines",
-              "content": "Both `count + 1` lines have the same bug. Change each to `count += 1` (or `count = count + 1`).",
+              "content": "Both `failed + 1` lines have the same bug. Change each to `failed += 1` (or `failed = failed + 1`).",
               "example_code": "n = 0\nn += 1\nprint(n)  # 1"
             }
           ]
@@ -1435,20 +1435,20 @@
           "id": "i09",
           "type": "code",
           "track": "interview",
-          "heading": "Debug: the birthday bug",
-          "instruction": "This crashes with a TypeError. Fix it so it prints next year's age: 31",
-          "initial_code": "age = '30'\nnext_year = age + 1\nprint(next_year)",
-          "expected_output": "31",
-          "hint": "age is text, so convert it before adding:\nnext_year = int(age) + 1",
+          "heading": "Debug: the next port",
+          "instruction": "A config file gives the port as text. This crashes with a TypeError. Fix it so it prints the next port to try: 8081",
+          "initial_code": "port = '8080'\nnext_port = port + 1\nprint(next_port)",
+          "expected_output": "8081",
+          "hint": "port is text, so convert it before adding:\nnext_port = int(port) + 1",
           "support": [
             {
               "heading": "The error names the problem",
-              "content": "The message says it can only concatenate str to str: `age` holds text ('30'), and you can't add a number to text.",
+              "content": "The message says it can only concatenate str to str: `port` holds text ('8080'), and you can't add a number to text.",
               "example_code": "years = '9'\nprint(int(years) + 1)  # 10"
             },
             {
               "heading": "Convert where you do the math",
-              "content": "Change the middle line so it adds 1 to `int(age)` instead of `age`. Leave `age` itself as it is.",
+              "content": "Change the middle line so it adds 1 to `int(port)` instead of `port`. Leave `port` itself as it is.",
               "example_code": "score = '99'\nnew = int(score) + 1\nprint(new)  # 100"
             }
           ]
@@ -1850,11 +1850,11 @@
           "id": "d06",
           "type": "code",
           "track": "deep-dive",
-          "heading": "Check a file name",
-          "instruction": "Print whether `filename` ends with '.pdf', then on the next line print the position of the dot using `.find()`. It should print True then 6.",
-          "initial_code": "filename = 'report.pdf'\n# TODO: print whether it ends with '.pdf'\n# TODO: print the index of '.'\n",
-          "expected_output": "True\n6",
-          "hint": "print(filename.endswith('.pdf'))\nprint(filename.find('.'))",
+          "heading": "Check a log file name",
+          "instruction": "Print whether `filename` ends with '.log', then on the next line print the position of the dot using `.find()`. It should print True then 4.",
+          "initial_code": "filename = 'auth.log'\n# TODO: print whether it ends with '.log'\n# TODO: print the index of '.'\n",
+          "expected_output": "True\n4",
+          "hint": "print(filename.endswith('.log'))\nprint(filename.find('.'))",
           "support": [
             {
               "heading": "Methods that answer questions",
@@ -1863,7 +1863,7 @@
             },
             {
               "heading": "Count to check your answer",
-              "content": "r-e-p-o-r-t is six characters, at indexes 0 to 5, so the dot is at index 6. Write two prints, one for each method.",
+              "content": "a-u-t-h is four characters, at indexes 0 to 3, so the dot is at index 4. Write two prints, one for each method.",
               "example_code": "print('notes.txt'.find('.'))  # 5"
             }
           ]
@@ -1905,20 +1905,20 @@
           "id": "d10",
           "type": "code",
           "track": "deep-dive",
-          "heading": "Capitalize the first letter",
-          "instruction": "Without using `.title()` or `.capitalize()`, print `name` with only its first letter capitalized: Python",
-          "initial_code": "name = 'python'\n# TODO: print it with a capital first letter\n",
-          "expected_output": "Python",
-          "hint": "Uppercase the first character and add the rest unchanged:\nprint(name[0].upper() + name[1:])",
+          "heading": "Capitalize a severity label",
+          "instruction": "Without using `.title()` or `.capitalize()`, print `severity` with only its first letter capitalized: Critical",
+          "initial_code": "severity = 'critical'\n# TODO: print it with a capital first letter\n",
+          "expected_output": "Critical",
+          "hint": "Uppercase the first character and add the rest unchanged:\nprint(severity[0].upper() + severity[1:])",
           "support": [
             {
               "heading": "Split it into two pieces",
-              "content": "`name[0]` is the first character and `name[1:]` is everything after it. Change only the first piece, then join them back with `+`.",
+              "content": "`severity[0]` is the first character and `severity[1:]` is everything after it. Change only the first piece, then join them back with `+`.",
               "example_code": "w = 'hello'\nprint(w[0])    # h\nprint(w[1:])   # ello"
             },
             {
               "heading": "Upper only the first piece",
-              "content": "Call `.upper()` on `name[0]`, then add `name[1:]` with `+`. The whole expression goes inside `print()`.",
+              "content": "Call `.upper()` on `severity[0]`, then add `severity[1:]` with `+`. The whole expression goes inside `print()`.",
               "example_code": "w = 'world'\nprint(w[0].upper() + w[1:])  # World"
             }
           ]
@@ -1951,21 +1951,21 @@
           "id": "d13",
           "type": "code",
           "track": "deep-dive",
-          "heading": "Line up a receipt line",
-          "instruction": "Print `item` left-aligned in 10 columns, followed by `price` right-aligned in 6 columns with 2 decimals, in one f-string. It should print: Coffee      3.50",
-          "initial_code": "item = 'Coffee'\nprice = 3.5\n# TODO: one f-string with both columns\n",
-          "expected_output": "Coffee      3.50",
-          "hint": "print(f'{item:<10}{price:>6.2f}')",
+          "heading": "Line up a port table",
+          "instruction": "Print `service` left-aligned in 10 columns, followed by `port` right-aligned in 6 columns, in one f-string. It should print: ssh           22",
+          "initial_code": "service = 'ssh'\nport = 22\n# TODO: one f-string with both columns\n",
+          "expected_output": "ssh           22",
+          "hint": "print(f'{service:<10}{port:>6}')",
           "support": [
             {
               "heading": "Width and alignment go after the colon",
-              "content": "`<10` means left-align in 10 columns. `>6.2f` means right-align in 6 columns, with 2 decimals.",
-              "example_code": "print(f'{\"Tea\":<8}|')      # Tea     |\nprint(f'{2.0:>6.2f}|')      #   2.00|"
+              "content": "`<10` means left-align in 10 columns. `>6` means right-align in 6 columns.",
+              "example_code": "print(f'{\"Tea\":<8}|')      # Tea     |\nprint(f'{2:>6}|')           #      2|"
             },
             {
               "heading": "Two placeholders side by side",
-              "content": "Put both `{...}` blocks next to each other in one f-string with no space between them; the widths provide the spacing. 'Coffee' is 6 characters, so `<10` adds 4 spaces; '3.50' is 4, so `>6` adds 2 in front.",
-              "example_code": "a = 'Tea'\nb = 2\nprint(f'{a:<6}{b:>4.1f}')  # Tea    2.0"
+              "content": "Put both `{...}` blocks next to each other in one f-string with no space between them; the widths provide the spacing. 'ssh' is 3 characters, so `<10` adds 7 spaces; '22' is 2, so `>6` adds 4 in front.",
+              "example_code": "a = 'Tea'\nb = 2\nprint(f'{a:<6}{b:>4}')  # Tea      2"
             }
           ]
         },
@@ -2010,11 +2010,11 @@
           "id": "d17",
           "type": "code",
           "track": "deep-dive",
-          "heading": "Case-insensitive match",
-          "instruction": "Print whether `a` and `b` are the same word, ignoring case. It should print: True",
-          "initial_code": "a = 'Python'\nb = 'PYTHON'\n# TODO: compare them, ignoring case\n",
+          "heading": "Case-insensitive username match",
+          "instruction": "Print whether `entered` and `stored` are the same username, ignoring case. It should print: True",
+          "initial_code": "entered = 'ADMIN'\nstored = 'Admin'\n# TODO: compare them, ignoring case\n",
           "expected_output": "True",
-          "hint": "Lowercase both before comparing:\nprint(a.lower() == b.lower())",
+          "hint": "Lowercase both before comparing:\nprint(entered.lower() == stored.lower())",
           "support": [
             {
               "heading": "Make the case match first",
@@ -2143,21 +2143,21 @@
           "id": "i08",
           "type": "code",
           "track": "interview",
-          "heading": "Debug: the wrong initials",
-          "instruction": "This should print the initials GH, but it prints GO. Find and fix the bug.",
-          "initial_code": "name = 'grace hopper'\nparts = name.split()\nprint((parts[0][0] + parts[1][1]).upper())",
-          "expected_output": "GH",
-          "hint": "The second index picks a letter from the second word. Index 1 is its second letter; the first letter is index 0:\nparts[1][0]",
+          "heading": "Debug: the wrong username",
+          "instruction": "This should build the username from the first letter of the first name plus the last name: ghopper. It prints rhopper. Find and fix the bug.",
+          "initial_code": "name = 'grace hopper'\nparts = name.split()\nprint(parts[0][1] + parts[1])",
+          "expected_output": "ghopper",
+          "hint": "The first index picks a letter from the first word. Index 1 is its second letter; the first letter is index 0:\nparts[0][0]",
           "support": [
             {
               "heading": "Two indexes: word, then letter",
-              "content": "`parts[1]` is the second word, 'hopper'. `parts[1][1]` is that word's second letter, 'o'. Indexes start at 0, so the first letter is `[0]`.",
+              "content": "`parts[0]` is the first word, 'grace'. `parts[0][1]` is that word's second letter, 'r'. Indexes start at 0, so the first letter is `[0]`.",
               "example_code": "words = 'big cat'.split()\nprint(words[1][0])  # c\nprint(words[1][1])  # a"
             },
             {
               "heading": "Change one number",
-              "content": "Only the last index is wrong. Change `parts[1][1]` to `parts[1][0]` and run it again.",
-              "example_code": "w = 'ada lovelace'.split()\nprint((w[0][0] + w[1][0]).upper())  # AL"
+              "content": "Only the first index is wrong. Change `parts[0][1]` to `parts[0][0]` and run it again.",
+              "example_code": "w = 'ada lovelace'.split()\nprint(w[0][0] + w[1])  # alovelace"
             }
           ]
         },
@@ -2165,10 +2165,10 @@
           "id": "i09",
           "type": "code",
           "track": "interview",
-          "heading": "Debug: the file extension",
-          "instruction": "This should print the extension without the dot (jpeg) but prints .jpeg. Fix the off-by-one bug.",
-          "initial_code": "filename = 'photo.jpeg'\ndot = filename.find('.')\nprint(filename[dot:])",
-          "expected_output": "jpeg",
+          "heading": "Debug: the backup file extension",
+          "instruction": "This should print the extension without the dot (zip) but prints .zip. Fix the off-by-one bug.",
+          "initial_code": "filename = 'backup.zip'\ndot = filename.find('.')\nprint(filename[dot:])",
+          "expected_output": "zip",
           "hint": "The slice starts at the dot itself. Start one position later:\nprint(filename[dot + 1:])",
           "support": [
             {
@@ -2458,11 +2458,11 @@
           "id": "d03",
           "type": "code",
           "track": "deep-dive",
-          "heading": "Check for an empty name",
-          "instruction": "If `name` is not empty, print `Hello, ` followed by the name. Otherwise print `Name required`. With the empty name given, it should print: Name required",
-          "initial_code": "name = ''\n# TODO: greet the name, or print 'Name required' if it's empty\n",
-          "expected_output": "Name required",
-          "hint": "An empty string is falsy, so `if name:` is False here:\nif name:\n    print('Hello, ' + name)\nelse:\n    print('Name required')",
+          "heading": "Check for an empty username",
+          "instruction": "If `username` is not empty, print `Welcome, ` followed by the username. Otherwise print `Username required`. With the empty username given, it should print: Username required",
+          "initial_code": "username = ''\n# TODO: welcome the user, or print 'Username required' if it's empty\n",
+          "expected_output": "Username required",
+          "hint": "An empty string is falsy, so `if username:` is False here:\nif username:\n    print('Welcome, ' + username)\nelse:\n    print('Username required')",
           "support": [
             {
               "heading": "Use the value itself as the condition",
@@ -2471,7 +2471,7 @@
             },
             {
               "heading": "An if/else pair",
-              "content": "Write `if name:` with the greeting indented under it, then `else:` lined up with `if`, with the other message indented under it.",
+              "content": "Write `if username:` with the welcome indented under it, then `else:` lined up with `if`, with the other message indented under it.",
               "example_code": "pet = ''\nif pet:\n    print('Pet:', pet)\nelse:\n    print('No pet')"
             }
           ]
@@ -2504,11 +2504,11 @@
           "id": "d06",
           "type": "code",
           "track": "deep-dive",
-          "heading": "Comfortable temperature",
-          "instruction": "If `temperature` is from 18 to 25 (both included), print `Comfortable`, otherwise print `Adjust thermostat`. Use a chained comparison. It should print: Comfortable",
+          "heading": "Server room temperature",
+          "instruction": "If `temperature` (in degrees C) is from 18 to 25 (both included), print `In range`, otherwise print `Check cooling`. Use a chained comparison. It should print: In range",
           "initial_code": "temperature = 22\n# TODO: check the range with a chained comparison\n",
-          "expected_output": "Comfortable",
-          "hint": "if 18 <= temperature <= 25:\n    print('Comfortable')\nelse:\n    print('Adjust thermostat')",
+          "expected_output": "In range",
+          "hint": "if 18 <= temperature <= 25:\n    print('In range')\nelse:\n    print('Check cooling')",
           "support": [
             {
               "heading": "Low <= value <= high",
@@ -2517,7 +2517,7 @@
             },
             {
               "heading": "Then add the else",
-              "content": "Under the `if` line, indent the Comfortable print. Line `else:` up with `if` and indent the other print under it.",
+              "content": "Under the `if` line, indent the In range print. Line `else:` up with `if` and indent the other print under it.",
               "example_code": "level = 3\nif 1 <= level <= 5:\n    print('Easy')\nelse:\n    print('Hard')"
             }
           ]
@@ -2536,20 +2536,20 @@
           "id": "d08",
           "type": "code",
           "track": "deep-dive",
-          "heading": "Free shipping rule",
-          "instruction": "Print `Free shipping` if the customer is a member **and** the total is over 100; otherwise print `Shipping: $5`. Use one `if` with `and`. It should print: Free shipping",
-          "initial_code": "member = True\ntotal = 120\n# TODO: one if with and, plus an else\n",
-          "expected_output": "Free shipping",
-          "hint": "if member and total > 100:\n    print('Free shipping')\nelse:\n    print('Shipping: $5')",
+          "heading": "Grant access",
+          "instruction": "Print `Access granted` if the user has MFA enabled **and** fewer than 3 failed attempts; otherwise print `Access denied`. Use one `if` with `and`. It should print: Access granted",
+          "initial_code": "mfa_enabled = True\nfailed_attempts = 1\n# TODO: one if with and, plus an else\n",
+          "expected_output": "Access granted",
+          "hint": "if mfa_enabled and failed_attempts < 3:\n    print('Access granted')\nelse:\n    print('Access denied')",
           "support": [
             {
               "heading": "and needs both sides",
-              "content": "`a and b` is True only if both are True. `member` is already a bool, so it can be used directly.",
+              "content": "`a and b` is True only if both are True. `mfa_enabled` is already a bool, so it can be used directly.",
               "example_code": "vip = True\nspent = 30\nprint(vip and spent > 20)  # True"
             },
             {
               "heading": "Build it in two branches",
-              "content": "Write the `if` with both conditions joined by `and`, indent the free-shipping print, then `else:` with the other print.",
+              "content": "Write the `if` with both conditions joined by `and`, indent the granted print, then `else:` with the other print.",
               "example_code": "student = False\nage = 70\nif student or age > 65:\n    print('Discount')\nelse:\n    print('Full price')"
             }
           ]
@@ -2582,20 +2582,20 @@
           "id": "d11",
           "type": "code",
           "track": "deep-dive",
-          "heading": "Ice or water",
-          "instruction": "Set `state` to `'ice'` if `temp` is 0 or below, otherwise `'water'`, using a one-line conditional expression. Then print it. It should print: ice",
-          "initial_code": "temp = -3\n# TODO: state = ... if ... else ...\n\nprint(state)",
-          "expected_output": "ice",
-          "hint": "state = 'ice' if temp <= 0 else 'water'",
+          "heading": "Disk status",
+          "instruction": "Set `status` to `'critical'` if `disk_used` is 90 or more, otherwise `'ok'`, using a one-line conditional expression. Then print it. It should print: critical",
+          "initial_code": "disk_used = 94\n# TODO: status = ... if ... else ...\n\nprint(status)",
+          "expected_output": "critical",
+          "hint": "status = 'critical' if disk_used >= 90 else 'ok'",
           "support": [
             {
               "heading": "Value, if, condition, else, value",
-              "content": "Read it as a sentence: \"state is ice if temp is at most 0, else water\". The condition sits in the middle.",
+              "content": "Read it as a sentence: \"status is critical if disk_used is at least 90, else ok\". The condition sits in the middle.",
               "example_code": "hour = 20\nmeal = 'dinner' if hour >= 17 else 'lunch'\nprint(meal)  # dinner"
             },
             {
               "heading": "One assignment",
-              "content": "Write `state =`, then `'ice'`, then `if temp <= 0`, then `else 'water'`, all on one line before the print.",
+              "content": "Write `status =`, then `'critical'`, then `if disk_used >= 90`, then `else 'ok'`, all on one line before the print.",
               "example_code": "x = 5\nsign = 'positive' if x > 0 else 'not positive'\nprint(sign)"
             }
           ]
@@ -2631,11 +2631,11 @@
           "id": "d14",
           "type": "code",
           "track": "deep-dive",
-          "heading": "Default name with or",
-          "instruction": "`username` is empty. Use `or` to set `display` to the username, or to `'Guest'` if it's empty, then print it. It should print: Guest",
-          "initial_code": "username = ''\n# TODO: display = ...\n\nprint(display)",
-          "expected_output": "Guest",
-          "hint": "display = username or 'Guest'",
+          "heading": "Default hostname with or",
+          "instruction": "`hostname` is empty because a device didn't report one. Use `or` to set `label` to the hostname, or to `'unknown-host'` if it's empty, then print it. It should print: unknown-host",
+          "initial_code": "hostname = ''\n# TODO: label = ...\n\nprint(label)",
+          "expected_output": "unknown-host",
+          "hint": "label = hostname or 'unknown-host'",
           "support": [
             {
               "heading": "or picks the first truthy value",
@@ -2644,7 +2644,7 @@
             },
             {
               "heading": "One line before the print",
-              "content": "Assign `display = username or 'Guest'`. If username were 'Ada', display would be 'Ada'.",
+              "content": "Assign `label = hostname or 'unknown-host'`. If hostname were 'web-01', label would be 'web-01'.",
               "example_code": "color = 'red'\nprint(color or 'black')  # red"
             }
           ]
@@ -2815,20 +2815,20 @@
           "id": "i08",
           "type": "code",
           "track": "interview",
-          "heading": "Debug: the grade ladder",
-          "instruction": "Every score above 60 gets a D. Fix the order of the checks so a score of 85 prints: B",
-          "initial_code": "score = 85\nif score >= 60:\n    print('D')\nelif score >= 70:\n    print('C')\nelif score >= 80:\n    print('B')\nelif score >= 90:\n    print('A')\nelse:\n    print('F')",
-          "expected_output": "B",
-          "hint": "Check the highest threshold first:\nif score >= 90: A\nelif score >= 80: B\nelif score >= 70: C\nelif score >= 60: D",
+          "heading": "Debug: the alert ladder",
+          "instruction": "Every CPU reading of 60 or more gets labelled `elevated`. Fix the order of the checks so a reading of 85 prints: warning",
+          "initial_code": "cpu = 85\nif cpu >= 60:\n    print('elevated')\nelif cpu >= 80:\n    print('warning')\nelif cpu >= 95:\n    print('critical')\nelse:\n    print('normal')",
+          "expected_output": "warning",
+          "hint": "Check the highest threshold first:\nif cpu >= 95: critical\nelif cpu >= 80: warning\nelif cpu >= 60: elevated",
           "support": [
             {
               "heading": "The first true branch wins",
-              "content": "85 >= 60 is True, so D prints and Python skips the rest. Put the strictest test first so higher scores are caught by it.",
+              "content": "85 >= 60 is True, so elevated prints and Python skips the rest. Put the strictest test first so higher readings are caught by it.",
               "example_code": "t = 30\nif t >= 25:\n    print('hot')\nelif t >= 15:\n    print('warm')"
             },
             {
               "heading": "Reverse the ladder",
-              "content": "Keep the same prints, but order the conditions 90, 80, 70, 60. The `if` gets the 90 check; the others become `elif`s; `else` stays last.",
+              "content": "Keep the same prints, but order the conditions 95, 80, 60. The `if` gets the 95 check; the others become `elif`s; `else` stays last.",
               "example_code": "n = 5\nif n >= 10:\n    print('big')\nelif n >= 5:\n    print('medium')  # this runs\nelse:\n    print('small')"
             }
           ]
@@ -2838,19 +2838,19 @@
           "type": "code",
           "track": "interview",
           "heading": "Debug: the always-true check",
-          "instruction": "This prints `warm` for every color. Fix the condition so blue prints: cool",
-          "initial_code": "color = 'blue'\nif color == 'red' or 'green':\n    print('warm')\nelse:\n    print('cool')",
-          "expected_output": "cool",
-          "hint": "`or 'green'` is always truthy. Repeat the comparison:\nif color == 'red' or color == 'green':",
+          "instruction": "This prints `privileged` for every role. Fix the condition so the guest role prints: standard",
+          "initial_code": "role = 'guest'\nif role == 'admin' or 'root':\n    print('privileged')\nelse:\n    print('standard')",
+          "expected_output": "standard",
+          "hint": "`or 'root'` is always truthy. Repeat the comparison:\nif role == 'admin' or role == 'root':",
           "support": [
             {
               "heading": "or joins two separate conditions",
-              "content": "Python reads `color == 'red' or 'green'` as `(color == 'red') or ('green')`. A non-empty string is truthy, so the whole thing is always truthy.",
-              "example_code": "print(bool('green'))  # True, which is the bug"
+              "content": "Python reads `role == 'admin' or 'root'` as `(role == 'admin') or ('root')`. A non-empty string is truthy, so the whole thing is always truthy.",
+              "example_code": "print(bool('root'))  # True, which is the bug"
             },
             {
               "heading": "Compare on both sides",
-              "content": "Each side of `or` must be a full comparison: `color == 'red' or color == 'green'`.",
+              "content": "Each side of `or` must be a full comparison: `role == 'admin' or role == 'root'`.",
               "example_code": "pet = 'cat'\nif pet == 'dog' or pet == 'cat':\n    print('mammal')"
             }
           ]
@@ -3152,16 +3152,16 @@
           "id": "d05",
           "type": "code",
           "track": "deep-dive",
-          "heading": "Count vowels with a loop",
-          "instruction": "Count the vowels in `text` with a loop (check each character against 'aeiou', ignoring case) and print the count. It should print: 11",
-          "initial_code": "text = 'Loops make repetition easy'\n# TODO: count the vowels with a loop\n",
-          "expected_output": "11",
-          "hint": "count = 0\nfor ch in text.lower():\n    if ch in 'aeiou':\n        count += 1\nprint(count)",
+          "heading": "Count failed checks with a loop",
+          "instruction": "`results` has one letter per health check: `O` for ok, `F` for failed. Count the failures with a loop and print the count. It should print: 4",
+          "initial_code": "results = 'OFFOOFOF'\n# TODO: count the F's with a loop\n",
+          "expected_output": "4",
+          "hint": "count = 0\nfor r in results:\n    if r == 'F':\n        count += 1\nprint(count)",
           "support": [
             {
               "heading": "Check each character",
-              "content": "Loop over the string; for each character ask `ch in 'aeiou'`. Lowercase the text first so capital vowels count too.",
-              "example_code": "count = 0\nfor ch in 'AbE'.lower():\n    if ch in 'aeiou':\n        count += 1\nprint(count)  # 2"
+              "content": "Loop over the string; for each character ask `r == 'F'`. Add 1 to a counter when it matches.",
+              "example_code": "count = 0\nfor c in 'AbA':\n    if c == 'A':\n        count += 1\nprint(count)  # 2"
             },
             {
               "heading": "Three levels of indentation",
@@ -3257,20 +3257,20 @@
           "id": "d12",
           "type": "code",
           "track": "deep-dive",
-          "heading": "First power of 2 over 1000",
-          "instruction": "Starting from 1, keep doubling `n` until it's greater than 1000, then print it. It should print: 1024",
-          "initial_code": "n = 1\n# TODO: double n until it's over 1000\n\nprint(n)",
-          "expected_output": "1024",
-          "hint": "while n <= 1000:\n    n *= 2",
+          "heading": "Retry backoff",
+          "instruction": "A client retries with a delay that starts at 1 second and doubles each time. Keep doubling `delay` until it's greater than 60, then print it. It should print: 64",
+          "initial_code": "delay = 1\n# TODO: double delay until it's over 60\n\nprint(delay)",
+          "expected_output": "64",
+          "hint": "while delay <= 60:\n    delay *= 2",
           "support": [
             {
               "heading": "Loop while the goal isn't reached",
-              "content": "`while n <= 1000:` keeps going as long as n is still too small. Inside, double n. The loop stops the first time n passes 1000.",
+              "content": "`while delay <= 60:` keeps going as long as delay is still too small. Inside, double delay. The loop stops the first time delay passes 60.",
               "example_code": "x = 1\nwhile x <= 20:\n    x *= 3\nprint(x)  # 27"
             },
             {
               "heading": "Or use while True with break",
-              "content": "Both work: `while True:` with `n *= 2` and then `if n > 1000: break`. Either way the print goes after the loop.",
+              "content": "Both work: `while True:` with `delay *= 2` and then `if delay > 60: break`. Either way the print goes after the loop.",
               "example_code": "x = 1\nwhile True:\n    x *= 2\n    if x > 50:\n        break\nprint(x)  # 64"
             }
           ]
@@ -3482,8 +3482,8 @@
           "id": "i09",
           "type": "code",
           "track": "interview",
-          "heading": "Debug: the countdown that never starts",
-          "instruction": "This should count down 5, 4, 3, 2, 1 (one per line), but it prints nothing. Fix the range.",
+          "heading": "Debug: the retry countdown that never starts",
+          "instruction": "This should count down the remaining retries 5, 4, 3, 2, 1 (one per line), but it prints nothing. Fix the range.",
           "initial_code": "for i in range(5, 0):\n    print(i)",
           "expected_output": "5\n4\n3\n2\n1",
           "hint": "range counts up unless you give a negative step:\nrange(5, 0, -1)",
