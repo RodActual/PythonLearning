@@ -7010,11 +7010,11 @@
           "id": "d03",
           "type": "code",
           "track": "deep-dive",
-          "heading": "Report the error message",
-          "instruction": "Catch the ValueError and print `Bad number:` followed by the error's own message. It should print: Bad number: invalid literal for int() with base 10: 'abc'",
-          "initial_code": "try:\n    int('abc')\nexcept ValueError:\n    print('Bad number')",
-          "expected_output": "Bad number: invalid literal for int() with base 10: 'abc'",
-          "hint": "Name the exception with `as e` and print it after the label:\nexcept ValueError as e:\n    print('Bad number:', e)",
+          "heading": "Report the bad port message",
+          "instruction": "A config file gave the port as `http`. Catch the ValueError and print `Bad port:` followed by the error's own message. It should print: Bad port: invalid literal for int() with base 10: 'http'",
+          "initial_code": "try:\n    int('http')\nexcept ValueError:\n    print('Bad port')",
+          "expected_output": "Bad port: invalid literal for int() with base 10: 'http'",
+          "hint": "Name the exception with `as e` and print it after the label:\nexcept ValueError as e:\n    print('Bad port:', e)",
           "support": [
             {
               "heading": "as e gives you the message",
@@ -7065,11 +7065,11 @@
           "id": "d07",
           "type": "code",
           "track": "deep-dive",
-          "heading": "Validate a quantity",
-          "instruction": "Make `order` raise `ValueError('quantity must be positive')` when `qty` is 0 or less. The code below then prints: Ordered 3, then quantity must be positive.",
-          "initial_code": "def order(qty):\n    # TODO: raise ValueError for qty <= 0\n    return f'Ordered {qty}'\n\nprint(order(3))\ntry:\n    print(order(0))\nexcept ValueError as e:\n    print(e)",
-          "expected_output": "Ordered 3\nquantity must be positive",
-          "hint": "    if qty <= 0:\n        raise ValueError('quantity must be positive')",
+          "heading": "Validate a timeout",
+          "instruction": "Make `set_timeout` raise `ValueError('timeout must be positive')` when `seconds` is 0 or less. The code below then prints: Timeout set to 30, then timeout must be positive.",
+          "initial_code": "def set_timeout(seconds):\n    # TODO: raise ValueError for seconds <= 0\n    return f'Timeout set to {seconds}'\n\nprint(set_timeout(30))\ntry:\n    print(set_timeout(0))\nexcept ValueError as e:\n    print(e)",
+          "expected_output": "Timeout set to 30\ntimeout must be positive",
+          "hint": "    if seconds <= 0:\n        raise ValueError('timeout must be positive')",
           "support": [
             {
               "heading": "raise ErrorType('message')",
@@ -7078,7 +7078,7 @@
             },
             {
               "heading": "Guard before the return",
-              "content": "Put the check as the first lines of `order`, so invalid quantities never reach the return. The code at the bottom already catches the error and prints it.",
+              "content": "Put the check as the first lines of `set_timeout`, so invalid values never reach the return. The code at the bottom already catches the error and prints it.",
               "example_code": "def pay(amount):\n    if amount <= 0:\n        raise ValueError('amount must be positive')\n    return 'paid'\n\ntry:\n    pay(0)\nexcept ValueError as e:\n    print(e)"
             }
           ]
@@ -7110,11 +7110,11 @@
           "id": "d10",
           "type": "code",
           "track": "deep-dive",
-          "heading": "A safe conversion function",
-          "instruction": "Write `to_int(text, default=0)` that returns `int(text)`, or `default` if the conversion fails. The prints should show 42, 0 and -1.",
-          "initial_code": "# TODO: def to_int(text, default=0):\n\n\nprint(to_int('42'))\nprint(to_int('abc'))\nprint(to_int('', -1))",
-          "expected_output": "42\n0\n-1",
-          "hint": "def to_int(text, default=0):\n    try:\n        return int(text)\n    except ValueError:\n        return default",
+          "heading": "A safe port parser",
+          "instruction": "Write `parse_port(text, default=22)` that returns `int(text)`, or `default` if the conversion fails. The prints should show 8080, 22 and 443.",
+          "initial_code": "# TODO: def parse_port(text, default=22):\n\n\nprint(parse_port('8080'))\nprint(parse_port('abc'))\nprint(parse_port('', 443))",
+          "expected_output": "8080\n22\n443",
+          "hint": "def parse_port(text, default=22):\n    try:\n        return int(text)\n    except ValueError:\n        return default",
           "support": [
             {
               "heading": "return inside try works",
@@ -7123,7 +7123,7 @@
             },
             {
               "heading": "The empty string fails too",
-              "content": "`int('')` raises ValueError, so the third call returns its default, -1.",
+              "content": "`int('')` raises ValueError, so the third call returns its default, 443.",
               "example_code": "try:\n    int('')\nexcept ValueError:\n    print('empty is not a number')"
             }
           ]
@@ -7156,10 +7156,10 @@
           "id": "d13",
           "type": "code",
           "track": "deep-dive",
-          "heading": "Retry until the input is valid",
-          "instruction": "`attempts` simulates what a user typed. Loop over them, skip any that aren't whole numbers or are negative, and stop at the first valid one, printing `Using` and the number. It should print: Using 7",
-          "initial_code": "attempts = ['ten', '-3', '7', '9']\n# TODO: find the first valid non-negative number\n",
-          "expected_output": "Using 7",
+          "heading": "Retry until the port is valid",
+          "instruction": "`attempts` simulates what an admin typed for a port. Loop over them, skip any that aren't whole numbers or are negative, and stop at the first valid one, printing `Using` and the number. It should print: Using 443",
+          "initial_code": "attempts = ['http', '-3', '443', '80']\n# TODO: find the first valid non-negative number\n",
+          "expected_output": "Using 443",
           "hint": "for text in attempts:\n    try:\n        n = int(text)\n    except ValueError:\n        continue\n    if n < 0:\n        continue\n    print('Using', n)\n    break",
           "support": [
             {
@@ -7212,11 +7212,11 @@
           "id": "d17",
           "type": "code",
           "track": "deep-dive",
-          "heading": "Safe list access",
-          "instruction": "Write `get_item(items, i)` that returns `items[i]`, or `None` if the index is out of range. The prints should show None then 2.",
-          "initial_code": "# TODO: def get_item(items, i):\n\n\nprint(get_item([1, 2], 5))\nprint(get_item([1, 2], 1))",
-          "expected_output": "None\n2",
-          "hint": "def get_item(items, i):\n    try:\n        return items[i]\n    except IndexError:\n        return None",
+          "heading": "Safe log field access",
+          "instruction": "Write `get_field(fields, i)` that returns `fields[i]`, or `None` if the log line doesn't have that many fields. The prints should show None then web-01.",
+          "initial_code": "# TODO: def get_field(fields, i):\n\n\nprint(get_field(['2025-10-01', 'web-01'], 5))\nprint(get_field(['2025-10-01', 'web-01'], 1))",
+          "expected_output": "None\nweb-01",
+          "hint": "def get_field(fields, i):\n    try:\n        return fields[i]\n    except IndexError:\n        return None",
           "support": [
             {
               "heading": "Which exception?",
@@ -7224,8 +7224,8 @@
               "example_code": "try:\n    print(['a'][3])\nexcept IndexError:\n    print('no such position')"
             },
             {
-              "heading": "Same shape as to_int",
-              "content": "Try to return the item; in the except block, return None.",
+              "heading": "Same shape as parse_port",
+              "content": "Try to return the field; in the except block, return None.",
               "example_code": "def safe_key(d, k):\n    try:\n        return d[k]\n    except KeyError:\n        return None\n\nprint(safe_key({}, 'x'))  # None"
             }
           ]
@@ -7322,20 +7322,20 @@
           "id": "i07",
           "type": "code",
           "track": "interview",
-          "heading": "Classic: average with validation",
-          "instruction": "Make `average` raise `ValueError('empty list')` for an empty list. The code below then prints: empty list, then 3.0.",
-          "initial_code": "def average(nums):\n    return sum(nums) / len(nums)\n\ntry:\n    print(average([]))\nexcept ValueError as e:\n    print(e)\nprint(average([2, 4]))",
-          "expected_output": "empty list\n3.0",
-          "hint": "    if not nums:\n        raise ValueError('empty list')",
+          "heading": "Average latency with validation",
+          "instruction": "Make `average` raise `ValueError('no readings')` for an empty list. The code below then prints: no readings, then 3.0.",
+          "initial_code": "def average(readings):\n    return sum(readings) / len(readings)\n\ntry:\n    print(average([]))\nexcept ValueError as e:\n    print(e)\nprint(average([2, 4]))",
+          "expected_output": "no readings\n3.0",
+          "hint": "    if not readings:\n        raise ValueError('no readings')",
           "support": [
             {
               "heading": "A clearer error than ZeroDivisionError",
-              "content": "Without the check, an empty list divides by zero. Raising your own ValueError with a clear message tells the caller what they did wrong.",
+              "content": "Without the check, an empty list divides by zero. Raising your own ValueError with a clear message tells the caller what went wrong.",
               "example_code": "def first(items):\n    if not items:\n        raise ValueError('no items')\n    return items[0]\n\ntry:\n    first([])\nexcept ValueError as e:\n    print(e)"
             },
             {
               "heading": "Guard clause at the top",
-              "content": "`if not nums:` is True for an empty list. Raise there, before the division.",
+              "content": "`if not readings:` is True for an empty list. Raise there, before the division.",
               "example_code": "print(not [])  # True"
             }
           ]
@@ -7345,19 +7345,19 @@
           "type": "code",
           "track": "interview",
           "heading": "Debug: the swallowed bug",
-          "instruction": "This prints `No prices` even though there are prices. A too-broad `except` is hiding the real bug. Fix the bug, and narrow the except to `ZeroDivisionError`, so it prints: 20.0",
-          "initial_code": "prices = [10, 20, 30]\ntry:\n    average = sum(prices) / len(price)\n    print(average)\nexcept Exception:\n    print('No prices')",
+          "instruction": "This prints `No readings` even though there are readings. A too-broad `except` is hiding the real bug. Fix the bug, and narrow the except to `ZeroDivisionError`, so it prints: 20.0",
+          "initial_code": "readings = [10, 20, 30]\ntry:\n    average = sum(readings) / len(reading)\n    print(average)\nexcept Exception:\n    print('No readings')",
           "expected_output": "20.0",
-          "hint": "`len(price)` is a typo, which raises NameError, and `except Exception` catches it. Fix it to `len(prices)` and catch only ZeroDivisionError.",
+          "hint": "`len(reading)` is a typo, which raises NameError, and `except Exception` catches it. Fix it to `len(readings)` and catch only ZeroDivisionError.",
           "support": [
             {
               "heading": "Broad excepts hide typos",
-              "content": "`except Exception` catches NameError too, so a simple typo looks like \"no prices\". Narrowing the except would have let the NameError show.",
+              "content": "`except Exception` catches NameError too, so a simple typo looks like \"no readings\". Narrowing the except would have let the NameError show.",
               "example_code": "try:\n    print(undefined_thing)\nexcept ZeroDivisionError:\n    print('never runs')\nexcept NameError as e:\n    print('real problem:', e)"
             },
             {
               "heading": "Two small edits",
-              "content": "Change `price` to `prices`, and change `Exception` to `ZeroDivisionError` (the only error an empty list could really cause here).",
+              "content": "Change `reading` to `readings`, and change `Exception` to `ZeroDivisionError` (the only error an empty list could really cause here).",
               "example_code": "nums = [4, 6]\nprint(sum(nums) / len(nums))  # 5.0"
             }
           ]
@@ -7368,7 +7368,7 @@
           "track": "interview",
           "heading": "Debug: catching the wrong error",
           "instruction": "This crashes instead of printing `missing`. Fix the except so it catches the error a missing dictionary key really raises.",
-          "initial_code": "settings = {'theme': 'dark'}\ntry:\n    print(settings['font'])\nexcept IndexError:\n    print('missing')",
+          "initial_code": "config = {'host': 'web-01'}\ntry:\n    print(config['port'])\nexcept IndexError:\n    print('missing')",
           "expected_output": "missing",
           "hint": "A missing dictionary key raises KeyError, not IndexError:\nexcept KeyError:",
           "support": [
@@ -7645,15 +7645,15 @@
           "id": "d04",
           "type": "code",
           "track": "deep-dive",
-          "heading": "Shuffle a deck",
-          "instruction": "With the seed set to 3, shuffle `cards` in place and print it.",
-          "initial_code": "import random\nrandom.seed(3)\ncards = ['A', 'K', 'Q', 'J', '10']\n# TODO: shuffle cards, then print them\n\nprint(cards)",
-          "expected_output": "['A', 'Q', 'J', '10', 'K']",
-          "hint": "random.shuffle(cards)",
+          "heading": "Randomize the audit order",
+          "instruction": "With the seed set to 3, shuffle `hosts` in place to set a random audit order, then print it.",
+          "initial_code": "import random\nrandom.seed(3)\nhosts = ['web-01', 'web-02', 'db-01', 'db-02', 'cache-01']\n# TODO: shuffle hosts, then print them\n\nprint(hosts)",
+          "expected_output": "['web-01', 'db-01', 'db-02', 'cache-01', 'web-02']",
+          "hint": "random.shuffle(hosts)",
           "support": [
             {
               "heading": "shuffle changes the list itself",
-              "content": "Call `random.shuffle(cards)` on its own line. Don't write `cards = random.shuffle(cards)`: shuffle returns None, so cards would become None.",
+              "content": "Call `random.shuffle(hosts)` on its own line. Don't write `hosts = random.shuffle(hosts)`: shuffle returns None, so hosts would become None.",
               "example_code": "import random\nnums = [1, 2, 3]\nrandom.shuffle(nums)\nprint(len(nums))  # still 3 items"
             },
             {
@@ -7736,20 +7736,20 @@
           "id": "d10",
           "type": "code",
           "track": "deep-dive",
-          "heading": "Top two words",
-          "instruction": "Use `Counter` to print the two most common words in `words`. It should print: [('the', 3), ('cat', 2)]",
-          "initial_code": "words = ['the', 'cat', 'the', 'dog', 'cat', 'the']\n# TODO: print the two most common words\n",
-          "expected_output": "[('the', 3), ('cat', 2)]",
-          "hint": "from collections import Counter\nprint(Counter(words).most_common(2))",
+          "heading": "Top two attacking addresses",
+          "instruction": "Use `Counter` to print the two addresses with the most failed logins in `ips`. It should print: [('10.0.0.5', 3), ('10.0.0.9', 2)]",
+          "initial_code": "ips = ['10.0.0.5', '10.0.0.9', '10.0.0.5', '10.0.0.7', '10.0.0.9', '10.0.0.5']\n# TODO: print the two most common addresses\n",
+          "expected_output": "[('10.0.0.5', 3), ('10.0.0.9', 2)]",
+          "hint": "from collections import Counter\nprint(Counter(ips).most_common(2))",
           "support": [
             {
               "heading": "Import, count, ask",
-              "content": "Import Counter from collections, build `Counter(words)`, and call `.most_common(2)` on it.",
+              "content": "Import Counter from collections, build `Counter(ips)`, and call `.most_common(2)` on it.",
               "example_code": "from collections import Counter\nprint(Counter('aab').most_common(1))  # [('a', 2)]"
             },
             {
               "heading": "Remember the import",
-              "content": "Without `from collections import Counter` at the top, Python raises NameError. The result is a list of (word, count) tuples, already sorted by count.",
+              "content": "Without `from collections import Counter` at the top, Python raises NameError. The result is a list of (address, count) tuples, already sorted by count.",
               "example_code": "from collections import Counter\nc = Counter([1, 1, 2])\nprint(c[1], c[2])  # 2 1"
             }
           ]
@@ -7768,11 +7768,11 @@
           "id": "d12",
           "type": "code",
           "track": "deep-dive",
-          "heading": "Group by length",
-          "instruction": "Use `defaultdict(list)` to group `words` by their length, then print it as a normal dict. It should print: {3: ['cat', 'dog'], 5: ['horse']}",
-          "initial_code": "from collections import defaultdict\nwords = ['cat', 'horse', 'dog']\n# TODO: group by len(word)\n",
-          "expected_output": "{3: ['cat', 'dog'], 5: ['horse']}",
-          "hint": "groups = defaultdict(list)\nfor w in words:\n    groups[len(w)].append(w)\nprint(dict(groups))",
+          "heading": "Group files by extension",
+          "instruction": "Use `defaultdict(list)` to group `files` by their extension (the text after the last dot), then print it as a normal dict. It should print: {'log': ['auth.log', 'web.log'], 'txt': ['notes.txt']}",
+          "initial_code": "from collections import defaultdict\nfiles = ['auth.log', 'notes.txt', 'web.log']\n# TODO: group by extension\n",
+          "expected_output": "{'log': ['auth.log', 'web.log'], 'txt': ['notes.txt']}",
+          "hint": "groups = defaultdict(list)\nfor name in files:\n    groups[name.split('.')[-1]].append(name)\nprint(dict(groups))",
           "support": [
             {
               "heading": "No 'not in' check needed",
@@ -7781,7 +7781,7 @@
             },
             {
               "heading": "Print as a normal dict",
-              "content": "Printing a defaultdict directly shows `defaultdict(<class 'list'>, {...})`. Wrap it in `dict()` for the plain form.",
+              "content": "Printing a defaultdict directly shows `defaultdict(<class 'list'>, {...})`. Wrap it in `dict()` for the plain form. The extension is `name.split('.')[-1]`.",
               "example_code": "from collections import defaultdict\nd = defaultdict(int)\nd['a'] += 1\nprint(dict(d))  # {'a': 1}"
             }
           ]
@@ -7837,11 +7837,11 @@
           "id": "d17",
           "type": "code",
           "track": "deep-dive",
-          "heading": "Summary statistics",
-          "instruction": "Using `statistics`, print the mean, median and mode of `scores`, one per line. It should print 86, 90 and 90.",
-          "initial_code": "scores = [70, 80, 90, 90, 100]\n# TODO: print mean, median and mode\n",
+          "heading": "Response time statistics",
+          "instruction": "Using `statistics`, print the mean, median and mode of `latencies` (in ms), one per line. It should print 86, 90 and 90.",
+          "initial_code": "latencies = [70, 80, 90, 90, 100]\n# TODO: print mean, median and mode\n",
           "expected_output": "86\n90\n90",
-          "hint": "import statistics\nprint(statistics.mean(scores))\nprint(statistics.median(scores))\nprint(statistics.mode(scores))",
+          "hint": "import statistics\nprint(statistics.mean(latencies))\nprint(statistics.median(latencies))\nprint(statistics.mode(latencies))",
           "support": [
             {
               "heading": "Three functions, one module",
@@ -8283,20 +8283,20 @@
           "id": "d04",
           "type": "code",
           "track": "deep-dive",
-          "heading": "One name per line",
-          "instruction": "Write each name in `names` to 'team.txt' on its own line. The verification should print the three names on three lines.",
-          "initial_code": "names = ['Ada', 'Bob', 'Cy']\nwith open('team.txt', 'w') as f:\n    # TODO: write each name followed by a newline\n    pass\n\n# Verification (do not change)\nprint(open('team.txt').read())",
-          "expected_output": "Ada\nBob\nCy",
-          "hint": "for name in names:\n    f.write(name + '\\n')",
+          "heading": "One host per line",
+          "instruction": "Write each host in `hosts` to 'hosts.txt' on its own line. The verification should print the three hosts on three lines.",
+          "initial_code": "hosts = ['web-01', 'db-01', 'cache-01']\nwith open('hosts.txt', 'w') as f:\n    # TODO: write each host followed by a newline\n    pass\n\n# Verification (do not change)\nprint(open('hosts.txt').read())",
+          "expected_output": "web-01\ndb-01\ncache-01",
+          "hint": "for host in hosts:\n    f.write(host + '\\n')",
           "support": [
             {
               "heading": "write() doesn't add newlines",
-              "content": "`f.write('Ada')` then `f.write('Bob')` gives 'AdaBob'. Add `'\\n'` to each name.",
+              "content": "`f.write('web-01')` then `f.write('db-01')` gives 'web-01db-01'. Add `'\\n'` to each host.",
               "example_code": "with open('demo.txt', 'w') as f:\n    f.write('x' + '\\n')\n    f.write('y' + '\\n')\nprint(open('demo.txt').read())"
             },
             {
               "heading": "Loop inside the with block",
-              "content": "Replace `pass` with a for loop over names, indented under the `with` so the file is still open.",
+              "content": "Replace `pass` with a for loop over hosts, indented under the `with` so the file is still open.",
               "example_code": "with open('demo.txt', 'w') as f:\n    for n in [1, 2]:\n        print(n, file=f)\nprint(open('demo.txt').read())"
             }
           ]
@@ -8328,21 +8328,21 @@
           "id": "d07",
           "type": "code",
           "track": "deep-dive",
-          "heading": "Total from a CSV",
-          "instruction": "Use `csv.DictReader` to add up the `price` column and print the total. It should print: 12.5",
-          "initial_code": "import csv\nwith open('order.csv', 'w') as f:\n    f.write('item,price\\npen,1.5\\nbook,8\\ntape,3\\n')\n\ntotal = 0\n# TODO: read order.csv with DictReader and add each price\n\nprint(total)",
-          "expected_output": "12.5",
-          "hint": "with open('order.csv', newline='') as f:\n    for row in csv.DictReader(f):\n        total += float(row['price'])",
+          "heading": "Total traffic from a CSV",
+          "instruction": "Use `csv.DictReader` to add up the `bytes` column and print the total. It should print: 12500",
+          "initial_code": "import csv\nwith open('traffic.csv', 'w') as f:\n    f.write('host,bytes\\nweb-01,1500\\ndb-01,8000\\ncache-01,3000\\n')\n\ntotal = 0\n# TODO: read traffic.csv with DictReader and add each row's bytes\n\nprint(total)",
+          "expected_output": "12500",
+          "hint": "with open('traffic.csv', newline='') as f:\n    for row in csv.DictReader(f):\n        total += int(row['bytes'])",
           "support": [
             {
               "heading": "Each row is a dictionary",
-              "content": "`row['price']` is the text in that row's price column, like `'1.5'`.",
+              "content": "`row['bytes']` is the text in that row's bytes column, like `'1500'`.",
               "example_code": "import csv\nwith open('t.csv', 'w') as f:\n    f.write('a,b\\n1,2\\n')\nwith open('t.csv', newline='') as f:\n    print(list(csv.DictReader(f)))"
             },
             {
               "heading": "Convert before adding",
-              "content": "CSV values are strings. Adding `'1.5'` to a number raises TypeError, so wrap it: `float(row['price'])`.",
-              "example_code": "print(float('8') + float('1.5'))  # 9.5"
+              "content": "CSV values are strings. Adding `'1500'` to a number raises TypeError, so wrap it: `int(row['bytes'])`.",
+              "example_code": "print(int('8') + int('15'))  # 23"
             }
           ]
         },
@@ -8374,11 +8374,11 @@
           "id": "d10",
           "type": "code",
           "track": "deep-dive",
-          "heading": "Write and read with pathlib",
-          "instruction": "Using `Path`, write 'Saved!' to 'status.txt' with `write_text`, then print it back with `read_text`.",
-          "initial_code": "from pathlib import Path\np = Path('status.txt')\n# TODO: write 'Saved!' then print the file's text\n",
-          "expected_output": "Saved!",
-          "hint": "p.write_text('Saved!')\nprint(p.read_text())",
+          "heading": "Write and read a status file with pathlib",
+          "instruction": "Using `Path`, write 'Backup OK' to 'status.txt' with `write_text`, then print it back with `read_text`.",
+          "initial_code": "from pathlib import Path\np = Path('status.txt')\n# TODO: write 'Backup OK' then print the file's text\n",
+          "expected_output": "Backup OK",
+          "hint": "p.write_text('Backup OK')\nprint(p.read_text())",
           "support": [
             {
               "heading": "No open() needed",
@@ -8475,15 +8475,15 @@
           "id": "d17",
           "type": "code",
           "track": "deep-dive",
-          "heading": "Number the lines",
-          "instruction": "Print each line of 'poem.txt' with its line number in front, starting at 1, like: 1: roses are red",
-          "initial_code": "with open('poem.txt', 'w') as f:\n    f.write('roses are red\\nviolets are blue\\n')\n\n# TODO: print each line with its number\n",
-          "expected_output": "1: roses are red\n2: violets are blue",
-          "hint": "with open('poem.txt') as f:\n    for number, line in enumerate(f, 1):\n        print(f'{number}: {line.strip()}')",
+          "heading": "Number the config lines",
+          "instruction": "Print each line of 'sshd.conf' with its line number in front, starting at 1, like: 1: PermitRootLogin no",
+          "initial_code": "with open('sshd.conf', 'w') as f:\n    f.write('PermitRootLogin no\\nPasswordAuthentication no\\n')\n\n# TODO: print each line with its number\n",
+          "expected_output": "1: PermitRootLogin no\n2: PasswordAuthentication no",
+          "hint": "with open('sshd.conf') as f:\n    for number, line in enumerate(f, 1):\n        print(f'{number}: {line.strip()}')",
           "support": [
             {
               "heading": "enumerate counts for you",
-              "content": "`enumerate(f, 1)` gives pairs like (1, 'roses are red\\n'). The 1 makes counting start at 1 instead of 0.",
+              "content": "`enumerate(f, 1)` gives pairs like (1, 'PermitRootLogin no\\n'). The 1 makes counting start at 1 instead of 0.",
               "example_code": "for i, word in enumerate(['a', 'b'], 1):\n    print(i, word)"
             },
             {
@@ -8610,16 +8610,16 @@
           "id": "i08",
           "type": "code",
           "track": "interview",
-          "heading": "Classic: merge two files",
-          "instruction": "'a.txt' and 'b.txt' each hold numbers, one per line. Write all of them to 'merged.txt' in ascending order, one per line. The verification should print 1, 2, 3, 4, 9, 10 on separate lines.",
-          "initial_code": "with open('a.txt', 'w') as f:\n    f.write('1\\n4\\n9\\n')\nwith open('b.txt', 'w') as f:\n    f.write('2\\n3\\n10\\n')\n\n# TODO: read both files, sort the numbers, write merged.txt\n\n\n# Verification (do not change)\nprint(open('merged.txt').read())",
-          "expected_output": "1\n2\n3\n4\n9\n10",
+          "heading": "Classic: merge two port lists",
+          "instruction": "'a.txt' and 'b.txt' each hold open port numbers, one per line. Write all of them to 'merged.txt' in ascending order, one per line. The verification should print 22, 80, 443, 3306, 8080, 9000 on separate lines.",
+          "initial_code": "with open('a.txt', 'w') as f:\n    f.write('22\\n443\\n8080\\n')\nwith open('b.txt', 'w') as f:\n    f.write('80\\n3306\\n9000\\n')\n\n# TODO: read both files, sort the numbers, write merged.txt\n\n\n# Verification (do not change)\nprint(open('merged.txt').read())",
+          "expected_output": "22\n80\n443\n3306\n8080\n9000",
           "hint": "numbers = []\nfor name in ['a.txt', 'b.txt']:\n    with open(name) as f:\n        numbers += [int(line) for line in f]\nwith open('merged.txt', 'w') as f:\n    for n in sorted(numbers):\n        f.write(f'{n}\\n')",
           "support": [
             {
               "heading": "Sort numbers, not text",
-              "content": "Convert each line with `int(line)` first. Sorted as text, '10' would come before '2'.",
-              "example_code": "print(sorted(['10', '2']), sorted([10, 2]))  # ['10', '2'] [2, 10]"
+              "content": "Convert each line with `int(line)` first. Sorted as text, '443' would come before '80'.",
+              "example_code": "print(sorted(['443', '80']), sorted([443, 80]))  # ['443', '80'] [80, 443]"
             },
             {
               "heading": "Read both, then write once",
@@ -8632,11 +8632,11 @@
           "id": "i09",
           "type": "code",
           "track": "interview",
-          "heading": "Debug: only the last name survives",
-          "instruction": "This should save all three names, but the file ends up holding only 'Cy'. Open the file once, before the loop, so every write goes into the same open file.",
-          "initial_code": "names = ['Ada', 'Bob', 'Cy']\nfor name in names:\n    with open('names.txt', 'w') as f:\n        f.write(name + '\\n')\n\n# Verification (do not change)\nprint(open('names.txt').read())",
-          "expected_output": "Ada\nBob\nCy",
-          "hint": "Swap the two lines so the with comes first:\nwith open('names.txt', 'w') as f:\n    for name in names:\n        f.write(name + '\\n')",
+          "heading": "Debug: only the last host survives",
+          "instruction": "This should save all three hosts, but the file ends up holding only 'cache-01'. Open the file once, before the loop, so every write goes into the same open file.",
+          "initial_code": "hosts = ['web-01', 'db-01', 'cache-01']\nfor host in hosts:\n    with open('hosts.txt', 'w') as f:\n        f.write(host + '\\n')\n\n# Verification (do not change)\nprint(open('hosts.txt').read())",
+          "expected_output": "web-01\ndb-01\ncache-01",
+          "hint": "Swap the two lines so the with comes first:\nwith open('hosts.txt', 'w') as f:\n    for host in hosts:\n        f.write(host + '\\n')",
           "support": [
             {
               "heading": "'w' wipes the file each time it opens",
@@ -9011,16 +9011,16 @@
           "id": "d11",
           "type": "code",
           "track": "deep-dive",
-          "heading": "Test with a fake",
-          "instruction": "`is_weekend(get_day)` calls `get_day()` for a day name. Replace each `...` with a fake day: `lambda: 'Sat'` in the first assert and `lambda: 'Mon'` in the second. Then it prints ok.",
-          "initial_code": "def is_weekend(get_day):\n    return get_day() in ('Sat', 'Sun')\n\nassert is_weekend(...)       # TODO: a fake Saturday\nassert not is_weekend(...)   # TODO: a fake Monday\nprint('ok')",
+          "heading": "Test with a fake clock",
+          "instruction": "`in_business_hours(get_hour)` calls `get_hour()` for the current hour (0-23). Replace each `...` with a fake hour: `lambda: 10` in the first assert and `lambda: 23` in the second. Then it prints ok.",
+          "initial_code": "def in_business_hours(get_hour):\n    return 9 <= get_hour() < 17\n\nassert in_business_hours(...)       # TODO: a fake 10 am\nassert not in_business_hours(...)   # TODO: a fake 11 pm\nprint('ok')",
           "expected_output": "ok",
-          "hint": "assert is_weekend(lambda: 'Sat')\nassert not is_weekend(lambda: 'Mon')",
+          "hint": "assert in_business_hours(lambda: 10)\nassert not in_business_hours(lambda: 23)",
           "support": [
             {
               "heading": "A fake is just a function",
-              "content": "`lambda: 'Sat'` is a function that always returns 'Sat'. Pass it in place of a real calendar.",
-              "example_code": "fake = lambda: 'Tue'\nprint(fake())  # Tue"
+              "content": "`lambda: 10` is a function that always returns 10. Pass it in place of the real clock.",
+              "example_code": "fake = lambda: 14\nprint(fake())  # 14"
             },
             {
               "heading": "Replace the dots",
@@ -9101,20 +9101,20 @@
           "id": "d17",
           "type": "code",
           "track": "deep-dive",
-          "heading": "Test the boundary",
-          "instruction": "The first two tests passed for months. Then someone added a test for exactly 90, and it fails. Fix the comparison in `grade` (not the tests) so it prints: All tests passed",
-          "initial_code": "def grade(score):\n    if score > 90:\n        return 'A'\n    return 'B'\n\nassert grade(95) == 'A'\nassert grade(50) == 'B'\nassert grade(90) == 'A'   # the new boundary test\n\nprint('All tests passed')",
+          "heading": "Test the alert boundary",
+          "instruction": "The first two tests passed for months. Then someone added a test for exactly 90, and it fails. Fix the comparison in `cpu_alert` (not the tests) so it prints: All tests passed",
+          "initial_code": "def cpu_alert(percent):\n    if percent > 90:\n        return 'ALERT'\n    return 'ok'\n\nassert cpu_alert(95) == 'ALERT'\nassert cpu_alert(50) == 'ok'\nassert cpu_alert(90) == 'ALERT'   # the new boundary test\n\nprint('All tests passed')",
           "expected_output": "All tests passed",
-          "hint": "Change `>` to `>=`:\nif score >= 90:",
+          "hint": "Change `>` to `>=`:\nif percent >= 90:",
           "support": [
             {
               "heading": "Boundaries hide bugs",
-              "content": "A score of exactly 90 should be an A, but `90 > 90` is False. Tests that only use 95 and 50 never notice.",
+              "content": "A reading of exactly 90 should alert, but `90 > 90` is False. Tests that only use 95 and 50 never notice.",
               "example_code": "print(90 > 90, 90 >= 90)  # False True"
             },
             {
               "heading": "One character",
-              "content": "Change `>` to `>=` so 90 itself counts as an A. The other two tests still pass.",
+              "content": "Change `>` to `>=` so 90 itself triggers the alert. The other two tests still pass.",
               "example_code": "def passed(score):\n    return score >= 50\nassert passed(50)\nprint('boundary ok')"
             }
           ]
@@ -9258,20 +9258,20 @@
           "id": "i09",
           "type": "code",
           "track": "interview",
-          "heading": "Debug: the float test",
-          "instruction": "`total` is correct, but its test fails. Fix the test (not the function) using `math.isclose` so it prints: All tests passed",
-          "initial_code": "import math\n\ndef total(prices):\n    return sum(prices)\n\nassert total([0.1, 0.2]) == 0.3\nprint('All tests passed')",
+          "heading": "Debug: the latency test",
+          "instruction": "`average_latency` is correct, but its test fails. Fix the test (not the function) using `math.isclose` so it prints: All tests passed",
+          "initial_code": "import math\n\ndef average_latency(samples):\n    return sum(samples) / len(samples)\n\nassert average_latency([0.1, 0.2]) == 0.15\nprint('All tests passed')",
           "expected_output": "All tests passed",
-          "hint": "assert math.isclose(total([0.1, 0.2]), 0.3)",
+          "hint": "assert math.isclose(average_latency([0.1, 0.2]), 0.15)",
           "support": [
             {
               "heading": "The function is fine",
-              "content": "0.1 + 0.2 is 0.30000000000000004 in binary floating point. The bug is the test's exact == comparison.",
-              "example_code": "print(0.1 + 0.2)"
+              "content": "0.1 + 0.2 is 0.30000000000000004 in binary floating point, so the average isn't exactly 0.15. The bug is the test's exact == comparison.",
+              "example_code": "print((0.1 + 0.2) / 2)"
             },
             {
               "heading": "Swap == for isclose",
-              "content": "Replace `a == b` with `math.isclose(a, b)` inside the assert. math is already imported.",
+              "content": "Replace `a == b` with `math.isclose(a, b)` inside the assert, comparing against 0.15. math is already imported.",
               "example_code": "import math\nassert math.isclose(1.1 + 2.2, 3.3)\nprint('close enough')"
             }
           ]
