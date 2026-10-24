@@ -3723,19 +3723,19 @@
           "type": "code",
           "track": "deep-dive",
           "heading": "Turn prints into returns",
-          "instruction": "`area` prints instead of returning, so adding two results crashes. Fix `area` so the program prints 22.",
-          "initial_code": "def area(w, h):\n    print(w * h)\n\ntotal = area(3, 4) + area(2, 5)\nprint(total)",
-          "expected_output": "22",
-          "hint": "Replace the print with a return:\n    return w * h",
+          "instruction": "`used_gb` prints instead of returning, so adding two results crashes. Fix `used_gb` so the program prints the total used space across two disks: 580.",
+          "initial_code": "def used_gb(total, free):\n    print(total - free)\n\ntotal = used_gb(500, 120) + used_gb(250, 50)\nprint(total)",
+          "expected_output": "580",
+          "hint": "Replace the print with a return:\n    return total - free",
           "support": [
             {
               "heading": "None + None fails",
-              "content": "Each call to `area` returns None, so the program tries `None + None` and raises a TypeError. Returned numbers can be added.",
+              "content": "Each call to `used_gb` returns None, so the program tries `None + None` and raises a TypeError. Returned numbers can be added.",
               "example_code": "def half(n):\n    return n / 2\n\nprint(half(10) + half(4))  # 7.0"
             },
             {
               "heading": "One word changes",
-              "content": "Inside `area`, change `print(w * h)` to `return w * h`. 3×4 + 2×5 is 22.",
+              "content": "Inside `used_gb`, change `print(total - free)` to `return total - free`. (500 - 120) + (250 - 50) is 580.",
               "example_code": "def cube(n):\n    return n * n * n\n\nprint(cube(2) + cube(1))  # 9"
             }
           ]
@@ -3777,10 +3777,10 @@
           "id": "d07",
           "type": "code",
           "track": "deep-dive",
-          "heading": "Total and average",
-          "instruction": "Finish `stats` so it returns the total of the three numbers and their average. The program should print: 18 6.0",
-          "initial_code": "def stats(a, b, c):\n    # TODO: return the total and the average\n    pass\n\ntotal, avg = stats(4, 8, 6)\nprint(total, avg)",
-          "expected_output": "18 6.0",
+          "heading": "Total and average response time",
+          "instruction": "Finish `stats` so it returns the total of three response times (in ms) and their average. The program should print: 300 100.0",
+          "initial_code": "def stats(a, b, c):\n    # TODO: return the total and the average\n    pass\n\ntotal, avg = stats(120, 80, 100)\nprint(total, avg)",
+          "expected_output": "300 100.0",
           "hint": "total = a + b + c\nreturn total, total / 3",
           "support": [
             {
@@ -3790,7 +3790,7 @@
             },
             {
               "heading": "Work out the total first",
-              "content": "Store the sum in a variable inside the function, then return that variable and the variable divided by 3. Division gives a float, so the average prints as 6.0.",
+              "content": "Store the sum in a variable inside the function, then return that variable and the variable divided by 3. Division gives a float, so the average prints as 100.0.",
               "example_code": "def pair(n):\n    doubled = n * 2\n    return doubled, doubled + 1\n\nprint(pair(5))  # (10, 11)"
             }
           ]
@@ -3823,11 +3823,11 @@
           "id": "d10",
           "type": "code",
           "track": "deep-dive",
-          "heading": "Grade with early returns",
-          "instruction": "Finish `grade` using early returns: 90 or more returns `'A'`, 50 or more returns `'pass'`, anything else `'fail'`. The prints should show A, pass and fail.",
-          "initial_code": "def grade(score):\n    # TODO: early returns for A, pass and fail\n    pass\n\nprint(grade(95))\nprint(grade(60))\nprint(grade(20))",
-          "expected_output": "A\npass\nfail",
-          "hint": "if score >= 90:\n    return 'A'\nif score >= 50:\n    return 'pass'\nreturn 'fail'",
+          "heading": "Classify a port with early returns",
+          "instruction": "Finish `classify` using early returns: a port below 1024 returns `'well-known'`, below 49152 returns `'registered'`, anything else `'dynamic'`. The prints should show well-known, registered and dynamic.",
+          "initial_code": "def classify(port):\n    # TODO: early returns for well-known, registered and dynamic\n    pass\n\nprint(classify(22))\nprint(classify(8080))\nprint(classify(55000))",
+          "expected_output": "well-known\nregistered\ndynamic",
+          "hint": "if port < 1024:\n    return 'well-known'\nif port < 49152:\n    return 'registered'\nreturn 'dynamic'",
           "support": [
             {
               "heading": "No elif needed",
@@ -3835,9 +3835,9 @@
               "example_code": "def size(n):\n    if n > 100:\n        return 'big'\n    return 'small'\n\nprint(size(500))"
             },
             {
-              "heading": "Highest check first",
-              "content": "Test 90 first, then 50, then fall through to the final `return 'fail'`. Each line is indented inside the function.",
-              "example_code": "def temp(t):\n    if t > 30:\n        return 'hot'\n    if t > 15:\n        return 'warm'\n    return 'cold'\n\nprint(temp(20))  # warm"
+              "heading": "Lowest check first",
+              "content": "Test below 1024 first, then below 49152, then fall through to the final `return 'dynamic'`. Each line is indented inside the function.",
+              "example_code": "def temp(t):\n    if t < 15:\n        return 'cold'\n    if t < 30:\n        return 'warm'\n    return 'hot'\n\nprint(temp(20))  # warm"
             }
           ]
         },
@@ -4378,11 +4378,11 @@
           "id": "d03",
           "type": "code",
           "track": "deep-dive",
-          "heading": "The last three scores",
-          "instruction": "Print the last three items of `scores` using a slice with a negative start. It should print: [88, 61, 99]",
-          "initial_code": "scores = [72, 95, 88, 61, 99]\n# TODO: print the last three\n",
-          "expected_output": "[88, 61, 99]",
-          "hint": "print(scores[-3:])",
+          "heading": "The last three events",
+          "instruction": "Print the last three items of `events` using a slice with a negative start. It should print: ['sudo', 'logout', 'shutdown']",
+          "initial_code": "events = ['boot', 'login', 'sudo', 'logout', 'shutdown']\n# TODO: print the last three\n",
+          "expected_output": "['sudo', 'logout', 'shutdown']",
+          "hint": "print(events[-3:])",
           "support": [
             {
               "heading": "Negative start counts from the end",
@@ -4427,11 +4427,11 @@
           "id": "d06",
           "type": "code",
           "track": "deep-dive",
-          "heading": "Average score",
-          "instruction": "Print the average of `scores` using `sum()` and `len()`. It should print: 79.0",
-          "initial_code": "scores = [72, 95, 88, 61]\n# TODO: print the average\n",
+          "heading": "Average latency",
+          "instruction": "Print the average of `latencies` (in ms) using `sum()` and `len()`. It should print: 79.0",
+          "initial_code": "latencies = [72, 95, 88, 61]\n# TODO: print the average\n",
           "expected_output": "79.0",
-          "hint": "print(sum(scores) / len(scores))",
+          "hint": "print(sum(latencies) / len(latencies))",
           "support": [
             {
               "heading": "Total divided by count",
@@ -4440,7 +4440,7 @@
             },
             {
               "heading": "One expression",
-              "content": "Put `sum(scores) / len(scores)` inside print(). Division gives a float, so it shows 79.0.",
+              "content": "Put `sum(latencies) / len(latencies)` inside print(). Division gives a float, so it shows 79.0.",
               "example_code": "print(sum([2, 4]) / len([2, 4]))  # 3.0"
             }
           ]
@@ -4459,11 +4459,11 @@
           "id": "d08",
           "type": "code",
           "track": "deep-dive",
-          "heading": "Find a name",
-          "instruction": "Print the position of `'Cy'` in `names`, then on the next line whether `'Zed'` is in the list. It should print 2 then False.",
-          "initial_code": "names = ['Ann', 'Bo', 'Cy', 'Dee']\n# TODO: print the index of 'Cy', then whether 'Zed' is in names\n",
+          "heading": "Find a host",
+          "instruction": "Print the position of `'db-01'` in `hosts`, then on the next line whether `'cache-01'` is in the list. It should print 2 then False.",
+          "initial_code": "hosts = ['web-01', 'web-02', 'db-01', 'db-02']\n# TODO: print the index of 'db-01', then whether 'cache-01' is in hosts\n",
           "expected_output": "2\nFalse",
-          "hint": "print(names.index('Cy'))\nprint('Zed' in names)",
+          "hint": "print(hosts.index('db-01'))\nprint('cache-01' in hosts)",
           "support": [
             {
               "heading": "index() finds, in checks",
@@ -4472,7 +4472,7 @@
             },
             {
               "heading": "Check before index",
-              "content": "Calling `.index()` on a missing value raises a ValueError, which is why you check with `in` first when you're not sure. Here 'Cy' is present, so `.index` is safe.",
+              "content": "Calling `.index()` on a missing value raises a ValueError, which is why you check with `in` first when you're not sure. Here 'db-01' is present, so `.index` is safe.",
               "example_code": "items = ['a', 'b']\nif 'z' in items:\n    print(items.index('z'))\nelse:\n    print('not there')"
             }
           ]
@@ -4508,11 +4508,11 @@
           "id": "d11",
           "type": "code",
           "track": "deep-dive",
-          "heading": "Copy before changing",
-          "instruction": "`backup` should keep the original list, but appending to `working` changes both. Fix it so it prints: [1, 2, 3] [1, 2, 3, 4]",
-          "initial_code": "backup = [1, 2, 3]\nworking = backup\nworking.append(4)\nprint(backup, working)",
-          "expected_output": "[1, 2, 3] [1, 2, 3, 4]",
-          "hint": "Make working a separate list:\nworking = backup.copy()",
+          "heading": "Copy the baseline before changing it",
+          "instruction": "`baseline` should keep the original list of open ports, but appending to `current` changes both. Fix it so it prints: [22, 80, 443] [22, 80, 443, 8080]",
+          "initial_code": "baseline = [22, 80, 443]\ncurrent = baseline\ncurrent.append(8080)\nprint(baseline, current)",
+          "expected_output": "[22, 80, 443] [22, 80, 443, 8080]",
+          "hint": "Make current a separate list:\ncurrent = baseline.copy()",
           "support": [
             {
               "heading": "Assignment shares, copy() duplicates",
@@ -4521,7 +4521,7 @@
             },
             {
               "heading": "Change one line",
-              "content": "Only the second line needs to change. `backup[:]` or `list(backup)` also work.",
+              "content": "Only the second line needs to change. `baseline[:]` or `list(baseline)` also work.",
               "example_code": "orig = [5]\nnew = orig[:]\nnew.append(6)\nprint(orig, new)  # [5] [5, 6]"
             }
           ]
@@ -4540,11 +4540,11 @@
           "id": "d13",
           "type": "code",
           "track": "deep-dive",
-          "heading": "Collect the long words",
-          "instruction": "Build a list of the words in `words` that have more than 4 letters, using a loop and `append`, then print it. It should print: ['python', 'loops', 'lists']",
-          "initial_code": "words = ['code', 'python', 'is', 'loops', 'fun', 'lists']\n# TODO: build long_words with a loop\n\nprint(long_words)",
-          "expected_output": "['python', 'loops', 'lists']",
-          "hint": "long_words = []\nfor w in words:\n    if len(w) > 4:\n        long_words.append(w)",
+          "heading": "Collect the unprivileged ports",
+          "instruction": "Build a list of the ports in `ports` that are above 1023 (they don't need root), using a loop and `append`, then print it. It should print: [8080, 3306, 9000]",
+          "initial_code": "ports = [22, 80, 8080, 443, 3306, 9000]\n# TODO: build high_ports with a loop\n\nprint(high_ports)",
+          "expected_output": "[8080, 3306, 9000]",
+          "hint": "high_ports = []\nfor p in ports:\n    if p > 1023:\n        high_ports.append(p)",
           "support": [
             {
               "heading": "Empty list, loop, condition, append",
@@ -4552,9 +4552,9 @@
               "example_code": "small = []\nfor n in [5, 50, 2]:\n    if n < 10:\n        small.append(n)\nprint(small)  # [5, 2]"
             },
             {
-              "heading": "len() inside the condition",
-              "content": "Each `w` is a word, so `len(w) > 4` checks its length. 'loops' has 5 letters and 'code' has 4, so only the first is kept.",
-              "example_code": "print(len('loops') > 4, len('code') > 4)  # True False"
+              "heading": "Compare inside the condition",
+              "content": "Each `p` is a port number, so `p > 1023` checks it. 8080 passes and 443 doesn't, so only the first is kept.",
+              "example_code": "print(8080 > 1023, 443 > 1023)  # True False"
             }
           ]
         },
@@ -4748,11 +4748,11 @@
           "id": "i09",
           "type": "code",
           "track": "interview",
-          "heading": "Debug: removing while looping",
-          "instruction": "This should remove all even numbers, but it prints [1, 2, 3]. Fix it so it prints: [1, 3]",
-          "initial_code": "nums = [1, 2, 2, 3, 4]\nfor n in nums:\n    if n % 2 == 0:\n        nums.remove(n)\nprint(nums)",
-          "expected_output": "[1, 3]",
-          "hint": "Don't change a list while looping over it. Build a new list of the items to keep:\nodds = []\nfor n in nums:\n    if n % 2 != 0:\n        odds.append(n)\nprint(odds)",
+          "heading": "Debug: removing accounts while looping",
+          "instruction": "This should remove every `guest` account from the list, but one survives and it prints ['ada', 'guest', 'bob']. Fix it so it prints: ['ada', 'bob']",
+          "initial_code": "users = ['ada', 'guest', 'guest', 'bob']\nfor u in users:\n    if u == 'guest':\n        users.remove(u)\nprint(users)",
+          "expected_output": "['ada', 'bob']",
+          "hint": "Don't change a list while looping over it. Build a new list of the accounts to keep:\nkept = []\nfor u in users:\n    if u != 'guest':\n        kept.append(u)\nprint(kept)",
           "support": [
             {
               "heading": "Why items get skipped",
@@ -4761,7 +4761,7 @@
             },
             {
               "heading": "Build a new list instead",
-              "content": "Loop over the original and append the items you want to keep (the odd ones) to a new list. Looping over a copy (`for n in nums[:]`) also works.",
+              "content": "Loop over the original and append the accounts you want to keep to a new list. Looping over a copy (`for u in users[:]`) also works.",
               "example_code": "keep = []\nfor n in [5, 6, 7]:\n    if n != 6:\n        keep.append(n)\nprint(keep)  # [5, 7]"
             }
           ]
@@ -5047,11 +5047,11 @@
           "id": "d03",
           "type": "code",
           "track": "deep-dive",
-          "heading": "Print a price list",
-          "instruction": "Loop over `prices` with `.items()` and print each line like `apple: $0.50` (two decimals).",
-          "initial_code": "prices = {'apple': 0.5, 'bread': 2.25}\n# TODO: print each item and its price\n",
-          "expected_output": "apple: $0.50\nbread: $2.25",
-          "hint": "for item, price in prices.items():\n    print(f'{item}: ${price:.2f}')",
+          "heading": "Print a service list",
+          "instruction": "Loop over `services` with `.items()` and print each line like `ssh: port 22`.",
+          "initial_code": "services = {'ssh': 22, 'http': 80}\n# TODO: print each service and its port\n",
+          "expected_output": "ssh: port 22\nhttp: port 80",
+          "hint": "for name, port in services.items():\n    print(f'{name}: port {port}')",
           "support": [
             {
               "heading": "Unpack each pair",
@@ -5059,9 +5059,9 @@
               "example_code": "ages = {'Ann': 30}\nfor name, age in ages.items():\n    print(f'{name} is {age}')"
             },
             {
-              "heading": "Format the money",
-              "content": "`{price:.2f}` shows two decimals, and the `$` before it is plain text.",
-              "example_code": "p = 1.5\nprint(f'tea: ${p:.2f}')  # tea: $1.50"
+              "heading": "Format the line",
+              "content": "Put both variables in one f-string: the name, then `: port `, then the number.",
+              "example_code": "p = 443\nprint(f'https: port {p}')  # https: port 443"
             }
           ]
         },
@@ -5093,20 +5093,20 @@
           "id": "d06",
           "type": "code",
           "track": "deep-dive",
-          "heading": "Word frequency",
-          "instruction": "Count how many times each word appears in `text` and print the dictionary. It should print: {'the': 2, 'cat': 1, 'and': 1, 'hat': 1}",
-          "initial_code": "text = 'the cat and the hat'\n# TODO: count each word\n",
-          "expected_output": "{'the': 2, 'cat': 1, 'and': 1, 'hat': 1}",
-          "hint": "counts = {}\nfor word in text.split():\n    counts[word] = counts.get(word, 0) + 1\nprint(counts)",
+          "heading": "Count log levels",
+          "instruction": "Count how many times each level appears in `levels` and print the dictionary. It should print: {'ERROR': 3, 'INFO': 2, 'WARN': 1}",
+          "initial_code": "levels = 'ERROR INFO ERROR WARN INFO ERROR'\n# TODO: count each level\n",
+          "expected_output": "{'ERROR': 3, 'INFO': 2, 'WARN': 1}",
+          "hint": "counts = {}\nfor level in levels.split():\n    counts[level] = counts.get(level, 0) + 1\nprint(counts)",
           "support": [
             {
               "heading": "Split first, then count",
-              "content": "`text.split()` gives the list of words. Loop over that list, not over the string (which would give letters).",
+              "content": "`levels.split()` gives the list of words. Loop over that list, not over the string (which would give letters).",
               "example_code": "print('a b a'.split())  # ['a', 'b', 'a']"
             },
             {
               "heading": "The get-plus-one line",
-              "content": "Inside the loop: `counts[word] = counts.get(word, 0) + 1`. Start with `counts = {}` before the loop and print after it.",
+              "content": "Inside the loop: `counts[level] = counts.get(level, 0) + 1`. Start with `counts = {}` before the loop and print after it.",
               "example_code": "c = {}\nfor x in ['x', 'y', 'x']:\n    c[x] = c.get(x, 0) + 1\nprint(c)  # {'x': 2, 'y': 1}"
             }
           ]
@@ -5149,20 +5149,20 @@
           "id": "d10",
           "type": "code",
           "track": "deep-dive",
-          "heading": "Read nested data",
-          "instruction": "Print the customer's city, then on the next line the number of items in the order. It should print: Lima then 2",
-          "initial_code": "order = {\n    'id': 7,\n    'customer': {'name': 'Kim', 'city': 'Lima'},\n    'items': ['pen', 'ink'],\n}\n# TODO: print the city, then how many items\n",
-          "expected_output": "Lima\n2",
-          "hint": "print(order['customer']['city'])\nprint(len(order['items']))",
+          "heading": "Read a nested alert",
+          "instruction": "Print the alerting host's operating system, then on the next line the number of tags on the alert. It should print: linux then 2",
+          "initial_code": "alert = {\n    'id': 7,\n    'host': {'name': 'web-01', 'os': 'linux'},\n    'tags': ['ssh', 'bruteforce'],\n}\n# TODO: print the host's os, then how many tags\n",
+          "expected_output": "linux\n2",
+          "hint": "print(alert['host']['os'])\nprint(len(alert['tags']))",
           "support": [
             {
               "heading": "Chain the brackets",
-              "content": "`order['customer']` is the inner dictionary; add `['city']` to look inside it.",
+              "content": "`alert['host']` is the inner dictionary; add `['os']` to look inside it.",
               "example_code": "data = {'pet': {'kind': 'dog'}}\nprint(data['pet']['kind'])  # dog"
             },
             {
               "heading": "len() of the inner list",
-              "content": "`order['items']` is a list, so `len(order['items'])` counts its items.",
+              "content": "`alert['tags']` is a list, so `len(alert['tags'])` counts its items.",
               "example_code": "d = {'tags': ['a', 'b', 'c']}\nprint(len(d['tags']))  # 3"
             }
           ]
@@ -5195,11 +5195,11 @@
           "id": "d13",
           "type": "code",
           "track": "deep-dive",
-          "heading": "Apply a discount",
-          "instruction": "Loop over `prices` and replace each price with 90% of it, rounded to 2 decimals, then print the dictionary. It should print: {'tea': 3.6, 'cake': 5.4}",
-          "initial_code": "prices = {'tea': 4.0, 'cake': 6.0}\n# TODO: take 10% off every price\n\nprint(prices)",
-          "expected_output": "{'tea': 3.6, 'cake': 5.4}",
-          "hint": "for item, price in prices.items():\n    prices[item] = round(price * 0.9, 2)",
+          "heading": "Convert timeouts to milliseconds",
+          "instruction": "Loop over `timeouts` (in seconds) and replace each value with the same time in milliseconds, then print the dictionary. It should print: {'ssh': 30000, 'http': 5000}",
+          "initial_code": "timeouts = {'ssh': 30, 'http': 5}\n# TODO: convert every timeout to milliseconds\n\nprint(timeouts)",
+          "expected_output": "{'ssh': 30000, 'http': 5000}",
+          "hint": "for name, seconds in timeouts.items():\n    timeouts[name] = seconds * 1000",
           "support": [
             {
               "heading": "Changing values while looping is fine",
@@ -5207,9 +5207,9 @@
               "example_code": "d = {'a': 1, 'b': 2}\nfor k, v in d.items():\n    d[k] = v * 10\nprint(d)  # {'a': 10, 'b': 20}"
             },
             {
-              "heading": "90% means times 0.9",
-              "content": "For each pair, store `round(price * 0.9, 2)` back under the same key.",
-              "example_code": "print(round(5.0 * 0.9, 2))  # 4.5"
+              "heading": "1000 milliseconds per second",
+              "content": "For each pair, store `seconds * 1000` back under the same key.",
+              "example_code": "print(5 * 1000)  # 5000"
             }
           ]
         },
@@ -5250,21 +5250,21 @@
           "id": "d17",
           "type": "code",
           "track": "deep-dive",
-          "heading": "Group words by first letter",
-          "instruction": "Group `words` by their first letter into a dictionary of lists and print it. It should print: {'a': ['apple', 'avocado'], 'b': ['banana', 'blueberry'], 'c': ['cherry']}",
-          "initial_code": "words = ['apple', 'avocado', 'banana', 'blueberry', 'cherry']\n# TODO: group by first letter\n",
-          "expected_output": "{'a': ['apple', 'avocado'], 'b': ['banana', 'blueberry'], 'c': ['cherry']}",
-          "hint": "groups = {}\nfor w in words:\n    first = w[0]\n    if first not in groups:\n        groups[first] = []\n    groups[first].append(w)\nprint(groups)",
+          "heading": "Group hosts by role",
+          "instruction": "Group `hosts` by the role in front of the dash (like `web` in `web-01`) into a dictionary of lists and print it. It should print: {'web': ['web-01', 'web-02'], 'db': ['db-01'], 'cache': ['cache-01']}",
+          "initial_code": "hosts = ['web-01', 'web-02', 'db-01', 'cache-01']\n# TODO: group by role\n",
+          "expected_output": "{'web': ['web-01', 'web-02'], 'db': ['db-01'], 'cache': ['cache-01']}",
+          "hint": "groups = {}\nfor h in hosts:\n    role = h.split('-')[0]\n    if role not in groups:\n        groups[role] = []\n    groups[role].append(h)\nprint(groups)",
           "support": [
             {
               "heading": "Make the list once, then append",
-              "content": "If the key isn't there yet, set it to an empty list. Then, every time, append the word to that key's list.",
+              "content": "If the key isn't there yet, set it to an empty list. Then, every time, append the host to that key's list.",
               "example_code": "g = {}\nfor x in ['hi', 'ho']:\n    if 'h' not in g:\n        g['h'] = []\n    g['h'].append(x)\nprint(g)  # {'h': ['hi', 'ho']}"
             },
             {
-              "heading": "The key is the first letter",
-              "content": "`w[0]` gives each word's first letter. Use it as the key in both the check and the append.",
-              "example_code": "print('cherry'[0])  # c"
+              "heading": "The key is the part before the dash",
+              "content": "`h.split('-')[0]` gives each host's role. Use it as the key in both the check and the append.",
+              "example_code": "print('web-01'.split('-')[0])  # web"
             }
           ]
         },
@@ -5404,11 +5404,11 @@
           "id": "i09",
           "type": "code",
           "track": "interview",
-          "heading": "Debug: the counter that crashes",
-          "instruction": "This crashes with a KeyError. Fix it so it prints: {'red': 2, 'blue': 1}",
-          "initial_code": "colors = ['red', 'blue', 'red']\ncounts = {}\nfor c in colors:\n    counts[c] += 1\nprint(counts)",
-          "expected_output": "{'red': 2, 'blue': 1}",
-          "hint": "`counts[c] += 1` reads counts[c] first, which doesn't exist yet. Use get with a default:\ncounts[c] = counts.get(c, 0) + 1",
+          "heading": "Debug: the failed-login counter that crashes",
+          "instruction": "This crashes with a KeyError. Fix it so it prints the failed logins per user: {'ada': 2, 'bob': 1}",
+          "initial_code": "failed = ['ada', 'bob', 'ada']\ncounts = {}\nfor user in failed:\n    counts[user] += 1\nprint(counts)",
+          "expected_output": "{'ada': 2, 'bob': 1}",
+          "hint": "`counts[user] += 1` reads counts[user] first, which doesn't exist yet. Use get with a default:\ncounts[user] = counts.get(user, 0) + 1",
           "support": [
             {
               "heading": "+= has to read before it writes",
@@ -5417,7 +5417,7 @@
             },
             {
               "heading": "Give new keys a starting value",
-              "content": "Replace the line inside the loop with the get-plus-one pattern. (Checking `if c not in counts: counts[c] = 0` first also works.)",
+              "content": "Replace the line inside the loop with the get-plus-one pattern. (Checking `if user not in counts: counts[user] = 0` first also works.)",
               "example_code": "d = {}\nfor k in 'aa':\n    d[k] = d.get(k, 0) + 1\nprint(d)  # {'a': 2}"
             }
           ]
@@ -5735,11 +5735,11 @@
           "id": "d03",
           "type": "code",
           "track": "deep-dive",
-          "heading": "Coordinates as keys",
-          "instruction": "Add the key `(1, 1)` with value `'trap'` to `grid`, then print the value at `(2, 3)` and, on the next line, how many entries `grid` has. It should print: treasure then 3",
-          "initial_code": "grid = {(0, 0): 'start', (2, 3): 'treasure'}\n# TODO: add (1, 1) -> 'trap', then print grid[(2, 3)] and len(grid)\n",
-          "expected_output": "treasure\n3",
-          "hint": "grid[(1, 1)] = 'trap'\nprint(grid[(2, 3)])\nprint(len(grid))",
+          "heading": "Scan results keyed by host and port",
+          "instruction": "Add the key `('web-01', 443)` with value `'open'` to `scans`, then print the value at `('web-01', 23)` and, on the next line, how many entries `scans` has. It should print: closed then 3",
+          "initial_code": "scans = {('web-01', 22): 'open', ('web-01', 23): 'closed'}\n# TODO: add ('web-01', 443) -> 'open', then print scans[('web-01', 23)] and len(scans)\n",
+          "expected_output": "closed\n3",
+          "hint": "scans[('web-01', 443)] = 'open'\nprint(scans[('web-01', 23)])\nprint(len(scans))",
           "support": [
             {
               "heading": "A tuple key works like any other key",
@@ -5748,7 +5748,7 @@
             },
             {
               "heading": "Three lines",
-              "content": "Add the trap, then print the lookup, then print `len(grid)`, which counts the entries.",
+              "content": "Add the new result, then print the lookup, then print `len(scans)`, which counts the entries.",
               "example_code": "m = {(0, 0): 'a'}\nm[(5, 5)] = 'b'\nprint(len(m))  # 2"
             }
           ]
@@ -5781,20 +5781,20 @@
           "id": "d06",
           "type": "code",
           "track": "deep-dive",
-          "heading": "Unique words, sorted",
-          "instruction": "Print the unique words in `text` as a sorted list. It should print: ['end', 'lazy', 'quick', 'the']",
-          "initial_code": "text = 'the quick the lazy the end'\n# TODO: unique words, sorted\n",
-          "expected_output": "['end', 'lazy', 'quick', 'the']",
-          "hint": "print(sorted(set(text.split())))",
+          "heading": "Unique addresses, sorted",
+          "instruction": "Print the unique addresses in `log` as a sorted list. It should print: ['10.0.0.5', '10.0.0.7', '10.0.0.9']",
+          "initial_code": "log = '10.0.0.5 10.0.0.9 10.0.0.5 10.0.0.7 10.0.0.9'\n# TODO: unique addresses, sorted\n",
+          "expected_output": "['10.0.0.5', '10.0.0.7', '10.0.0.9']",
+          "hint": "print(sorted(set(log.split())))",
           "support": [
             {
               "heading": "Three steps, inside out",
-              "content": "`text.split()` gives the words, `set(...)` drops repeats, and `sorted(...)` turns the set into an alphabetical list.",
+              "content": "`log.split()` gives the addresses, `set(...)` drops repeats, and `sorted(...)` turns the set into an ordered list.",
               "example_code": "print(sorted(set('b a b'.split())))  # ['a', 'b']"
             },
             {
               "heading": "Nest the calls",
-              "content": "Write it as one line: `sorted(set(text.split()))`, inside print. Python works from the innermost call outwards.",
+              "content": "Write it as one line: `sorted(set(log.split()))`, inside print. Python works from the innermost call outwards.",
               "example_code": "words = ['x', 'y', 'x']\nprint(sorted(set(words)))  # ['x', 'y']"
             }
           ]
@@ -5837,20 +5837,20 @@
           "id": "d10",
           "type": "code",
           "track": "deep-dive",
-          "heading": "Label the numbers",
-          "instruction": "Use one list comprehension to turn `nums` into labels. It should print: ['odd', 'even', 'odd', 'even']",
-          "initial_code": "nums = [1, 2, 3, 4]\n# TODO: labels = [...]\n\nprint(labels)",
-          "expected_output": "['odd', 'even', 'odd', 'even']",
-          "hint": "labels = ['even' if n % 2 == 0 else 'odd' for n in nums]",
+          "heading": "Label the ports",
+          "instruction": "Use one list comprehension to turn `ports` into labels: `'privileged'` below 1024, otherwise `'user'`. It should print: ['privileged', 'user', 'privileged', 'user']",
+          "initial_code": "ports = [22, 8080, 443, 3306]\n# TODO: labels = [...]\n\nprint(labels)",
+          "expected_output": "['privileged', 'user', 'privileged', 'user']",
+          "hint": "labels = ['privileged' if p < 1024 else 'user' for p in ports]",
           "support": [
             {
               "heading": "The if/else goes first",
-              "content": "Because every number gets a label, this is a transform, not a filter. Put the whole `a if cond else b` before `for`.",
+              "content": "Because every port gets a label, this is a transform, not a filter. Put the whole `a if cond else b` before `for`.",
               "example_code": "print(['big' if n > 2 else 'small' for n in [1, 5]])  # ['small', 'big']"
             },
             {
               "heading": "Same one-line if from Logic",
-              "content": "It's the conditional expression you used for `kind = 'even' if ... else 'odd'`, wrapped in `[ ... for n in nums]`.",
+              "content": "It's the conditional expression you used for `status = 'critical' if ... else 'ok'`, wrapped in `[ ... for p in ports]`.",
               "example_code": "n = 3\nprint('even' if n % 2 == 0 else 'odd')  # odd"
             }
           ]
@@ -5883,20 +5883,20 @@
           "id": "d13",
           "type": "code",
           "track": "deep-dive",
-          "heading": "Flatten a grid",
-          "instruction": "Use a nested list comprehension to flatten `grid` into one list. It should print: [1, 2, 3, 4, 5, 6]",
-          "initial_code": "grid = [[1, 2], [3], [4, 5, 6]]\n# TODO: flat = [...]\n\nprint(flat)",
-          "expected_output": "[1, 2, 3, 4, 5, 6]",
-          "hint": "flat = [x for row in grid for x in row]",
+          "heading": "Flatten the scan results",
+          "instruction": "`scan` has one list of open ports per host. Use a nested list comprehension to flatten it into one list. It should print: [22, 80, 443, 22, 3306, 8080]",
+          "initial_code": "scan = [[22, 80], [443], [22, 3306, 8080]]\n# TODO: flat = [...]\n\nprint(flat)",
+          "expected_output": "[22, 80, 443, 22, 3306, 8080]",
+          "hint": "flat = [port for host in scan for port in host]",
           "support": [
             {
               "heading": "Outer loop first",
-              "content": "Write the loops in the order you'd nest them: `for row in grid` then `for x in row`. Put `x` at the front.",
+              "content": "Write the loops in the order you'd nest them: `for host in scan` then `for port in host`. Put `port` at the front.",
               "example_code": "pairs = [(a, b) for a in 'ab' for b in '12']\nprint(pairs)  # [('a', '1'), ('a', '2'), ('b', '1'), ('b', '2')]"
             },
             {
               "heading": "Rows can be different lengths",
-              "content": "The inner loop just goes over whatever each row holds, so [3] and [4, 5, 6] both work.",
+              "content": "The inner loop just goes over whatever each host holds, so [443] and [22, 3306, 8080] both work.",
               "example_code": "rows = [[7], [8, 9]]\nprint([v for r in rows for v in r])  # [7, 8, 9]"
             }
           ]
@@ -5939,20 +5939,20 @@
           "id": "d17",
           "type": "code",
           "track": "deep-dive",
-          "heading": "Invert a dictionary",
-          "instruction": "Use a dictionary comprehension to swap keys and values in `codes`. It should print: {'United States': 'US', 'France': 'FR'}",
-          "initial_code": "codes = {'US': 'United States', 'FR': 'France'}\n# TODO: names = {...}\n\nprint(names)",
-          "expected_output": "{'United States': 'US', 'France': 'FR'}",
-          "hint": "names = {v: k for k, v in codes.items()}",
+          "heading": "Look up the service by port",
+          "instruction": "Use a dictionary comprehension to swap keys and values in `services`, so you can look a service up by its port. It should print: {22: 'ssh', 80: 'http', 443: 'https'}",
+          "initial_code": "services = {'ssh': 22, 'http': 80, 'https': 443}\n# TODO: by_port = {...}\n\nprint(by_port)",
+          "expected_output": "{22: 'ssh', 80: 'http', 443: 'https'}",
+          "hint": "by_port = {port: name for name, port in services.items()}",
           "support": [
             {
               "heading": "Swap the order in the expression",
-              "content": "Loop with `for k, v in codes.items()` and write `v: k` at the front so values become keys.",
+              "content": "Loop with `for name, port in services.items()` and write `port: name` at the front so ports become keys.",
               "example_code": "d = {'x': 1}\nprint({v: k for k, v in d.items()})  # {1: 'x'}"
             },
             {
               "heading": "Watch for duplicate values",
-              "content": "If two keys had the same value, the inverted dictionary would keep only the last one, because keys must be unique. Here the values are unique, so nothing is lost.",
+              "content": "If two keys had the same value, the inverted dictionary would keep only the last one, because keys must be unique. Here the ports are unique, so nothing is lost.",
               "example_code": "d = {'a': 1, 'b': 1}\nprint({v: k for k, v in d.items()})  # {1: 'b'}"
             }
           ]
@@ -6395,10 +6395,10 @@
           "type": "code",
           "track": "deep-dive",
           "heading": "Fix the shared default",
-          "instruction": "`add_tag` remembers tags from earlier calls. Fix it with a `None` default so it prints `['a']` then `['b']`.",
-          "initial_code": "def add_tag(tag, tags=[]):\n    tags.append(tag)\n    return tags\n\nprint(add_tag('a'))\nprint(add_tag('b'))",
-          "expected_output": "['a']\n['b']",
-          "hint": "def add_tag(tag, tags=None):\n    if tags is None:\n        tags = []\n    tags.append(tag)\n    return tags",
+          "instruction": "`add_alert` remembers alerts from earlier calls. Fix it with a `None` default so it prints `['disk']` then `['cpu']`.",
+          "initial_code": "def add_alert(alert, alerts=[]):\n    alerts.append(alert)\n    return alerts\n\nprint(add_alert('disk'))\nprint(add_alert('cpu'))",
+          "expected_output": "['disk']\n['cpu']",
+          "hint": "def add_alert(alert, alerts=None):\n    if alerts is None:\n        alerts = []\n    alerts.append(alert)\n    return alerts",
           "support": [
             {
               "heading": "None means \"make a new one\"",
@@ -6407,7 +6407,7 @@
             },
             {
               "heading": "Two changes",
-              "content": "Change the default to `tags=None`, and add `if tags is None: tags = []` as the first lines of the body.",
+              "content": "Change the default to `alerts=None`, and add `if alerts is None: alerts = []` as the first lines of the body.",
               "example_code": "v = None\nif v is None:\n    v = []\nprint(v)  # []"
             }
           ]
@@ -6498,20 +6498,20 @@
           "id": "d10",
           "type": "code",
           "track": "deep-dive",
-          "heading": "Sort by two keys",
-          "instruction": "Sort `people` by age from oldest to youngest, breaking ties alphabetically by name, and print each name. It should print Ann, Cy, Bo (one per line).",
-          "initial_code": "people = [('Cy', 30), ('Bo', 25), ('Ann', 30)]\n# TODO: ranked = sorted(people, key=...)\n\nfor name, age in ranked:\n    print(name)",
-          "expected_output": "Ann\nCy\nBo",
-          "hint": "ranked = sorted(people, key=lambda p: (-p[1], p[0]))",
+          "heading": "Rank alerts by severity, then name",
+          "instruction": "Sort `alerts` by severity from highest to lowest, breaking ties alphabetically by name, and print each name. It should print cpu, auth, disk (one per line).",
+          "initial_code": "alerts = [('disk', 3), ('cpu', 5), ('auth', 3)]\n# TODO: ranked = sorted(alerts, key=...)\n\nfor name, severity in ranked:\n    print(name)",
+          "expected_output": "cpu\nauth\ndisk",
+          "hint": "ranked = sorted(alerts, key=lambda a: (-a[1], a[0]))",
           "support": [
             {
               "heading": "A tuple key sorts on several things",
-              "content": "`key=lambda p: (first_rule, second_rule)`. The second rule only matters when the first ties.",
+              "content": "`key=lambda a: (first_rule, second_rule)`. The second rule only matters when the first ties.",
               "example_code": "pts = [(1, 'b'), (1, 'a'), (0, 'c')]\nprint(sorted(pts, key=lambda p: (p[0], p[1])))  # [(0, 'c'), (1, 'a'), (1, 'b')]"
             },
             {
               "heading": "Negate for descending",
-              "content": "Ages should go high to low, so use `-p[1]`. Names go A to Z, so use `p[0]` as is.",
+              "content": "Severity should go high to low, so use `-a[1]`. Names go A to Z, so use `a[0]` as is.",
               "example_code": "print(sorted([3, 1, 2], key=lambda n: -n))  # [3, 2, 1]"
             }
           ]
@@ -6544,20 +6544,20 @@
           "id": "d13",
           "type": "code",
           "track": "deep-dive",
-          "heading": "Make a greeting function",
-          "instruction": "Write `make_greeting(greeting)` that returns a function taking a name and returning e.g. `'Hello, Ada!'`. The prints should show `Hello, Ada!` then `Hi, Bo!`.",
-          "initial_code": "# TODO: def make_greeting(greeting):\n\n\nhello = make_greeting('Hello')\nhi = make_greeting('Hi')\nprint(hello('Ada'))\nprint(hi('Bo'))",
-          "expected_output": "Hello, Ada!\nHi, Bo!",
-          "hint": "def make_greeting(greeting):\n    def greet(name):\n        return f'{greeting}, {name}!'\n    return greet",
+          "heading": "Make a log formatter",
+          "instruction": "Write `make_formatter(level)` that returns a function taking a message and returning e.g. `'[ERROR] disk full'`. The prints should show `[ERROR] disk full` then `[WARN] cpu high`.",
+          "initial_code": "# TODO: def make_formatter(level):\n\n\nerror = make_formatter('ERROR')\nwarn = make_formatter('WARN')\nprint(error('disk full'))\nprint(warn('cpu high'))",
+          "expected_output": "[ERROR] disk full\n[WARN] cpu high",
+          "hint": "def make_formatter(level):\n    def fmt(message):\n        return f'[{level}] {message}'\n    return fmt",
           "support": [
             {
               "heading": "Define inside, return without calling",
-              "content": "Inside the outer function, define the inner one, then `return greet` with no parentheses, so you hand back the function itself.",
+              "content": "Inside the outer function, define the inner one, then `return fmt` with no parentheses, so you hand back the function itself.",
               "example_code": "def outer():\n    def inner():\n        return 'hi'\n    return inner\n\nf = outer()\nprint(f())  # hi"
             },
             {
               "heading": "The inner function uses the outer parameter",
-              "content": "`greet(name)` builds its text from `greeting` (remembered from the outer call) and `name` (its own parameter).",
+              "content": "`fmt(message)` builds its text from `level` (remembered from the outer call) and `message` (its own parameter).",
               "example_code": "def make_suffix(s):\n    def add(word):\n        return word + s\n    return add\n\nprint(make_suffix('!')('wow'))  # wow!"
             }
           ]
