@@ -664,16 +664,16 @@
           "id": "i02",
           "type": "quiz",
           "track": "mastery",
-          "question": "Line 1 is `print('A')` and line 2 is `print('B'` (missing its closing parenthesis). What happens when you run the file?",
+          "question": "Line 1 is `print('one')` and line 2 is `print('two'` (missing its closing parenthesis). What happens when you run the file?",
           "options": [
             "Nothing prints: Python finds the SyntaxError before running any line",
-            "A prints, then a SyntaxError",
-            "A and B both print"
+            "one prints, then a SyntaxError",
+            "one and two both print"
           ],
           "answer": "Nothing prints: Python finds the SyntaxError before running any line",
           "explanation": "Python checks the whole file's grammar before running it, so a SyntaxError anywhere stops everything. Errors like ZeroDivisionError are different: they only happen when that line runs, so earlier lines do print.",
           "feedback": {
-            "A prints, then a SyntaxError": "That's how runtime errors like ZeroDivisionError behave. Syntax is checked for the whole file first."
+            "one prints, then a SyntaxError": "That's how runtime errors like ZeroDivisionError behave. Syntax is checked for the whole file first."
           }
         },
         {
@@ -2734,15 +2734,15 @@
           "track": "mastery",
           "question": "What does this code print?",
           "options": [
-            "C",
-            "A",
-            "C then A"
+            "pass",
+            "honors",
+            "pass then honors"
           ],
-          "answer": "C",
+          "answer": "pass",
           "explanation": "95 >= 70 is True, so the first branch runs and the chain stops. The `elif` is never checked. The more specific test (>= 90) needed to come first.",
-          "code": "score = 95\nif score >= 70:\n    print('C')\nelif score >= 90:\n    print('A')",
+          "code": "score = 95\nif score >= 70:\n    print('pass')\nelif score >= 90:\n    print('honors')",
           "feedback": {
-            "C then A": "Only one branch of an if/elif chain ever runs: the first one whose condition is True."
+            "pass then honors": "Only one branch of an if/elif chain ever runs: the first one whose condition is True."
           }
         },
         {

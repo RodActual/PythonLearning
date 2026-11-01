@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { coreIds, course, expectAccessible, lesson, nextButton, seedProgress, store } from './helpers';
+import { chooseOption, coreIds, course, expectAccessible, lesson, nextButton, seedProgress, store } from './helpers';
 
 const steps = lesson('lesson-01').steps;
 const firstDeep = steps.findIndex((s) => s.track === 'deep-dive');
@@ -62,14 +62,14 @@ test('the lesson-complete toast fires once, at the end of the core', async ({ pa
   await expect(page.locator('.step-kicker')).toContainText(`Step ${core.length} of`);
   // The last core step is a quiz: answer it, then continue into the deep dive.
   const last = steps[core.length - 1];
-  await page.locator('.option-button').filter({ hasText: last.answer! }).first().click();
+  await chooseOption(page, last.answer!);
   await nextButton(page).click();
   await expect(page.getByText('Lesson complete: Introduction to Python')).toBeVisible();
   await expect(page.locator('.track-banner')).toBeVisible();
   expect(await toastCount()).toBe(1);
   await nextButton(page).click(); // an optional step after the core is done
   await expect(page.locator('.step-kicker')).toContainText('Deep dive · Predict the output');
-  await page.locator('.option-button').filter({ hasText: steps[core.length + 1].answer! }).first().click();
+  await chooseOption(page, steps[core.length + 1].answer!);
   await nextButton(page).click();
   await expect(page.locator('.step-kicker')).toContainText(`Step ${core.length + 3} of`);
   expect(await toastCount()).toBe(1);

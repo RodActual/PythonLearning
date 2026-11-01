@@ -1,5 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
-import { allIds, coreIds, expectAccessible, lesson, seedProgress, store } from './helpers';
+import { allIds, chooseOption, coreIds, expectAccessible, lesson, seedProgress, store } from './helpers';
 
 type Card = { box: number; due: string };
 type Saved = { review?: Record<string, Card> };
@@ -19,12 +19,12 @@ async function answerCard(page: Page, wantRight: boolean): Promise<boolean> {
     await page.getByRole('button', { name: 'Skip (counts as a miss)' }).click();
     return false;
   }
-  const shown = await page.locator('.option-text').allInnerTexts();
-  const step = lesson('lesson-01').steps.find((s) => s.type === 'quiz' && JSON.stringify(s.options) === JSON.stringify(shown))!;
-  if (!wantRight) {
-    await page.locator('.option-text').getByText(step.options!.find((o) => o !== step.answer)!, { exact: true }).click();
-  }
-  await page.locator('.option-text').getByText(step.answer!, { exact: true }).click();
+  // Options are shuffled, so identify the step by its set of options, not their order.
+  const key = (opts: string[]) => JSON.stringify([...opts].sort());
+  const shown = key(await page.locator('.option-text').allInnerTexts());
+  const step = lesson('lesson-01').steps.find((s) => s.type === 'quiz' && key(s.options!) === shown)!;
+  if (!wantRight) await chooseOption(page, step.options!.find((o) => o !== step.answer)!);
+  await chooseOption(page, step.answer!);
   await expect(page.locator('.feedback')).toContainText('Correct');
   await page.locator('.lesson-nav-controls .primary-button').click();
   return wantRight;

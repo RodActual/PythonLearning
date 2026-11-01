@@ -1,4 +1,4 @@
-import { useId, useState } from 'react';
+import { useId, useMemo, useState } from 'react';
 import RichText from './RichText';
 import CodeBlock from './CodeBlock';
 import type { QuizStep } from '../types/lesson';
@@ -12,12 +12,27 @@ interface QuizProps {
 
 const LETTERS = 'ABCDEFGH';
 
+/** Options that refer to the other options; they stay last, in their authored order. */
+const PINNED_LAST = /^(both|neither|all of the above|none of the above)$/i;
+
+/** Fisher-Yates shuffle into a new array, so the answer's position varies. */
+function shuffled(items: readonly string[]): string[] {
+  const out = items.filter((o) => !PINNED_LAST.test(o.trim()));
+  for (let i = out.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [out[i], out[j]] = [out[j], out[i]];
+  }
+  return [...out, ...items.filter((o) => PINNED_LAST.test(o.trim()))];
+}
+
 /** Multiple-choice question (or predict-the-output when the step has code). */
 export default function Quiz({ step, rewardText, onSolved }: QuizProps) {
   const questionId = useId();
   const [selected, setSelected] = useState<string | null>(null);
   const [solved, setSolved] = useState(false);
   const [attempts, setAttempts] = useState(0);
+  // Stable while this step is shown; a new step (or a remount) gets a fresh order.
+  const options = useMemo(() => shuffled(step.options), [step.options]);
 
   const choose = (option: string) => {
     if (solved) return;
@@ -51,7 +66,7 @@ export default function Quiz({ step, rewardText, onSolved }: QuizProps) {
       )}
       <p id={questionId} className="question-text"><RichText text={step.question} /></p>
       <div className="options-grid" role="group" aria-labelledby={questionId}>
-        {step.options.map((option, i) => {
+        {options.map((option, i) => {
           const isSelected = selected === option;
           const state = isSelected ? (solved ? 'correct' : 'incorrect') : '';
           return (
