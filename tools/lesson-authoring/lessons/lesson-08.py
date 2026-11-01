@@ -96,8 +96,8 @@ C("Safe log field access",
     "def safe_key(d, k):\n    try:\n        return d[k]\n    except KeyError:\n        return None\n\nprint(safe_key({}, 'x'))  # None")]),
 ]
 
-INTERVIEW = [
-Q("Interview question: why is a bare `except:` considered bad practice?",
+MASTERY = [
+Q("Concept check: why is a bare `except:` considered bad practice?",
   ["It catches everything, including Ctrl+C and real bugs, so problems get hidden", "It's slower", "It's a SyntaxError in Python 3"],
   "It catches everything, including Ctrl+C and real bugs, so problems get hidden",
   "Catch the specific exceptions you expect (ValueError, KeyError...). If you truly need a catch-all, use `except Exception as e:` and log `e`, so you still see what happened."),

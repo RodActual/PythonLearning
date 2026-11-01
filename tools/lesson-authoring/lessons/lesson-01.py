@@ -21,7 +21,7 @@ T("Order of operations",
   "When an expression has several operators, Python follows math rules: `**` first, then `* / // %`, then `+ -`. Operators at the same level run left to right. **Parentheses** always go first, so use them whenever the order matters or isn't obvious.",
   "print(2 + 3 * 4)     # 14: multiply first\nprint((2 + 3) * 4)   # 20: parentheses first\nprint(10 - 4 - 3)    # 3:  left to right\nprint(2 * 3 ** 2)    # 18: power before multiply",
   "Python builds the answer in rounds: it works out the highest-priority pieces, replaces them with their results, and repeats until one value is left. `2 + 3 * 4` becomes `2 + 12`, then `14`.",
-  "Getting formulas right: averages, prices with tax, unit conversions. A missing pair of parentheses is one of the most common real bugs, and a favorite interview trick question."),
+  "Getting formulas right: averages, prices with tax, unit conversions. A missing pair of parentheses is one of the most common real bugs, and a favorite trick question."),
 Q("What does this code print?", ["24", "4", "7"], "4",
   "Multiplication happens before subtraction: `2 * 3` is 6, then `10 - 6` is 4.",
   code="print(10 - 2 * 3)",
@@ -97,8 +97,8 @@ C("Clean up a float",
     "print(round(0.7 + 0.1, 1))  # 0.8")]),
 ]
 
-INTERVIEW = [
-Q("Interview question: what's the difference between `/` and `//` in Python?",
+MASTERY = [
+Q("Concept check: what's the difference between `/` and `//` in Python?",
   ["`/` always gives a float; `//` divides and rounds down to a whole number", "They do the same thing", "`//` starts a comment"],
   "`/` always gives a float; `//` divides and rounds down to a whole number",
   "`7 / 2` is 3.5 and `7 // 2` is 3. Even `6 / 2` gives the float 3.0. A strong answer mentions both, plus that `%` gives the remainder.",
@@ -111,7 +111,7 @@ Q("Line 1 is `print('A')` and line 2 is `print('B'` (missing its closing parenth
 Q("Why does `print(0.1 + 0.2)` show 0.30000000000000004?",
   ["Floats are stored in binary, and 0.1 and 0.2 can't be stored exactly", "It's a bug in Python", "print() adds extra digits"],
   "Floats are stored in binary, and 0.1 and 0.2 can't be stored exactly",
-  "This happens in almost every language, not just Python. Interviewers like it because the follow-up is how to handle money: round for display, or store whole cents as integers."),
+  "This happens in almost every language, not just Python. The follow-up question is how to handle money: round for display, or store whole cents as integers."),
 Q("Which expression gives 0 exactly when 14 is even?", ["14 % 2", "14 // 2", "14 / 2"], "14 % 2",
   "`%` gives the remainder. Even numbers leave a remainder of 0 when divided by 2; odd numbers leave 1. This is the standard even/odd check."),
 Q("What does this code print?", ["14", "100", "22"], "14",

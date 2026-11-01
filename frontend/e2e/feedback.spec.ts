@@ -68,7 +68,7 @@ test.describe('diagnose (no browser)', () => {
     );
   });
 
-  test('advice added for the deep-dive and interview exercises', () => {
+  test('advice added for the deep-dive and mastery exercises', () => {
     // Text + number: offer the math fix too, not only str().
     expect(run("age = '30'\nprint(age + 1)", tb(2, 'print(age + 1)', 'TypeError: can only concatenate str (not "int") to str'), '31')).toMatch(/int\(\)/);
     // Repeating text by text.

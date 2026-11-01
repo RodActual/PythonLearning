@@ -82,7 +82,7 @@ Q("What does this code print?", ["{0, 1, 2}", "[0, 1, 2, 0, 1, 2, 0]", "{0, 1, 2
   "The remainders of 0..6 divided by 3 are 0,1,2,0,1,2,0. A set keeps each once.",
   code="print({n % 3 for n in range(7)})"),
 T("Choosing the right collection",
-  "**List**: ordered, allows duplicates, changeable; `in` is O(n). **Tuple**: a fixed record; can be a key. **Set**: unique items, no order; `in` is O(1). **Dict**: look up values by key; `in` (on keys) is O(1). Picking the right one is often the main idea of an interview answer.",
+  "**List**: ordered, allows duplicates, changeable; `in` is O(n). **Tuple**: a fixed record; can be a key. **Set**: unique items, no order; `in` is O(1). **Dict**: look up values by key; `in` (on keys) is O(1). Picking the right one is often the main idea of a good solution.",
   "todo = ['email', 'call', 'email']    # order and repeats matter\nrgb = (255, 128, 0)                  # a fixed record\nseen = {'ann', 'bo'}                 # fast 'have we seen it?'\nages = {'ann': 30, 'bo': 25}         # look up by name",
   "Lists check `in` by scanning; sets and dicts hash the value to jump straight to it. That's the difference between O(n) and O(1) per lookup.",
   "Making code fast and clear: a set for membership tests inside a loop can turn an O(n²) solution into O(n)."),
@@ -97,8 +97,8 @@ C("Look up the service by port",
     "d = {'a': 1, 'b': 1}\nprint({v: k for k, v in d.items()})  # {1: 'b'}")]),
 ]
 
-INTERVIEW = [
-Q("Interview question: what's the difference between a list and a tuple?",
+MASTERY = [
+Q("Concept check: what's the difference between a list and a tuple?",
   ["Lists can change; tuples can't, so tuples can be dict keys or set items and signal a fixed record", "Tuples are faster to sort", "Lists can only hold numbers"],
   "Lists can change; tuples can't, so tuples can be dict keys or set items and signal a fixed record",
   "Use a list for a collection that grows or changes (a to-do list), and a tuple for a fixed group of related values (a coordinate, a date)."),

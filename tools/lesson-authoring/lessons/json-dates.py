@@ -95,8 +95,8 @@ Q("You need to store each host with a list of open ports and nested scan details
   "CSV is flat: one row, fixed columns. JSON holds lists and nested objects directly."),
 ]
 
-INTERVIEW = [
-Q("Interview question: what's the difference between `json.load` and `json.loads`?",
+MASTERY = [
+Q("Concept check: what's the difference between `json.load` and `json.loads`?",
   ["`load` reads from an open file; `loads` parses a string", "`loads` is the faster version", "`load` returns a list and `loads` a dictionary"],
   "`load` reads from an open file; `loads` parses a string",
   "The s stands for string. `dump` and `dumps` mirror them for writing."),

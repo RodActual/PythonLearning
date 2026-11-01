@@ -92,8 +92,8 @@ Q("Why does a classmethod constructor return `cls(...)` instead of naming the cl
   "`cls` is whichever class the method was called on. `Date(...)` would always build a Date, even when called as `Holiday.from_string(...)`."),
 ]
 
-INTERVIEW = [
-Q("Interview question: when should you use inheritance instead of composition?",
+MASTERY = [
+Q("Concept check: when should you use inheritance instead of composition?",
   ["When the child truly is a kind of the parent (is-a); for has-a relationships, prefer composition", "Always: inheritance is more powerful", "Never: composition is always better"],
   "When the child truly is a kind of the parent (is-a); for has-a relationships, prefer composition",
   "Inheritance couples a child tightly to its parent's details. Composition keeps parts independent and swappable."),

@@ -71,7 +71,7 @@ T("Big files: one line at a time",
   "`f.read()` loads the whole file into memory. Looping with `for line in f` reads one line at a time, so even a file far bigger than your memory works. `enumerate(f, 1)` gives line numbers starting at 1.",
   "with open('log.txt', 'w') as f:\n    f.write('ok\\nERROR disk\\nok\\nERROR net\\n')\n\nwith open('log.txt') as f:\n    for number, line in enumerate(f, 1):\n        if line.startswith('ERROR'):\n            print(number, line.strip())",
   "The file object reads a chunk from disk, hands out lines from it, and fetches the next chunk only when needed. Memory stays small no matter how long the file is.",
-  "Server logs, data dumps and anything that might grow large. It's also the answer interviewers want to \"how would you process a 50 GB file?\""),
+  "Server logs, data dumps and anything that might grow large. It's also the answer to \"how would you process a 50 GB file?\""),
 C("Count the errors",
   "Loop over 'server.log' one line at a time and count lines that start with 'ERROR'. Print the count. It should print: 2",
   "with open('server.log', 'w') as f:\n    f.write('ok\\nERROR disk full\\nok\\nERROR timeout\\nok\\n')\n\ncount = 0\n# TODO: loop over the file and count ERROR lines\n\nprint(count)",
@@ -94,8 +94,8 @@ C("Number the config lines",
     "line = 'hello\\n'\nprint(f'1: {line.strip()}')")]),
 ]
 
-INTERVIEW = [
-Q("Interview question: why pass `encoding='utf-8'` when opening a text file?",
+MASTERY = [
+Q("Concept check: why pass `encoding='utf-8'` when opening a text file?",
   ["So the file is read and written the same way on every system, instead of depending on the computer's default", "It makes the file smaller", "It's required or open() fails"],
   "So the file is read and written the same way on every system, instead of depending on the computer's default",
   "Default encodings vary by operating system. Being explicit avoids garbled accents and UnicodeDecodeError when the file moves between machines."),

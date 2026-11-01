@@ -1,6 +1,6 @@
 import type { CourseAbout as About, Lesson, Unit, UserProgress } from '../types/lesson';
 import CourseAbout from './CourseAbout';
-import InterviewGoal from './InterviewGoal';
+import MasteryGoal from './MasteryGoal';
 import { lessonState, recommendedLessonIndex, type LessonState } from '../game/summary';
 import { lessonXp } from '../game/xp';
 import { doneCount, isStepDone, resumeIndex } from '../game/progress';
@@ -164,7 +164,7 @@ const SkillMap = ({ about, units, lessons, progress, onOpenLesson, onOpenStep, o
         </div>
       )}
 
-      <InterviewGoal units={units} lessons={lessons} progress={progress} onOpenStep={onOpenStep} />
+      <MasteryGoal units={units} lessons={lessons} progress={progress} onOpenStep={onOpenStep} />
 
       <CourseAbout about={about} defaultOpen={Object.values(progress.done).every((ids) => ids.length === 0)} />
 

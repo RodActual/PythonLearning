@@ -3,7 +3,7 @@
  * finishing the lesson, so expanding a lesson never reopens it for people who already finished.
  * Their quizzes and challenges can be skipped.
  */
-export type StepTrack = 'deep-dive' | 'interview';
+export type StepTrack = 'deep-dive' | 'mastery';
 
 export interface TextStep {
   /** Permanent id, unique within its lesson. Progress is saved by this id, so never change or reuse it. */
@@ -90,6 +90,8 @@ export interface Unit {
   prepares: string[];
   /** Example programs a learner could build after the unit. */
   applications: string[];
+  /** The part of the language this unit's mastery practice covers (goal card row label). */
+  mastery_area: string;
 }
 
 export interface CareerPath {

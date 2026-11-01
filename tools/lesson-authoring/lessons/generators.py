@@ -38,7 +38,7 @@ T("A generator runs only once",
   "Once a generator has handed out every value, it's exhausted: looping over it again gives nothing, with no error. If you need the values twice, store them in a list first.",
   "failed = (line for line in ['FAIL ada', 'OK bob'] if 'FAIL' in line)\nprint(list(failed))   # ['FAIL ada']\nprint(list(failed))   # []: already used up\n\nsaved = [line for line in ['FAIL ada', 'OK bob'] if 'FAIL' in line]\nprint(len(saved), saved)   # a list can be read again",
   "A generator keeps its position. After the last value it stays at the end, so a second loop starts there and finds nothing.",
-  "A common source of \"why is my report empty?\" bugs, and a favorite interview predict-the-output question."),
+  "A common source of \"why is my report empty?\" bugs, and a favorite predict-the-output puzzle."),
 Q("What does this code print?", ["3 0", "3 3", "6 0"], "3 0",
   "The first `sum` uses up the generator. The second gets no values, and the sum of nothing is 0.",
   code="g = (x for x in [1, 2])\nprint(sum(g), sum(g))",
@@ -95,8 +95,8 @@ Q("What does this code print?", ["False True", "True False", "False False"], "Fa
   code="print(any([]), all([]))"),
 ]
 
-INTERVIEW = [
-Q("Interview question: when would you use a generator instead of a list?",
+MASTERY = [
+Q("Concept check: when would you use a generator instead of a list?",
   ["For large or streaming data you go through once, so you don't hold it all in memory", "Whenever you need to sort the data", "When you need to read the values several times"],
   "For large or streaming data you go through once, so you don't hold it all in memory",
   "Lists win when you need indexing, sorting, `len()` or several passes."),

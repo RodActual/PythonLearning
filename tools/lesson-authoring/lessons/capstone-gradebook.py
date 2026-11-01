@@ -53,7 +53,7 @@ T("Mean or median?",
   "One failed scan can drag a host's mean down sharply. The **median** (middle value) ignores a single outlier, so it often describes a host's usual state better. Report both when outliers matter.",
   "import statistics\n\nscans = [90, 92, 10, 91]     # one scan failed to run properly\nprint(statistics.mean(scans))     # 70.75\nprint(statistics.median(scans))   # 90.5",
   "The mean adds every value, so one extreme value moves it. The median only looks at the middle of the sorted list.",
-  "Response times, scan scores and anything with occasional glitches. Interviewers like asking when each is the right choice."),
+  "Response times, scan scores and anything with occasional glitches. Knowing when each is the right choice is part of reading data well."),
 Q("What does this code print?", ["64 90", "90 64", "64 64"], "64 90",
   "The mean is (90 + 92 + 10) / 3 = 64. The median is the middle of [10, 90, 92], which is 90.",
   code="import statistics\nprint(statistics.mean([90, 92, 10]), statistics.median([90, 92, 10]))"),
@@ -96,8 +96,8 @@ Q("The Scorecard stores hosts in a dictionary keyed by name. How long does looki
   "A dictionary goes straight to the key. A list of hosts would need a scan, O(n)."),
 ]
 
-INTERVIEW = [
-Q("Interview question: how would you store failed scans per host so you can add new ones and look up a host quickly?",
+MASTERY = [
+Q("Concept check: how would you store failed scans per host so you can add new ones and look up a host quickly?",
   ["A dictionary mapping host name to a list of results", "One long list of (host, result) tuples", "A separate variable for each host"],
   "A dictionary mapping host name to a list of results",
   "O(1) lookup by host and O(1) appends. `defaultdict(list)` removes the \"is the host there yet?\" check."),

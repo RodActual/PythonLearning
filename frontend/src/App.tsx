@@ -305,7 +305,7 @@ function App() {
 
   const prevStep = () => setStepIndex((i) => Math.max(i - 1, 0));
 
-  /** Moves past an optional (deep-dive or interview) step without completing it. */
+  /** Moves past an optional (deep-dive or mastery) step without completing it. */
   const skipStep = () => {
     if (!currentLesson) return;
     setStepIndex(Math.min(stepIndex + 1, currentLesson.steps.length));

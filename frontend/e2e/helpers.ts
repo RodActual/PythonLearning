@@ -14,7 +14,7 @@ export const solutions = JSON.parse(readFileSync(new URL('../tests/solutions.jso
 >;
 export const lesson = (id: string) => course.lessons.find((l) => l.id === id)!;
 export const allIds = (id: string) => lesson(id).steps.map((s) => s.id);
-/** Ids of the steps that count toward finishing a lesson (not deep-dive or interview). */
+/** Ids of the steps that count toward finishing a lesson (not deep-dive or mastery). */
 export const coreIds = (id: string) => lesson(id).steps.filter((s) => !s.track).map((s) => s.id);
 
 /** Seeds the mock Firestore progress document before the app loads. */

@@ -1,6 +1,6 @@
 {
   "about": {
-    "tagline": "From your first print() to tested, file-saving, object-oriented programs.",
+    "tagline": "From your first print() to writing Python that's clear, correct and idiomatic.",
     "outcomes": [
       "Write, run, and debug Python programs on your own",
       "Organize code with functions, classes, and modules",
@@ -9,32 +9,32 @@
     ],
     "paths": [
       {
-        "icon": "🤖",
-        "title": "Automation and scripting",
-        "description": "Rename and sort files, clean up exported CSV data, generate reports, and automate repetitive office tasks."
+        "icon": "🐍",
+        "title": "Pythonic style",
+        "description": "Write code the way experienced Python developers do: comprehensions, unpacking, f-strings, EAFP, and built-ins instead of hand-rolled loops."
       },
       {
-        "icon": "📊",
-        "title": "Data analysis",
-        "description": "Load, filter, and summarize data. You'll have the Python you need before learning pandas and matplotlib."
+        "icon": "🧠",
+        "title": "How Python works",
+        "description": "Names and objects, mutability and aliasing, scope and closures, and the special methods that make your classes behave like built-in types."
       },
       {
-        "icon": "🌐",
-        "title": "Web back ends and APIs",
-        "description": "APIs send JSON and are built from functions and classes. You'll be ready to start Flask or FastAPI."
+        "icon": "⚡",
+        "title": "Performance and data structures",
+        "description": "Judge code with Big-O, pick the right collection for each job, and process large data lazily with generators."
       },
       {
-        "icon": "🎮",
-        "title": "Games and interactive programs",
-        "description": "Game loops, state, and objects map directly to what you learn here. The natural next step is pygame."
+        "icon": "🧰",
+        "title": "The standard library",
+        "description": "Reach for collections, pathlib, json, datetime, statistics and csv before writing your own version."
       },
       {
         "icon": "🧪",
-        "title": "Testing and code quality",
-        "description": "Write checks that catch bugs before users do, a habit every professional team expects."
+        "title": "Correct, tested code",
+        "description": "Raise and handle exceptions deliberately, prove behavior with tests, and debug by reading tracebacks and predicting output."
       }
     ],
-    "next_steps": "This course is a strong foundation, not the finish line. To build full applications, pick one path and learn its main library: pandas for data, Flask or FastAPI for the web, pygame for games, or pathlib and csv for automation. Then build something you'll actually use."
+    "next_steps": "This course covers the core of the language, not all of it. To keep going toward mastery, learn decorators, context managers (your own with blocks), dataclasses, type hints, functools and itertools, then async and packaging. Read the official Python tutorial and language reference, and read well-written open-source Python to see these features used together."
   },
   "units": [
     {
@@ -51,7 +51,8 @@
         "A tip calculator or unit converter",
         "A number-guessing game",
         "A text cleaner that tidies up names and messages"
-      ]
+      ],
+      "mastery_area": "Core syntax: types, strings and control flow"
     },
     {
       "id": "functions-data",
@@ -68,7 +69,8 @@
         "A contact book or to-do list",
         "A word-frequency counter",
         "A leaderboard that ranks players by score"
-      ]
+      ],
+      "mastery_area": "Functions, collections and comprehensions"
     },
     {
       "id": "robust-code",
@@ -85,7 +87,8 @@
         "A log-file analyzer",
         "A script that renames or sorts files",
         "A journal app that saves entries to disk"
-      ]
+      ],
+      "mastery_area": "Exceptions, the standard library, files and tests"
     },
     {
       "id": "objects",
@@ -101,7 +104,8 @@
         "An inventory or library system",
         "A bank account simulator",
         "Characters and items for a text adventure"
-      ]
+      ],
+      "mastery_area": "Classes, inheritance and the data model"
     },
     {
       "id": "toolkit",
@@ -118,7 +122,8 @@
         "A habit or expense tracker that saves to JSON",
         "A due-date reminder tool",
         "A grade book or quiz app backed by tests"
-      ]
+      ],
+      "mastery_area": "Serialization, dates and generators"
     }
   ],
   "lessons": [
@@ -439,7 +444,7 @@
           "content": "When an expression has several operators, Python follows math rules: `**` first, then `* / // %`, then `+ -`. Operators at the same level run left to right. **Parentheses** always go first, so use them whenever the order matters or isn't obvious.",
           "example_code": "print(2 + 3 * 4)     # 14: multiply first\nprint((2 + 3) * 4)   # 20: parentheses first\nprint(10 - 4 - 3)    # 3:  left to right\nprint(2 * 3 ** 2)    # 18: power before multiply",
           "how": "Python builds the answer in rounds: it works out the highest-priority pieces, replaces them with their results, and repeats until one value is left. `2 + 3 * 4` becomes `2 + 12`, then `14`.",
-          "use": "Getting formulas right: averages, prices with tax, unit conversions. A missing pair of parentheses is one of the most common real bugs, and a favorite interview trick question."
+          "use": "Getting formulas right: averages, prices with tax, unit conversions. A missing pair of parentheses is one of the most common real bugs, and a favorite trick question."
         },
         {
           "id": "d05",
@@ -642,8 +647,8 @@
         {
           "id": "i01",
           "type": "quiz",
-          "track": "interview",
-          "question": "Interview question: what's the difference between `/` and `//` in Python?",
+          "track": "mastery",
+          "question": "Concept check: what's the difference between `/` and `//` in Python?",
           "options": [
             "`/` always gives a float; `//` divides and rounds down to a whole number",
             "They do the same thing",
@@ -658,7 +663,7 @@
         {
           "id": "i02",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "Line 1 is `print('A')` and line 2 is `print('B'` (missing its closing parenthesis). What happens when you run the file?",
           "options": [
             "Nothing prints: Python finds the SyntaxError before running any line",
@@ -674,7 +679,7 @@
         {
           "id": "i03",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "Why does `print(0.1 + 0.2)` show 0.30000000000000004?",
           "options": [
             "Floats are stored in binary, and 0.1 and 0.2 can't be stored exactly",
@@ -682,12 +687,12 @@
             "print() adds extra digits"
           ],
           "answer": "Floats are stored in binary, and 0.1 and 0.2 can't be stored exactly",
-          "explanation": "This happens in almost every language, not just Python. Interviewers like it because the follow-up is how to handle money: round for display, or store whole cents as integers."
+          "explanation": "This happens in almost every language, not just Python. The follow-up question is how to handle money: round for display, or store whole cents as integers."
         },
         {
           "id": "i04",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "Which expression gives 0 exactly when 14 is even?",
           "options": [
             "14 % 2",
@@ -700,7 +705,7 @@
         {
           "id": "i05",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "What does this code print?",
           "options": [
             "14",
@@ -718,7 +723,7 @@
         {
           "id": "i06",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Classic: temperature converter",
           "instruction": "Convert 100 degrees Celsius to Fahrenheit and print the result. The formula is F = C × 9 / 5 + 32.",
           "initial_code": "# Convert 100 Celsius to Fahrenheit\n",
@@ -740,7 +745,7 @@
         {
           "id": "i07",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Classic: seconds to h:m:s",
           "instruction": "Convert 3725 seconds into hours, minutes and seconds, and print them separated by colons: 1:2:5",
           "initial_code": "# 3725 seconds as hours:minutes:seconds\n",
@@ -762,7 +767,7 @@
         {
           "id": "i08",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Debug: the wrong average",
           "instruction": "This should print the average of three CPU readings, 80, 90 and 100, which is 90.0, but it prints 203.33333333333334. Fix the bug.",
           "initial_code": "print(80 + 90 + 100 / 3)",
@@ -784,7 +789,7 @@
         {
           "id": "i09",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Code review: the report banner",
           "instruction": "This banner code crashes with a TypeError. Fix it so it prints: ===ALERT===",
           "initial_code": "print('=' * 3 + 'ALERT' + '=' * '3')",
@@ -1199,7 +1204,7 @@
           "content": "Python's official style guide, **PEP 8**, says: `snake_case` for normal variables, `UPPER_CASE` for constants (values meant never to change, like `MAX_LIVES = 3`), and descriptive names over single letters. Never reuse a built-in name like `str`, `list`, `print` or `type` as a variable: it hides the built-in.",
           "example_code": "MAX_LIVES = 3          # a constant, by convention\nplayer_name = 'Sam'    # snake_case\n\n# str = 'oops'         # this would hide str()...\n# print(str(5))        # ...so this would then crash",
           "how": "Python doesn't enforce constants or naming styles; they're agreements between programmers. Built-in names, though, are ordinary names: assigning to `str` points it at your value, so the original `str()` function is no longer reachable by that name.",
-          "use": "Readable code that other developers (and interviewers) can follow quickly, and avoiding a confusing class of bugs where a built-in suddenly stops working."
+          "use": "Readable code that other developers (and future you) can follow quickly, and avoiding a confusing class of bugs where a built-in suddenly stops working."
         },
         {
           "id": "d12",
@@ -1295,8 +1300,8 @@
         {
           "id": "i01",
           "type": "quiz",
-          "track": "interview",
-          "question": "Interview question: Python is \"dynamically typed\". What does that mean?",
+          "track": "mastery",
+          "question": "Concept check: Python is \"dynamically typed\". What does that mean?",
           "options": [
             "Types belong to values; a variable can hold any type and you never declare it",
             "Python has no types",
@@ -1311,7 +1316,7 @@
         {
           "id": "i02",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "What's the difference between `=` and `==`?",
           "options": [
             "`=` stores a value in a name; `==` compares two values and gives True or False",
@@ -1324,7 +1329,7 @@
         {
           "id": "i03",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "What does this code print?",
           "options": [
             "55 10",
@@ -1338,7 +1343,7 @@
         {
           "id": "i04",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "Which variable name follows PEP 8 style for a normal variable?",
           "options": [
             "userScore",
@@ -1351,7 +1356,7 @@
         {
           "id": "i05",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "What does this code print?",
           "options": [
             "<class 'float'>",
@@ -1368,7 +1373,7 @@
         {
           "id": "i06",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Classic: rectangle area and perimeter",
           "instruction": "Using `width` and `height`, print the area and then the perimeter on one line, separated by a space: 21 20",
           "initial_code": "width = 7\nheight = 3\n# TODO: print the area and the perimeter\n",
@@ -1390,7 +1395,7 @@
         {
           "id": "i07",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Classic: digits of a number",
           "instruction": "For the two-digit number `n`, print its last digit, then on the next line the sum of its two digits: 7 then 11",
           "initial_code": "n = 47\n# TODO: print the last digit, then the sum of both digits\n",
@@ -1412,7 +1417,7 @@
         {
           "id": "i08",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Debug: the failed-login counter that never counts",
           "instruction": "This should count two failed logins, but it prints 0. Fix it so it prints 2.",
           "initial_code": "failed = 0\nfailed + 1\nfailed + 1\nprint(failed)",
@@ -1434,7 +1439,7 @@
         {
           "id": "i09",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Debug: the next port",
           "instruction": "A config file gives the port as text. This crashes with a TypeError. Fix it so it prints the next port to try: 8081",
           "initial_code": "port = '8080'\nnext_port = port + 1\nprint(next_port)",
@@ -1781,7 +1786,7 @@
           "content": "A slice can take a third number, the **step**: `text[start:stop:step]`. `text[::2]` takes every second character. A negative step walks backwards, so `text[::-1]` is the whole string reversed.",
           "example_code": "word = 'Python'\nprint(word[::2])    # Pto\nprint(word[1::2])   # yhn\nprint(word[::-1])   # nohtyP",
           "how": "Python starts at `start`, adds `step` each time, and stops before `stop`. Leaving start and stop blank means \"the whole string\"; with a negative step, blank start means \"from the end\".",
-          "use": "Reversing text (palindrome checks are a classic interview task), taking every nth character, and later the same syntax on lists."
+          "use": "Reversing text (palindrome checks are a classic exercise), taking every nth character, and later the same syntax on lists."
         },
         {
           "id": "d02",
@@ -1899,7 +1904,7 @@
           "content": "You can read one character with `text[0]`, but you can't change it: `text[0] = 'J'` raises a **TypeError**. To \"change\" a string you build a new one from pieces, for example `'J' + text[1:]`, and store it.",
           "example_code": "name = 'python'\n# name[0] = 'P'           # TypeError\nname = 'P' + name[1:]     # build a new string\nprint(name)               # Python",
           "how": "Once a string exists, its characters are fixed. Every \"edit\" (slicing, `+`, methods like `.upper()`) produces a new string; assigning it back to the same name just moves the label to the new string.",
-          "use": "Explains why string methods return results instead of changing the original, and it's a common interview question. Immutability also makes strings safe to use as dictionary keys later."
+          "use": "Explains why string methods return results instead of changing the original, and it's a core idea of Python's design. Immutability also makes strings safe to use as dictionary keys later."
         },
         {
           "id": "d10",
@@ -2031,8 +2036,8 @@
         {
           "id": "i01",
           "type": "quiz",
-          "track": "interview",
-          "question": "Interview question: what happens when you run `s = 'cat'` and then `s[0] = 'b'`?",
+          "track": "mastery",
+          "question": "Concept check: what happens when you run `s = 'cat'` and then `s[0] = 'b'`?",
           "options": [
             "A TypeError: strings are immutable",
             "s becomes 'bat'",
@@ -2044,7 +2049,7 @@
         {
           "id": "i02",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "What's the difference between `.find()` and `.index()` when the text isn't in the string?",
           "options": [
             "`.find()` returns -1; `.index()` raises a ValueError",
@@ -2057,7 +2062,7 @@
         {
           "id": "i03",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "What does this code print?",
           "options": [
             "ell o",
@@ -2071,7 +2076,7 @@
         {
           "id": "i04",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "Why are f-strings usually preferred over joining with `+`, as in `name + ' is ' + str(age)`?",
           "options": [
             "They convert values automatically and are easier to read",
@@ -2084,7 +2089,7 @@
         {
           "id": "i05",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "What does this code print?",
           "options": [
             "abcabccba",
@@ -2098,7 +2103,7 @@
         {
           "id": "i06",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Classic: palindrome check",
           "instruction": "A palindrome reads the same backwards. Print whether `word` is a palindrome, ignoring case. It should print: True",
           "initial_code": "word = 'Racecar'\n# TODO: print True if word is a palindrome (ignore case)\n",
@@ -2120,7 +2125,7 @@
         {
           "id": "i07",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Classic: count the vowels",
           "instruction": "Print how many vowels (a, e, i, o, u) are in `text`, without a loop. It should print: 5",
           "initial_code": "text = 'programming is fun'\n# TODO: count the vowels\n",
@@ -2142,7 +2147,7 @@
         {
           "id": "i08",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Debug: the wrong username",
           "instruction": "This should build the username from the first letter of the first name plus the last name: ghopper. It prints rhopper. Find and fix the bug.",
           "initial_code": "name = 'grace hopper'\nparts = name.split()\nprint(parts[0][1] + parts[1])",
@@ -2164,7 +2169,7 @@
         {
           "id": "i09",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Debug: the backup file extension",
           "instruction": "This should print the extension without the dot (zip) but prints .zip. Fix the off-by-one bug.",
           "initial_code": "filename = 'backup.zip'\ndot = filename.find('.')\nprint(filename[dot:])",
@@ -2700,8 +2705,8 @@
         {
           "id": "i01",
           "type": "quiz",
-          "track": "interview",
-          "question": "Interview question: what's the difference between `is` and `==`?",
+          "track": "mastery",
+          "question": "Concept check: what's the difference between `is` and `==`?",
           "options": [
             "`==` compares values; `is` checks whether both refer to the same object",
             "They are identical",
@@ -2713,7 +2718,7 @@
         {
           "id": "i02",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "Which values are falsy in Python?",
           "options": [
             "0, '', None and empty collections (plus False)",
@@ -2726,7 +2731,7 @@
         {
           "id": "i03",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "What does this code print?",
           "options": [
             "C",
@@ -2743,7 +2748,7 @@
         {
           "id": "i04",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "What does this code print?",
           "options": [
             "a",
@@ -2757,7 +2762,7 @@
         {
           "id": "i05",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "Why should the most specific condition come first in an if/elif chain?",
           "options": [
             "Only the first true branch runs, so a broader check placed earlier would catch the case first",
@@ -2770,7 +2775,7 @@
         {
           "id": "i06",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Classic: FizzBuzz for one number",
           "instruction": "For `n`, print `FizzBuzz` if it's divisible by both 3 and 5, `Fizz` if only by 3, `Buzz` if only by 5, and the number itself otherwise. With n = 15 it should print: FizzBuzz",
           "initial_code": "n = 15\n# TODO: FizzBuzz for one number\n",
@@ -2792,7 +2797,7 @@
         {
           "id": "i07",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Classic: leap year",
           "instruction": "A year is a leap year if it's divisible by 4, except years divisible by 100, unless they're also divisible by 400. Print whether `year` is a leap year. For 1900 it should print: False",
           "initial_code": "year = 1900\n# TODO: print True or False\n",
@@ -2814,7 +2819,7 @@
         {
           "id": "i08",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Debug: the alert ladder",
           "instruction": "Every CPU reading of 60 or more gets labelled `elevated`. Fix the order of the checks so a reading of 85 prints: warning",
           "initial_code": "cpu = 85\nif cpu >= 60:\n    print('elevated')\nelif cpu >= 80:\n    print('warning')\nelif cpu >= 95:\n    print('critical')\nelse:\n    print('normal')",
@@ -2836,7 +2841,7 @@
         {
           "id": "i09",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Debug: the always-true check",
           "instruction": "This prints `privileged` for every role. Fix the condition so the guest role prints: standard",
           "initial_code": "role = 'guest'\nif role == 'admin' or 'root':\n    print('privileged')\nelse:\n    print('standard')",
@@ -3283,7 +3288,7 @@
           "content": "**Big-O** describes how the amount of work grows as the input grows. **O(1)** (constant): the same work whatever the size, like reading `text[0]`. **O(n)** (linear): one loop over n items; double the input, double the work. **O(n²)** (quadratic): a loop inside a loop over the same items; double the input, four times the work.",
           "example_code": "word = 'python'\nprint(word[0])            # O(1): one step, any length\n\nfor ch in word:           # O(n): one step per character\n    print(ch)\n\nfor a in word:            # O(n^2): every character\n    for b in word:        # paired with every character\n        pass",
           "how": "Count how many times the innermost line runs as the input grows, and keep only the biggest term. A loop that does 3 things per item is still O(n); constants and smaller terms are dropped because they matter little for big inputs.",
-          "use": "Almost every coding interview asks for the Big-O of your solution. In real work it tells you whether code that's fast on 100 items will still be fast on a million."
+          "use": "Big-O is how programmers compare solutions. In real work it tells you whether code that's fast on 100 items will still be fast on a million."
         },
         {
           "id": "d14",
@@ -3309,7 +3314,7 @@
           "content": "Anything that gives the same result every round should be worked out once, before the loop. Loop over the items directly (`for ch in word`) instead of over positions (`for i in range(len(word))`) unless you really need the position.",
           "example_code": "text = 'Hello World'\n\n# Wasteful: lowercases the whole text on every round\nfor ch in text:\n    if ch in text.lower():\n        pass\n\n# Better: do it once\nlower = text.lower()\nfor ch in lower:\n    pass",
           "how": "Code inside a loop runs once per item. An expensive call there is multiplied by the number of items; moved outside, it runs once.",
-          "use": "Faster programs, and cleaner code that interviewers and reviewers read as \"knows what they're doing\"."
+          "use": "Faster programs, and cleaner code that reviewers read as \"knows what they're doing\"."
         },
         {
           "id": "d16",
@@ -3349,8 +3354,8 @@
         {
           "id": "i01",
           "type": "quiz",
-          "track": "interview",
-          "question": "Interview question: what's the difference between `break` and `continue`?",
+          "track": "mastery",
+          "question": "Concept check: what's the difference between `break` and `continue`?",
           "options": [
             "`break` exits the loop entirely; `continue` skips to the next round",
             "They do the same thing",
@@ -3362,7 +3367,7 @@
         {
           "id": "i02",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "A loop looks at each character of a string once. If the string becomes 10 times longer, roughly how much longer does the loop take?",
           "options": [
             "About 10 times longer: O(n)",
@@ -3375,7 +3380,7 @@
         {
           "id": "i03",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "A function compares every item in a list of n items with every other item. What's its time complexity?",
           "options": [
             "O(n)",
@@ -3383,12 +3388,12 @@
             "O(1)"
           ],
           "answer": "O(n²)",
-          "explanation": "Comparing all pairs needs a loop inside a loop: about n × n comparisons. Interviewers often ask you to improve a solution like this, for example with a set (coming in a later lesson)."
+          "explanation": "Comparing all pairs needs a loop inside a loop: about n × n comparisons. A solution like this can often be improved, for example with a set (coming in a later lesson)."
         },
         {
           "id": "i04",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "What does this code print?",
           "options": [
             "1 2 3 4",
@@ -3402,7 +3407,7 @@
         {
           "id": "i05",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "When is a `while` loop a better fit than a `for` loop?",
           "options": [
             "When you don't know in advance how many times to repeat",
@@ -3415,7 +3420,7 @@
         {
           "id": "i06",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Classic: FizzBuzz",
           "instruction": "Print the numbers 1 to 15, but print `Fizz` for multiples of 3, `Buzz` for multiples of 5, and `FizzBuzz` for multiples of both.",
           "initial_code": "# TODO: FizzBuzz from 1 to 15\n",
@@ -3437,7 +3442,7 @@
         {
           "id": "i07",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Classic: reverse a string without slicing",
           "instruction": "Build the reverse of `word` with a loop (no `[::-1]`) and print it. It should print: nohtyp",
           "initial_code": "word = 'python'\n# TODO: reverse it with a loop\n",
@@ -3451,7 +3456,7 @@
             },
             {
               "heading": "Start empty",
-              "content": "Begin with `result = ''`, update it inside the loop, and print it once after the loop. Interviewers ask for this version to see that you understand loops, not just slicing.",
+              "content": "Begin with `result = ''`, update it inside the loop, and print it once after the loop. Writing this version shows you understand loops, not just slicing.",
               "example_code": "r = ''\nfor ch in 'hi':\n    r = ch + r\nprint(r)  # ih"
             }
           ]
@@ -3459,7 +3464,7 @@
         {
           "id": "i08",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Classic: is it prime?",
           "instruction": "A prime number is only divisible by 1 and itself. Print whether `n` is prime by checking every number from 2 up to n - 1. For 29 it should print: True",
           "initial_code": "n = 29\n# TODO: print True if n is prime, otherwise False\n",
@@ -3473,7 +3478,7 @@
             },
             {
               "heading": "Or use for/else",
-              "content": "A `for` loop's `else` runs only when no `break` happened, which here means no divisor was found. Either style works. (Checking only up to the square root of n is faster, a common interview follow-up.)",
+              "content": "A `for` loop's `else` runs only when no `break` happened, which here means no divisor was found. Either style works. (Checking only up to the square root of n is faster, a common follow-up improvement.)",
               "example_code": "n = 7\nfor d in range(2, n):\n    if n % d == 0:\n        print(False)\n        break\nelse:\n    print(True)"
             }
           ]
@@ -3481,7 +3486,7 @@
         {
           "id": "i09",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Debug: the retry countdown that never starts",
           "instruction": "This should count down the remaining retries 5, 4, 3, 2, 1 (one per line), but it prints nothing. Fix the range.",
           "initial_code": "for i in range(5, 0):\n    print(i)",
@@ -3748,7 +3753,7 @@
           "content": "Name functions with verbs that say what they do (`to_celsius`, `is_valid`, `count_words`). The first line inside a function can be a string in triple quotes, a **docstring**, describing what it does. Tools and `help()` show it.",
           "example_code": "def to_celsius(f):\n    \"\"\"Convert a Fahrenheit temperature to Celsius.\"\"\"\n    return (f - 32) * 5 / 9\n\nprint(to_celsius(212))     # 100.0\nprint(to_celsius.__doc__)  # Convert a Fahrenheit ...",
           "how": "If the first statement in a function body is a string, Python stores it as the function's `__doc__` attribute instead of discarding it.",
-          "use": "Self-explaining code that teammates (and interviewers reading your solution) can follow, plus editor tooltips and generated documentation."
+          "use": "Self-explaining code that teammates (and future you) can follow, plus editor tooltips and generated documentation."
         },
         {
           "id": "d05",
@@ -3803,7 +3808,7 @@
           "content": "A `return` can come anywhere in a function. Handling special cases first and returning right away (a **guard clause**) keeps the main logic unindented and easy to read.",
           "example_code": "def safe_divide(a, b):\n    if b == 0:\n        return None      # guard: stop early\n    return a / b\n\nprint(safe_divide(10, 4))  # 2.5\nprint(safe_divide(1, 0))   # None",
           "how": "`return` ends the function immediately, so nothing after it runs for that call. Each guard removes one case, and the code below can assume it's been dealt with.",
-          "use": "Validating input, handling empty or missing data, and avoiding deep if/else nesting. Reviewers and interviewers like this style."
+          "use": "Validating input, handling empty or missing data, and avoiding deep if/else nesting. Code reviewers like this style."
         },
         {
           "id": "d09",
@@ -3849,7 +3854,7 @@
           "content": "Big programs are built from small functions that call each other. Each one does one job, so it's easy to test and reuse.",
           "example_code": "def square(n):\n    return n * n\n\ndef sum_of_squares(a, b):\n    return square(a) + square(b)\n\nprint(sum_of_squares(3, 4))   # 25",
           "how": "When `sum_of_squares` calls `square(a)`, Python pauses it, runs `square` to its return, and drops the result into the expression. Then it carries on with the next call.",
-          "use": "Breaking problems into steps. In interviews, writing a small helper (like `is_vowel`) for one part of the problem shows clear thinking."
+          "use": "Breaking problems into steps. Writing a small helper (like `is_vowel`) for one part of the problem shows clear thinking."
         },
         {
           "id": "d12",
@@ -3946,8 +3951,8 @@
         {
           "id": "i01",
           "type": "quiz",
-          "track": "interview",
-          "question": "Interview question: what's the difference between a parameter and an argument?",
+          "track": "mastery",
+          "question": "Concept check: what's the difference between a parameter and an argument?",
           "options": [
             "A parameter is the name in the def line; an argument is the value passed in the call",
             "They're two words for the same thing",
@@ -3959,7 +3964,7 @@
         {
           "id": "i02",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "What does a function return if it has no `return` statement?",
           "options": [
             "None",
@@ -3972,7 +3977,7 @@
         {
           "id": "i03",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "What does this code print?",
           "options": [
             "None",
@@ -3986,7 +3991,7 @@
         {
           "id": "i04",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "A helper `contains(text, ch)` loops over every character of `text`. You call it once for each of the n characters of another string, and `text` also has n characters. What's the overall time complexity?",
           "options": [
             "O(n)",
@@ -3994,12 +3999,12 @@
             "O(1)"
           ],
           "answer": "O(n²)",
-          "explanation": "Each call is O(n), and you make n calls: n × n. Function calls can hide loops, so interviewers expect you to count the work inside the functions you call."
+          "explanation": "Each call is O(n), and you make n calls: n × n. Function calls can hide loops, so count the work inside the functions you call."
         },
         {
           "id": "i05",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "Why is returning a value usually better than printing it inside the function?",
           "options": [
             "The caller can store, combine, test or print the result as needed",
@@ -4012,7 +4017,7 @@
         {
           "id": "i06",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Classic: password validator",
           "instruction": "Write `is_valid(password)` that returns True only if the password has at least 8 characters, at least one digit, and at least one uppercase letter. The prints should show True then False.",
           "initial_code": "# TODO: def is_valid(password):\n\n\nprint(is_valid('Secret123'))\nprint(is_valid('password'))",
@@ -4034,7 +4039,7 @@
         {
           "id": "i07",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Classic: factorial with a loop",
           "instruction": "Write `factorial(n)` that returns 1 × 2 × ... × n using a loop. factorial(0) is 1 by definition. The prints should show 120 then 1.",
           "initial_code": "# TODO: def factorial(n):\n\n\nprint(factorial(5))\nprint(factorial(0))",
@@ -4056,7 +4061,7 @@
         {
           "id": "i08",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Classic: largest of three",
           "instruction": "Without using `max()`, write `biggest(a, b, c)` that returns the largest value. The prints should show 9 then 7.",
           "initial_code": "# TODO: def biggest(a, b, c):\n\n\nprint(biggest(3, 9, 4))\nprint(biggest(7, 7, 2))",
@@ -4078,7 +4083,7 @@
         {
           "id": "i09",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Debug: the function that quits too soon",
           "instruction": "`sum_to(5)` should return 1 + 2 + 3 + 4 + 5 = 15, but it returns 1. Fix the bug.",
           "initial_code": "def sum_to(n):\n    total = 0\n    for i in range(1, n + 1):\n        total += i\n        return total\n\nprint(sum_to(5))",
@@ -4485,7 +4490,7 @@
           "content": "Lists are **mutable**, so the label picture from Variables matters: `b = a` makes both names point at the same list. Changing it through `b` changes what `a` sees. Make a real copy with `a.copy()`, `a[:]` or `list(a)`.",
           "example_code": "a = [1, 2]\nb = a           # same list, two labels\nb.append(3)\nprint(a)        # [1, 2, 3]\n\nc = a.copy()    # a separate list\nc.append(4)\nprint(a, c)     # [1, 2, 3] [1, 2, 3, 4]",
           "how": "Assignment never copies; it only attaches another name. With immutable values (numbers, strings) that's invisible, because nothing can change them in place. With lists it shows, because `append`, `remove` and item assignment change the list itself.",
-          "use": "Avoiding one of the most common bugs in real Python code, and a favorite interview question."
+          "use": "Avoiding one of the most common bugs in real Python code, and one every Python programmer should recognize."
         },
         {
           "id": "d10",
@@ -4612,8 +4617,8 @@
         {
           "id": "i01",
           "type": "quiz",
-          "track": "interview",
-          "question": "Interview question: what's the difference between `nums.sort()` and `sorted(nums)`?",
+          "track": "mastery",
+          "question": "Concept check: what's the difference between `nums.sort()` and `sorted(nums)`?",
           "options": [
             "`.sort()` changes the list in place and returns None; `sorted()` returns a new sorted list",
             "They're identical",
@@ -4625,7 +4630,7 @@
         {
           "id": "i02",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "What's the difference between `append` and `extend`?",
           "options": [
             "`append` adds one item (even a whole list); `extend` adds each item of another list",
@@ -4638,7 +4643,7 @@
         {
           "id": "i03",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "What's the time complexity of `x in my_list` for a list of n items?",
           "options": [
             "O(n)",
@@ -4651,7 +4656,7 @@
         {
           "id": "i04",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "What's the time complexity of reading `my_list[5000]` from a list of a million items?",
           "options": [
             "O(1)",
@@ -4664,7 +4669,7 @@
         {
           "id": "i05",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "What does this code print?",
           "options": [
             "[1, 2, 3]",
@@ -4681,7 +4686,7 @@
         {
           "id": "i06",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Classic: find the maximum without max()",
           "instruction": "Without using `max()` or sorting, print the largest number in `nums`. It should print: 23",
           "initial_code": "nums = [4, 17, 9, 23, 8]\n# TODO: find the largest with a loop\n",
@@ -4695,7 +4700,7 @@
             },
             {
               "heading": "One pass is O(n)",
-              "content": "Each number is looked at once. Print the tracked value after the loop. Interviewers ask this to see that you don't reach for sorting (O(n log n)) when one pass will do.",
+              "content": "Each number is looked at once. Print the tracked value after the loop. The point is to not reach for sorting (O(n log n)) when one pass will do.",
               "example_code": "nums = [-5, -2, -9]\nbest = nums[0]\nfor n in nums:\n    if n > best:\n        best = n\nprint(best)  # -2"
             }
           ]
@@ -4703,7 +4708,7 @@
         {
           "id": "i07",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Classic: remove duplicates, keep the order",
           "instruction": "Build a new list with each item of `items` once, in the order first seen, using a loop. It should print: ['a', 'b', 'c']",
           "initial_code": "items = ['a', 'b', 'a', 'c', 'b']\n# TODO: unique items, original order\n",
@@ -4717,7 +4722,7 @@
             },
             {
               "heading": "Note the cost",
-              "content": "`x not in unique` is itself a loop, so this is O(n²). It's fine here; in the Collections lesson you'll learn a set-based O(n) version, which is the follow-up interviewers ask for.",
+              "content": "`x not in unique` is itself a loop, so this is O(n²). It's fine here; in the Collections lesson you'll learn a set-based O(n) version, which is the natural next improvement.",
               "example_code": "print('b' not in ['a', 'c'])  # True"
             }
           ]
@@ -4725,7 +4730,7 @@
         {
           "id": "i08",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Classic: second largest",
           "instruction": "Print the second largest **distinct** value in `nums`. It should print: 7",
           "initial_code": "nums = [5, 1, 9, 7, 9]\n# TODO: print the second largest distinct value\n",
@@ -4747,7 +4752,7 @@
         {
           "id": "i09",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Debug: removing accounts while looping",
           "instruction": "This should remove every `guest` account from the list, but one survives and it prints ['ada', 'guest', 'bob']. Fix it so it prints: ['ada', 'bob']",
           "initial_code": "users = ['ada', 'guest', 'guest', 'bob']\nfor u in users:\n    if u == 'guest':\n        users.remove(u)\nprint(users)",
@@ -5271,8 +5276,8 @@
         {
           "id": "i01",
           "type": "quiz",
-          "track": "interview",
-          "question": "Interview question: why must dictionary keys be immutable (hashable)?",
+          "track": "mastery",
+          "question": "Concept check: why must dictionary keys be immutable (hashable)?",
           "options": [
             "A key's hash decides where its value is stored; if the key could change, the value couldn't be found again",
             "To save memory",
@@ -5284,7 +5289,7 @@
         {
           "id": "i02",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "What's the average time complexity of looking up a key in a dictionary?",
           "options": [
             "O(1)",
@@ -5297,7 +5302,7 @@
         {
           "id": "i03",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "What's the difference between `d['x']` and `d.get('x')` when 'x' isn't a key?",
           "options": [
             "`d['x']` raises KeyError; `d.get('x')` returns None",
@@ -5310,7 +5315,7 @@
         {
           "id": "i04",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "You need to check, many times, whether usernames exist among a million users. Which is faster to search?",
           "options": [
             "A dictionary (or set) keyed by username: O(1) per check",
@@ -5318,12 +5323,12 @@
             "They're the same speed"
           ],
           "answer": "A dictionary (or set) keyed by username: O(1) per check",
-          "explanation": "Each `in` on a list scans up to a million names (O(n)). A dictionary or set lookup is O(1). Choosing the right structure is often the whole answer to an interview question."
+          "explanation": "Each `in` on a list scans up to a million names (O(n)). A dictionary or set lookup is O(1). Choosing the right structure is often the whole answer to a performance problem."
         },
         {
           "id": "i05",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "What does this code print?",
           "options": [
             "{'a': 11}",
@@ -5337,7 +5342,7 @@
         {
           "id": "i06",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Classic: two sum",
           "instruction": "Find the positions of the two numbers in `nums` that add up to `target`, and print them separated by a space. Use a dictionary of numbers you've already seen. It should print: 0 1",
           "initial_code": "nums = [2, 7, 11, 15]\ntarget = 9\n# TODO: print the two indexes\n",
@@ -5351,7 +5356,7 @@
             },
             {
               "heading": "Remember positions in a dict",
-              "content": "Keep `seen = {number: index}`. Check `need in seen` (O(1)) before storing the current number. That makes the whole thing one pass, O(n), instead of checking every pair, O(n²), which is exactly the improvement interviewers look for.",
+              "content": "Keep `seen = {number: index}`. Check `need in seen` (O(1)) before storing the current number. That makes the whole thing one pass, O(n), instead of checking every pair, O(n²), which is exactly the improvement to look for.",
               "example_code": "seen = {4: 0}\nprint(6 in seen, 4 in seen)  # False True\nprint(seen[4])               # 0"
             }
           ]
@@ -5359,7 +5364,7 @@
         {
           "id": "i07",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Classic: first non-repeating character",
           "instruction": "Print the first character in `s` that appears exactly once. It should print: w",
           "initial_code": "s = 'swiss'\n# TODO: print the first character that appears once\n",
@@ -5381,7 +5386,7 @@
         {
           "id": "i08",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Classic: anagram check",
           "instruction": "Two words are anagrams if they use the same letters the same number of times. Print whether `a` and `b` are anagrams by comparing letter-count dictionaries. It should print: True",
           "initial_code": "a = 'listen'\nb = 'silent'\n# TODO: compare letter counts\n",
@@ -5403,7 +5408,7 @@
         {
           "id": "i09",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Debug: the failed-login counter that crashes",
           "instruction": "This crashes with a KeyError. Fix it so it prints the failed logins per user: {'ada': 2, 'bob': 1}",
           "initial_code": "failed = ['ada', 'bob', 'ada']\ncounts = {}\nfor user in failed:\n    counts[user] += 1\nprint(counts)",
@@ -5930,7 +5935,7 @@
           "type": "text",
           "track": "deep-dive",
           "heading": "Choosing the right collection",
-          "content": "**List**: ordered, allows duplicates, changeable; `in` is O(n). **Tuple**: a fixed record; can be a key. **Set**: unique items, no order; `in` is O(1). **Dict**: look up values by key; `in` (on keys) is O(1). Picking the right one is often the main idea of an interview answer.",
+          "content": "**List**: ordered, allows duplicates, changeable; `in` is O(n). **Tuple**: a fixed record; can be a key. **Set**: unique items, no order; `in` is O(1). **Dict**: look up values by key; `in` (on keys) is O(1). Picking the right one is often the main idea of a good solution.",
           "example_code": "todo = ['email', 'call', 'email']    # order and repeats matter\nrgb = (255, 128, 0)                  # a fixed record\nseen = {'ann', 'bo'}                 # fast 'have we seen it?'\nages = {'ann': 30, 'bo': 25}         # look up by name",
           "how": "Lists check `in` by scanning; sets and dicts hash the value to jump straight to it. That's the difference between O(n) and O(1) per lookup.",
           "use": "Making code fast and clear: a set for membership tests inside a loop can turn an O(n²) solution into O(n)."
@@ -5960,8 +5965,8 @@
         {
           "id": "i01",
           "type": "quiz",
-          "track": "interview",
-          "question": "Interview question: what's the difference between a list and a tuple?",
+          "track": "mastery",
+          "question": "Concept check: what's the difference between a list and a tuple?",
           "options": [
             "Lists can change; tuples can't, so tuples can be dict keys or set items and signal a fixed record",
             "Tuples are faster to sort",
@@ -5973,7 +5978,7 @@
         {
           "id": "i02",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "What's the average time complexity of `x in s` when `s` is a set of n items?",
           "options": [
             "O(1)",
@@ -5986,7 +5991,7 @@
         {
           "id": "i03",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "Why can't you put a list inside a set?",
           "options": [
             "Lists are mutable, so they aren't hashable",
@@ -5999,7 +6004,7 @@
         {
           "id": "i04",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "Removing duplicates with `list(set(items))` versus comparing every pair of items with nested loops. What are their time complexities?",
           "options": [
             "O(n) for the set version, O(n²) for nested loops",
@@ -6012,7 +6017,7 @@
         {
           "id": "i05",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "What does this code print?",
           "options": [
             "[1, 2, 3, 4]",
@@ -6026,7 +6031,7 @@
         {
           "id": "i06",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Classic: contains duplicate",
           "instruction": "Print whether `nums` contains any value more than once, using a set. It should print: True",
           "initial_code": "nums = [3, 1, 4, 1, 5]\n# TODO: True if there's a duplicate\n",
@@ -6048,7 +6053,7 @@
         {
           "id": "i07",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Classic: common elements",
           "instruction": "Print the values that appear in both `a` and `b`, once each, as a sorted list. It should print: [2, 4]",
           "initial_code": "a = [1, 2, 2, 3, 4]\nb = [2, 4, 6]\n# TODO: values in both, sorted\n",
@@ -6070,7 +6075,7 @@
         {
           "id": "i08",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Classic: the missing number",
           "instruction": "`nums` holds every number from 0 to 4 except one. Print the missing number. It should print: 2",
           "initial_code": "nums = [0, 1, 3, 4]\n# TODO: find the missing number from 0..4\n",
@@ -6092,7 +6097,7 @@
         {
           "id": "i09",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Debug: the wrong squares",
           "instruction": "This should print the squares of the even numbers from 1 to 6, but it prints the odd ones. Fix the filter so it prints: [4, 16, 36]",
           "initial_code": "evens_squared = [n * n for n in range(1, 7) if n % 2]\nprint(evens_squared)",
@@ -6371,7 +6376,7 @@
           "content": "A default value is created **once**, when the `def` line runs, not on every call. If the default is a list or dict and the function changes it, the change carries over to the next call. The standard fix is a default of `None` and creating a fresh list inside.",
           "example_code": "def add_bad(item, items=[]):\n    items.append(item)\n    return items\n\nprint(add_bad(1))   # [1]\nprint(add_bad(2))   # [1, 2]  surprise!\n\ndef add_good(item, items=None):\n    if items is None:\n        items = []\n    items.append(item)\n    return items\n\nprint(add_good(1))  # [1]\nprint(add_good(2))  # [2]",
           "how": "Python evaluates default expressions when it defines the function and stores the resulting object with it. Every call that uses the default gets that same stored list.",
-          "use": "Avoiding a famous bug, and one of the most common Python interview questions."
+          "use": "Avoiding a famous bug, and one of the best-known surprises in Python's design."
         },
         {
           "id": "d02",
@@ -6593,7 +6598,7 @@
           "content": "The naive recursive Fibonacci recalculates the same values over and over, so its work roughly doubles with each step: **O(2ⁿ)**. Storing each answer in a dictionary the first time (a **memo**) means each value is computed once: **O(n)**. `functools.lru_cache` does this automatically.",
           "example_code": "memo = {}\n\ndef fib(n):\n    if n <= 1:\n        return n\n    if n in memo:\n        return memo[n]\n    memo[n] = fib(n - 1) + fib(n - 2)\n    return memo[n]\n\nprint(fib(80))   # 23416728348467685, instantly",
           "how": "Before doing any work, the function checks whether it already knows the answer. The first time, it computes and stores it; every later call with the same n is a single dictionary lookup.",
-          "use": "Speeding up recursive solutions (this is the core idea of dynamic programming, a big interview topic) and caching slow lookups."
+          "use": "Speeding up recursive solutions (this is the core idea of dynamic programming, a big algorithms topic) and caching slow lookups."
         },
         {
           "id": "d17",
@@ -6620,8 +6625,8 @@
         {
           "id": "i01",
           "type": "quiz",
-          "track": "interview",
-          "question": "Interview question: what's wrong with `def add(item, items=[])`?",
+          "track": "mastery",
+          "question": "Concept check: what's wrong with `def add(item, items=[])`?",
           "options": [
             "The default list is created once and shared by every call that uses it",
             "Lists aren't allowed as parameters",
@@ -6633,7 +6638,7 @@
         {
           "id": "i02",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "What are `*args` and `**kwargs`?",
           "options": [
             "They collect extra positional arguments into a tuple and extra keyword arguments into a dict",
@@ -6646,7 +6651,7 @@
         {
           "id": "i03",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "The naive recursive Fibonacci, `fib(n - 1) + fib(n - 2)`, has what time complexity? And with memoization?",
           "options": [
             "About O(2ⁿ) naive; O(n) memoized",
@@ -6659,7 +6664,7 @@
         {
           "id": "i04",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "What is a closure?",
           "options": [
             "An inner function that remembers variables from the enclosing function after it has returned",
@@ -6672,7 +6677,7 @@
         {
           "id": "i05",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "What does this code print?",
           "options": [
             "[-1, 2, 3]",
@@ -6686,7 +6691,7 @@
         {
           "id": "i06",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Classic: recursive power",
           "instruction": "Write a recursive `power(base, exp)` (no `**` or loops): any number to the power 0 is 1, and base^exp is base × base^(exp − 1). It should print: 1024",
           "initial_code": "# TODO: def power(base, exp):\n\n\nprint(power(2, 10))",
@@ -6708,7 +6713,7 @@
         {
           "id": "i07",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Classic: flatten a nested list",
           "instruction": "Write a recursive `flatten(items)` that returns one flat list from lists nested to any depth. Check with `type(x) == list`. It should print: [1, 2, 3, 4, 5]",
           "initial_code": "# TODO: def flatten(items):\n\n\nprint(flatten([1, [2, [3, 4]], 5]))",
@@ -6730,7 +6735,7 @@
         {
           "id": "i08",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Classic: binary search",
           "instruction": "`nums` is sorted. Find the index of `target` by binary search: look at the middle item and throw away the half that can't contain the target, until you find it. It should print: 4",
           "initial_code": "nums = [1, 3, 5, 7, 9, 11]\ntarget = 9\n# TODO: binary search for target\n",
@@ -6752,7 +6757,7 @@
         {
           "id": "i09",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Debug: recursion with no way out",
           "instruction": "This crashes with RecursionError. Add a base case so it prints 3, 2, 1 (one per line) and stops.",
           "initial_code": "def countdown(n):\n    print(n)\n    countdown(n - 1)\n\ncountdown(3)",
@@ -7233,8 +7238,8 @@
         {
           "id": "i01",
           "type": "quiz",
-          "track": "interview",
-          "question": "Interview question: why is a bare `except:` considered bad practice?",
+          "track": "mastery",
+          "question": "Concept check: why is a bare `except:` considered bad practice?",
           "options": [
             "It catches everything, including Ctrl+C and real bugs, so problems get hidden",
             "It's slower",
@@ -7246,7 +7251,7 @@
         {
           "id": "i02",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "In a try statement, what's the difference between `else` and `finally`?",
           "options": [
             "`else` runs only if no exception happened; `finally` always runs",
@@ -7259,7 +7264,7 @@
         {
           "id": "i03",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "Python style often prefers EAFP. What does that mean?",
           "options": [
             "Try the operation and handle the exception if it fails",
@@ -7272,7 +7277,7 @@
         {
           "id": "i04",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "What does this code print?",
           "options": [
             "lookup",
@@ -7286,7 +7291,7 @@
         {
           "id": "i05",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "What does a bare `raise` (with no arguments) do inside an except block?",
           "options": [
             "Re-raises the exception that was just caught",
@@ -7299,7 +7304,7 @@
         {
           "id": "i06",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Classic: total the valid numbers",
           "instruction": "`values` came from a messy file. Add up the ones that are valid whole numbers, skipping the rest, and print the total. It should print: 10",
           "initial_code": "values = ['3', 'x', '5', '', '2']\n# TODO: sum the valid integers\n",
@@ -7321,7 +7326,7 @@
         {
           "id": "i07",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Average latency with validation",
           "instruction": "Make `average` raise `ValueError('no readings')` for an empty list. The code below then prints: no readings, then 3.0.",
           "initial_code": "def average(readings):\n    return sum(readings) / len(readings)\n\ntry:\n    print(average([]))\nexcept ValueError as e:\n    print(e)\nprint(average([2, 4]))",
@@ -7343,7 +7348,7 @@
         {
           "id": "i08",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Debug: the swallowed bug",
           "instruction": "This prints `No readings` even though there are readings. A too-broad `except` is hiding the real bug. Fix the bug, and narrow the except to `ZeroDivisionError`, so it prints: 20.0",
           "initial_code": "readings = [10, 20, 30]\ntry:\n    average = sum(readings) / len(reading)\n    print(average)\nexcept Exception:\n    print('No readings')",
@@ -7365,7 +7370,7 @@
         {
           "id": "i09",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Debug: catching the wrong error",
           "instruction": "This crashes instead of printing `missing`. Fix the except so it catches the error a missing dictionary key really raises.",
           "initial_code": "config = {'host': 'web-01'}\ntry:\n    print(config['port'])\nexcept IndexError:\n    print('missing')",
@@ -7716,7 +7721,7 @@
           "content": "`Counter` from the `collections` module counts things for you: `Counter(items)` builds a dictionary-like object of counts. `.most_common(n)` returns the n most frequent items as (item, count) pairs.",
           "example_code": "from collections import Counter\nwords = 'the cat and the hat and the bat'.split()\ncounts = Counter(words)\nprint(counts['the'])          # 3\nprint(counts.most_common(2))  # [('the', 3), ('and', 2)]\nprint(counts['zebra'])        # 0, no KeyError",
           "how": "Counter loops over the items once, doing the `counts.get(x, 0) + 1` pattern for you. Missing items count as 0 instead of raising KeyError.",
-          "use": "Word frequencies, top-N lists, voting, and quick data exploration. It's usually the fastest way to answer \"how many of each?\" in an interview."
+          "use": "Word frequencies, top-N lists, voting, and quick data exploration. It's usually the fastest way to answer \"how many of each?\" in a few lines."
         },
         {
           "id": "d09",
@@ -7817,7 +7822,7 @@
           "content": "A few more modules worth knowing: `statistics` (mean, median, mode), `datetime` (dates), `json` (data files), `pathlib` (file paths), `itertools` (combinations, permutations, chaining), and `os` (environment and files).",
           "example_code": "import statistics\nfrom itertools import combinations\ndata = [3, 1, 4, 1, 5]\nprint(statistics.mean(data))      # 2.8\nprint(statistics.median(data))    # 3\nprint(list(combinations('abc', 2)))  # [('a', 'b'), ('a', 'c'), ('b', 'c')]",
           "how": "Each module packages tested, documented code for one area. Learning what exists saves you from writing (and debugging) it yourself.",
-          "use": "\"Is there a built-in for this?\" is often the best first question, in real work and in interviews."
+          "use": "\"Is there a built-in for this?\" is often the best first question, in real work and in practice problems."
         },
         {
           "id": "d16",
@@ -7858,8 +7863,8 @@
         {
           "id": "i01",
           "type": "quiz",
-          "track": "interview",
-          "question": "Interview question: what's the difference between `import math` and `from math import sqrt`?",
+          "track": "mastery",
+          "question": "Concept check: what's the difference between `import math` and `from math import sqrt`?",
           "options": [
             "The first gives you the module (use `math.sqrt`); the second copies just the name `sqrt` into your file",
             "The second is faster at runtime",
@@ -7871,7 +7876,7 @@
         {
           "id": "i02",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "Why is `from module import *` usually avoided?",
           "options": [
             "It dumps unknown names into your file, can overwrite your own, and hides where names come from",
@@ -7884,7 +7889,7 @@
         {
           "id": "i03",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "What does `if __name__ == '__main__':` do?",
           "options": [
             "Runs that block only when the file is run directly, not when it's imported",
@@ -7897,7 +7902,7 @@
         {
           "id": "i04",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "`Counter(words)` on a list of n words takes roughly how long?",
           "options": [
             "O(n)",
@@ -7910,7 +7915,7 @@
         {
           "id": "i05",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "What does this code print?",
           "options": [
             "-3 -2",
@@ -7927,7 +7932,7 @@
         {
           "id": "i06",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Classic: most common character",
           "instruction": "Print the most common character in `text`. It should print: l",
           "initial_code": "text = 'hello world'\n# TODO: print the most common character\n",
@@ -7941,7 +7946,7 @@
             },
             {
               "heading": "Or do it by hand",
-              "content": "Without Counter: count with a dict, then use `max(counts, key=counts.get)`. Interviewers are happy with either, as long as you know the O(n) idea.",
+              "content": "Without Counter: count with a dict, then use `max(counts, key=counts.get)`. Either is fine, as long as you know the O(n) idea.",
               "example_code": "counts = {'x': 1, 'y': 4}\nprint(max(counts, key=counts.get))  # y"
             }
           ]
@@ -7949,7 +7954,7 @@
         {
           "id": "i07",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Classic: dice simulation",
           "instruction": "With seed 42, roll two six-sided dice 1000 times and count how often they add up to 7. Print the count.",
           "initial_code": "import random\nrandom.seed(42)\n# TODO: count sevens in 1000 rolls of two dice\n",
@@ -7971,7 +7976,7 @@
         {
           "id": "i08",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Classic: Euclid's GCD",
           "instruction": "Without `math.gcd`, write `gcd(a, b)` using Euclid's algorithm: while b isn't 0, replace (a, b) with (b, a % b); then a is the answer. The prints should show 6 then 1.",
           "initial_code": "# TODO: def gcd(a, b):\n\n\nprint(gcd(48, 18))\nprint(gcd(17, 5))",
@@ -7993,7 +7998,7 @@
         {
           "id": "i09",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Debug: the shadowed module",
           "instruction": "This crashes with an AttributeError. A variable has the same name as a module. Rename the variable to `shape` so it prints: circle 12.566370614359172",
           "initial_code": "import math\nmath = 'circle'\nradius = 2\nprint(math, math.pi * radius ** 2)",
@@ -8434,7 +8439,7 @@
           "content": "`f.read()` loads the whole file into memory. Looping with `for line in f` reads one line at a time, so even a file far bigger than your memory works. `enumerate(f, 1)` gives line numbers starting at 1.",
           "example_code": "with open('log.txt', 'w') as f:\n    f.write('ok\\nERROR disk\\nok\\nERROR net\\n')\n\nwith open('log.txt') as f:\n    for number, line in enumerate(f, 1):\n        if line.startswith('ERROR'):\n            print(number, line.strip())",
           "how": "The file object reads a chunk from disk, hands out lines from it, and fetches the next chunk only when needed. Memory stays small no matter how long the file is.",
-          "use": "Server logs, data dumps and anything that might grow large. It's also the answer interviewers want to \"how would you process a 50 GB file?\""
+          "use": "Server logs, data dumps and anything that might grow large. It's also the answer to \"how would you process a 50 GB file?\""
         },
         {
           "id": "d15",
@@ -8496,8 +8501,8 @@
         {
           "id": "i01",
           "type": "quiz",
-          "track": "interview",
-          "question": "Interview question: why pass `encoding='utf-8'` when opening a text file?",
+          "track": "mastery",
+          "question": "Concept check: why pass `encoding='utf-8'` when opening a text file?",
           "options": [
             "So the file is read and written the same way on every system, instead of depending on the computer's default",
             "It makes the file smaller",
@@ -8509,7 +8514,7 @@
         {
           "id": "i02",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "What does a `with open(...) as f:` block guarantee?",
           "options": [
             "The file is closed when the block ends, even if an error happens inside",
@@ -8522,7 +8527,7 @@
         {
           "id": "i03",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "You need to process a 20 GB log file. Which approach is right?",
           "options": [
             "Loop with `for line in f`, handling one line at a time",
@@ -8535,7 +8540,7 @@
         {
           "id": "i04",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "What does this code print?",
           "options": [
             "two",
@@ -8552,7 +8557,7 @@
         {
           "id": "i05",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "What happens if you `open('data.txt', 'x')` and data.txt already exists?",
           "options": [
             "It raises FileExistsError",
@@ -8565,7 +8570,7 @@
         {
           "id": "i06",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Classic: word count",
           "instruction": "Like the `wc` command, print the number of lines, words and characters in 'story.txt', separated by spaces. It should print: 2 6 23",
           "initial_code": "with open('story.txt', 'w') as f:\n    f.write('the cat sat\\non the mat\\n')\n\n# TODO: print lines, words and characters\n",
@@ -8587,7 +8592,7 @@
         {
           "id": "i07",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Classic: longest line",
           "instruction": "Print the longest line in 'lines.txt' (without its newline). It should print: a much longer line here",
           "initial_code": "with open('lines.txt', 'w') as f:\n    f.write('short\\na much longer line here\\nmedium line\\n')\n\n# TODO: print the longest line\n",
@@ -8609,7 +8614,7 @@
         {
           "id": "i08",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Classic: merge two port lists",
           "instruction": "'a.txt' and 'b.txt' each hold open port numbers, one per line. Write all of them to 'merged.txt' in ascending order, one per line. The verification should print 22, 80, 443, 3306, 8080, 9000 on separate lines.",
           "initial_code": "with open('a.txt', 'w') as f:\n    f.write('22\\n443\\n8080\\n')\nwith open('b.txt', 'w') as f:\n    f.write('80\\n3306\\n9000\\n')\n\n# TODO: read both files, sort the numbers, write merged.txt\n\n\n# Verification (do not change)\nprint(open('merged.txt').read())",
@@ -8631,7 +8636,7 @@
         {
           "id": "i09",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Debug: only the last host survives",
           "instruction": "This should save all three hosts, but the file ends up holding only 'cache-01'. Open the file once, before the loop, so every write goes into the same open file.",
           "initial_code": "hosts = ['web-01', 'db-01', 'cache-01']\nfor host in hosts:\n    with open('hosts.txt', 'w') as f:\n        f.write(host + '\\n')\n\n# Verification (do not change)\nprint(open('hosts.txt').read())",
@@ -8995,7 +9000,7 @@
           "content": "Real projects run tests with a tool. **pytest** finds files named `test_*.py`, runs every `test_` function, and reports which failed and why. `pytest.raises(ValueError)` checks an error is raised. **doctest** (built in) runs examples written inside docstrings and checks their output. Both run from a terminal, so here we call test functions by hand.",
           "example_code": "# test_prices.py, run with:  pytest\nimport pytest\nfrom prices import apply_discount\n\ndef test_quarter_off():\n    assert apply_discount(200, 25) == 150\n\ndef test_negative_percent():\n    with pytest.raises(ValueError):\n        apply_discount(200, -5)",
           "how": "pytest rewrites your plain `assert` lines so a failure shows the actual values on both sides, which is why it needs no special assert methods.",
-          "use": "pytest is the most widely used Python test tool. You'll see it in almost every open-source project and most job descriptions that mention testing."
+          "use": "pytest is the most widely used Python test tool. You'll see it in almost every open-source Python project."
         },
         {
           "id": "d10",
@@ -9060,7 +9065,7 @@
           "content": "**TDD** flips the usual order: write a test for behavior that doesn't exist yet and watch it fail (red), write just enough code to make it pass (green), then tidy the code while the tests keep passing (refactor). Repeat for the next behavior.",
           "example_code": "# 1. Red: the test comes first and fails\ndef test_initials():\n    assert initials('Ada Lovelace') == 'AL'\n\n# 2. Green: the simplest code that passes\ndef initials(name):\n    return ''.join([word[0] for word in name.split()])\n\ntest_initials()\nprint('green')",
           "how": "Writing the test first makes you decide what \"done\" means before coding, and the failing run proves the test can actually catch a mistake.",
-          "use": "Many teams use it for tricky logic and bug fixes, and some interviews ask you to work this way: write the tests, then the code."
+          "use": "Many teams use it for tricky logic and bug fixes, and it's a good way to practice: write the tests, then the code."
         },
         {
           "id": "d15",
@@ -9122,8 +9127,8 @@
         {
           "id": "i01",
           "type": "quiz",
-          "track": "interview",
-          "question": "Interview question: what's the difference between a unit test and an integration test?",
+          "track": "mastery",
+          "question": "Concept check: what's the difference between a unit test and an integration test?",
           "options": [
             "A unit test checks one small piece alone; an integration test checks several pieces working together",
             "Unit tests use assert and integration tests don't",
@@ -9135,7 +9140,7 @@
         {
           "id": "i02",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "What is a regression test?",
           "options": [
             "A test that reproduces a fixed bug so it can't come back unnoticed",
@@ -9148,7 +9153,7 @@
         {
           "id": "i03",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "Why shouldn't a program use `assert` to validate user input?",
           "options": [
             "Asserts are skipped when Python runs with -O, so the check could silently disappear",
@@ -9161,7 +9166,7 @@
         {
           "id": "i04",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "A test passes most runs but fails now and then. What's the most likely cause?",
           "options": [
             "It depends on time, randomness, or what other tests did first",
@@ -9174,7 +9179,7 @@
         {
           "id": "i05",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "What does this code print?",
           "options": [
             "[-3]",
@@ -9191,7 +9196,7 @@
         {
           "id": "i06",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Debug: make the tests pass",
           "instruction": "`count_vowels` fails one of these tests. Find which, then fix the function (not the tests) so it prints: All tests passed",
           "initial_code": "def count_vowels(text):\n    count = 0\n    for ch in text:\n        if ch in 'aeiou':\n            count += 1\n    return count\n\nassert count_vowels('hello') == 2\nassert count_vowels('AEIOU') == 5\nassert count_vowels('') == 0\nprint('All tests passed')",
@@ -9213,7 +9218,7 @@
         {
           "id": "i07",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Classic: test-first chunk()",
           "instruction": "The tests are written first. Implement `chunk(items, size)` to split a list into pieces of `size` items, the last piece holding what's left. Then it prints: All tests passed",
           "initial_code": "def chunk(items, size):\n    # TODO: make the tests pass\n    pass\n\nassert chunk([1, 2, 3, 4, 5], 2) == [[1, 2], [3, 4], [5]]\nassert chunk([1, 2, 3], 3) == [[1, 2, 3]]\nassert chunk([], 4) == []\nprint('All tests passed')",
@@ -9235,7 +9240,7 @@
         {
           "id": "i08",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Classic: write a raises() helper",
           "instruction": "Write `raises(func, error)`: call `func()`, return True if it raises `error`, and False if it runs without one. The prints should show True then False.",
           "initial_code": "# TODO: def raises(func, error):\n\n\nprint(raises(lambda: int('x'), ValueError))\nprint(raises(lambda: int('5'), ValueError))",
@@ -9257,7 +9262,7 @@
         {
           "id": "i09",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Debug: the latency test",
           "instruction": "`average_latency` is correct, but its test fails. Fix the test (not the function) using `math.isclose` so it prints: All tests passed",
           "initial_code": "import math\n\ndef average_latency(samples):\n    return sum(samples) / len(samples)\n\nassert average_latency([0.1, 0.2]) == 0.15\nprint('All tests passed')",
@@ -9653,7 +9658,7 @@
           "content": "A list written as a class attribute is one list shared by all objects. Appending to it through one object changes it for all of them. Mutable data that each object should own belongs in `__init__`, on `self`.",
           "example_code": "class Team:\n    members = []                # shared by every Team!\n\nred = Team()\nblue = Team()\nred.members.append('Ada')\nprint(blue.members)             # ['Ada']: surprise\n\nclass FixedTeam:\n    def __init__(self):\n        self.members = []       # a new list per team",
           "how": "`red.members.append` doesn't assign anything: it finds `members` on the class and changes that one list in place.",
-          "use": "Any per-object collection: a cart's items, a player's inventory, a team's members. It's a favorite interview trap, alongside the mutable default argument."
+          "use": "Any per-object collection: a cart's items, a player's inventory, a team's members. It's a classic Python trap, alongside the mutable default argument."
         },
         {
           "id": "d10",
@@ -9785,8 +9790,8 @@
         {
           "id": "i01",
           "type": "quiz",
-          "track": "interview",
-          "question": "Interview question: what's the difference between a class and an object?",
+          "track": "mastery",
+          "question": "Concept check: what's the difference between a class and an object?",
           "options": [
             "A class is the blueprint; an object is one instance built from it, with its own data",
             "They're two words for the same thing",
@@ -9798,7 +9803,7 @@
         {
           "id": "i02",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "What is `self` in a method?",
           "options": [
             "The object the method was called on, passed in automatically",
@@ -9811,7 +9816,7 @@
         {
           "id": "i03",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "A class has `count = 0` in its body and `self.name = name` in `__init__`. Which is shared by every object?",
           "options": [
             "`count`",
@@ -9825,7 +9830,7 @@
         {
           "id": "i04",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "An object's attributes are stored in a dictionary (`obj.__dict__`). How long does reading `obj.name` take, as objects get more attributes?",
           "options": [
             "O(1)",
@@ -9838,7 +9843,7 @@
         {
           "id": "i05",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "What does this code print?",
           "options": [
             "TypeError",
@@ -9855,7 +9860,7 @@
         {
           "id": "i06",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Classic: build a stack",
           "instruction": "Write a Stack class with `push(item)`, `pop()` (remove and return the top item), `peek()` (return the top without removing it) and `is_empty()`. The prints should show: 3, 3, 2, False",
           "initial_code": "class Stack:\n    # TODO: __init__, push, pop, peek, is_empty\n    pass\n\ns = Stack()\ns.push(1)\ns.push(2)\ns.push(3)\nprint(s.peek())\nprint(s.pop())\nprint(s.pop())\nprint(s.is_empty())",
@@ -9877,7 +9882,7 @@
         {
           "id": "i07",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Classic: account lockout",
           "instruction": "Write `login(password)` for UserAccount: return True for the right password (and reset the failure count), False for a wrong one. After 3 wrong passwords in a row, lock the account so every later login raises `PermissionError('account locked')`. It should print: False, False, True, then account locked",
           "initial_code": "class UserAccount:\n    def __init__(self, username, password):\n        self.username = username\n        self._password = password\n        self.failures = 0\n        self.locked = False\n\n    # TODO: login(self, password)\n\nacct = UserAccount('ada', 's3cret')\nprint(acct.login('guess1'))\nprint(acct.login('guess2'))\nprint(acct.login('s3cret'))\nfor guess in ['a', 'b', 'c']:\n    acct.login(guess)\ntry:\n    acct.login('s3cret')\nexcept PermissionError as e:\n    print(e)",
@@ -9899,7 +9904,7 @@
         {
           "id": "i08",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Classic: failed login tracker",
           "instruction": "Write FailedLoginTracker with `record(ip)` to note a failed login from an address and `top()` to return the address with the most failures. It should print: 10.0.0.5",
           "initial_code": "class FailedLoginTracker:\n    # TODO: __init__, record, top\n    pass\n\nt = FailedLoginTracker()\nfor ip in ['10.0.0.5', '10.0.0.9', '10.0.0.5', '10.0.0.7', '10.0.0.5']:\n    t.record(ip)\nprint(t.top())",
@@ -9921,7 +9926,7 @@
         {
           "id": "i09",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Debug: the missing hostname",
           "instruction": "This crashes with AttributeError: Device has no attribute 'hostname'. `__init__` receives the hostname but never stores it on the object. Fix it so it prints: web-01",
           "initial_code": "class Device:\n    def __init__(self, hostname):\n        hostname = hostname\n\nd = Device('web-01')\nprint(d.hostname)",
@@ -10437,8 +10442,8 @@
         {
           "id": "i01",
           "type": "quiz",
-          "track": "interview",
-          "question": "Interview question: when should you use inheritance instead of composition?",
+          "track": "mastery",
+          "question": "Concept check: when should you use inheritance instead of composition?",
           "options": [
             "When the child truly is a kind of the parent (is-a); for has-a relationships, prefer composition",
             "Always: inheritance is more powerful",
@@ -10450,7 +10455,7 @@
         {
           "id": "i02",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "What does `super().__init__(...)` do in a child class?",
           "options": [
             "Calls the next class in the MRO (usually the parent) so its setup runs too",
@@ -10463,7 +10468,7 @@
         {
           "id": "i03",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "What's the difference between `__str__` and `__repr__`?",
           "options": [
             "__str__ is friendly text for users; __repr__ is unambiguous text for developers, used in lists and as print's fallback",
@@ -10476,7 +10481,7 @@
         {
           "id": "i04",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "What is polymorphism?",
           "options": [
             "Different classes responding to the same method call in their own way",
@@ -10489,7 +10494,7 @@
         {
           "id": "i05",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "What does this code print?",
           "options": [
             "CBA",
@@ -10506,7 +10511,7 @@
         {
           "id": "i06",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Classic: risk scores with inheritance",
           "instruction": "Device's `risk()` is 2 points per missing patch. Write InternetFacing as a child of Device whose `risk()` returns the parent's risk (use `super()`) plus 10, since it's exposed. The total should print: 20",
           "initial_code": "class Device:\n    def __init__(self, name, missing_patches):\n        self.name = name\n        self.missing_patches = missing_patches\n\n    def risk(self):\n        return self.missing_patches * 2\n\nclass InternetFacing(Device):\n    # TODO: risk() = parent risk + 10\n    pass\n\nfleet = [Device('laptop-7', 3), InternetFacing('vpn-gw', 2)]\nprint(sum([d.risk() for d in fleet]))",
@@ -10528,7 +10533,7 @@
         {
           "id": "i07",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Classic: comparing software versions",
           "instruction": "Patch levels compare as numbers, not text: '1.10.0' is newer than '1.2.9'. Give Version `__lt__`, `__eq__` and `__repr__` (like `Version('1.2.9')`), comparing tuples of ints. It should print the sorted list, then True",
           "initial_code": "class Version:\n    def __init__(self, text):\n        self.text = text\n        self.parts = tuple([int(p) for p in text.split('.')])\n\n    # TODO: __lt__, __eq__, __repr__\n\nprint(sorted([Version('1.10.0'), Version('1.2.9'), Version('1.2.10')]))\nprint(Version('2.0.0') == Version('2.0.0'))",
@@ -10550,7 +10555,7 @@
         {
           "id": "i08",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Classic: a linked list",
           "instruction": "Each Node holds a value and a link to the next node. Finish LinkedList's `append` (walk to the last node and link a new one) so it prints: [1, 2, 3] then 3",
           "initial_code": "class Node:\n    def __init__(self, value):\n        self.value = value\n        self.next = None\n\nclass LinkedList:\n    def __init__(self):\n        self.head = None\n\n    def append(self, value):\n        # TODO: add a Node with value at the end\n        pass\n\n    def to_list(self):\n        out, node = [], self.head\n        while node:\n            out.append(node.value)\n            node = node.next\n        return out\n\nll = LinkedList()\nfor v in [1, 2, 3]:\n    ll.append(v)\nprint(ll.to_list())\nprint(len(ll.to_list()))",
@@ -10572,7 +10577,7 @@
         {
           "id": "i09",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Debug: the forgotten parent setup",
           "instruction": "This crashes with AttributeError: Server has no 'hostname'. Server's `__init__` replaces Device's and never runs it. Call the parent's `__init__` so it prints: web-01 linux",
           "initial_code": "class Device:\n    def __init__(self, hostname):\n        self.hostname = hostname\n\nclass Server(Device):\n    def __init__(self, hostname, os):\n        self.os = os\n\ns = Server('web-01', 'linux')\nprint(s.hostname, s.os)",
@@ -10941,7 +10946,7 @@
           "content": "`find` loops over every product: O(n). Keeping a dictionary keyed by name makes it O(1), at the cost of updating the dictionary whenever a product is added.",
           "example_code": "class Inventory:\n    def __init__(self):\n        self.by_name = {}\n\n    def add(self, product):\n        self.by_name[product.name] = product\n\n    def find(self, name):\n        return self.by_name.get(name)   # None when missing",
           "how": "A dictionary jumps straight to a key's value with a hash, instead of checking items one by one. `.get` returns None for a missing key instead of raising KeyError.",
-          "use": "Any lookup that runs often: asset tags, usernames, hostnames. Trading a little memory for speed like this is a standard interview answer."
+          "use": "Any lookup that runs often: asset tags, usernames, hostnames. Trading a little memory for speed like this is a standard technique."
         },
         {
           "id": "d13",
@@ -11015,8 +11020,8 @@
         {
           "id": "i01",
           "type": "quiz",
-          "track": "interview",
-          "question": "Interview question: the inventory grows to a million assets and `find` is slow. What's the standard fix?",
+          "track": "mastery",
+          "question": "Concept check: the inventory grows to a million assets and `find` is slow. What's the standard fix?",
           "options": [
             "Index products in a dictionary keyed by name for O(1) lookups",
             "Sort the list before every search",
@@ -11028,7 +11033,7 @@
         {
           "id": "i02",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "Should Inventory store a `total_value` attribute, updated on every change, or compute it when asked?",
           "options": [
             "Compute it when asked unless it's too slow; a stored total can go stale if any update path forgets it",
@@ -11036,12 +11041,12 @@
             "It makes no difference"
           ],
           "answer": "Compute it when asked unless it's too slow; a stored total can go stale if any update path forgets it",
-          "explanation": "Computed values are always correct. Caching is an optimization with a cost, and naming that trade-off is what interviewers listen for."
+          "explanation": "Computed values are always correct. Caching is an optimization with a cost, and naming that trade-off is what good design reviews listen for."
         },
         {
           "id": "i03",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "In this project, what does encapsulation mean?",
           "options": [
             "Product's own methods change its stock and enforce the rules; other code calls them instead of editing qty directly",
@@ -11054,7 +11059,7 @@
         {
           "id": "i04",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "What does this code print?",
           "options": [
             "7 7",
@@ -11071,7 +11076,7 @@
         {
           "id": "i05",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "`total_value()` loops over every product once. Its time complexity is:",
           "options": [
             "O(n)",
@@ -11084,7 +11089,7 @@
         {
           "id": "i06",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Classic: a license seat pool",
           "instruction": "Write LicensePool with `assign(user)` (return True and record the user if a seat is free, else False) and `release(user)`. A user who already has a seat should get True without using another. It should print: True, True, False, True",
           "initial_code": "class LicensePool:\n    def __init__(self, seats):\n        self.seats = seats\n        self.users = set()\n\n    # TODO: assign(self, user) and release(self, user)\n\npool = LicensePool(2)\nprint(pool.assign('ada'))\nprint(pool.assign('bob'))\nprint(pool.assign('cy'))\npool.release('ada')\nprint(pool.assign('cy'))",
@@ -11106,7 +11111,7 @@
         {
           "id": "i07",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Classic: totals by category",
           "instruction": "Use `defaultdict(int)` to add up the quantity of each category in `assets`, then print it as a normal dict. It should print: {'laptop': 7, 'monitor': 12, 'dock': 2}",
           "initial_code": "from collections import defaultdict\nassets = [('laptop', 5), ('monitor', 12), ('laptop', 2), ('dock', 2)]\n# TODO: total qty per category\n",
@@ -11128,7 +11133,7 @@
         {
           "id": "i08",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Classic: stale device report",
           "instruction": "Devices that haven't checked in for over 30 days may be lost or unpatched. Print the names of devices with `days_since_seen` over 30, most overdue first. It should print: ['kiosk-2', 'laptop-14']",
           "initial_code": "devices = [\n    {'name': 'laptop-3', 'days_since_seen': 2},\n    {'name': 'laptop-14', 'days_since_seen': 45},\n    {'name': 'kiosk-2', 'days_since_seen': 90},\n    {'name': 'printer-1', 'days_since_seen': 30},\n]\n# TODO: names over 30 days, most overdue first\n",
@@ -11150,7 +11155,7 @@
         {
           "id": "i09",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Debug: retiring stock skips an item",
           "instruction": "This should remove every product with qty 0, but 'Webcam' survives. Removing items from a list while looping over it makes the loop skip the next one. Rebuild the list with a comprehension instead, so it prints: ['Laptop', 'Monitor']",
           "initial_code": "class Product:\n    def __init__(self, name, qty):\n        self.name = name\n        self.qty = qty\n\ninventory = [Product('Laptop', 4), Product('Dock', 0), Product('Webcam', 0), Product('Monitor', 9)]\nfor p in inventory:\n    if p.qty == 0:\n        inventory.remove(p)\nprint([p.name for p in inventory])",
@@ -11679,8 +11684,8 @@
         {
           "id": "i01",
           "type": "quiz",
-          "track": "interview",
-          "question": "Interview question: what's the difference between `json.load` and `json.loads`?",
+          "track": "mastery",
+          "question": "Concept check: what's the difference between `json.load` and `json.loads`?",
           "options": [
             "`load` reads from an open file; `loads` parses a string",
             "`loads` is the faster version",
@@ -11692,7 +11697,7 @@
         {
           "id": "i02",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "`json.dumps({'when': datetime.now()})` raises TypeError. Why, and what's a fix?",
           "options": [
             "JSON has no date type; convert first, e.g. `.isoformat()` or `default=str`",
@@ -11705,7 +11710,7 @@
         {
           "id": "i03",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "A password policy says passwords expire after 90 days. Which check is right?",
           "options": [
             "`(today - changed).days > 90`",
@@ -11718,7 +11723,7 @@
         {
           "id": "i04",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "What does this code print?",
           "options": [
             "[1, 2]",
@@ -11732,7 +11737,7 @@
         {
           "id": "i05",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "What does this code print?",
           "options": [
             "{'1': 'a'}",
@@ -11749,7 +11754,7 @@
         {
           "id": "i06",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Classic: inactive account audit",
           "instruction": "Accounts unused for over 90 days are a risk and should be disabled. Parse `raw` and print the usernames whose last login is more than 90 days before `today`. It should print: ['bob', 'svc-backup']",
           "initial_code": "import json\nfrom datetime import date\n\nraw = '[{\"user\": \"ada\", \"last_login\": \"2025-09-20\"}, {\"user\": \"bob\", \"last_login\": \"2025-05-02\"}, {\"user\": \"svc-backup\", \"last_login\": \"2024-12-31\"}]'\ntoday = date(2025, 10, 1)\n# TODO: print users inactive for more than 90 days\n",
@@ -11771,7 +11776,7 @@
         {
           "id": "i07",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Classic: brute-force detection",
           "instruction": "Flag any address with 3 or more failed logins within 5 minutes. Group the timestamps by IP, sort them, and check each run of 3 consecutive failures. Print the flagged addresses sorted. It should print: ['10.0.0.5']",
           "initial_code": "from datetime import datetime, timedelta\nfrom collections import defaultdict\n\nevents = [\n    ('2025-10-01 09:00:00', '10.0.0.5'),\n    ('2025-10-01 09:00:00', '10.0.0.9'),\n    ('2025-10-01 09:01:30', '10.0.0.5'),\n    ('2025-10-01 09:20:00', '10.0.0.9'),\n    ('2025-10-01 09:03:10', '10.0.0.5'),\n    ('2025-10-01 09:40:00', '10.0.0.9'),\n    ('2025-10-01 10:00:00', '10.0.0.7'),\n]\n# TODO: flag IPs with 3 failures inside 5 minutes\n",
@@ -11793,7 +11798,7 @@
         {
           "id": "i08",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Classic: merge config files",
           "instruction": "A hardened SSH config starts from defaults and applies overrides. Parse both JSON strings, apply the overrides on top of the defaults with `.update()`, and print the result with `json.dumps(..., sort_keys=True)`. It should print: {\"max_tries\": 3, \"password_auth\": false, \"port\": 22}",
           "initial_code": "import json\n\ndefaults = '{\"port\": 22, \"password_auth\": true, \"max_tries\": 5}'\noverrides = '{\"password_auth\": false, \"max_tries\": 3}'\n# TODO: merge and print\n",
@@ -11815,7 +11820,7 @@
         {
           "id": "i09",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Debug: the timestamp won't parse",
           "instruction": "This raises ValueError: the time data doesn't match the format. The pattern has the day and month swapped. Fix the pattern so it prints: July 31",
           "initial_code": "from datetime import datetime\n\nstamp = '2025-07-31 14:05:00'\nwhen = datetime.strptime(stamp, '%Y-%d-%m %H:%M:%S')\nprint(when.strftime('%B %d'))",
@@ -12164,7 +12169,7 @@
           "content": "Once a generator has handed out every value, it's exhausted: looping over it again gives nothing, with no error. If you need the values twice, store them in a list first.",
           "example_code": "failed = (line for line in ['FAIL ada', 'OK bob'] if 'FAIL' in line)\nprint(list(failed))   # ['FAIL ada']\nprint(list(failed))   # []: already used up\n\nsaved = [line for line in ['FAIL ada', 'OK bob'] if 'FAIL' in line]\nprint(len(saved), saved)   # a list can be read again",
           "how": "A generator keeps its position. After the last value it stays at the end, so a second loop starts there and finds nothing.",
-          "use": "A common source of \"why is my report empty?\" bugs, and a favorite interview predict-the-output question."
+          "use": "A common source of \"why is my report empty?\" bugs, and a favorite predict-the-output puzzle."
         },
         {
           "id": "d08",
@@ -12323,8 +12328,8 @@
         {
           "id": "i01",
           "type": "quiz",
-          "track": "interview",
-          "question": "Interview question: when would you use a generator instead of a list?",
+          "track": "mastery",
+          "question": "Concept check: when would you use a generator instead of a list?",
           "options": [
             "For large or streaming data you go through once, so you don't hold it all in memory",
             "Whenever you need to sort the data",
@@ -12336,7 +12341,7 @@
         {
           "id": "i02",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "What's the difference between `yield` and `return`?",
           "options": [
             "`yield` hands back a value and pauses so the function can continue later; `return` ends the function",
@@ -12349,7 +12354,7 @@
         {
           "id": "i03",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "You scan a log of n lines with a generator, keeping only a running count. How much extra memory does that use?",
           "options": [
             "O(1)",
@@ -12362,7 +12367,7 @@
         {
           "id": "i04",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "What does this code print?",
           "options": [
             "['made', 'start', 1]",
@@ -12376,7 +12381,7 @@
         {
           "id": "i05",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "What does `next(g, None)` return when `g` is already exhausted?",
           "options": [
             "None",
@@ -12389,7 +12394,7 @@
         {
           "id": "i06",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Classic: top attacking addresses",
           "instruction": "Finish the generator `failed_ips(lines)` so it yields the IP of each FAIL line, then print the two most common with `Counter`. It should print: [('10.0.0.5', 3), ('10.0.0.7', 2)]",
           "initial_code": "from collections import Counter\n\nlog = ['FAIL 10.0.0.5 ada', 'OK 10.0.0.9 bob', 'FAIL 10.0.0.5 ada', 'FAIL 10.0.0.7 cy', 'FAIL 10.0.0.5 root', 'FAIL 10.0.0.7 cy']\n\ndef failed_ips(lines):\n    # TODO: yield the IP from each FAIL line\n    pass\n\nprint(Counter(failed_ips(log)).most_common(2))",
@@ -12411,7 +12416,7 @@
         {
           "id": "i07",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Classic: moving average",
           "instruction": "Write a generator `moving_average(values, window)` that yields the average of each run of `window` consecutive values, to smooth noisy CPU readings. It should print: [60.0, 80.0, 70.0]",
           "initial_code": "# TODO: def moving_average(values, window):\n\n\nprint(list(moving_average([40, 60, 80, 100, 30], 3)))",
@@ -12433,7 +12438,7 @@
         {
           "id": "i08",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Classic: parse key=value logs",
           "instruction": "Some systems log `key=value` pairs. Finish the generator `parse(lines)` so it yields a dictionary per line, then print the users of failed actions. It should print: ['bob', 'root']",
           "initial_code": "log = [\n    'user=ada action=login status=ok',\n    'user=bob action=login status=fail',\n    'user=root action=sudo status=fail',\n]\n\ndef parse(lines):\n    # TODO: yield a dict for each line\n    pass\n\nprint([r['user'] for r in parse(log) if r['status'] == 'fail'])",
@@ -12455,7 +12460,7 @@
         {
           "id": "i09",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Debug: the generator that returns",
           "instruction": "This should list the IP at the start of each line, but it prints single characters. The function returns on the first line instead of yielding each one. Fix it so it prints: ['10.0.0.5', '10.0.0.9']",
           "initial_code": "def first_fields(lines):\n    for line in lines:\n        return line.split()[0]\n\nprint(list(first_fields(['10.0.0.5 GET /', '10.0.0.9 POST /login'])))",
@@ -12794,7 +12799,7 @@
           "content": "One failed scan can drag a host's mean down sharply. The **median** (middle value) ignores a single outlier, so it often describes a host's usual state better. Report both when outliers matter.",
           "example_code": "import statistics\n\nscans = [90, 92, 10, 91]     # one scan failed to run properly\nprint(statistics.mean(scans))     # 70.75\nprint(statistics.median(scans))   # 90.5",
           "how": "The mean adds every value, so one extreme value moves it. The median only looks at the middle of the sorted list.",
-          "use": "Response times, scan scores and anything with occasional glitches. Interviewers like asking when each is the right choice."
+          "use": "Response times, scan scores and anything with occasional glitches. Knowing when each is the right choice is part of reading data well."
         },
         {
           "id": "d10",
@@ -12913,8 +12918,8 @@
         {
           "id": "i01",
           "type": "quiz",
-          "track": "interview",
-          "question": "Interview question: how would you store failed scans per host so you can add new ones and look up a host quickly?",
+          "track": "mastery",
+          "question": "Concept check: how would you store failed scans per host so you can add new ones and look up a host quickly?",
           "options": [
             "A dictionary mapping host name to a list of results",
             "One long list of (host, result) tuples",
@@ -12926,7 +12931,7 @@
         {
           "id": "i02",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "A host has no scans yet. Should `average()` return 0 or None?",
           "options": [
             "None is clearer: 0 looks like a real, failing score, while None says there's no data",
@@ -12939,7 +12944,7 @@
         {
           "id": "i03",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "Why turn the Scorecard into a plain dictionary before `json.dump`?",
           "options": [
             "json only knows dicts, lists, strings, numbers, booleans and None, not your classes",
@@ -12952,7 +12957,7 @@
         {
           "id": "i04",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "Finding the single worst host with `min(hosts, key=...)` takes:",
           "options": [
             "O(n)",
@@ -12965,7 +12970,7 @@
         {
           "id": "i05",
           "type": "quiz",
-          "track": "interview",
+          "track": "mastery",
           "question": "What does this code print?",
           "options": [
             "{'web-01': 2}",
@@ -12979,7 +12984,7 @@
         {
           "id": "i06",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Classic: top talkers",
           "instruction": "Network flow records list (ip, bytes). Total the bytes per IP and print the two IPs that sent the most, highest first. It should print: ['10.0.0.7', '10.0.0.5']",
           "initial_code": "flows = [('10.0.0.5', 1200), ('10.0.0.9', 300), ('10.0.0.5', 800), ('10.0.0.7', 5000), ('10.0.0.9', 100)]\n# TODO: print the top two IPs by total bytes\n",
@@ -13001,7 +13006,7 @@
         {
           "id": "i07",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Classic: percent non-compliant",
           "instruction": "Print the share of hosts whose average is below 70, as a percentage with one decimal place. It should print: 50.0% below 70",
           "initial_code": "averages = {'web-01': 92, 'db-02': 64, 'vpn-gw': 71, 'kiosk-2': 55}\n# TODO: print the percentage below 70\n",
@@ -13023,7 +13028,7 @@
         {
           "id": "i08",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Classic: alerts per day",
           "instruction": "Count alerts per calendar day from their ISO timestamps and print the counts as a dict. It should print: {'2025-10-01': 2, '2025-10-02': 1, '2025-10-03': 2}",
           "initial_code": "from datetime import datetime\nfrom collections import defaultdict\n\nstamps = ['2025-10-01T09:14:00', '2025-10-01T22:40:00', '2025-10-02T03:05:00', '2025-10-03T11:00:00', '2025-10-03T11:30:00']\n# TODO: count alerts per day\n",
@@ -13045,7 +13050,7 @@
         {
           "id": "i09",
           "type": "code",
-          "track": "interview",
+          "track": "mastery",
           "heading": "Debug: every vulnerability is medium",
           "instruction": "This maps CVSS scores to severity, but almost everything comes out 'medium'. The checks run in the wrong order: a 9.8 passes `>= 4` first. Reorder them so it prints: ['critical', 'high', 'medium', 'low']",
           "initial_code": "def severity(score):\n    if score >= 4:\n        return 'medium'\n    elif score >= 7:\n        return 'high'\n    elif score >= 9:\n        return 'critical'\n    return 'low'\n\nprint([severity(s) for s in [9.8, 7.5, 5.0, 2.1]])",

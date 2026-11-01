@@ -47,7 +47,7 @@ T("The shared-list trap",
   "A list written as a class attribute is one list shared by all objects. Appending to it through one object changes it for all of them. Mutable data that each object should own belongs in `__init__`, on `self`.",
   "class Team:\n    members = []                # shared by every Team!\n\nred = Team()\nblue = Team()\nred.members.append('Ada')\nprint(blue.members)             # ['Ada']: surprise\n\nclass FixedTeam:\n    def __init__(self):\n        self.members = []       # a new list per team",
   "`red.members.append` doesn't assign anything: it finds `members` on the class and changes that one list in place.",
-  "Any per-object collection: a cart's items, a player's inventory, a team's members. It's a favorite interview trap, alongside the mutable default argument."),
+  "Any per-object collection: a cart's items, a player's inventory, a team's members. It's a classic Python trap, alongside the mutable default argument."),
 Q("What does this code print?", ["['sit']", "[]", "It raises AttributeError"], "['sit']",
   "`tricks` is a class attribute, so both dogs share one list. Rex's append shows up for Fido.",
   code="class Dog:\n    tricks = []\n\nrex = Dog()\nfido = Dog()\nrex.tricks.append('sit')\nprint(fido.tricks)"),
@@ -95,8 +95,8 @@ C("Methods that use other methods",
     "name = 'db-02'\nprint(f'{name} ok')")]),
 ]
 
-INTERVIEW = [
-Q("Interview question: what's the difference between a class and an object?",
+MASTERY = [
+Q("Concept check: what's the difference between a class and an object?",
   ["A class is the blueprint; an object is one instance built from it, with its own data", "They're two words for the same thing", "A class holds data and an object holds methods"],
   "A class is the blueprint; an object is one instance built from it, with its own data",
   "`Dog` describes what every dog has and does. `Dog('Rex')` and `Dog('Fido')` are two separate objects made from it."),
