@@ -1,6 +1,6 @@
 import type { Lesson, UserProgress } from '../types/lesson';
 import { units } from '../data/lessons';
-import { coreSteps, firstTrySet, isMasteryChallenge, isLessonComplete, isStepDone } from './progress';
+import { coreSteps, firstTrySet, isCoreDone, isMasteryChallenge, isStepDone } from './progress';
 
 export interface Badge {
   id: string;
@@ -10,9 +10,10 @@ export interface Badge {
   earned: (lessons: Lesson[], progress: UserProgress) => boolean;
 }
 
+/** Trophies need the core worked through; testing out of a lesson doesn't earn them. */
 const isComplete = (lessons: Lesson[], progress: UserProgress, id: string) => {
   const lesson = lessons.find((l) => l.id === id);
-  return !!lesson && isLessonComplete(progress, lesson);
+  return !!lesson && isCoreDone(progress, lesson);
 };
 
 const completedCount = (lessons: Lesson[], progress: UserProgress) =>

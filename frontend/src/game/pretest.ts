@@ -1,5 +1,6 @@
-import type { CodeStep, Lesson, PretestResult, QuizStep, Unit, UserProgress } from '../types/lesson';
+import type { Lesson, PretestResult, Unit, UserProgress } from '../types/lesson';
 import { coreSteps, isLessonComplete, isTestedOut } from './progress';
+import { isReviewable, shuffle, stepLabel, type ReviewStep } from './review';
 
 /**
  * Pretests let the learner test out of the lessons they already know. A unit's pretest asks a
@@ -9,24 +10,15 @@ import { coreSteps, isLessonComplete, isTestedOut } from './progress';
 export const QUIZZES_PER_LESSON = 2;
 export const CODE_PER_LESSON = 1;
 
-export type PretestStep = QuizStep | CodeStep;
+/** Steps with a right answer, the same ones Review can ask. */
+export type PretestStep = ReviewStep;
 
 export interface PretestItem {
   lesson: Lesson;
   step: PretestStep;
 }
 
-const isQuiz = (s: Lesson['steps'][number]): s is QuizStep => s.type === 'quiz' && s.answer !== undefined;
-const isChallenge = (s: Lesson['steps'][number]): s is CodeStep => s.type === 'code' && !s.expected_error;
-
-function sample<T>(list: T[], n: number, random: () => number): T[] {
-  const out = [...list];
-  for (let i = out.length - 1; i > 0; i--) {
-    const j = Math.floor(random() * (i + 1));
-    [out[i], out[j]] = [out[j], out[i]];
-  }
-  return out.slice(0, n);
-}
+const sample = <T,>(list: T[], n: number, random: () => number) => shuffle(list, random).slice(0, n);
 
 /** Lessons in the unit that a pretest can still test out of. */
 export const pretestLessons = (unit: Unit, lessons: Lesson[], progress: UserProgress) =>
@@ -34,17 +26,17 @@ export const pretestLessons = (unit: Unit, lessons: Lesson[], progress: UserProg
 
 /** Core questions with a right answer: answerable quizzes and coding challenges (not crash demos). */
 export const pretestQuestions = (lesson: Lesson): PretestStep[] =>
-  coreSteps(lesson).filter((s): s is PretestStep => isQuiz(s) || isChallenge(s));
+  coreSteps(lesson).filter(isReviewable);
 
 /** A few random core questions per lesson, kept in lesson order so the test builds up. */
 export function buildPretest(lessons: Lesson[], random = Math.random): PretestItem[] {
   return lessons.flatMap((lesson) => {
-    const core = coreSteps(lesson);
+    const questions = pretestQuestions(lesson);
     const picked = new Set<PretestStep>([
-      ...sample(core.filter(isQuiz), QUIZZES_PER_LESSON, random),
-      ...sample(core.filter(isChallenge), CODE_PER_LESSON, random),
+      ...sample(questions.filter((s) => s.type === 'quiz'), QUIZZES_PER_LESSON, random),
+      ...sample(questions.filter((s) => s.type === 'code'), CODE_PER_LESSON, random),
     ]);
-    return core.filter((s): s is PretestStep => picked.has(s as PretestStep)).map((step) => ({ lesson, step }));
+    return questions.filter((s) => picked.has(s)).map((step) => ({ lesson, step }));
   });
 }
 
@@ -94,6 +86,4 @@ export function needsWork(units: Unit[], lessons: Lesson[], progress: UserProgre
   });
 }
 
-/** Short label for a pretest question in lists. */
-export const questionLabel = (step: PretestStep) =>
-  step.type === 'code' ? step.heading ?? 'Coding challenge' : step.question;
+export const questionLabel = stepLabel;

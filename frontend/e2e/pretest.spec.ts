@@ -13,16 +13,13 @@ async function answer(page: Page, right: boolean) {
     await page.getByRole('button', { name: "I don't know this yet" }).click();
     return;
   }
-  const steps = lesson('lesson-01').steps;
-  if ((await page.locator('.step-kicker').textContent())?.includes('Coding challenge')) {
-    const starter = await page.locator('textarea.code-input').inputValue();
-    const step = steps.find((s) => s.type === 'code' && (s as { initial_code?: string }).initial_code === starter)!;
+  const id = await page.locator('.step-card').getAttribute('data-step-id');
+  const step = lesson('lesson-01').steps.find((s) => s.id === id)!;
+  if (step.type === 'code') {
     await page.locator('textarea.code-input').fill(solutions[`lesson-01:${step.id}`]);
     await page.locator('.run-button').click();
     await expect(page.locator('.run-status')).toContainText('Correct output', { timeout: 60_000 });
   } else {
-    const shown = await page.locator('.option-text').allInnerTexts();
-    const step = steps.find((s) => s.type === 'quiz' && JSON.stringify(s.options) === JSON.stringify(shown))!;
     await page.locator('.option-text').getByText(step.answer!, { exact: true }).click();
     await expect(page.locator('.feedback')).toContainText('Correct');
   }
@@ -67,6 +64,9 @@ test('passing every question tests out of a lesson without earning XP', async ({
   await expect(node.locator('.node-status')).toContainText('Tested out');
   await expect(page.locator('.hud-stats dd').first()).toHaveText(xpBefore);
   await expect(page.getByRole('button', { name: /Take the pretest.*Foundations/ })).toHaveCount(0);
+  // Trophies need the core worked through, so the Foundations unit trophy isn't earned yet.
+  await expect(page.locator('#unit-foundations').locator('xpath=ancestor::section').locator('.chip-done')).toHaveCount(0);
+  await expect(node.getByRole('button', { name: 'Reset progress for Introduction to Python' })).toBeVisible();
 });
 
 test('missed questions are listed in what still needs work, with a way to practice them', async ({ page }) => {

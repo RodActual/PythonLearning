@@ -1,6 +1,7 @@
-import { useId, useState } from 'react';
+import { useState } from 'react';
 import type { Lesson, UserProgress } from '../types/lesson';
-import { buildSession, dueItems, nextCard, nextDueDate, reviewItems, whenLabel, type ReviewItem } from '../game/review';
+import { buildSession, dueItems, nextCard, nextDueDate, reviewItems, stepLabel, whenLabel, type ReviewItem } from '../game/review';
+import { SessionNav, SessionProgress } from './SessionControls';
 import { useDocumentTitle, useFocusOnMount } from '../a11y/hooks';
 import Quiz from './Quiz';
 import CodeSandbox from './CodeSandbox';
@@ -83,7 +84,6 @@ function Session({ items, practice, onFinish, onResult, onQuit }: {
   const [index, setIndex] = useState(0);
   const [outcome, setOutcome] = useState<boolean | null>(null);
   const [results, setResults] = useState<Result[]>([]);
-  const hintId = useId();
   const item = items[index];
   useDocumentTitle(`Review ${index + 1} of ${items.length}`);
 
@@ -108,45 +108,17 @@ function Session({ items, practice, onFinish, onResult, onQuit }: {
         </button>
         {practice && <span className="chip chip-next">Practice</span>}
       </div>
-      <div
-        className="step-progress"
-        role="progressbar"
-        aria-label="Review progress"
-        aria-valuemin={0}
-        aria-valuemax={items.length}
-        aria-valuenow={index}
-        aria-valuetext={`Card ${index + 1} of ${items.length}`}
-      >
-        {items.map((_, i) => (
-          <span key={i} className={`seg ${i < index ? 'done' : i === index ? 'current' : ''}`} />
-        ))}
-      </div>
+      <SessionProgress label="Review progress" unit="Card" index={index} total={items.length} />
       <ReviewCardView key={item.key + index} item={item} index={index} total={items.length} onAnswered={setOutcome} />
-      <nav className="lesson-nav-controls" aria-label="Review navigation">
-        {item.step.type === 'code' && outcome === null ? (
-          <button type="button" className="secondary-button" onClick={skip}>
-            Skip (counts as a miss)
-          </button>
-        ) : (
-          <span />
-        )}
-        <div className="next-wrap">
-          {outcome === null && (
-            <span id={hintId} className="next-hint">
-              {item.step.type === 'quiz' ? 'Choose the correct answer to continue.' : 'Pass the challenge or skip it.'}
-            </span>
-          )}
-          <button
-            type="button"
-            className="primary-button"
-            aria-disabled={outcome === null || undefined}
-            aria-describedby={outcome === null ? hintId : undefined}
-            onClick={() => outcome !== null && record(outcome)}
-          >
-            {index + 1 >= items.length ? 'Finish' : 'Next card'}<span aria-hidden="true"> →</span>
-          </button>
-        </div>
-      </nav>
+      <SessionNav
+        label="Review navigation"
+        skipLabel={item.step.type === 'code' ? 'Skip (counts as a miss)' : undefined}
+        onSkip={skip}
+        hint={item.step.type === 'quiz' ? 'Choose the correct answer to continue.' : 'Pass the challenge or skip it.'}
+        answered={outcome !== null}
+        nextLabel={index + 1 >= items.length ? 'Finish' : 'Next card'}
+        onNext={() => outcome !== null && record(outcome)}
+      />
     </div>
   );
 }
@@ -206,7 +178,7 @@ function Summary({ results, practice, onAgain, onBackToMap }: {
             <span aria-hidden="true">{r.correct ? '✓ ' : '↻ '}</span>
             <span className="visually-hidden">{r.correct ? 'Right: ' : 'Missed: '}</span>
             <span className="result-title">
-              {r.item.step.type === 'code' ? r.item.step.heading ?? 'Coding challenge' : r.item.step.question}
+              {stepLabel(r.item.step)}
             </span>
             <span className="result-meta">
               {r.item.lesson.title}

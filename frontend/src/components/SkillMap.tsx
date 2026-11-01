@@ -82,6 +82,8 @@ function UnitPath({ lessons, allLessons, progress, recommendedId, onOpenLesson, 
           const state = lessonState(lesson, progress);
           const reached = doneCount(progress, lesson);
           const resumeAt = resumeIndex(progress, lesson);
+          // Tested out without working through the core: shown as done, with a full ring.
+          const testedOutOnly = state === 'completed' && isTestedOut(progress, lesson.id) && !isCoreDone(progress, lesson);
           const optional = lesson.steps.filter((s) => s.track);
           const optionalDone = optional.filter((s) => isStepDone(progress, lesson.id, s.id)).length;
           const isNext = lesson.id === recommendedId;
@@ -96,7 +98,7 @@ function UnitPath({ lessons, allLessons, progress, recommendedId, onOpenLesson, 
             >
               <button type="button" className="node-button" onClick={() => onOpenLesson(lesson.id)}>
                 <span className="node-circle" aria-hidden="true">
-                  <ProgressRing fraction={reached / lesson.steps.length} />
+                  <ProgressRing fraction={testedOutOnly ? 1 : reached / lesson.steps.length} />
                   <span className="node-number">{state === 'completed' ? '✓' : number}</span>
                 </span>
                 <span className="node-label">
@@ -105,7 +107,7 @@ function UnitPath({ lessons, allLessons, progress, recommendedId, onOpenLesson, 
                     {isNext && <span className="chip chip-next">Up next</span>}
                     {state === 'in-progress'
                       ? `Step ${resumeAt + 1} of ${lesson.steps.length}`
-                      : state === 'completed' && isTestedOut(progress, lesson.id) && !isCoreDone(progress, lesson)
+                      : testedOutOnly
                         ? 'Tested out'
                         : STATE_LABEL[state]}
                     {state === 'completed' && optional.length > 0 && optionalDone < optional.length && (
@@ -115,7 +117,7 @@ function UnitPath({ lessons, allLessons, progress, recommendedId, onOpenLesson, 
                   </span>
                 </span>
               </button>
-              {state !== 'not-started' && (
+              {(state !== 'not-started' || progress.pretest[lesson.id]) && (
                 <button
                   type="button"
                   className="node-reset"
@@ -188,6 +190,8 @@ const SkillMap = ({ about, units, lessons, progress, onOpenLesson, onOpenStep, o
         const unitLessons = lessons.filter((l) => l.unit === unit.id);
         const done = unitLessons.filter((l) => lessonState(l, progress) === 'completed').length;
         const complete = done === unitLessons.length;
+        // The unit trophy needs every core worked through, not just tested out.
+        const trophy = unitLessons.every((l) => isCoreDone(progress, l));
         const canTestOut = pretestLessons(unit, lessons, progress).length;
         const headingId = `unit-${unit.id}`;
         return (
@@ -218,7 +222,7 @@ const SkillMap = ({ about, units, lessons, progress, onOpenLesson, onOpenStep, o
               </div>
               <p className="unit-progress">
                 {done} of {unitLessons.length} lessons complete
-                {complete && <span className="chip chip-done">Trophy earned</span>}
+                {trophy && <span className="chip chip-done">Trophy earned</span>}
               </p>
               {canTestOut > 0 && (
                 <button type="button" className="secondary-button unit-pretest" onClick={() => onOpenPretest(unit.id)}>

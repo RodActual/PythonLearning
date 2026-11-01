@@ -84,6 +84,7 @@ function App() {
   const summary = summarize(lessons, progress);
   const reviewsDue = dueItems(reviewItems(lessons, progress)).length;
   const currentLesson = view.name === 'lesson' ? getLesson(view.lessonId) : undefined;
+  const pretestUnit = view.name === 'pretest' ? getUnit(view.unitId) : undefined;
 
   const applyProgress = (next: UserProgress) => {
     progressRef.current = next;
@@ -421,9 +422,9 @@ function App() {
                 <ReviewView lessons={lessons} progress={progress} onResult={recordReview} onBackToMap={backToMap} />
               ) : view.name === 'playground' ? (
                 <Playground uid={user.uid} onBackToMap={backToMap} />
-              ) : view.name === 'pretest' && getUnit(view.unitId) ? (
+              ) : pretestUnit ? (
                 <PretestView
-                  unit={getUnit(view.unitId)!}
+                  unit={pretestUnit}
                   lessons={lessons}
                   progress={progress}
                   onFinish={savePretest}
@@ -440,7 +441,7 @@ function App() {
                   lessonXpEarned={lessonXp(currentLesson, progress)}
                   unit={getUnit(currentLesson.unit)}
                   unitComplete={lessons.filter((l) => l.unit === currentLesson.unit).every((l) => isLessonComplete(progress, l))}
-                  courseComplete={summary.lessonsCompleted === lessons.length}
+                  courseComplete={lessons.every((l) => isCoreDone(progress, l))}
                   about={about}
                   onNext={nextStep}
                   onSkip={skipStep}

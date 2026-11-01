@@ -1,4 +1,4 @@
-import { useId, useState } from 'react';
+import { useState } from 'react';
 import type { Lesson, PretestResult, Unit, UserProgress } from '../types/lesson';
 import { buildPretest, pretestLessons, questionLabel, scorePretest, type PretestItem } from '../game/pretest';
 import { today } from '../game/review';
@@ -7,6 +7,7 @@ import Quiz from './Quiz';
 import CodeSandbox from './CodeSandbox';
 import RichText from './RichText';
 import NeedsWork from './NeedsWork';
+import { SessionNav, SessionProgress } from './SessionControls';
 
 interface PretestViewProps {
   unit: Unit;
@@ -46,7 +47,6 @@ function Intro({ unit, lessons, progress, onStart, onBackToMap }: {
       {open.length === 0 ? (
         <div className="review-empty">
           <p>Every lesson in this unit is already complete.</p>
-          <button type="button" className="primary-button" onClick={onBackToMap}>Back to the map</button>
         </div>
       ) : (
         <div className="review-start">
@@ -72,7 +72,6 @@ function Session({ items, onFinish, onQuit }: {
   const [index, setIndex] = useState(0);
   const [outcome, setOutcome] = useState<boolean | null>(null);
   const [answers, setAnswers] = useState<boolean[]>([]);
-  const hintId = useId();
   const item = items[index];
   useDocumentTitle(`Pretest question ${index + 1} of ${items.length}`);
 
@@ -94,45 +93,17 @@ function Session({ items, onFinish, onQuit }: {
         </button>
         <span className="chip chip-next">Pretest</span>
       </div>
-      <div
-        className="step-progress"
-        role="progressbar"
-        aria-label="Pretest progress"
-        aria-valuemin={0}
-        aria-valuemax={items.length}
-        aria-valuenow={index}
-        aria-valuetext={`Question ${index + 1} of ${items.length}`}
-      >
-        {items.map((_, i) => (
-          <span key={i} className={`seg ${i < index ? 'done' : i === index ? 'current' : ''}`} />
-        ))}
-      </div>
+      <SessionProgress label="Pretest progress" unit="Question" index={index} total={items.length} />
       <QuestionCard key={index} item={item} index={index} total={items.length} onAnswered={setOutcome} />
-      <nav className="lesson-nav-controls" aria-label="Pretest navigation">
-        {outcome === null ? (
-          <button type="button" className="secondary-button" onClick={() => record(false)}>
-            I don't know this yet
-          </button>
-        ) : (
-          <span />
-        )}
-        <div className="next-wrap">
-          {outcome === null && (
-            <span id={hintId} className="next-hint">
-              {step.type === 'quiz' ? 'Choose an answer to continue.' : 'Pass the challenge or skip it.'}
-            </span>
-          )}
-          <button
-            type="button"
-            className="primary-button"
-            aria-disabled={outcome === null || undefined}
-            aria-describedby={outcome === null ? hintId : undefined}
-            onClick={() => outcome !== null && record(outcome)}
-          >
-            {index + 1 >= items.length ? 'See results' : 'Next question'}<span aria-hidden="true"> →</span>
-          </button>
-        </div>
-      </nav>
+      <SessionNav
+        label="Pretest navigation"
+        skipLabel="I don't know this yet"
+        onSkip={() => record(false)}
+        hint={step.type === 'quiz' ? 'Choose an answer to continue.' : 'Pass the challenge or skip it.'}
+        answered={outcome !== null}
+        nextLabel={index + 1 >= items.length ? 'See results' : 'Next question'}
+        onNext={() => outcome !== null && record(outcome)}
+      />
     </div>
   );
 }
@@ -146,7 +117,7 @@ function QuestionCard({ item, index, total, onAnswered }: {
   const headingRef = useFocusOnMount<HTMLHeadingElement>();
   const { step, lesson } = item;
   return (
-    <div className={`step-card step-${step.type}`}>
+    <div className={`step-card step-${step.type}`} data-step-id={step.id}>
       <h3 ref={headingRef} tabIndex={-1} className="step-heading">
         <span className="step-kicker">
           Question {index + 1} of {total} · {step.type === 'code' ? 'Coding challenge' : step.code ? 'Predict the output' : 'Quiz'}
