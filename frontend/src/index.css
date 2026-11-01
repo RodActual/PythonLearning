@@ -721,6 +721,99 @@ button[aria-disabled='true'] {
   margin: 0;
 }
 
+/* What still needs work (map and pretest results) */
+.needs-work {
+  margin: 0 0 1.25rem;
+  padding: 0.75rem 1.35rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  text-align: left;
+}
+
+.needs-work > summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 0.75rem;
+  min-height: 44px;
+  align-content: center;
+  cursor: pointer;
+}
+
+.needs-work-title {
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.needs-work-count,
+.needs-work-meta,
+.work-meta {
+  font-family: var(--mono);
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+.needs-work-empty {
+  margin: 0.5rem 0 0;
+}
+
+.needs-work-unit {
+  margin-top: 0.75rem;
+}
+
+.needs-work-list {
+  list-style: none;
+  padding: 0;
+  margin: 0.35rem 0 0;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.needs-work-list > li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 0.75rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.needs-work-list > li.work-missed {
+  border-color: var(--yellow);
+  background: var(--yellow-soft);
+}
+
+.work-text {
+  display: grid;
+  gap: 0.1rem;
+  flex: 1 1 220px;
+  min-width: 0;
+}
+
+.work-title {
+  font-weight: 650;
+}
+
+.work-missed-list {
+  margin: 0.25rem 0 0;
+  padding-left: 1.1rem;
+  font-size: 0.92rem;
+  overflow-wrap: anywhere;
+}
+
+.pretest-needs-work {
+  max-width: 640px;
+  margin: 1.5rem auto 0;
+}
+
+.unit-pretest {
+  margin-left: auto;
+}
+
 .goal-card {
   margin: 0 0 1.25rem;
   padding: 1rem 1.35rem;

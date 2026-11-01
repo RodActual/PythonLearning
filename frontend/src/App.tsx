@@ -3,7 +3,7 @@ import { onAuthStateChanged, signOut, type User } from 'firebase/auth';
 import { arrayUnion, deleteField, doc, FieldPath, onSnapshot, setDoc, updateDoc } from 'firebase/firestore';
 import { auth, db } from './firebaseConfig';
 import { about, getLesson, getUnit, lessons, units } from './data/lessons';
-import type { UserProgress } from './types/lesson';
+import type { PretestResult, UserProgress } from './types/lesson';
 import { summarize, type GameSummary } from './game/summary';
 import { BADGES } from './game/badges';
 import { lessonXp, LESSON_COMPLETE_BONUS } from './game/xp';
@@ -11,6 +11,7 @@ import {
   EMPTY_PROGRESS,
   PROGRESS_VERSION,
   fromDoc,
+  isCoreDone,
   isLessonComplete,
   isStepDone,
   resumeIndex,
@@ -34,6 +35,7 @@ const StepView = lazy(() => import('./components/StepView'));
 const TrophyCase = lazy(() => import('./components/TrophyCase'));
 const ReviewView = lazy(() => import('./components/ReviewView'));
 const Playground = lazy(() => import('./components/Playground'));
+const PretestView = lazy(() => import('./components/PretestView'));
 
 const USER_PROGRESS_COLLECTION = 'user_progress';
 const TOAST_MS = 6000;
@@ -43,6 +45,7 @@ type View =
   | { name: 'trophies' }
   | { name: 'review' }
   | { name: 'playground' }
+  | { name: 'pretest'; unitId: string }
   | { name: 'lesson'; lessonId: string };
 
 const Loading = () => (
@@ -81,6 +84,7 @@ function App() {
   const summary = summarize(lessons, progress);
   const reviewsDue = dueItems(reviewItems(lessons, progress)).length;
   const currentLesson = view.name === 'lesson' ? getLesson(view.lessonId) : undefined;
+  const pretestUnit = view.name === 'pretest' ? getUnit(view.unitId) : undefined;
 
   const applyProgress = (next: UserProgress) => {
     progressRef.current = next;
@@ -224,7 +228,8 @@ function App() {
 
       const lesson = getLesson(lessonId);
       // Only the step that finishes the core counts; optional steps after it don't re-announce.
-      const justFinished = lesson && !isLessonComplete(prev, lesson) && isLessonComplete(next, lesson) ? lesson.title : undefined;
+      // A tested-out lesson still announces when its core is worked through, since that earns the bonus.
+      const justFinished = lesson && !isCoreDone(prev, lesson) && isCoreDone(next, lesson) ? lesson.title : undefined;
       announceRewards(summarize(lessons, prev), summarize(lessons, next), justFinished);
 
       const update: Record<string, unknown> = {
@@ -251,6 +256,22 @@ function App() {
     [user, write],
   );
 
+  /** Saves a finished pretest. Each lesson's latest result replaces its previous one. */
+  const savePretest = useCallback(
+    (results: Record<string, PretestResult>) => {
+      if (!user) return;
+      const prev = progressRef.current;
+      const next = { ...prev, pretest: { ...prev.pretest, ...results } };
+      applyProgress(next);
+      announceRewards(summarize(lessons, prev), summarize(lessons, next));
+      write(
+        setDoc(doc(db, USER_PROGRESS_COLLECTION, user.uid), { version: PROGRESS_VERSION, pretest: results }, { merge: true }),
+        'save pretest',
+      );
+    },
+    [user, announceRewards, write],
+  );
+
   const resetLessonProgress = (lessonId: string) => {
     if (!user) return;
     const title = getLesson(lessonId)?.title ?? 'this lesson';
@@ -264,6 +285,8 @@ function App() {
         new FieldPath('done', lessonId),
         deleteField(),
         new FieldPath('first_try_ids', lessonId),
+        deleteField(),
+        new FieldPath('pretest', lessonId),
         deleteField(),
       ),
       'reset lesson',
@@ -361,7 +384,7 @@ function App() {
                     ['playground', '🧪', 'Playground'],
                   ] as const
                 ).map(([name, icon, label]) => {
-                  const current = view.name === name || (name === 'map' && view.name === 'lesson');
+                  const current = view.name === name || (name === 'map' && (view.name === 'lesson' || view.name === 'pretest'));
                   return (
                     <li key={name}>
                       <button
@@ -389,7 +412,7 @@ function App() {
         )}
 
         <main id="main" className="app-main" tabIndex={-1}>
-          <ErrorBoundary key={view.name === 'lesson' ? view.lessonId : view.name} onReset={backToMap}>
+          <ErrorBoundary key={view.name === 'lesson' ? view.lessonId : view.name === 'pretest' ? `pretest:${view.unitId}` : view.name} onReset={backToMap}>
             <Suspense fallback={<Loading />}>
               {!user ? (
                 <AuthForm />
@@ -399,6 +422,16 @@ function App() {
                 <ReviewView lessons={lessons} progress={progress} onResult={recordReview} onBackToMap={backToMap} />
               ) : view.name === 'playground' ? (
                 <Playground uid={user.uid} onBackToMap={backToMap} />
+              ) : pretestUnit ? (
+                <PretestView
+                  unit={pretestUnit}
+                  lessons={lessons}
+                  progress={progress}
+                  onFinish={savePretest}
+                  onOpenLesson={openLesson}
+                  onOpenStep={openStep}
+                  onBackToMap={backToMap}
+                />
               ) : currentLesson ? (
                 <StepView
                   key={`${currentLesson.id}:${stepIndex}`}
@@ -408,7 +441,7 @@ function App() {
                   lessonXpEarned={lessonXp(currentLesson, progress)}
                   unit={getUnit(currentLesson.unit)}
                   unitComplete={lessons.filter((l) => l.unit === currentLesson.unit).every((l) => isLessonComplete(progress, l))}
-                  courseComplete={summary.lessonsCompleted === lessons.length}
+                  courseComplete={lessons.every((l) => isCoreDone(progress, l))}
                   about={about}
                   onNext={nextStep}
                   onSkip={skipStep}
@@ -428,6 +461,7 @@ function App() {
                   onResetLesson={resetLessonProgress}
                   reviewsDue={reviewsDue}
                   onOpenReview={() => setView({ name: 'review' })}
+                  onOpenPretest={(unitId) => setView({ name: 'pretest', unitId })}
                 />
               )}
             </Suspense>

@@ -45,7 +45,7 @@ export function daysBetween(from: string, to: string): number {
  * A step can be reviewed if the learner has completed it and it has a right answer.
  * Opinion polls (no answer) and "watch it crash" demos (expected_error) are skipped.
  */
-const isReviewable = (step: Lesson['steps'][number]): step is ReviewStep =>
+export const isReviewable = (step: Lesson['steps'][number]): step is ReviewStep =>
   (step.type === 'quiz' && step.answer !== undefined) || (step.type === 'code' && !step.expected_error);
 
 export function reviewItems(lessons: Lesson[], progress: UserProgress): ReviewItem[] {
@@ -71,7 +71,7 @@ export function nextDueDate(items: ReviewItem[], on = today()): string | undefin
     .sort()[0];
 }
 
-function shuffle<T>(list: T[], random: () => number): T[] {
+export function shuffle<T>(list: T[], random: () => number): T[] {
   const out = [...list];
   for (let i = out.length - 1; i > 0; i--) {
     const j = Math.floor(random() * (i + 1));
@@ -118,6 +118,9 @@ export function nextCard(card: ReviewCard | undefined, correct: boolean, on = to
   const box = Math.min((card?.box ?? 1) + 1, INTERVAL_DAYS.length);
   return { box, due: addDays(on, INTERVAL_DAYS[box - 1]) };
 }
+
+/** Short label for a question in result lists. */
+export const stepLabel = (step: ReviewStep) => (step.type === 'code' ? step.heading ?? 'Coding challenge' : step.question);
 
 /** Human wording for when a card comes back, e.g. "tomorrow" or "in 7 days". */
 export function whenLabel(due: string, on = today()): string {

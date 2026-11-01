@@ -49,6 +49,26 @@ test('owner can save a review result', async () => {
   await assertFails(setDoc(progress('alice'), { version: 2, review: 'everything' }, { merge: true }));
 });
 
+test('owner can save pretest results and reset one lesson\'s result', async () => {
+  await seed('alice', { version: 2, done: {}, first_try_ids: {} });
+  await assertSucceeds(
+    setDoc(
+      progress('alice'),
+      { version: 2, pretest: { 'lesson-01': { date: '2026-11-01', missed: [] }, 'lesson-02': { date: '2026-11-01', missed: ['s04'] } } },
+      { merge: true },
+    ),
+  );
+  await assertSucceeds(
+    updateDoc(
+      progress('alice'),
+      new FieldPath('done', 'lesson-01'), deleteField(),
+      new FieldPath('first_try_ids', 'lesson-01'), deleteField(),
+      new FieldPath('pretest', 'lesson-01'), deleteField(),
+    ),
+  );
+  await assertFails(setDoc(progress('alice'), { version: 2, pretest: ['lesson-01'] }, { merge: true }));
+});
+
 test('owner can read their own progress', async () => {
   await seed('alice', { version: 2, done: {}, first_try_ids: {} });
   await assertSucceeds(getDoc(progress('alice')));

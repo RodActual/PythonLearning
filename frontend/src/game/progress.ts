@@ -1,8 +1,8 @@
 import legacyMap from '../data/legacy-step-ids.json';
-import type { CodeStep, DoneSteps, Lesson, ReviewCard, UserProgress } from '../types/lesson';
+import type { CodeStep, DoneSteps, Lesson, PretestResult, ReviewCard, UserProgress } from '../types/lesson';
 
 export const PROGRESS_VERSION = 2;
-export const EMPTY_PROGRESS: UserProgress = { done: {}, firstTry: {}, review: {} };
+export const EMPTY_PROGRESS: UserProgress = { done: {}, firstTry: {}, review: {}, pretest: {} };
 
 /**
  * Shape of user_progress/{uid} in Firestore.
@@ -13,6 +13,7 @@ export interface ProgressDoc {
   done?: DoneSteps;
   first_try_ids?: DoneSteps;
   review?: Record<string, ReviewCard>;
+  pretest?: Record<string, PretestResult>;
   /** v1: lessonId -> index of the furthest step reached. */
   completed_steps?: Record<string, number>;
   /** v1: lessonId -> step indices solved first try. */
@@ -44,6 +45,18 @@ const asReview = (value: unknown): Record<string, ReviewCard> => {
   return out;
 };
 
+const asPretest = (value: unknown): Record<string, PretestResult> => {
+  const out: Record<string, PretestResult> = {};
+  if (value && typeof value === 'object') {
+    for (const [k, v] of Object.entries(value as Record<string, Partial<PretestResult>>)) {
+      if (v && typeof v.date === 'string' && DATE.test(v.date) && Array.isArray(v.missed)) {
+        out[k] = { date: v.date, missed: v.missed.filter((x): x is string => typeof x === 'string') };
+      }
+    }
+  }
+  return out;
+};
+
 /** Converts a v1 document (step positions) to step ids using the frozen legacy map. */
 export function migrateLegacy(doc: ProgressDoc): UserProgress {
   const done: DoneSteps = {};
@@ -59,7 +72,7 @@ export function migrateLegacy(doc: ProgressDoc): UserProgress {
     const mapped = indices.map((i) => ids[i]).filter((id): id is string => typeof id === 'string');
     if (mapped.length) firstTry[lessonId] = mapped;
   }
-  return { done, firstTry, review: {} };
+  return { done, firstTry, review: {}, pretest: {} };
 }
 
 /** Reads a Firestore document. `needsMigration` means it should be rewritten as v2. */
@@ -67,7 +80,12 @@ export function fromDoc(doc: ProgressDoc | undefined): { progress: UserProgress;
   if (!doc) return { progress: EMPTY_PROGRESS, needsMigration: false };
   if ((doc.version ?? 1) >= PROGRESS_VERSION) {
     return {
-      progress: { done: asStringLists(doc.done), firstTry: asStringLists(doc.first_try_ids), review: asReview(doc.review) },
+      progress: {
+        done: asStringLists(doc.done),
+        firstTry: asStringLists(doc.first_try_ids),
+        review: asReview(doc.review),
+        pretest: asPretest(doc.pretest),
+      },
       needsMigration: false,
     };
   }
@@ -77,7 +95,7 @@ export function fromDoc(doc: ProgressDoc | undefined): { progress: UserProgress;
 
 /**
  * The v2 fields to write for a progress snapshot (migration and "reset all").
- * `review` is deliberately left out: it's only written by review sessions, and a
+ * `review` and `pretest` are deliberately left out: it's only written by review sessions, and a
  * non-merge write of this (reset all) clears it. Legacy fields are left for rollback.
  */
 export const toDoc = (p: UserProgress) => ({
@@ -102,11 +120,21 @@ export const isMasteryChallenge = (s: Lesson['steps'][number]): s is CodeStep =>
 /** The steps that count toward finishing a lesson (deep-dive and mastery steps are optional). */
 export const coreSteps = (lesson: Lesson) => lesson.steps.filter((s) => !s.track);
 
-export const isLessonComplete = (p: UserProgress, lesson: Lesson) => {
+/** Every core step was actually worked through (what the lesson-complete XP bonus needs). */
+export const isCoreDone = (p: UserProgress, lesson: Lesson) => {
   const core = coreSteps(lesson);
   const done = new Set(p.done[lesson.id] ?? []);
   return core.length > 0 && core.every((s) => done.has(s.id));
 };
+
+/** The latest pretest for this lesson had no misses. */
+export const isTestedOut = (p: UserProgress, lessonId: string) => {
+  const result = p.pretest[lessonId];
+  return !!result && result.missed.length === 0;
+};
+
+/** Finished: core steps done, or tested out with a pretest. */
+export const isLessonComplete = (p: UserProgress, lesson: Lesson) => isCoreDone(p, lesson) || isTestedOut(p, lesson.id);
 
 /** Where to resume: the first unfinished step, or the start for a finished lesson (review). */
 export const resumeIndex = (p: UserProgress, lesson: Lesson) => {
@@ -124,13 +152,16 @@ export function withStepDone(p: UserProgress, lessonId: string, stepId: string, 
     done: { ...p.done, [lessonId]: [...(p.done[lessonId] ?? []), stepId] },
     firstTry: firstTry ? { ...p.firstTry, [lessonId]: [...(p.firstTry[lessonId] ?? []), stepId] } : p.firstTry,
     review: p.review,
+    pretest: p.pretest,
   };
 }
 
 export function withoutLesson(p: UserProgress, lessonId: string): UserProgress {
   const done = { ...p.done };
   const firstTry = { ...p.firstTry };
+  const pretest = { ...p.pretest };
   delete done[lessonId];
   delete firstTry[lessonId];
-  return { done, firstTry, review: {} };
+  delete pretest[lessonId];
+  return { done, firstTry, review: {}, pretest };
 }

@@ -1,9 +1,11 @@
 import type { CourseAbout as About, Lesson, Unit, UserProgress } from '../types/lesson';
 import CourseAbout from './CourseAbout';
 import MasteryGoal from './MasteryGoal';
+import NeedsWork from './NeedsWork';
+import { pretestLessons } from '../game/pretest';
 import { lessonState, recommendedLessonIndex, type LessonState } from '../game/summary';
 import { lessonXp } from '../game/xp';
-import { doneCount, isStepDone, resumeIndex } from '../game/progress';
+import { doneCount, isCoreDone, isStepDone, isTestedOut, resumeIndex } from '../game/progress';
 import { useDocumentTitle, useFocusOnMount } from '../a11y/hooks';
 
 interface SkillMapProps {
@@ -16,6 +18,7 @@ interface SkillMapProps {
   onResetLesson: (lessonId: string) => void;
   reviewsDue: number;
   onOpenReview: () => void;
+  onOpenPretest: (unitId: string) => void;
 }
 
 const ROW = 216; // px between nodes
@@ -79,6 +82,8 @@ function UnitPath({ lessons, allLessons, progress, recommendedId, onOpenLesson, 
           const state = lessonState(lesson, progress);
           const reached = doneCount(progress, lesson);
           const resumeAt = resumeIndex(progress, lesson);
+          // Tested out without working through the core: shown as done, with a full ring.
+          const testedOutOnly = state === 'completed' && isTestedOut(progress, lesson.id) && !isCoreDone(progress, lesson);
           const optional = lesson.steps.filter((s) => s.track);
           const optionalDone = optional.filter((s) => isStepDone(progress, lesson.id, s.id)).length;
           const isNext = lesson.id === recommendedId;
@@ -93,14 +98,18 @@ function UnitPath({ lessons, allLessons, progress, recommendedId, onOpenLesson, 
             >
               <button type="button" className="node-button" onClick={() => onOpenLesson(lesson.id)}>
                 <span className="node-circle" aria-hidden="true">
-                  <ProgressRing fraction={reached / lesson.steps.length} />
+                  <ProgressRing fraction={testedOutOnly ? 1 : reached / lesson.steps.length} />
                   <span className="node-number">{state === 'completed' ? '✓' : number}</span>
                 </span>
                 <span className="node-label">
                   <span className="node-title">{number}. {lesson.title}</span>
                   <span className="node-status">
                     {isNext && <span className="chip chip-next">Up next</span>}
-                    {state === 'in-progress' ? `Step ${resumeAt + 1} of ${lesson.steps.length}` : STATE_LABEL[state]}
+                    {state === 'in-progress'
+                      ? `Step ${resumeAt + 1} of ${lesson.steps.length}`
+                      : testedOutOnly
+                        ? 'Tested out'
+                        : STATE_LABEL[state]}
                     {state === 'completed' && optional.length > 0 && optionalDone < optional.length && (
                       <> · Deep dive {optionalDone}/{optional.length}</>
                     )}
@@ -108,7 +117,7 @@ function UnitPath({ lessons, allLessons, progress, recommendedId, onOpenLesson, 
                   </span>
                 </span>
               </button>
-              {state !== 'not-started' && (
+              {(state !== 'not-started' || progress.pretest[lesson.id]) && (
                 <button
                   type="button"
                   className="node-reset"
@@ -126,7 +135,7 @@ function UnitPath({ lessons, allLessons, progress, recommendedId, onOpenLesson, 
   );
 }
 
-const SkillMap = ({ about, units, lessons, progress, onOpenLesson, onOpenStep, onResetLesson, reviewsDue, onOpenReview }: SkillMapProps) => {
+const SkillMap = ({ about, units, lessons, progress, onOpenLesson, onOpenStep, onResetLesson, reviewsDue, onOpenReview, onOpenPretest }: SkillMapProps) => {
   useDocumentTitle('Learning path');
   const headingRef = useFocusOnMount<HTMLHeadingElement>();
   const recommended = recommendedLessonIndex(lessons, progress);
@@ -166,12 +175,24 @@ const SkillMap = ({ about, units, lessons, progress, onOpenLesson, onOpenStep, o
 
       <MasteryGoal units={units} lessons={lessons} progress={progress} onOpenStep={onOpenStep} />
 
+      <NeedsWork
+        units={units}
+        lessons={lessons}
+        progress={progress}
+        onOpenLesson={onOpenLesson}
+        onOpenStep={onOpenStep}
+        defaultOpen={Object.keys(progress.pretest).length > 0}
+      />
+
       <CourseAbout about={about} defaultOpen={Object.values(progress.done).every((ids) => ids.length === 0)} />
 
       {units.map((unit, u) => {
         const unitLessons = lessons.filter((l) => l.unit === unit.id);
         const done = unitLessons.filter((l) => lessonState(l, progress) === 'completed').length;
         const complete = done === unitLessons.length;
+        // The unit trophy needs every core worked through, not just tested out.
+        const trophy = unitLessons.every((l) => isCoreDone(progress, l));
+        const canTestOut = pretestLessons(unit, lessons, progress).length;
         const headingId = `unit-${unit.id}`;
         return (
           <section key={unit.id} className={`unit${complete ? ' unit-done' : ''}`} aria-labelledby={headingId}>
@@ -201,8 +222,13 @@ const SkillMap = ({ about, units, lessons, progress, onOpenLesson, onOpenStep, o
               </div>
               <p className="unit-progress">
                 {done} of {unitLessons.length} lessons complete
-                {complete && <span className="chip chip-done">Trophy earned</span>}
+                {trophy && <span className="chip chip-done">Trophy earned</span>}
               </p>
+              {canTestOut > 0 && (
+                <button type="button" className="secondary-button unit-pretest" onClick={() => onOpenPretest(unit.id)}>
+                  Take the pretest<span className="visually-hidden">: {unit.title}</span>
+                </button>
+              )}
             </div>
             <UnitPath
               lessons={unitLessons}
