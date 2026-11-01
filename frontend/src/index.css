@@ -1196,7 +1196,7 @@ button[aria-disabled='true'] {
   box-shadow: 0 0 10px -2px var(--yellow);
 }
 
-/* Long lessons (with deep-dive and interview steps) get thinner gaps so segments stay visible. */
+/* Long lessons (with deep-dive and mastery steps) get thinner gaps so segments stay visible. */
 .step-progress.dense {
   gap: 2px;
 }
@@ -1216,7 +1216,7 @@ button[aria-disabled='true'] {
   border-left: 4px solid var(--primary);
 }
 
-.track-banner.track-interview {
+.track-banner.track-mastery {
   border-left-color: var(--yellow);
 }
 

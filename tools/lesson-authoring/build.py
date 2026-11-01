@@ -1,7 +1,7 @@
-"""Appends deep-dive and interview steps from expand/lessons/*.py into lessons.json.
+"""Appends deep-dive and mastery steps from expand/lessons/*.py into lessons.json.
 
-Each lesson file defines DEEP and INTERVIEW lists built with T/Q/C below. Step ids are
-d01.. (deep-dive) and i01.. (interview). Expected output is computed by running the
+Each lesson file defines DEEP and MASTERY lists built with T/Q/C below. Step ids are
+d01.. (deep-dive) and i01.. (mastery). Expected output is computed by running the
 reference solution, which is also written to tests/solutions.json. Re-running replaces
 a lesson's optional steps, so files can be edited and rebuilt.
 Usage: python3 build.py <frontend dir> [lesson ids...]
@@ -61,7 +61,7 @@ for f in sorted(glob.glob(os.path.join(HERE, 'lessons', '*.py'))):
     for k in [k for k in sols if k.startswith(lid + ':') and k.split(':')[1][0] in 'di']:
         del sols[k]
     new = []
-    for track, prefix, items in (('deep-dive', 'd', mod['DEEP']), ('interview', 'i', mod['INTERVIEW'])):
+    for track, prefix, items in (('deep-dive', 'd', mod['DEEP']), ('mastery', 'i', mod['MASTERY'])):
         for n, item in enumerate(items, 1):
             step = {'id': f'{prefix}{n:02d}', 'type': item['type'], 'track': track}
             step.update({k: v for k, v in item.items() if k not in ('type', '_solution')})

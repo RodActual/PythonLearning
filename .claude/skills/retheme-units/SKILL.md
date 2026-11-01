@@ -1,11 +1,11 @@
 ---
 name: retheme-units
-description: Use when changing the theme or context of optional exercises (deep-dive and interview steps) in this repo's lessons, or adding a new unit's optional steps. Covers the swap, build, check, browser walk and PR order.
+description: Use when changing the theme or context of optional exercises (deep-dive and mastery steps) in this repo's lessons, or adding a new unit's optional steps. Covers the swap, build, check, browser walk and PR order.
 ---
 
 # Re-theme or extend lesson exercises
 
-Tools live in `tools/lesson-authoring/` (read its README). Keep step ids, order and kinds unchanged so saved progress is unaffected. Change only context: instruction, starter, solution, hint and tiers. Leave core steps and classic interview problems alone. The repo is public, so keep employer names, salaries and posting details out of lesson content.
+Tools live in `tools/lesson-authoring/` (read its README). Keep step ids, order and kinds unchanged so saved progress is unaffected. Change only context: instruction, starter, solution, hint and tiers. Leave core steps and classic problems alone. The repo is public, so keep employer names, salaries and posting details out of lesson content.
 
 Order, per unit:
 

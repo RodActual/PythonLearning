@@ -71,7 +71,7 @@ T("Test-driven development",
   "**TDD** flips the usual order: write a test for behavior that doesn't exist yet and watch it fail (red), write just enough code to make it pass (green), then tidy the code while the tests keep passing (refactor). Repeat for the next behavior.",
   "# 1. Red: the test comes first and fails\ndef test_initials():\n    assert initials('Ada Lovelace') == 'AL'\n\n# 2. Green: the simplest code that passes\ndef initials(name):\n    return ''.join([word[0] for word in name.split()])\n\ntest_initials()\nprint('green')",
   "Writing the test first makes you decide what \"done\" means before coding, and the failing run proves the test can actually catch a mistake.",
-  "Many teams use it for tricky logic and bug fixes, and some interviews ask you to work this way: write the tests, then the code."),
+  "Many teams use it for tricky logic and bug fixes, and it's a good way to practice: write the tests, then the code."),
 Q("In TDD, what do you write first?", ["A test that fails", "The full function", "The documentation"], "A test that fails",
   "Red, green, refactor: a failing test first, then code to pass it, then cleanup."),
 C("TDD: make the tests pass",
@@ -94,8 +94,8 @@ C("Test the alert boundary",
     "def passed(score):\n    return score >= 50\nassert passed(50)\nprint('boundary ok')")]),
 ]
 
-INTERVIEW = [
-Q("Interview question: what's the difference between a unit test and an integration test?",
+MASTERY = [
+Q("Concept check: what's the difference between a unit test and an integration test?",
   ["A unit test checks one small piece alone; an integration test checks several pieces working together", "Unit tests use assert and integration tests don't", "Integration tests are just slower unit tests"],
   "A unit test checks one small piece alone; an integration test checks several pieces working together",
   "Unit tests are fast and pinpoint failures. Integration tests (say, your code plus a real database) catch problems in how parts connect. Projects need both."),

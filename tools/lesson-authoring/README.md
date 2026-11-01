@@ -1,6 +1,6 @@
 # Lesson authoring tools
 
-Optional steps (deep-dive `d01..`, interview `i01..`) are authored as Python in `lessons/*.py` and built into `frontend/src/data/lessons.json` and `frontend/tests/solutions.json`. Rebuilding with no edits reproduces the committed data.
+Optional steps (deep-dive `d01..`, mastery `i01..`) are authored as Python in `lessons/*.py` and built into `frontend/src/data/lessons.json` and `frontend/tests/solutions.json`. Rebuilding with no edits reproduces the committed data.
 
 - `build.py <frontend dir> [lesson ids]`: rebuild those lessons (all if none given). Expected output is computed by running each reference solution.
 - `swap.py LESSON.py NEW.py`: replace whole steps, keyed by old heading. `NEW.py` holds `SWAP = {'old heading': '''C(...)'''}`.

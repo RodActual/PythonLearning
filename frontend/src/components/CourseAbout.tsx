@@ -7,7 +7,7 @@ interface CourseAboutProps {
   defaultOpen?: boolean;
 }
 
-/** "What this course prepares you for": outcomes, where the skills lead, and next steps. */
+/** "What this course prepares you for": outcomes, paths to mastery, and next steps. */
 const CourseAbout = ({ about, defaultOpen = false }: CourseAboutProps) => {
   const headingId = useId();
   return (
@@ -25,7 +25,7 @@ const CourseAbout = ({ about, defaultOpen = false }: CourseAboutProps) => {
           ))}
         </ul>
 
-        <h3 id={headingId} className="about-heading">Where these skills lead</h3>
+        <h3 id={headingId} className="about-heading">Paths to mastery</h3>
         <ul className="path-grid" aria-labelledby={headingId}>
           {about.paths.map((p) => (
             <li key={p.title} className="path-card">

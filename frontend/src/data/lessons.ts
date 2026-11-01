@@ -65,12 +65,12 @@ function validate(data: unknown): Course {
     if (!unitIds.has(l.unit)) throw new Error(`${l.id}: unknown unit ${l.unit}`);
     seen.add(l.id);
     const steps = l.steps.map((s, j) => validateStep(s, `${l.id} step ${j + 1}`));
-    // Order is core steps, then deep-dive steps, then interview steps.
-    const rank = (s: Step) => (s.track === undefined ? 0 : s.track === 'deep-dive' ? 1 : s.track === 'interview' ? 2 : -1);
+    // Order is core steps, then deep-dive steps, then mastery steps.
+    const rank = (s: Step) => (s.track === undefined ? 0 : s.track === 'deep-dive' ? 1 : s.track === 'mastery' ? 2 : -1);
     steps.forEach((s, j) => {
       if (rank(s) === -1) throw new Error(`${l.id} step ${j + 1}: unknown track "${String(s.track)}"`);
       if (j > 0 && rank(s) < rank(steps[j - 1])) {
-        throw new Error(`${l.id} step ${j + 1}: core steps come first, then deep-dive, then interview`);
+        throw new Error(`${l.id} step ${j + 1}: core steps come first, then deep-dive, then mastery`);
       }
     });
     const ids = new Set(steps.map((s) => s.id));

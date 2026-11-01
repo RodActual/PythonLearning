@@ -97,8 +97,8 @@ C("Group hosts by role",
     "print('web-01'.split('-')[0])  # web")]),
 ]
 
-INTERVIEW = [
-Q("Interview question: why must dictionary keys be immutable (hashable)?",
+MASTERY = [
+Q("Concept check: why must dictionary keys be immutable (hashable)?",
   ["A key's hash decides where its value is stored; if the key could change, the value couldn't be found again", "To save memory", "Because dictionaries are sorted"],
   "A key's hash decides where its value is stored; if the key could change, the value couldn't be found again",
   "Strings, numbers and tuples of those are hashable. Lists and dicts aren't, because they can change after being used as a key."),
@@ -111,7 +111,7 @@ Q("What's the difference between `d['x']` and `d.get('x')` when 'x' isn't a key?
 Q("You need to check, many times, whether usernames exist among a million users. Which is faster to search?",
   ["A dictionary (or set) keyed by username: O(1) per check", "A list of usernames: O(1) per check", "They're the same speed"],
   "A dictionary (or set) keyed by username: O(1) per check",
-  "Each `in` on a list scans up to a million names (O(n)). A dictionary or set lookup is O(1). Choosing the right structure is often the whole answer to an interview question."),
+  "Each `in` on a list scans up to a million names (O(n)). A dictionary or set lookup is O(1). Choosing the right structure is often the whole answer to a performance problem."),
 Q("What does this code print?", ["{'a': 11}", "{'a': 1}", "KeyError"], "{'a': 11}",
   "'b' isn't a key, so `d.get('b', 10)` returns the default 10. 10 + 1 is 11, stored back under 'a'.",
   code="d = {'a': 1}\nd['a'] = d.get('b', 10) + d['a']\nprint(d)"),
@@ -122,7 +122,7 @@ C("Classic: two sum",
   "seen = {}   # number -> its index\nfor i in range(len(nums)):\n    need = target - nums[i]\n    if need in seen:\n        print(seen[need], i)\n        break\n    seen[nums[i]] = i",
   [("Ask what you need", "For each number, the partner you need is `target - number`. If you've already seen that partner, you're done.",
     "target = 10\nprint(target - 3)  # 7 is the partner of 3"),
-   ("Remember positions in a dict", "Keep `seen = {number: index}`. Check `need in seen` (O(1)) before storing the current number. That makes the whole thing one pass, O(n), instead of checking every pair, O(n²), which is exactly the improvement interviewers look for.",
+   ("Remember positions in a dict", "Keep `seen = {number: index}`. Check `need in seen` (O(1)) before storing the current number. That makes the whole thing one pass, O(n), instead of checking every pair, O(n²), which is exactly the improvement to look for.",
     "seen = {4: 0}\nprint(6 in seen, 4 in seen)  # False True\nprint(seen[4])               # 0")]),
 C("Classic: first non-repeating character",
   "Print the first character in `s` that appears exactly once. It should print: w",

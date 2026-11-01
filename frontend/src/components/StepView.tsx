@@ -20,7 +20,7 @@ interface StepViewProps {
   courseComplete: boolean;
   about: CourseAbout;
   onNext: (firstTry: boolean) => void;
-  /** Moves past an optional (deep-dive or interview) step without completing it. */
+  /** Moves past an optional (deep-dive or mastery) step without completing it. */
   onSkip: () => void;
   onPrev: () => void;
   onBackToMenu: () => void;
@@ -32,14 +32,14 @@ interface StepViewProps {
 const stepLabel = (step: Step) =>
   step.type === 'text' ? 'Lesson' : step.type === 'code' ? 'Coding challenge' : step.code ? 'Predict the output' : 'Quiz';
 
-const TRACK_LABEL = { 'deep-dive': 'Deep dive', interview: 'Interview practice' } as const;
+const TRACK_LABEL = { 'deep-dive': 'Deep dive', mastery: 'Mastery' } as const;
 
 /** Introduces an optional section on its first step. */
-function TrackBanner({ track, count, onBackToMenu }: { track: 'deep-dive' | 'interview'; count: number; onBackToMenu: () => void }) {
+function TrackBanner({ track, count, onBackToMenu }: { track: 'deep-dive' | 'mastery'; count: number; onBackToMenu: () => void }) {
   return (
     <aside className={`track-banner track-${track}`} aria-label={`${TRACK_LABEL[track]}, optional`}>
       <p className="track-title">
-        <span aria-hidden="true">{track === 'deep-dive' ? '🤿 ' : '💼 '}</span>
+        <span aria-hidden="true">{track === 'deep-dive' ? '🤿 ' : '🐍 '}</span>
         {TRACK_LABEL[track]} <span className="chip">Optional</span>
       </p>
       {track === 'deep-dive' ? (
@@ -50,8 +50,8 @@ function TrackBanner({ track, count, onBackToMenu }: { track: 'deep-dive' | 'int
         </p>
       ) : (
         <p>
-          {count} steps in the style of real Python interviews: explain a concept, judge how fast code is, solve a
-          classic problem, and find the bug in someone else's code. They earn XP, and you can skip any of them.
+          {count} steps that test how well you know the language: explain how a feature works, judge how fast code is,
+          solve a classic problem, and find the bug in someone else's code. They earn XP, and you can skip any of them.
         </p>
       )}
       <button type="button" className="secondary-button" onClick={onBackToMenu}>Back to the map</button>
@@ -101,7 +101,7 @@ function CompletionScreen({ lesson, lessonXpEarned, unit, unitComplete, courseCo
         {courseComplete && (
           <section className="completion-card course-card" aria-labelledby="course-done-heading">
             <h3 id="course-done-heading"><span aria-hidden="true">🎓 </span>You finished the whole course</h3>
-            <p>You now have the foundation for:</p>
+            <p>Keep building mastery in these areas:</p>
             <ul>
               {about.paths.map((p) => (
                 <li key={p.title}><strong>{p.title}.</strong> {p.description}</li>

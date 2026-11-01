@@ -96,10 +96,10 @@ export const doneCount = (p: UserProgress, lesson: Lesson) => {
   return lesson.steps.filter((s) => done.has(s.id)).length;
 };
 
-/** An interview coding challenge: what the Interview Ready badge and the goal card both count. */
-export const isInterviewChallenge = (s: Lesson['steps'][number]): s is CodeStep => s.track === 'interview' && s.type === 'code';
+/** A mastery coding challenge: what the Pythonista badge and the goal card both count. */
+export const isMasteryChallenge = (s: Lesson['steps'][number]): s is CodeStep => s.track === 'mastery' && s.type === 'code';
 
-/** The steps that count toward finishing a lesson (deep-dive and interview steps are optional). */
+/** The steps that count toward finishing a lesson (deep-dive and mastery steps are optional). */
 export const coreSteps = (lesson: Lesson) => lesson.steps.filter((s) => !s.track);
 
 export const isLessonComplete = (p: UserProgress, lesson: Lesson) => {

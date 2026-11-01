@@ -1,26 +1,26 @@
 import type { Lesson, Unit, UserProgress } from '../types/lesson';
-import { interviewByUnit, nextInterviewStep } from '../game/goal';
+import { masteryByUnit, nextMasteryStep } from '../game/goal';
 
-interface InterviewGoalProps {
+interface MasteryGoalProps {
   units: Unit[];
   lessons: Lesson[];
   progress: UserProgress;
   onOpenStep: (lessonId: string, stepId: string) => void;
 }
 
-/** Goal: land a technical job. Interview challenge progress by unit, and the next one to try. */
-const InterviewGoal = ({ units, lessons, progress, onOpenStep }: InterviewGoalProps) => {
-  const rows = interviewByUnit(units, lessons, progress).filter((r) => r.total > 0);
+/** Goal: master Python. Mastery challenge progress by unit, and the next one to try. */
+const MasteryGoal = ({ units, lessons, progress, onOpenStep }: MasteryGoalProps) => {
+  const rows = masteryByUnit(units, lessons, progress).filter((r) => r.total > 0);
   const solved = rows.reduce((n, r) => n + r.done, 0);
   const total = rows.reduce((n, r) => n + r.total, 0);
-  const next = nextInterviewStep(lessons, progress);
+  const next = nextMasteryStep(lessons, progress);
 
   return (
     <section className="goal-card" aria-labelledby="goal-heading">
       <p className="eyebrow">Goal</p>
-      <h3 id="goal-heading" className="goal-title">Land a technical job</h3>
+      <h3 id="goal-heading" className="goal-title">Master the language</h3>
       <p className="goal-summary">
-        {solved} of {total} interview challenges solved
+        {solved} of {total} mastery challenges solved
       </p>
       <ul className="goal-list">
         {rows.map((r) => (
@@ -34,7 +34,7 @@ const InterviewGoal = ({ units, lessons, progress, onOpenStep }: InterviewGoalPr
       {next ? (
         <div className="goal-next">
           <p>
-            <strong>Next interview challenge: </strong>
+            <strong>Next mastery challenge: </strong>
             {next.step.heading} <span className="goal-lesson">({next.lesson.title})</span>
           </p>
           <button type="button" className="secondary-button" onClick={() => onOpenStep(next.lesson.id, next.step.id)}>
@@ -42,10 +42,10 @@ const InterviewGoal = ({ units, lessons, progress, onOpenStep }: InterviewGoalPr
           </button>
         </div>
       ) : (
-        <p className="goal-next">Every interview challenge is solved.</p>
+        <p className="goal-next">Every mastery challenge is solved.</p>
       )}
     </section>
   );
 };
 
-export default InterviewGoal;
+export default MasteryGoal;

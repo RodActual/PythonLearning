@@ -102,8 +102,8 @@ C("Close enough",
     "x = 1.1 + 2.2\nprint(round(x, 9) == round(3.3, 9))  # True")]),
 ]
 
-INTERVIEW = [
-Q("Interview question: what's the difference between `is` and `==`?",
+MASTERY = [
+Q("Concept check: what's the difference between `is` and `==`?",
   ["`==` compares values; `is` checks whether both refer to the same object", "They are identical", "`is` is only for strings"],
   "`==` compares values; `is` checks whether both refer to the same object",
   "Two separate lists `[1, 2]` and `[1, 2]` are `==` but not `is`. Use `is` mainly for `None` (and True/False); use `==` for comparing values."),

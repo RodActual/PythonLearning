@@ -1,6 +1,6 @@
 import type { Lesson, UserProgress } from '../types/lesson';
 import { units } from '../data/lessons';
-import { coreSteps, firstTrySet, isInterviewChallenge, isLessonComplete, isStepDone } from './progress';
+import { coreSteps, firstTrySet, isMasteryChallenge, isLessonComplete, isStepDone } from './progress';
 
 export interface Badge {
   id: string;
@@ -37,9 +37,9 @@ const hasFlawlessLesson = (lessons: Lesson[], progress: UserProgress) =>
 const hasFullDeepDive = (lessons: Lesson[], progress: UserProgress) =>
   lessons.some((l) => l.steps.some((s) => s.track) && l.steps.every((s) => isStepDone(progress, l.id, s.id)));
 
-const interviewChallengesSolved = (lessons: Lesson[], progress: UserProgress) =>
+const masteryChallengesSolved = (lessons: Lesson[], progress: UserProgress) =>
   lessons.reduce(
-    (n, l) => n + l.steps.filter((s) => isInterviewChallenge(s) && isStepDone(progress, l.id, s.id)).length,
+    (n, l) => n + l.steps.filter((s) => isMasteryChallenge(s) && isStepDone(progress, l.id, s.id)).length,
     0,
   );
 
@@ -83,16 +83,16 @@ const BASE_BADGES: Badge[] = [
   {
     id: 'deep-diver',
     name: 'Deep Diver',
-    description: 'Finish every step of a lesson, deep dive and interview practice included.',
+    description: 'Finish every step of a lesson, deep dive and mastery practice included.',
     icon: '🤿',
     earned: hasFullDeepDive,
   },
   {
-    id: 'interview-ready',
-    name: 'Interview Ready',
-    description: 'Solve 10 interview coding challenges.',
-    icon: '💼',
-    earned: (lessons, p) => interviewChallengesSolved(lessons, p) >= 10,
+    id: 'pythonista',
+    name: 'Pythonista',
+    description: 'Solve 10 mastery coding challenges.',
+    icon: '🐍',
+    earned: (lessons, p) => masteryChallengesSolved(lessons, p) >= 10,
   },
   {
     id: 'loop-master',

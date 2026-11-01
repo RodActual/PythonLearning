@@ -52,7 +52,7 @@ def passes(step, code) -> bool:
 
 problems = []
 counts = {"code": 0, "predict": 0, "quiz": 0, "text": 0}
-tracks = {"deep-dive": 0, "interview": 0}
+tracks = {"deep-dive": 0, "mastery": 0}
 unit_ids = {u["id"] for u in COURSE["units"]}
 
 about = COURSE.get("about") or {}
@@ -71,15 +71,15 @@ for lesson in COURSE["lessons"]:
         if not lesson.get(key):
             problems.append(f"{lesson['id']}: missing {key}")
     seen_ids = set()
-    # Optional sections follow the core: core steps, then deep-dive, then interview.
-    rank = {None: 0, "deep-dive": 1, "interview": 2}
+    # Optional sections follow the core: core steps, then deep-dive, then mastery.
+    rank = {None: 0, "deep-dive": 1, "mastery": 2}
     prev_rank = 0
     for i, step in enumerate(lesson["steps"]):
         track = step.get("track")
         if track not in rank:
             problems.append(f"{lesson['id']} step {i + 1}: unknown track {track!r}")
         elif rank[track] < prev_rank:
-            problems.append(f"{lesson['id']} step {i + 1}: core steps come first, then deep-dive, then interview")
+            problems.append(f"{lesson['id']} step {i + 1}: core steps come first, then deep-dive, then mastery")
         else:
             prev_rank = rank[track]
             if track:
@@ -156,7 +156,7 @@ for lesson in COURSE["lessons"]:
 total = sum(counts.values())
 print(f"{len(COURSE['units'])} units, {len(COURSE['lessons'])} lessons, {total} steps: "
       f"{counts['text']} text, {counts['quiz']} quiz, {counts['predict']} predict-the-output, {counts['code']} coding"
-      f" ({tracks['deep-dive']} deep-dive, {tracks['interview']} interview)")
+      f" ({tracks['deep-dive']} deep-dive, {tracks['mastery']} mastery)")
 if problems:
     print(f"\n{len(problems)} problem(s):")
     for p in problems:

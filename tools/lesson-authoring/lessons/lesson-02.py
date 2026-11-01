@@ -61,7 +61,7 @@ T("Naming conventions",
   "Python's official style guide, **PEP 8**, says: `snake_case` for normal variables, `UPPER_CASE` for constants (values meant never to change, like `MAX_LIVES = 3`), and descriptive names over single letters. Never reuse a built-in name like `str`, `list`, `print` or `type` as a variable: it hides the built-in.",
   "MAX_LIVES = 3          # a constant, by convention\nplayer_name = 'Sam'    # snake_case\n\n# str = 'oops'         # this would hide str()...\n# print(str(5))        # ...so this would then crash",
   "Python doesn't enforce constants or naming styles; they're agreements between programmers. Built-in names, though, are ordinary names: assigning to `str` points it at your value, so the original `str()` function is no longer reachable by that name.",
-  "Readable code that other developers (and interviewers) can follow quickly, and avoiding a confusing class of bugs where a built-in suddenly stops working."),
+  "Readable code that other developers (and future you) can follow quickly, and avoiding a confusing class of bugs where a built-in suddenly stops working."),
 Q("After which line would `str(5)` stop working?", ["str = 'hello'", "my_str = 'hello'", "STR_LEN = 5"], "str = 'hello'",
   "Assigning to `str` reuses the built-in's name, so `str` now means the text 'hello', and calling it raises a TypeError. The other names are different words and don't affect `str`."),
 T("None: the value for \"nothing yet\"",
@@ -97,8 +97,8 @@ C("Build a hostname",
     "a = 'Ice'\nb = 'cream'\nprint(a + ' ' + b)  # Ice cream")]),
 ]
 
-INTERVIEW = [
-Q("Interview question: Python is \"dynamically typed\". What does that mean?",
+MASTERY = [
+Q("Concept check: Python is \"dynamically typed\". What does that mean?",
   ["Types belong to values; a variable can hold any type and you never declare it", "Python has no types", "You must declare each variable's type before using it"],
   "Types belong to values; a variable can hold any type and you never declare it",
   "`x = 5` then `x = 'five'` is allowed: the name just moves to a value of a different type. Values still have strict types, which is why `'5' + 5` is an error. Languages like Java are statically typed: you declare `int x` and it can only ever hold ints.",
