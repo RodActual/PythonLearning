@@ -1,15 +1,6 @@
 import type { CodeStep, Lesson, Unit, UserProgress } from '../types/lesson';
 import { isMasteryChallenge, isStepDone } from './progress';
 
-/** The part of the language each unit's mastery practice covers. */
-const MASTERY_AREAS: Record<string, string> = {
-  foundations: 'Core syntax: types, strings and control flow',
-  'functions-data': 'Functions, collections and comprehensions',
-  'robust-code': 'Exceptions, the standard library, files and tests',
-  objects: 'Classes, inheritance and the data model',
-  toolkit: 'Serialization, dates and generators',
-};
-
 export interface UnitMastery {
   unit: Unit;
   area: string;
@@ -29,7 +20,7 @@ export function masteryByUnit(units: Unit[], lessons: Lesson[], progress: UserPr
         if (isStepDone(progress, l.id, s.id)) done++;
       }
     }
-    return { unit, area: MASTERY_AREAS[unit.id] ?? unit.title, done, total };
+    return { unit, area: unit.mastery_area, done, total };
   });
 }
 

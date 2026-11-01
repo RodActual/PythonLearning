@@ -60,7 +60,7 @@ for key in ("tagline", "outcomes", "paths", "next_steps"):
     if not about.get(key):
         problems.append(f"about: missing {key}")
 for unit in COURSE["units"]:
-    for key in ("prepares", "applications"):
+    for key in ("prepares", "applications", "mastery_area"):
         if not unit.get(key):
             problems.append(f"unit {unit['id']}: missing {key}")
 

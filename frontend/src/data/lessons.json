@@ -26,7 +26,7 @@
       {
         "icon": "🧰",
         "title": "The standard library",
-        "description": "Reach for collections, itertools, pathlib, json, datetime, statistics and csv before writing your own version."
+        "description": "Reach for collections, pathlib, json, datetime, statistics and csv before writing your own version."
       },
       {
         "icon": "🧪",
@@ -51,7 +51,8 @@
         "A tip calculator or unit converter",
         "A number-guessing game",
         "A text cleaner that tidies up names and messages"
-      ]
+      ],
+      "mastery_area": "Core syntax: types, strings and control flow"
     },
     {
       "id": "functions-data",
@@ -68,7 +69,8 @@
         "A contact book or to-do list",
         "A word-frequency counter",
         "A leaderboard that ranks players by score"
-      ]
+      ],
+      "mastery_area": "Functions, collections and comprehensions"
     },
     {
       "id": "robust-code",
@@ -85,7 +87,8 @@
         "A log-file analyzer",
         "A script that renames or sorts files",
         "A journal app that saves entries to disk"
-      ]
+      ],
+      "mastery_area": "Exceptions, the standard library, files and tests"
     },
     {
       "id": "objects",
@@ -101,7 +104,8 @@
         "An inventory or library system",
         "A bank account simulator",
         "Characters and items for a text adventure"
-      ]
+      ],
+      "mastery_area": "Classes, inheritance and the data model"
     },
     {
       "id": "toolkit",
@@ -118,7 +122,8 @@
         "A habit or expense tracker that saves to JSON",
         "A due-date reminder tool",
         "A grade book or quiz app backed by tests"
-      ]
+      ],
+      "mastery_area": "Serialization, dates and generators"
     }
   ],
   "lessons": [
@@ -8995,7 +9000,7 @@
           "content": "Real projects run tests with a tool. **pytest** finds files named `test_*.py`, runs every `test_` function, and reports which failed and why. `pytest.raises(ValueError)` checks an error is raised. **doctest** (built in) runs examples written inside docstrings and checks their output. Both run from a terminal, so here we call test functions by hand.",
           "example_code": "# test_prices.py, run with:  pytest\nimport pytest\nfrom prices import apply_discount\n\ndef test_quarter_off():\n    assert apply_discount(200, 25) == 150\n\ndef test_negative_percent():\n    with pytest.raises(ValueError):\n        apply_discount(200, -5)",
           "how": "pytest rewrites your plain `assert` lines so a failure shows the actual values on both sides, which is why it needs no special assert methods.",
-          "use": "pytest is the most widely used Python test tool. You'll see it in almost every open-source project and most job descriptions that mention testing."
+          "use": "pytest is the most widely used Python test tool. You'll see it in almost every open-source Python project."
         },
         {
           "id": "d10",

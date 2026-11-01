@@ -5,7 +5,7 @@ import CodeSandbox from './CodeSandbox';
 import Quiz from './Quiz';
 import CodeBlock from './CodeBlock';
 import RichText from './RichText';
-import type { CourseAbout, Lesson, Step, Unit } from '../types/lesson';
+import type { CourseAbout, Lesson, Step, StepTrack, Unit } from '../types/lesson';
 import { stepReward } from '../game/xp';
 import { useDocumentTitle, useFocusOnMount, usePrefersReducedMotion } from '../a11y/hooks';
 
@@ -32,10 +32,10 @@ interface StepViewProps {
 const stepLabel = (step: Step) =>
   step.type === 'text' ? 'Lesson' : step.type === 'code' ? 'Coding challenge' : step.code ? 'Predict the output' : 'Quiz';
 
-const TRACK_LABEL = { 'deep-dive': 'Deep dive', mastery: 'Mastery' } as const;
+const TRACK_LABEL: Record<StepTrack, string> = { 'deep-dive': 'Deep dive', mastery: 'Mastery' };
 
 /** Introduces an optional section on its first step. */
-function TrackBanner({ track, count, onBackToMenu }: { track: 'deep-dive' | 'mastery'; count: number; onBackToMenu: () => void }) {
+function TrackBanner({ track, count, onBackToMenu }: { track: StepTrack; count: number; onBackToMenu: () => void }) {
   return (
     <aside className={`track-banner track-${track}`} aria-label={`${TRACK_LABEL[track]}, optional`}>
       <p className="track-title">

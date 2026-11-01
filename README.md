@@ -37,7 +37,7 @@ Lessons live in `frontend/src/data/lessons.json`: an `about` block, a list of `u
 
 Learner-facing guidance about what the course prepares people for:
 - `about`: `tagline`, `outcomes`, `paths` (areas of language mastery, e.g. Pythonic style, how Python works, the standard library), and `next_steps`. Shown at the top of the map; `paths` and `next_steps` also appear on the course-complete screen.
-- Each unit: `prepares` (skills) and `applications` (example programs). Shown in the unit header and when a unit is finished.
+- Each unit: `prepares` (skills) and `applications` (example programs). Shown in the unit header and when a unit is finished. `mastery_area` labels the unit's row on the map's "Master the language" goal card.
 - Each lesson: `why` (shown before step 1) and `unlocks` (shown on the completion screen).
 
 Step types:
@@ -49,7 +49,7 @@ Step types:
 
 Every coding step needs a reference solution in `frontend/tests/solutions.json`, keyed `lessonId:stepId`. Run `npm run check:lessons` (needs Python) after editing: it runs every solution, confirms starters don't already pass, checks that predict-the-output answers match what the code really prints, and checks that every explanation has `how`/`use` and every exercise has 1-2 support tiers whose examples run cleanly and don't give away the solution.
 
-**Optional sections.** Any step can have `"track": "deep-dive"` or `"track": "mastery"`. Steps run in order: core steps (no `track`), then deep-dive steps, then mastery steps; the app and `check:lessons` reject any other order. By convention their ids are `d01`... and `i01`.... Deep dives add explanation and practice past the core; mastery practice covers explain-the-concept questions, Big-O questions (introduced in the Loops deep dive), classic coding problems and debug-this-code exercises. Each optional section starts with a banner, and finished lessons resume at the first undone optional step.
+**Optional sections.** Any step can have `"track": "deep-dive"` or `"track": "mastery"`. Steps run in order: core steps (no `track`), then deep-dive steps, then mastery steps; the app and `check:lessons` reject any other order. By convention their ids are `d01`... and `i01`.... The `i` prefix is left over from the old interview track; keep it, because progress is saved by step id and renaming would erase it. Deep dives add explanation and practice past the core; mastery practice covers explain-the-concept questions, Big-O questions (introduced in the Loops deep dive), classic coding problems and debug-this-code exercises. Each optional section starts with a banner, and finished lessons resume at the first undone optional step.
 
 **Progress is saved by lesson id and step id.** Every step has a permanent `id` (unique within its lesson). You can add, remove, and reorder steps freely; never rename a lesson id, and never change or reuse a step id. Progress saved before step ids existed is migrated automatically using `frontend/src/data/legacy-step-ids.json`, which must never be edited.
 

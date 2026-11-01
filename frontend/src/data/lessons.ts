@@ -51,8 +51,8 @@ function validate(data: unknown): Course {
   }
   const units = course.units as Unit[];
   for (const u of units) {
-    if (!Array.isArray(u.prepares) || !Array.isArray(u.applications)) {
-      throw new Error(`unit ${u.id}: missing "prepares" or "applications"`);
+    if (!Array.isArray(u.prepares) || !Array.isArray(u.applications) || typeof u.mastery_area !== 'string' || !u.mastery_area) {
+      throw new Error(`unit ${u.id}: missing "prepares", "applications" or "mastery_area"`);
     }
   }
   const unitIds = new Set(units.map((u) => u.id));

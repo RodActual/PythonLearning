@@ -1,7 +1,7 @@
 """Appends deep-dive and mastery steps from expand/lessons/*.py into lessons.json.
 
 Each lesson file defines DEEP and MASTERY lists built with T/Q/C below. Step ids are
-d01.. (deep-dive) and i01.. (mastery). Expected output is computed by running the
+d01.. (deep-dive) and i01.. (mastery; the i is from the old interview track and stays, since progress is keyed by step id). Expected output is computed by running the
 reference solution, which is also written to tests/solutions.json. Re-running replaces
 a lesson's optional steps, so files can be edited and rebuilt.
 Usage: python3 build.py <frontend dir> [lesson ids...]

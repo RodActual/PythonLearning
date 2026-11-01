@@ -90,6 +90,8 @@ export interface Unit {
   prepares: string[];
   /** Example programs a learner could build after the unit. */
   applications: string[];
+  /** The part of the language this unit's mastery practice covers (goal card row label). */
+  mastery_area: string;
 }
 
 export interface CareerPath {
