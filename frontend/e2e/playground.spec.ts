@@ -37,8 +37,10 @@ test('every playground example runs without errors', async ({ page }) => {
   test.setTimeout(120_000);
   await page.goto('/');
   await page.locator('.main-nav').getByRole('button', { name: /Playground/ }).click();
-  const names = await page.getByLabel('Start from an example').locator('option').allInnerTexts();
-  expect(names.length).toBeGreaterThan(3);
+  // The Playground is lazy-loaded and allInnerTexts() doesn't wait, so wait for the options first.
+  const options = page.getByLabel('Start from an example').locator('option');
+  await expect(options.nth(3)).toBeAttached();
+  const names = await options.allInnerTexts();
   page.on('dialog', (d) => d.accept());
   for (const name of names) {
     await page.getByLabel('Start from an example').selectOption(name);
