@@ -1162,11 +1162,12 @@ button[aria-disabled='true'] {
   position: relative;
   display: grid;
   place-items: center;
-  width: 58px;
-  height: 58px;
-  border-radius: 16px;
+  /* Corners must stay inside the ring's inner edge (~33px from center), even with the 4px is-next glow. */
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
   font-family: var(--mono);
-  font-size: 1.35rem;
+  font-size: 1.2rem;
   font-weight: 800;
   background: var(--surface-2);
   color: var(--muted);
