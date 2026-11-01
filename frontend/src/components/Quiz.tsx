@@ -12,12 +12,24 @@ interface QuizProps {
 
 const LETTERS = 'ABCDEFGH';
 
+/** Fisher-Yates shuffle into a new array, so the answer's position varies. */
+function shuffled<T>(items: readonly T[]): T[] {
+  const out = [...items];
+  for (let i = out.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [out[i], out[j]] = [out[j], out[i]];
+  }
+  return out;
+}
+
 /** Multiple-choice question (or predict-the-output when the step has code). */
 export default function Quiz({ step, rewardText, onSolved }: QuizProps) {
   const questionId = useId();
   const [selected, setSelected] = useState<string | null>(null);
   const [solved, setSolved] = useState(false);
   const [attempts, setAttempts] = useState(0);
+  // New order on every mount; callers key Quiz per step, so each showing reshuffles.
+  const [options] = useState(() => shuffled(step.options));
 
   const choose = (option: string) => {
     if (solved) return;
@@ -51,7 +63,7 @@ export default function Quiz({ step, rewardText, onSolved }: QuizProps) {
       )}
       <p id={questionId} className="question-text"><RichText text={step.question} /></p>
       <div className="options-grid" role="group" aria-labelledby={questionId}>
-        {step.options.map((option, i) => {
+        {options.map((option, i) => {
           const isSelected = selected === option;
           const state = isSelected ? (solved ? 'correct' : 'incorrect') : '';
           return (
