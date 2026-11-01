@@ -1,5 +1,5 @@
 import type { Lesson, Step, UserProgress } from '../types/lesson';
-import { firstTrySet, isLessonComplete } from './progress';
+import { firstTrySet, isCoreDone } from './progress';
 
 // XP is derived from saved progress, never stored, so replays can't farm it
 // and resetting a lesson removes exactly what it earned.
@@ -15,7 +15,8 @@ export function lessonXp(lesson: Lesson, progress: UserProgress): number {
     if (!done.has(step.id)) continue;
     xp += STEP_XP[step.type] + (firstTry.has(step.id) ? FIRST_TRY_BONUS[step.type] : 0);
   }
-  if (isLessonComplete(progress, lesson)) xp += LESSON_COMPLETE_BONUS;
+  // Testing out marks a lesson complete but earns no XP; the bonus needs the core steps done.
+  if (isCoreDone(progress, lesson)) xp += LESSON_COMPLETE_BONUS;
   return xp;
 }
 

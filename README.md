@@ -9,6 +9,8 @@ A basic application that teaches Python.
 
 ## Review and Playground
 - **Review** (`src/game/review.ts`): every completed quiz and coding challenge becomes a spaced-repetition card (Leitner boxes). Right on the first try moves a card up a box (next review in 3, 7, 14, then 30 days); a miss sends it back to tomorrow. Sessions show up to 10 due cards, at most 3 of them coding challenges, mixed across lessons. The schedule is saved in the progress document's `review` field. "Practice anyway" never changes the schedule.
+- **Pretest** (`src/game/pretest.ts`, `src/components/PretestView.tsx`): each unit with unfinished lessons has a "Take the pretest" button. It asks 2 core quizzes and 1 coding challenge (when the lesson has them) from each unfinished lesson. Every question right (quizzes on the first try, challenges on any run) tests out of that lesson: it counts as complete for the map, trophies and the course, but earns no XP until its core steps are actually done. "I don't know this yet" counts as a miss. Each lesson's latest result is saved in the progress document's `pretest` field (`lessonId -> { date, missed }`); resetting a lesson clears it.
+- **What still needs work** (`src/components/NeedsWork.tsx`): a summary on the map, and on the pretest results for that unit, listing each unfinished lesson by unit with its pretest misses and a button to practice the first one.
 - **Playground** (`src/components/Playground.tsx`): a free-form editor with runnable examples (`src/data/playground-examples.ts`). Code is saved in the browser's localStorage per account; no grading or XP.
 
 ## Game layer

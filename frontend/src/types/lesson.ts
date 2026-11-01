@@ -123,6 +123,15 @@ export interface ReviewCard {
   due: string;
 }
 
+/**
+ * One lesson's latest pretest result. `missed` lists the step ids answered wrong or skipped;
+ * an empty list means the learner tested out of the lesson.
+ */
+export interface PretestResult {
+  date: string;
+  missed: string[];
+}
+
 /** Learner progress as the app uses it. */
 export interface UserProgress {
   done: DoneSteps;
@@ -130,4 +139,6 @@ export interface UserProgress {
   firstTry: DoneSteps;
   /** "lessonId:stepId" -> review schedule. */
   review: Record<string, ReviewCard>;
+  /** lessonId -> latest pretest result. */
+  pretest: Record<string, PretestResult>;
 }
