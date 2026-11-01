@@ -43,6 +43,10 @@ export async function expectAccessible(page: Page) {
   expect(results.violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.target.join(' ')).join(', ')}`)).toEqual([]);
 }
 
+/** Clicks the quiz option whose whole text is `text`; options are shuffled, so never match by position or substring. */
+export const chooseOption = (page: Page, text: string) =>
+  page.locator('.option-text').getByText(text, { exact: true }).click();
+
 export const nextButton = (page: Page) => page.locator('.lesson-nav-controls .primary-button');
 
 /** Answers an exercise's check-in with "Feeling good" so the code editor appears. */

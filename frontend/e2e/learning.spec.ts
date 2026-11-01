@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { allIds, lesson, nextButton, passCheckIn, solutions, store } from './helpers';
+import { allIds, chooseOption, lesson, nextButton, passCheckIn, solutions, store } from './helpers';
 
 test('complete lesson 1: quizzes, hints, predict-the-output, and real Python', async ({ page }) => {
   test.setTimeout(300_000);
@@ -12,10 +12,10 @@ test('complete lesson 1: quizzes, hints, predict-the-output, and real Python', a
     if (step.type === 'quiz') {
       const wrong = step.options!.find((o) => o !== step.answer);
       if (i === 1 && wrong) {
-        await page.locator('.option-button', { hasText: wrong }).click();
+        await chooseOption(page, wrong);
         await expect(page.locator('.feedback')).toContainText('Not quite');
       }
-      await page.locator('.option-button').filter({ hasText: new RegExp(`^.?${escape(step.answer!)}`) }).first().click();
+      await chooseOption(page, step.answer!);
       await expect(page.locator('.feedback')).toContainText(/Correct|Thanks/);
     } else if (step.type === 'code') {
       await passCheckIn(page);
@@ -113,7 +113,3 @@ test('a failed progress listener shows a message, not an empty map', async ({ pa
   await expect(page.getByRole('alert')).toContainText("couldn't be loaded");
   await expect(page.locator('.map-node')).toHaveCount(0);
 });
-
-function escape(s: string) {
-  return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}
