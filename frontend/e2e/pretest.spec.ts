@@ -90,8 +90,8 @@ test('missed questions are listed in what still needs work, with a way to practi
   const index = lesson('lesson-01').steps.findIndex((s) => s.id === missed[0]);
   await expect(page.locator('.step-kicker')).toContainText(`Step ${index + 1} of`);
 
-  // The map's summary opens once a pretest has been taken.
-  await page.locator('.main-nav').getByRole('button', { name: /Learning path/ }).click();
-  await expect(page.locator('.skill-map-view .needs-work')).toHaveAttribute('open', '');
-  await expect(page.locator('.skill-map-view .work-missed')).toHaveCount(1);
+  // The Progress page's summary opens once a pretest has been taken.
+  await page.locator('.main-nav').getByRole('link', { name: /Progress/ }).click();
+  await expect(page.locator('.progress-view .needs-work')).toHaveAttribute('open', '');
+  await expect(page.locator('.progress-view .work-missed')).toHaveCount(1);
 });

@@ -72,7 +72,7 @@ test('nothing due shows the next date, and practice leaves the schedule alone', 
   await seedProgress(page, { version: 2, done: { 'lesson-01': allIds('lesson-01') }, first_try_ids: {}, review });
   await page.goto('/');
   await expect(page.locator('.review-card')).toHaveCount(0);
-  await page.locator('.main-nav').getByRole('button', { name: /Review/ }).click();
+  await page.locator('.main-nav').getByRole('link', { name: /Review/ }).click();
   await expect(page.locator('.review-count')).toContainText("You're all caught up. Next review in 7 days.");
   await page.getByRole('button', { name: 'Practice anyway' }).click();
   await expect(page.locator('.review-session .chip-next')).toHaveText('Practice');
@@ -83,7 +83,7 @@ test('nothing due shows the next date, and practice leaves the schedule alone', 
 
 test('with no finished steps, review explains how to get cards', async ({ page }) => {
   await page.goto('/');
-  await page.locator('.main-nav').getByRole('button', { name: /Review/ }).click();
+  await page.locator('.main-nav').getByRole('link', { name: /Review/ }).click();
   await expect(page.locator('.review-empty')).toContainText('Nothing to review yet');
   await expectAccessible(page);
 });

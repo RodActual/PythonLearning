@@ -4,9 +4,9 @@ import { expectAccessible } from './helpers';
 test('playground runs code, loads examples, and remembers code', async ({ page }) => {
   test.setTimeout(90_000);
   await page.goto('/');
-  await page.locator('.main-nav').getByRole('button', { name: /Playground/ }).click();
+  await page.locator('.main-nav').getByRole('link', { name: /Playground/ }).click();
   await expect(page.getByRole('heading', { name: 'Playground' })).toBeFocused();
-  await expect(page.locator('.main-nav').getByRole('button', { name: /Playground/ })).toHaveAttribute('aria-current', 'page');
+  await expect(page.locator('.main-nav').getByRole('link', { name: /Playground/ })).toHaveAttribute('aria-current', 'page');
   await expectAccessible(page);
 
   await page.locator('textarea.code-input').fill('total = sum(range(1, 101))\nprint(total)');
@@ -29,14 +29,14 @@ test('playground runs code, loads examples, and remembers code', async ({ page }
 
   // Code survives a reload.
   await page.reload();
-  await page.locator('.main-nav').getByRole('button', { name: /Playground/ }).click();
+  await page.locator('.main-nav').getByRole('link', { name: /Playground/ }).click();
   await expect(page.locator('textarea.code-input')).toHaveValue(/FizzBuzz/);
 });
 
 test('every playground example runs without errors', async ({ page }) => {
   test.setTimeout(120_000);
   await page.goto('/');
-  await page.locator('.main-nav').getByRole('button', { name: /Playground/ }).click();
+  await page.locator('.main-nav').getByRole('link', { name: /Playground/ }).click();
   // The Playground is lazy-loaded and allInnerTexts() doesn't wait, so wait for the options first.
   const options = page.getByLabel('Start from an example').locator('option');
   await expect(options.nth(3)).toBeAttached();

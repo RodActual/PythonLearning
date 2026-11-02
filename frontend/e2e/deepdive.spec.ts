@@ -92,7 +92,7 @@ test('the goal card counts solved mastery challenges and opens the next one', as
     .filter((x) => x.unit === l.unit)
     .reduce((n, x) => n + x.steps.filter((s) => s.track === 'mastery' && s.type === 'code').length, 0);
   await seedProgress(page, { version: 2, done: { 'lesson-01': [mastery[0].id] }, first_try_ids: {} });
-  await page.goto('/');
+  await page.goto('/#/progress');
   const card = page.locator('.goal-card');
   await expect(card).toContainText('Master the language');
   await expect(card.locator('.goal-row').first().locator('.goal-count')).toHaveText(`1/${unitTotal}`);

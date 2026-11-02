@@ -15,7 +15,7 @@ const TrophyCase = ({ earned, onBack }: TrophyCaseProps) => {
     <div className="trophy-case">
       <div className="top-controls">
         <button type="button" className="secondary-button" onClick={onBack}>
-          <span aria-hidden="true">← </span>Back to map
+          <span aria-hidden="true">← </span>Back
         </button>
       </div>
       <h2 ref={headingRef} tabIndex={-1}>Trophy Case</h2>

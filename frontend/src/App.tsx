@@ -29,6 +29,8 @@ import Hud from './components/Hud';
 import Toasts, { type Toast } from './components/Toasts';
 import ErrorBoundary from './components/ErrorBoundary';
 import SaveStatus, { type SaveState } from './components/SaveStatus';
+import NotFound from './components/NotFound';
+import { toHash, useHashRoute, type Route } from './router';
 
 // Loaded on demand so the first page (sign-in and map) downloads less.
 const StepView = lazy(() => import('./components/StepView'));
@@ -36,17 +38,17 @@ const TrophyCase = lazy(() => import('./components/TrophyCase'));
 const ReviewView = lazy(() => import('./components/ReviewView'));
 const Playground = lazy(() => import('./components/Playground'));
 const PretestView = lazy(() => import('./components/PretestView'));
+const ProgressView = lazy(() => import('./components/ProgressView'));
 
 const USER_PROGRESS_COLLECTION = 'user_progress';
 const TOAST_MS = 6000;
 
-type View =
-  | { name: 'map' }
-  | { name: 'trophies' }
-  | { name: 'review' }
-  | { name: 'playground' }
-  | { name: 'pretest'; unitId: string }
-  | { name: 'lesson'; lessonId: string };
+const NAV: { route: Route; icon: string; label: string; covers: Route['name'][] }[] = [
+  { route: { name: 'home' }, icon: '🗺️', label: 'Learning path', covers: ['home', 'lesson', 'pretest'] },
+  { route: { name: 'review' }, icon: '🔁', label: 'Review', covers: ['review'] },
+  { route: { name: 'progress' }, icon: '📈', label: 'Progress', covers: ['progress', 'trophies'] },
+  { route: { name: 'playground' }, icon: '🧪', label: 'Playground', covers: ['playground'] },
+];
 
 const Loading = () => (
   <div className="loading-state" role="status">
@@ -71,8 +73,7 @@ function App() {
   const [loadFailed, setLoadFailed] = useState(false);
   // The signed-in user whose progress has arrived, so a repeat sign-in callback doesn't reset the app.
   const readyUid = useRef<string | null>(null);
-  const [view, setView] = useState<View>({ name: 'map' });
-  const [stepIndex, setStepIndex] = useState(0);
+  const [route, navigate] = useHashRoute();
   const [progress, setProgress] = useState<UserProgress>(EMPTY_PROGRESS);
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [saveState, setSaveState] = useState<SaveState>('idle');
@@ -83,8 +84,22 @@ function App() {
 
   const summary = summarize(lessons, progress);
   const reviewsDue = dueItems(reviewItems(lessons, progress)).length;
-  const currentLesson = view.name === 'lesson' ? getLesson(view.lessonId) : undefined;
-  const pretestUnit = view.name === 'pretest' ? getUnit(view.unitId) : undefined;
+  const currentLesson = route.name === 'lesson' ? getLesson(route.lessonId) : undefined;
+  const pretestUnit = route.name === 'pretest' ? getUnit(route.unitId) : undefined;
+  const homeUnit = route.name === 'home' && route.unitId ? getUnit(route.unitId) : undefined;
+  // The URL step is 1-based; one past the last step is the completion screen.
+  const stepIndex =
+    currentLesson && route.name === 'lesson' && route.step
+      ? Math.min(route.step - 1, currentLesson.steps.length)
+      : currentLesson
+        ? resumeIndex(progress, currentLesson)
+        : 0;
+  // Ids in the URL that match nothing (an old bookmark or a typo) get a "not found" page.
+  const notFound =
+    route.name === 'not-found' ||
+    (route.name === 'lesson' && (!currentLesson || (route.step ?? 0) > currentLesson.steps.length + 1)) ||
+    (route.name === 'pretest' && !pretestUnit) ||
+    (route.name === 'home' && !!route.unitId && !homeUnit);
 
   const applyProgress = (next: UserProgress) => {
     progressRef.current = next;
@@ -155,9 +170,10 @@ function App() {
       setSaveState('idle');
 
       if (!currentUser) {
+        // Signing out drops the old place, so the next sign-in starts on the map, not someone's lesson step.
+        if (readyUid.current) navigate({ name: 'home' }, { replace: true });
         readyUid.current = null;
         applyProgress(EMPTY_PROGRESS);
-        setView({ name: 'map' });
         setLoadFailed(false);
         setLoading(false);
         return;
@@ -214,7 +230,7 @@ function App() {
       unsubscribeProgress?.();
       unsubscribeAuth();
     };
-  }, []);
+  }, [navigate]);
 
   // --- PROGRESS SAVING (each step counts once, so XP can't be farmed by replaying) ---
   const completeStep = useCallback(
@@ -278,7 +294,6 @@ function App() {
     if (!window.confirm(`Reset your progress for ${title}? The XP from this lesson will be removed.`)) return;
 
     applyProgress(withoutLesson(progressRef.current, lessonId));
-    if (currentLesson?.id === lessonId) setStepIndex(0);
     write(
       updateDoc(
         doc(db, USER_PROGRESS_COLLECTION, user.uid),
@@ -298,56 +313,94 @@ function App() {
     if (!window.confirm('This permanently erases ALL your progress, XP, and trophies. Are you sure?')) return;
 
     applyProgress(EMPTY_PROGRESS);
-    setStepIndex(0);
     // No merge: replaces the whole document, including any old-format fields.
     write(setDoc(doc(db, USER_PROGRESS_COLLECTION, user.uid), toDoc(EMPTY_PROGRESS)), 'reset all');
   };
 
   // --- NAVIGATION ---
+  // A lesson URL without a step resolves to where the learner left off, so refresh and Back land there.
+  // So does a link to the completion screen of a lesson whose core isn't done, so a URL can't fake a finish.
+  useEffect(() => {
+    if (loading || !user || route.name !== 'lesson' || !currentLesson) return;
+    const fakeFinish = route.step === currentLesson.steps.length + 1 && !isCoreDone(progressRef.current, currentLesson);
+    if (!route.step || fakeFinish) {
+      navigate({ ...route, step: resumeIndex(progressRef.current, currentLesson) + 1 }, { replace: true });
+    }
+  }, [loading, user, route, currentLesson, navigate]);
+
+  // New page: start at the top. Steps within a lesson and unit switches on the map handle their own focus.
+  const pageKey =
+    route.name === 'lesson'
+      ? `lesson:${route.lessonId}`
+      : route.name === 'pretest'
+        ? `pretest:${route.unitId}`
+        : route.name === 'home'
+          ? `home:${route.unitId ?? ''}`
+          : route.name;
+  // The map keeps one error boundary across unit switches, so a unit change doesn't remount it.
+  const boundaryKey = route.name === 'home' ? 'home' : pageKey;
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pageKey]);
+
   const openLesson = (lessonId: string) => {
     const lesson = getLesson(lessonId);
     if (!lesson) return;
-    setStepIndex(resumeIndex(progressRef.current, lesson));
-    setView({ name: 'lesson', lessonId });
+    navigate({ name: 'lesson', lessonId, step: resumeIndex(progressRef.current, lesson) + 1 });
   };
 
   const openStep = (lessonId: string, stepId: string) => {
     const lesson = getLesson(lessonId);
     const index = lesson?.steps.findIndex((s) => s.id === stepId) ?? -1;
     if (!lesson || index === -1) return;
-    setStepIndex(index);
-    setView({ name: 'lesson', lessonId });
+    navigate({ name: 'lesson', lessonId, step: index + 1 });
+  };
+
+  // Steps replace the history entry, so Back leaves the lesson instead of stepping through it.
+  const goToStep = (index: number) => {
+    if (!currentLesson) return;
+    navigate({ name: 'lesson', lessonId: currentLesson.id, step: Math.max(0, Math.min(index, currentLesson.steps.length)) + 1 }, { replace: true });
   };
 
   const nextStep = (firstTry: boolean) => {
     if (!currentLesson) return;
     const step = currentLesson.steps[stepIndex];
     if (step) completeStep(currentLesson.id, step.id, firstTry);
-    setStepIndex(Math.min(stepIndex + 1, currentLesson.steps.length));
+    goToStep(stepIndex + 1);
   };
 
-  const prevStep = () => setStepIndex((i) => Math.max(i - 1, 0));
+  const prevStep = () => goToStep(stepIndex - 1);
 
   /** Moves past an optional (deep-dive or mastery) step without completing it. */
-  const skipStep = () => {
-    if (!currentLesson) return;
-    setStepIndex(Math.min(stepIndex + 1, currentLesson.steps.length));
-  };
+  const skipStep = () => goToStep(stepIndex + 1);
 
   // Moves the cursor only; saved progress and XP are kept.
   const restartLesson = () => {
     if (window.confirm('Restart this lesson from step 1? Your saved progress and XP are kept.')) {
-      setStepIndex(0);
+      goToStep(0);
       window.scrollTo(0, 0);
     }
   };
 
   const startOver = () => {
-    setStepIndex(0);
+    goToStep(0);
     window.scrollTo(0, 0);
   };
 
-  const backToMap = () => setView({ name: 'map' });
+  const goHome = () => navigate({ name: 'home' });
+
+  // Trophies open from the stats bar on any page, so Back returns there (e.g. mid-lesson) instead of to Progress.
+  const trophiesOpenedInApp = useRef(false);
+  const openTrophies = () => {
+    trophiesOpenedInApp.current = true;
+    navigate({ name: 'trophies' });
+  };
+  const leaveTrophies = () => {
+    if (trophiesOpenedInApp.current) window.history.back();
+    else navigate({ name: 'progress' });
+  };
+  /** Back to the map, showing the unit the learner was working in. */
+  const backToUnit = (unitId: string) => () => navigate({ name: 'home', unitId });
 
   if (loading) return <Loading />;
   if (loadFailed) return <LoadFailed onSignOut={() => signOut(auth)} />;
@@ -365,7 +418,6 @@ function App() {
             {user && (
               <>
                 <span className="user-email">{user.email}</span>
-                <button type="button" onClick={resetAllProgress} className="danger-button">Reset all progress</button>
                 <button type="button" onClick={() => signOut(auth)} className="secondary-button">Log out</button>
               </>
             )}
@@ -374,34 +426,34 @@ function App() {
 
         {user && (
           <>
-            <Hud summary={summary} totalLessons={lessons.length} onOpenTrophies={() => setView({ name: 'trophies' })} />
+            <Hud summary={summary} totalLessons={lessons.length} onOpenTrophies={openTrophies} />
             <nav className="main-nav" aria-label="Main">
               <ul>
-                {(
-                  [
-                    ['map', '🗺️', 'Learning path'],
-                    ['review', '🔁', 'Review'],
-                    ['playground', '🧪', 'Playground'],
-                  ] as const
-                ).map(([name, icon, label]) => {
-                  const current = view.name === name || (name === 'map' && (view.name === 'lesson' || view.name === 'pretest'));
+                {NAV.map(({ route: target, icon, label, covers }) => {
+                  const current = covers.includes(route.name);
                   return (
-                    <li key={name}>
-                      <button
-                        type="button"
+                    <li key={label}>
+                      <a
+                        href={toHash(target)}
                         className={`nav-tab${current ? ' active' : ''}`}
                         aria-current={current ? 'page' : undefined}
-                        onClick={() => setView({ name } as View)}
+                        onClick={(e) => {
+                          // Let modified clicks open a new tab or window as usual.
+                          if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+                          // Always lands on the page's start, even when already there (e.g. back to the default unit).
+                          e.preventDefault();
+                          navigate(target);
+                        }}
                       >
                         <span aria-hidden="true">{icon} </span>
                         {label}
-                        {name === 'review' && reviewsDue > 0 && (
+                        {target.name === 'review' && reviewsDue > 0 && (
                           <span className="nav-badge">
                             {reviewsDue}
                             <span className="visually-hidden"> due</span>
                           </span>
                         )}
-                      </button>
+                      </a>
                     </li>
                   );
                 })}
@@ -412,16 +464,30 @@ function App() {
         )}
 
         <main id="main" className="app-main" tabIndex={-1}>
-          <ErrorBoundary key={view.name === 'lesson' ? view.lessonId : view.name === 'pretest' ? `pretest:${view.unitId}` : view.name} onReset={backToMap}>
+          <ErrorBoundary key={notFound ? 'not-found' : boundaryKey} onReset={goHome}>
             <Suspense fallback={<Loading />}>
               {!user ? (
                 <AuthForm />
-              ) : view.name === 'trophies' ? (
-                <TrophyCase earned={summary.badges} onBack={backToMap} />
-              ) : view.name === 'review' ? (
-                <ReviewView lessons={lessons} progress={progress} onResult={recordReview} onBackToMap={backToMap} />
-              ) : view.name === 'playground' ? (
-                <Playground uid={user.uid} onBackToMap={backToMap} />
+              ) : notFound ? (
+                <NotFound onGoHome={goHome} />
+              ) : route.name === 'trophies' ? (
+                <TrophyCase earned={summary.badges} onBack={leaveTrophies} />
+              ) : route.name === 'progress' ? (
+                <ProgressView
+                  about={about}
+                  units={units}
+                  lessons={lessons}
+                  progress={progress}
+                  summary={summary}
+                  onOpenLesson={openLesson}
+                  onOpenStep={openStep}
+                  onOpenTrophies={openTrophies}
+                  onResetAll={resetAllProgress}
+                />
+              ) : route.name === 'review' ? (
+                <ReviewView lessons={lessons} progress={progress} onResult={recordReview} onBackToMap={goHome} />
+              ) : route.name === 'playground' ? (
+                <Playground uid={user.uid} onBackToMap={goHome} />
               ) : pretestUnit ? (
                 <PretestView
                   unit={pretestUnit}
@@ -430,7 +496,7 @@ function App() {
                   onFinish={savePretest}
                   onOpenLesson={openLesson}
                   onOpenStep={openStep}
-                  onBackToMap={backToMap}
+                  onBackToMap={backToUnit(pretestUnit.id)}
                 />
               ) : currentLesson ? (
                 <StepView
@@ -446,7 +512,7 @@ function App() {
                   onNext={nextStep}
                   onSkip={skipStep}
                   onPrev={prevStep}
-                  onBackToMenu={backToMap}
+                  onBackToMenu={backToUnit(currentLesson.unit)}
                   onRestart={restartLesson}
                   onStartOver={startOver}
                 />
@@ -456,12 +522,12 @@ function App() {
                   units={units}
                   lessons={lessons}
                   progress={progress}
+                  selectedUnitId={homeUnit?.id}
                   onOpenLesson={openLesson}
-                  onOpenStep={openStep}
                   onResetLesson={resetLessonProgress}
                   reviewsDue={reviewsDue}
-                  onOpenReview={() => setView({ name: 'review' })}
-                  onOpenPretest={(unitId) => setView({ name: 'pretest', unitId })}
+                  onOpenReview={() => navigate({ name: 'review' })}
+                  onOpenPretest={(unitId) => navigate({ name: 'pretest', unitId })}
                 />
               )}
             </Suspense>
