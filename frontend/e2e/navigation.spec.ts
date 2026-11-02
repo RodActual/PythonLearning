@@ -77,7 +77,7 @@ test('the Progress page holds the goal, what needs work, trophies, and reset', a
   await page.getByRole('button', { name: 'View trophy case' }).click();
   await expect(page.getByRole('heading', { name: 'Trophy Case' })).toBeFocused();
   await expect(page.locator('.main-nav').getByRole('link', { name: /Progress/ })).toHaveAttribute('aria-current', 'page');
-  await page.getByRole('button', { name: /Back to progress/ }).click();
+  await page.getByRole('button', { name: 'Back', exact: true }).click();
   await expect(page).toHaveURL(/#\/progress$/);
 });
 
@@ -87,4 +87,26 @@ test('malformed or out-of-range links show not-found instead of crashing or a fa
   await page.goto(`/#/lesson/lesson-01/${lesson('lesson-01').steps.length + 2}`);
   await page.reload();
   await expect(page.getByRole('heading', { name: 'Page not found' })).toBeVisible();
+  // The completion screen's own URL resumes an unfinished lesson instead of showing "Lesson complete!".
+  await page.goto(`/#/lesson/lesson-01/${lesson('lesson-01').steps.length + 1}`);
+  await page.reload();
+  await expect(page.locator('.step-kicker')).toContainText('Step 1 of');
+  await expect(page).toHaveURL(/#\/lesson\/lesson-01\/1$/);
+});
+
+test('trophies opened mid-lesson go back to the same step', async ({ page }) => {
+  await page.goto('/#/lesson/lesson-01/3');
+  await expect(page.locator('.step-kicker')).toContainText('Step 3 of');
+  await page.locator('.hud-trophies').click();
+  await expect(page.getByRole('heading', { name: 'Trophy Case' })).toBeFocused();
+  await page.getByRole('button', { name: 'Back', exact: true }).click();
+  await expect(page.locator('.step-kicker')).toContainText('Step 3 of');
+});
+
+test('the Learning path tab returns to the top of the map', async ({ page }) => {
+  await page.goto('/#/unit/foundations');
+  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+  await page.locator('.main-nav').getByRole('link', { name: /Learning path/ }).click();
+  await expect(page).toHaveURL(/#\/$/);
+  expect(await page.evaluate(() => window.scrollY)).toBe(0);
 });

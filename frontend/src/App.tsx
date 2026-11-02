@@ -319,14 +319,26 @@ function App() {
 
   // --- NAVIGATION ---
   // A lesson URL without a step resolves to where the learner left off, so refresh and Back land there.
+  // So does a link to the completion screen of a lesson whose core isn't done, so a URL can't fake a finish.
   useEffect(() => {
-    if (!loading && user && route.name === 'lesson' && !route.step && currentLesson) {
+    if (loading || !user || route.name !== 'lesson' || !currentLesson) return;
+    const fakeFinish = route.step === currentLesson.steps.length + 1 && !isCoreDone(progressRef.current, currentLesson);
+    if (!route.step || fakeFinish) {
       navigate({ ...route, step: resumeIndex(progressRef.current, currentLesson) + 1 }, { replace: true });
     }
   }, [loading, user, route, currentLesson, navigate]);
 
   // New page: start at the top. Steps within a lesson and unit switches on the map handle their own focus.
-  const pageKey = route.name === 'lesson' ? `lesson:${route.lessonId}` : route.name === 'pretest' ? `pretest:${route.unitId}` : route.name;
+  const pageKey =
+    route.name === 'lesson'
+      ? `lesson:${route.lessonId}`
+      : route.name === 'pretest'
+        ? `pretest:${route.unitId}`
+        : route.name === 'home'
+          ? `home:${route.unitId ?? ''}`
+          : route.name;
+  // The map keeps one error boundary across unit switches, so a unit change doesn't remount it.
+  const boundaryKey = route.name === 'home' ? 'home' : pageKey;
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [pageKey]);
@@ -376,6 +388,17 @@ function App() {
   };
 
   const goHome = () => navigate({ name: 'home' });
+
+  // Trophies open from the stats bar on any page, so Back returns there (e.g. mid-lesson) instead of to Progress.
+  const trophiesOpenedInApp = useRef(false);
+  const openTrophies = () => {
+    trophiesOpenedInApp.current = true;
+    navigate({ name: 'trophies' });
+  };
+  const leaveTrophies = () => {
+    if (trophiesOpenedInApp.current) window.history.back();
+    else navigate({ name: 'progress' });
+  };
   /** Back to the map, showing the unit the learner was working in. */
   const backToUnit = (unitId: string) => () => navigate({ name: 'home', unitId });
 
@@ -403,7 +426,7 @@ function App() {
 
         {user && (
           <>
-            <Hud summary={summary} totalLessons={lessons.length} onOpenTrophies={() => navigate({ name: 'trophies' })} />
+            <Hud summary={summary} totalLessons={lessons.length} onOpenTrophies={openTrophies} />
             <nav className="main-nav" aria-label="Main">
               <ul>
                 {NAV.map(({ route: target, icon, label, covers }) => {
@@ -441,14 +464,14 @@ function App() {
         )}
 
         <main id="main" className="app-main" tabIndex={-1}>
-          <ErrorBoundary key={notFound ? 'not-found' : pageKey} onReset={goHome}>
+          <ErrorBoundary key={notFound ? 'not-found' : boundaryKey} onReset={goHome}>
             <Suspense fallback={<Loading />}>
               {!user ? (
                 <AuthForm />
               ) : notFound ? (
                 <NotFound onGoHome={goHome} />
               ) : route.name === 'trophies' ? (
-                <TrophyCase earned={summary.badges} onBack={() => navigate({ name: 'progress' })} />
+                <TrophyCase earned={summary.badges} onBack={leaveTrophies} />
               ) : route.name === 'progress' ? (
                 <ProgressView
                   about={about}
@@ -458,7 +481,7 @@ function App() {
                   summary={summary}
                   onOpenLesson={openLesson}
                   onOpenStep={openStep}
-                  onOpenTrophies={() => navigate({ name: 'trophies' })}
+                  onOpenTrophies={openTrophies}
                   onResetAll={resetAllProgress}
                 />
               ) : route.name === 'review' ? (
