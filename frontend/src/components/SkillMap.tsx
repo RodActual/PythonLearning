@@ -1,7 +1,6 @@
-import type { CourseAbout as About, Lesson, Unit, UserProgress } from '../types/lesson';
-import CourseAbout from './CourseAbout';
-import MasteryGoal from './MasteryGoal';
-import NeedsWork from './NeedsWork';
+import { useEffect, useRef } from 'react';
+import type { Lesson, Unit, UserProgress } from '../types/lesson';
+import { toHash } from '../router';
 import { pretestLessons } from '../game/pretest';
 import { lessonState, recommendedLessonIndex, type LessonState } from '../game/summary';
 import { lessonXp } from '../game/xp';
@@ -9,12 +8,12 @@ import { doneCount, isCoreDone, isStepDone, isTestedOut, resumeIndex } from '../
 import { useDocumentTitle, useFocusOnMount } from '../a11y/hooks';
 
 interface SkillMapProps {
-  about: About;
   units: Unit[];
   lessons: Lesson[];
   progress: UserProgress;
+  /** Unit chosen in the URL; otherwise the unit holding the next lesson. */
+  selectedUnitId?: string;
   onOpenLesson: (lessonId: string) => void;
-  onOpenStep: (lessonId: string, stepId: string) => void;
   onResetLesson: (lessonId: string) => void;
   reviewsDue: number;
   onOpenReview: () => void;
@@ -135,11 +134,36 @@ function UnitPath({ lessons, allLessons, progress, recommendedId, onOpenLesson, 
   );
 }
 
-const SkillMap = ({ about, units, lessons, progress, onOpenLesson, onOpenStep, onResetLesson, reviewsDue, onOpenReview, onOpenPretest }: SkillMapProps) => {
+const SkillMap = ({ units, lessons, progress, selectedUnitId, onOpenLesson, onResetLesson, reviewsDue, onOpenReview, onOpenPretest }: SkillMapProps) => {
   useDocumentTitle('Learning path');
   const headingRef = useFocusOnMount<HTMLHeadingElement>();
   const recommended = recommendedLessonIndex(lessons, progress);
   const next = recommended >= 0 ? lessons[recommended] : null;
+
+  const unitIndex = Math.max(0, units.findIndex((u) => u.id === (selectedUnitId ?? next?.unit)));
+  const unit = units[unitIndex];
+  const unitLessons = lessons.filter((l) => l.unit === unit.id);
+  const doneIn = (u: Unit) => lessons.filter((l) => l.unit === u.id && lessonState(l, progress) === 'completed').length;
+  const totalIn = (u: Unit) => lessons.filter((l) => l.unit === u.id).length;
+  const done = doneIn(unit);
+  const complete = done === unitLessons.length;
+  // The unit trophy needs every core worked through, not just tested out.
+  const trophy = unitLessons.every((l) => isCoreDone(progress, l));
+  const canTestOut = pretestLessons(unit, lessons, progress).length;
+  const headingId = `unit-${unit.id}`;
+  const prevUnit = units[unitIndex - 1];
+  const nextUnit = units[unitIndex + 1];
+
+  // Switching units moves focus to the new unit's heading, so keyboard and screen-reader users land on it.
+  const unitHeadingRef = useRef<HTMLHeadingElement>(null);
+  const shownUnit = useRef(unit.id);
+  useEffect(() => {
+    if (shownUnit.current === unit.id) return;
+    shownUnit.current = unit.id;
+    unitHeadingRef.current?.focus();
+  }, [unit.id]);
+
+  const unitLabel = (u: Unit) => `Unit ${units.indexOf(u) + 1}: ${u.title}`;
 
   return (
     <div className="skill-map-view">
@@ -173,74 +197,104 @@ const SkillMap = ({ about, units, lessons, progress, onOpenLesson, onOpenStep, o
         </div>
       )}
 
-      <MasteryGoal units={units} lessons={lessons} progress={progress} onOpenStep={onOpenStep} />
+      <nav className="unit-picker" aria-label="Units">
+        <ol>
+          {units.map((u, i) => {
+            const d = doneIn(u);
+            const n = totalIn(u);
+            const current = u.id === unit.id;
+            return (
+              <li key={u.id}>
+                <a
+                  href={toHash({ name: 'home', unitId: u.id })}
+                  className={`unit-tab${current ? ' active' : ''}${d === n ? ' done' : ''}`}
+                  aria-current={current ? 'page' : undefined}
+                >
+                  <span className="unit-tab-icon" aria-hidden="true">{u.icon}</span>
+                  <span className="unit-tab-text">
+                    <span className="unit-tab-meta">
+                      <span className="unit-tab-eyebrow">Unit {i + 1}</span>
+                      <span className="unit-tab-count">
+                        {d === n ? <span aria-hidden="true">✓ </span> : null}
+                        {d}/{n}
+                        <span className="visually-hidden"> lessons complete</span>
+                      </span>
+                    </span>
+                    <span className="unit-tab-title">{u.title}</span>
+                  </span>
+                  <span className="unit-tab-bar" aria-hidden="true">
+                    <span style={{ width: `${(d / n) * 100}%` }} />
+                  </span>
+                </a>
+              </li>
+            );
+          })}
+        </ol>
+      </nav>
 
-      <NeedsWork
-        units={units}
-        lessons={lessons}
-        progress={progress}
-        onOpenLesson={onOpenLesson}
-        onOpenStep={onOpenStep}
-        defaultOpen={Object.keys(progress.pretest).length > 0}
-      />
-
-      <CourseAbout about={about} defaultOpen={Object.values(progress.done).every((ids) => ids.length === 0)} />
-
-      {units.map((unit, u) => {
-        const unitLessons = lessons.filter((l) => l.unit === unit.id);
-        const done = unitLessons.filter((l) => lessonState(l, progress) === 'completed').length;
-        const complete = done === unitLessons.length;
-        // The unit trophy needs every core worked through, not just tested out.
-        const trophy = unitLessons.every((l) => isCoreDone(progress, l));
-        const canTestOut = pretestLessons(unit, lessons, progress).length;
-        const headingId = `unit-${unit.id}`;
-        return (
-          <section key={unit.id} className={`unit${complete ? ' unit-done' : ''}`} aria-labelledby={headingId}>
-            <div className="unit-header">
-              <span className="unit-icon" aria-hidden="true">{unit.icon}</span>
-              <div className="unit-text">
-                <p className="eyebrow">Unit {u + 1}</p>
-                <h3 id={headingId} className="unit-title">{unit.title}</h3>
-                <p className="unit-desc">{unit.description}</p>
-                <details className="unit-details">
-                  <summary>What this unit prepares you for</summary>
-                  <div className="unit-details-body">
-                    <div>
-                      <h4 className="about-heading">You'll learn to</h4>
-                      <ul>
-                        {unit.prepares.map((p) => <li key={p}>{p}</li>)}
-                      </ul>
-                    </div>
-                    <div>
-                      <h4 className="about-heading">Programs you could build</h4>
-                      <ul>
-                        {unit.applications.map((a) => <li key={a}>{a}</li>)}
-                      </ul>
-                    </div>
-                  </div>
-                </details>
+      <section className={`unit${complete ? ' unit-done' : ''}`} aria-labelledby={headingId}>
+        <div className="unit-header">
+          <span className="unit-icon" aria-hidden="true">{unit.icon}</span>
+          <div className="unit-text">
+            <p className="eyebrow">Unit {unitIndex + 1} of {units.length}</p>
+            <h3 id={headingId} ref={unitHeadingRef} tabIndex={-1} className="unit-title">{unit.title}</h3>
+            <p className="unit-desc">{unit.description}</p>
+            <details className="unit-details">
+              <summary>What this unit prepares you for</summary>
+              <div className="unit-details-body">
+                <div>
+                  <h4 className="about-heading">You'll learn to</h4>
+                  <ul>
+                    {unit.prepares.map((p) => <li key={p}>{p}</li>)}
+                  </ul>
+                </div>
+                <div>
+                  <h4 className="about-heading">Programs you could build</h4>
+                  <ul>
+                    {unit.applications.map((a) => <li key={a}>{a}</li>)}
+                  </ul>
+                </div>
               </div>
-              <p className="unit-progress">
-                {done} of {unitLessons.length} lessons complete
-                {trophy && <span className="chip chip-done">Trophy earned</span>}
-              </p>
-              {canTestOut > 0 && (
-                <button type="button" className="secondary-button unit-pretest" onClick={() => onOpenPretest(unit.id)}>
-                  Take the pretest<span className="visually-hidden">: {unit.title}</span>
-                </button>
-              )}
-            </div>
-            <UnitPath
-              lessons={unitLessons}
-              allLessons={lessons}
-              progress={progress}
-              recommendedId={next?.id}
-              onOpenLesson={onOpenLesson}
-              onResetLesson={onResetLesson}
-            />
-          </section>
-        );
-      })}
+            </details>
+          </div>
+          <p className="unit-progress">
+            {done} of {unitLessons.length} lessons complete
+            {trophy && <span className="chip chip-done">Trophy earned</span>}
+          </p>
+          {canTestOut > 0 && (
+            <button type="button" className="secondary-button unit-pretest" onClick={() => onOpenPretest(unit.id)}>
+              Take the pretest<span className="visually-hidden">: {unit.title}</span>
+            </button>
+          )}
+        </div>
+        <UnitPath
+          lessons={unitLessons}
+          allLessons={lessons}
+          progress={progress}
+          recommendedId={next?.id}
+          onOpenLesson={onOpenLesson}
+          onResetLesson={onResetLesson}
+        />
+      </section>
+
+      {(prevUnit || nextUnit) && (
+        <nav className="unit-pager" aria-label="Previous and next unit">
+          {prevUnit ? (
+            <a className="secondary-button" href={toHash({ name: 'home', unitId: prevUnit.id })}>
+              <span aria-hidden="true">← </span>
+              <span className="visually-hidden">Previous: </span>
+              {unitLabel(prevUnit)}
+            </a>
+          ) : <span />}
+          {nextUnit && (
+            <a className="secondary-button" href={toHash({ name: 'home', unitId: nextUnit.id })}>
+              <span className="visually-hidden">Next: </span>
+              {unitLabel(nextUnit)}
+              <span aria-hidden="true"> →</span>
+            </a>
+          )}
+        </nav>
+      )}
     </div>
   );
 };

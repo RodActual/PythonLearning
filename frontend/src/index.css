@@ -579,6 +579,7 @@ button[aria-disabled='true'] {
 
 .nav-tab {
   position: relative;
+  text-decoration: none;
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
@@ -998,10 +999,165 @@ button[aria-disabled='true'] {
   border-left: 4px solid var(--primary);
 }
 
+/* Unit picker: one unit's path is shown at a time. */
+.unit-picker ol {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 0.6rem;
+  list-style: none;
+  margin: 0 0 0.5rem;
+  padding: 0;
+}
+
+.unit-tab {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 0.4rem 0.6rem;
+  height: 100%;
+  min-height: 44px;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.unit-tab:hover {
+  background: var(--surface-3);
+}
+
+.unit-tab.active {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+  box-shadow: inset 0 0 0 1px var(--primary);
+}
+
+.unit-tab-icon {
+  font-size: 1.3rem;
+  line-height: 1;
+}
+
+.unit-tab-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.unit-tab-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.unit-tab-eyebrow {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.unit-tab-title {
+  font-weight: 700;
+  color: var(--ink-strong);
+}
+
+.unit-tab-count {
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.unit-tab.done .unit-tab-count {
+  color: var(--success-ink);
+}
+
+.unit-tab-bar {
+  grid-column: 1 / -1;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--path-todo);
+  overflow: hidden;
+}
+
+.unit-tab-bar > span {
+  display: block;
+  height: 100%;
+  background: var(--success);
+}
+
+.unit-pager {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px dashed var(--border);
+}
+
+.unit-pager a {
+  text-decoration: none;
+}
+
+.unit-title:focus {
+  outline: none;
+}
+
+.unit-title:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+/* Progress page */
+.progress-view > h2 {
+  margin-top: 0;
+  font-size: 1.6rem;
+}
+
+.trophy-summary,
+.danger-zone {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1rem;
+  margin: 0 0 1.25rem;
+  padding: 1rem 1.35rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+}
+
+.trophy-summary p,
+.danger-zone p {
+  margin: 0.2rem 0 0;
+}
+
+.danger-zone {
+  display: block;
+  margin-top: 2rem;
+  border-color: var(--danger);
+}
+
+.danger-zone h3 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.danger-zone .danger-button {
+  margin-top: 0.75rem;
+}
+
 /* Units */
 .unit {
-  margin-top: 2.25rem;
-  padding-top: 1.5rem;
+  margin-top: 1.25rem;
+  padding-top: 1.25rem;
   border-top: 1px dashed var(--border);
 }
 
@@ -2359,6 +2515,25 @@ button[aria-disabled='true'] {
 
   .nav-tab {
     padding: 0.4rem 0.7rem;
+  }
+
+  /* Two compact columns so the picker doesn't push the path off the first screen. */
+  .unit-picker ol {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.4rem;
+  }
+
+  .unit-tab {
+    padding: 0.45rem 0.55rem;
+    gap: 0.3rem 0.45rem;
+  }
+
+  .unit-tab-icon {
+    font-size: 1.1rem;
+  }
+
+  .unit-tab-title {
+    font-size: 0.9rem;
   }
 
   /* Single column in normal flow on narrow screens so nothing clips or overlaps. */
