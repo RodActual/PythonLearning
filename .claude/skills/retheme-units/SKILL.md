@@ -14,8 +14,8 @@ Order, per unit:
 3. Rebuild only those lessons: `python3 tools/lesson-authoring/build.py frontend lesson-id ...`.
 4. From `frontend/`: `npm run check`, then the feedback audit, then the browser walk of the changed lessons, then the full `npx playwright test`.
 5. Verify only the intended lessons differ from `origin/main` (compare `lessons.json` by lesson id and `solutions.json` by key prefix).
-6. Commit, push, open a draft PR. Do not merge without explicit approval.
+6. Commit, push, open a draft PR. Before merge, add the PR's `task-list.md` row (`close-out-pr` steps 1–2). Do not merge without explicit approval.
 
 Rules the checker enforces: the starter must not already pass; tier examples must run and must not contain the solution; text examples need `how` and `use`. When two PRs both regenerate `lessons.json`, merge main into the branch, take main's `solutions.json` (`git checkout --theirs`), rebuild that unit, and re-verify the diff scope.
 
-After merge, follow the `close-out-pr` skill.
+After merge, finish the `close-out-pr` skill (steps 3–6).
