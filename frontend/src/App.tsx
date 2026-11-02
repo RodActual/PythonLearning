@@ -97,7 +97,7 @@ function App() {
   // Ids in the URL that match nothing (an old bookmark or a typo) get a "not found" page.
   const notFound =
     route.name === 'not-found' ||
-    (route.name === 'lesson' && !currentLesson) ||
+    (route.name === 'lesson' && (!currentLesson || (route.step ?? 0) > currentLesson.steps.length + 1)) ||
     (route.name === 'pretest' && !pretestUnit) ||
     (route.name === 'home' && !!route.unitId && !homeUnit);
 
@@ -170,6 +170,8 @@ function App() {
       setSaveState('idle');
 
       if (!currentUser) {
+        // Signing out drops the old place, so the next sign-in starts on the map, not someone's lesson step.
+        if (readyUid.current) navigate({ name: 'home' }, { replace: true });
         readyUid.current = null;
         applyProgress(EMPTY_PROGRESS);
         setLoadFailed(false);
@@ -228,7 +230,7 @@ function App() {
       unsubscribeProgress?.();
       unsubscribeAuth();
     };
-  }, []);
+  }, [navigate]);
 
   // --- PROGRESS SAVING (each step counts once, so XP can't be farmed by replaying) ---
   const completeStep = useCallback(
@@ -413,6 +415,8 @@ function App() {
                         className={`nav-tab${current ? ' active' : ''}`}
                         aria-current={current ? 'page' : undefined}
                         onClick={(e) => {
+                          // Let modified clicks open a new tab or window as usual.
+                          if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
                           // Always lands on the page's start, even when already there (e.g. back to the default unit).
                           e.preventDefault();
                           navigate(target);
@@ -491,6 +495,7 @@ function App() {
                 />
               ) : (
                 <SkillMap
+                  about={about}
                   units={units}
                   lessons={lessons}
                   progress={progress}

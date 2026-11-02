@@ -80,3 +80,11 @@ test('the Progress page holds the goal, what needs work, trophies, and reset', a
   await page.getByRole('button', { name: /Back to progress/ }).click();
   await expect(page).toHaveURL(/#\/progress$/);
 });
+
+test('malformed or out-of-range links show not-found instead of crashing or a false completion', async ({ page }) => {
+  await page.goto('/#/lesson/%E0');
+  await expect(page.getByRole('heading', { name: 'Page not found' })).toBeVisible();
+  await page.goto(`/#/lesson/lesson-01/${lesson('lesson-01').steps.length + 2}`);
+  await page.reload();
+  await expect(page.getByRole('heading', { name: 'Page not found' })).toBeVisible();
+});

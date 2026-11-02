@@ -16,7 +16,13 @@ export type Route =
   | { name: 'not-found' };
 
 export function parseHash(hash: string): Route {
-  const parts = hash.replace(/^#\/?/, '').split('/').filter(Boolean).map(decodeURIComponent);
+  let parts: string[];
+  try {
+    parts = hash.replace(/^#\/?/, '').split('/').filter(Boolean).map(decodeURIComponent);
+  } catch {
+    // A malformed escape like %E0 (a truncated bookmark) is just an unknown page.
+    return { name: 'not-found' };
+  }
   const [head, a, b] = parts;
   if (!head) return { name: 'home' };
   if (head === 'unit' && a && parts.length === 2) return { name: 'home', unitId: a };
@@ -54,18 +60,15 @@ export function useHashRoute() {
 
   useEffect(() => {
     const sync = () => setRoute(parseHash(window.location.hash));
-    // popstate covers Back/Forward; hashchange covers typed URLs and plain links.
-    window.addEventListener('popstate', sync);
+    // Fires for Back/Forward between hashes, typed URLs, and plain links; pushState/replaceState don't fire it.
     window.addEventListener('hashchange', sync);
-    return () => {
-      window.removeEventListener('popstate', sync);
-      window.removeEventListener('hashchange', sync);
-    };
+    return () => window.removeEventListener('hashchange', sync);
   }, []);
 
   const navigate = useCallback((next: Route, { replace = false } = {}) => {
     const hash = toHash(next);
-    if (hash !== window.location.hash) {
+    // An empty hash is home, so going home from `/` adds no duplicate entry.
+    if (hash !== (window.location.hash || '#/')) {
       window.history[replace ? 'replaceState' : 'pushState'](null, '', hash);
     }
     setRoute(next);

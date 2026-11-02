@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
-import type { Lesson, Unit, UserProgress } from '../types/lesson';
+import type { CourseAbout as About, Lesson, Unit, UserProgress } from '../types/lesson';
 import { toHash } from '../router';
+import CourseAbout from './CourseAbout';
 import { pretestLessons } from '../game/pretest';
 import { lessonState, recommendedLessonIndex, type LessonState } from '../game/summary';
 import { lessonXp } from '../game/xp';
@@ -8,6 +9,7 @@ import { doneCount, isCoreDone, isStepDone, isTestedOut, resumeIndex } from '../
 import { useDocumentTitle, useFocusOnMount } from '../a11y/hooks';
 
 interface SkillMapProps {
+  about: About;
   units: Unit[];
   lessons: Lesson[];
   progress: UserProgress;
@@ -134,7 +136,7 @@ function UnitPath({ lessons, allLessons, progress, recommendedId, onOpenLesson, 
   );
 }
 
-const SkillMap = ({ units, lessons, progress, selectedUnitId, onOpenLesson, onResetLesson, reviewsDue, onOpenReview, onOpenPretest }: SkillMapProps) => {
+const SkillMap = ({ about, units, lessons, progress, selectedUnitId, onOpenLesson, onResetLesson, reviewsDue, onOpenReview, onOpenPretest }: SkillMapProps) => {
   useDocumentTitle('Learning path');
   const headingRef = useFocusOnMount<HTMLHeadingElement>();
   const recommended = recommendedLessonIndex(lessons, progress);
@@ -154,14 +156,17 @@ const SkillMap = ({ units, lessons, progress, selectedUnitId, onOpenLesson, onRe
   const prevUnit = units[unitIndex - 1];
   const nextUnit = units[unitIndex + 1];
 
-  // Switching units moves focus to the new unit's heading, so keyboard and screen-reader users land on it.
+  // Picking a unit moves focus to its heading, so keyboard and screen-reader users land on it.
+  // Keyed on the URL's unit, so a live progress update that moves "up next" never steals focus.
   const unitHeadingRef = useRef<HTMLHeadingElement>(null);
-  const shownUnit = useRef(unit.id);
+  const pickedUnit = useRef(selectedUnitId);
   useEffect(() => {
-    if (shownUnit.current === unit.id) return;
-    shownUnit.current = unit.id;
-    unitHeadingRef.current?.focus();
-  }, [unit.id]);
+    if (pickedUnit.current === selectedUnitId) return;
+    pickedUnit.current = selectedUnitId;
+    if (selectedUnitId) unitHeadingRef.current?.focus();
+  }, [selectedUnitId]);
+  // A new learner still gets the course intro on the first page they see.
+  const nothingDone = Object.values(progress.done).every((ids) => ids.length === 0);
 
   const unitLabel = (u: Unit) => `Unit ${units.indexOf(u) + 1}: ${u.title}`;
 
@@ -196,6 +201,8 @@ const SkillMap = ({ units, lessons, progress, selectedUnitId, onOpenLesson, onRe
           <button type="button" className="secondary-button" onClick={onOpenReview}>Start review</button>
         </div>
       )}
+
+      {nothingDone && <CourseAbout about={about} defaultOpen />}
 
       <nav className="unit-picker" aria-label="Units">
         <ol>
