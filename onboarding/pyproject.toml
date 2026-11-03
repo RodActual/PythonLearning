@@ -2,3 +2,9 @@
 # Plain `pytest` runs the reference tests only. Run `pytest exercises` for your exercise checks.
 testpaths = ["tests"]
 addopts = "-q"
+# Hide deprecation notices raised inside FastAPI and Starlette themselves on newer Pythons;
+# they aren't about this project's code and would make the expected output harder to read.
+filterwarnings = [
+    "ignore:The anyio.abc.BlockingPortal alias is deprecated:DeprecationWarning",
+    "ignore:'asyncio.iscoroutinefunction' is deprecated:DeprecationWarning",
+]

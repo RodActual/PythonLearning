@@ -19,7 +19,7 @@ You'll install two free programs:
 
 | Program | What it's for | When you need it |
 |---|---|---|
-| **Python** (version 3.11 or newer) | Runs the Catalog Service and its checks | From the start |
+| **Python** (version 3.11, 3.12, 3.13 or 3.14) | Runs the Catalog Service and its checks | From the start |
 | **Docker Desktop** | Runs a search engine and a packaged copy of the service | Only for lessons 5 and 7 |
 
 ---
@@ -69,7 +69,7 @@ python3 --version
 py --version
 ```
 
-You should see something like `Python 3.12.7`. The first number must be 3 and the second must be 11 or higher. If you see an error instead, go to [Problems and fixes](#problems-and-fixes).
+You should see something like `Python 3.12.7`. The first number must be 3 and the second must be between 11 and 14. If you see an error instead, go to [Problems and fixes](#problems-and-fixes).
 
 ### Step 4: Download the lessons
 
@@ -136,6 +136,8 @@ source .venv/bin/activate
 You'll know it worked when `(.venv)` appears at the start of the line in the terminal. On Windows, if you see a red message about "running scripts is disabled", go to [Problems and fixes](#problems-and-fixes).
 
 ### Step 8: Install the project's tools
+
+Check first that the line in the terminal starts with `(.venv)`. If it doesn't, do [Step 7](#step-7-turn-the-workspace-on) now; otherwise the tools are installed outside the workspace and later steps won't find them.
 
 This downloads the libraries the Catalog Service needs. It takes a minute or two.
 
@@ -253,8 +255,11 @@ Windows blocks this step by default. Run this once, type `Y` and press Enter whe
 Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
 ```
 
-**"No module named ..." or "pytest: command not found"**
-The workspace isn't turned on. Do [Step 7](#step-7-turn-the-workspace-on) and check that `(.venv)` appears, then try again.
+**"No module named ...", "pytest: command not found" or "The term 'pytest' is not recognized"**
+The workspace isn't turned on, or Step 8 ran before it was. Do [Step 7](#step-7-turn-the-workspace-on), check that `(.venv)` appears, then run [Step 8](#step-8-install-the-projects-tools) again.
+
+**Step 8 fails with "Failed building wheel" or "Failed to build installable wheels"**
+Your Python is newer than this course supports, so pip is trying to build a library from scratch. Check [Step 3](#step-3-check-that-python-is-installed): the second number must be between 11 and 14. If it's higher, install Python 3.14 from https://www.python.org/downloads/ (scroll to "Looking for a specific release?"), then delete the `.venv` folder and redo Steps 6 to 8.
 
 **"No such file or directory" or "Cannot find path"**
 The terminal is in the wrong folder. Do [Step 5](#step-5-go-to-the-onboarding-folder-in-the-terminal) again.

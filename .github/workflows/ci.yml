@@ -95,8 +95,12 @@ jobs:
       - run: npm test
 
   onboarding:
-    name: Backend onboarding track (reference tests)
+    name: Backend onboarding track (reference tests, Python ${{ matrix.python }})
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        # Oldest and newest Python versions the onboarding README supports.
+        python: ['3.11', '3.14']
     defaults:
       run:
         working-directory: onboarding
@@ -104,7 +108,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
+          python-version: ${{ matrix.python }}
           cache: pip
           cache-dependency-path: onboarding/requirements-dev.txt
       - run: pip install -r requirements-dev.txt
