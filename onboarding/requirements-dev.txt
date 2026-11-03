@@ -1,3 +1,4 @@
 -r requirements.txt
-pytest==8.3.5
-httpx==0.28.1
+pytest==9.0.3
+# FastAPI's TestClient uses httpx2 (the successor to httpx).
+httpx2==2.15.1
