@@ -181,10 +181,10 @@ In `catalog/api.py`, inside `create_app`:
 2. Start a container from it, with debug logging:
 
    ```bash
-   docker run --rm -p 8000:8000 -e CATALOG_LOG_LEVEL=debug catalog
+   docker run --rm -p 127.0.0.1:8000:8000 -e CATALOG_LOG_LEVEL=debug catalog
    ```
 
-   `-p 8000:8000` connects your computer's port 8000 to the container's, and `-e` sets an environment variable. You should see `Uvicorn running on http://0.0.0.0:8000`.
+   `-p 127.0.0.1:8000:8000` connects port 8000 on your computer to the container's, and only for your computer: other machines on your network can't reach it. That matters because this API has no sign-in. `-e` sets an environment variable. You should see `Uvicorn running on http://0.0.0.0:8000`.
 
 3. Open http://localhost:8000/docs and add an item.
 4. Stop the container with **Control + C**. Run the `docker run` command again, open the docs page, and try **GET /items**. The item is gone. Why? (See question b in section 2.)

@@ -13,6 +13,11 @@ updates:
     directory: /firestore-tests
     schedule:
       interval: monthly
+  - package-ecosystem: pip
+    # The onboarding track's Python packages (requirements.txt, constraints.txt).
+    directory: /onboarding
+    schedule:
+      interval: monthly
   - package-ecosystem: github-actions
     directory: /
     schedule:
