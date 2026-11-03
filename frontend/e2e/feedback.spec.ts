@@ -55,6 +55,7 @@ test.describe('diagnose (no browser)', () => {
 
   test('output differences are pointed out', () => {
     expect(run('print(4)', '', '4.0', '4\n')).toMatch(/formatted differently/);
+    expect(run('print(8 // 2)', '', '4.0', '4\n')).toMatch(/`\/\/` drops the decimal part/);
     expect(run('print(1)\nprint(2)', '', '1', '1\n2\n')).toBe('Your code printed 2 lines, but only 1 is expected. Line 2 (`2`) is extra.');
     expect(run('print(1)', '', '1\n2', '1\n')).toBe('Your code printed 1 line, but 2 are expected. The next expected line is `2`.');
   });

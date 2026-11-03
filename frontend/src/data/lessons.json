@@ -725,7 +725,7 @@
           "type": "code",
           "track": "mastery",
           "heading": "Classic: temperature converter",
-          "instruction": "Convert 100 degrees Celsius to Fahrenheit and print the result. The formula is F = C × 9 / 5 + 32.",
+          "instruction": "Convert 100 degrees Celsius to Fahrenheit and print the result. The formula is F = C × 9 / 5 + 32. Use `/` for the division, so the result is a float: 212.0",
           "initial_code": "# Convert 100 Celsius to Fahrenheit\n",
           "expected_output": "212.0",
           "hint": "Turn the formula into Python with the Celsius value in place of C:\nprint(100 * 9 / 5 + 32)",
@@ -736,9 +736,9 @@
               "example_code": "print(10 * 9 / 5 + 32)  # 10 C is 50.0 F"
             },
             {
-              "heading": "Why the answer has .0",
-              "content": "`/` always gives a float, so the result prints with `.0` on the end. That's expected. Put 100 where C goes and print the whole expression.",
-              "example_code": "print(0 * 9 / 5 + 32)  # 32.0"
+              "heading": "If you get 212 instead of 212.0",
+              "content": "`//` is floor division: it drops the fraction, so `100 * 9 // 5 + 32` prints `212`. For most temperatures that's the wrong answer, not just a different format. Use `/`, which always gives a float.",
+              "example_code": "print(37 * 9 // 5 + 32)  # 98: the .6 is lost\nprint(37 * 9 / 5 + 32)   # 98.6"
             }
           ]
         },
@@ -6195,7 +6195,7 @@
           "id": "s06",
           "type": "code",
           "heading": "Average of anything",
-          "instruction": "Finish average so it works with any number of arguments.",
+          "instruction": "Finish average so it works with any number of arguments. Use `/` for the division, so the result is a float: 4.0",
           "initial_code": "def average(*nums):\n    # TODO: return the sum of nums divided by how many there are\n    pass\n\nprint(average(2, 4, 6))",
           "expected_output": "4.0",
           "hint": "return sum(nums) / len(nums)",
@@ -7467,7 +7467,7 @@
           "id": "s06",
           "type": "code",
           "heading": "Round pi",
-          "instruction": "Print the value of Pi (math.pi).",
+          "instruction": "Print math.pi rounded to 2 decimal places.",
           "initial_code": "import math\n# TODO: print math.pi rounded to 2 decimals with round()\n",
           "expected_output": "3.14",
           "hint": "print(round(math.pi, 2))",
@@ -12508,7 +12508,7 @@
           "id": "s03",
           "type": "code",
           "heading": "Task 1: Student average",
-          "instruction": "Finish average(): return the mean of self.scores, or 0 if there are no scores.",
+          "instruction": "Finish average(): return the mean of self.scores, or 0 if there are no scores. Use `/` for the division. The expected output is 85.0, then 0.",
           "initial_code": "class Student:\n    def __init__(self, name):\n        self.name = name\n        self.scores = []\n\n    def average(self):\n        # TODO: return the mean score, or 0 if there are none\n        pass\n\ns = Student('Ada')\ns.scores = [90, 80]\nprint(s.average())\nprint(Student('Bo').average())",
           "expected_output": "85.0\n0",
           "hint": "        if not self.scores:\n            return 0\n        return sum(self.scores) / len(self.scores)",
