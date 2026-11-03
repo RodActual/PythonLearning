@@ -1,0 +1,4 @@
+[tool.pytest.ini_options]
+# Plain `pytest` runs the reference tests only. Run `pytest exercises` for your exercise checks.
+testpaths = ["tests"]
+addopts = "-q"

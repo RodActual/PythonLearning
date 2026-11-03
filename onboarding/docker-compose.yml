@@ -1,0 +1,34 @@
+# Local stack: the API plus a single-node OpenSearch with security off. Not for production.
+services:
+  opensearch:
+    image: opensearchproject/opensearch:2.17.1
+    environment:
+      discovery.type: single-node
+      DISABLE_SECURITY_PLUGIN: "true"
+      DISABLE_INSTALL_DEMO_CONFIG: "true"
+      OPENSEARCH_JAVA_OPTS: -Xms512m -Xmx512m
+    ports:
+      - "9200:9200"
+    healthcheck:
+      # Plain bash, so the check doesn't depend on curl being in the image. ?pretty puts
+      # "status" on its own line, so grep -q exits on the match without waiting for the
+      # socket to close; timeout covers a server that answers nothing.
+      test: ["CMD", "bash", "-c", "exec 3<>/dev/tcp/127.0.0.1/9200 && printf 'GET /_cluster/health?pretty HTTP/1.0\\r\\nConnection: close\\r\\n\\r\\n' >&3 && timeout 5 grep -qE '\"status\" *: *\"(green|yellow)\"' <&3"]
+      interval: 10s
+      retries: 12
+
+  api:
+    build: .
+    environment:
+      CATALOG_SEARCH_BACKEND: opensearch
+      CATALOG_OPENSEARCH_URL: http://opensearch:9200
+    ports:
+      - "8000:8000"
+    volumes:
+      - catalog-data:/data
+    depends_on:
+      opensearch:
+        condition: service_healthy
+
+volumes:
+  catalog-data:
