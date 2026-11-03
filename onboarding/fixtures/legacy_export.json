@@ -1,0 +1,8 @@
+[
+  {"title": "Sales orders", "type": "DATASET", "contact": "data-team", "notes": "Daily orders from the ERP", "labels": "sales, ERP", "attrs": {"rows": 1200, "source": {"system": "erp", "table": "orders"}}},
+  {"title": "Billing API", "type": "Service", "contact": "payments", "labels": "billing,api"},
+  {"title": "Budget 2026", "type": "SPREADSHEET", "contact": "finance", "labels": "finance"},
+  {"title": "Onboarding guide", "type": "document", "contact": "hr-team", "notes": "New hire handbook", "labels": ""},
+  {"type": "dataset", "contact": "data-team", "labels": "orphan"},
+  {"title": "Payroll", "type": "dataset", "contact": "hr-team", "labels": "hr, payroll, HR", "attrs": {"rows": 340}}
+]

@@ -1,0 +1,9 @@
+{"path": "/health", "status": 200, "ms": 2}
+{"path": "/items", "status": 201, "ms": 48}
+{"path": "/search", "status": 200, "ms": 310}
+{"path": "/items", "status": 500, "ms": 1203}
+not json at all
+{"path": "/search", "status": 503, "ms": 15}
+{"path": "/items/7", "status": 404}
+
+{"path": "/health", "status": 200, "ms": 1}

@@ -93,3 +93,20 @@ jobs:
           java-version: '21'
       - run: npm ci
       - run: npm test
+
+  onboarding:
+    name: Backend onboarding track (reference tests)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: onboarding
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: onboarding/requirements-dev.txt
+      - run: pip install -r requirements-dev.txt
+      # Reference tests only; exercises/ fails until the learner solves it.
+      - run: pytest

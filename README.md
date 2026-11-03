@@ -7,6 +7,9 @@ A basic application that teaches Python.
 - Learner code runs in the browser with [Pyodide](https://pyodide.org) inside a Web Worker. Runs time out after 10 seconds.
 - This is a single-user app: the sign-in screen has no sign-up, and new accounts should also be disabled in the Firebase console (Authentication > Settings > User actions). Firebase is used only for sign-in and saving progress (`user_progress/{uid}` in Firestore). Access rules are in `firestore.rules`.
 
+## Backend onboarding track
+`onboarding/` is a separate, hands-on track that runs on your machine, not in the app: REST APIs (FastAPI), data modeling (Pydantic), databases (SQLAlchemy), search (OpenSearch), pytest, debugging and Docker, taught on one small Catalog Service. Start at `onboarding/README.md`.
+
 ## Review and Playground
 - **Review** (`src/game/review.ts`): every completed quiz and coding challenge becomes a spaced-repetition card (Leitner boxes). Right on the first try moves a card up a box (next review in 3, 7, 14, then 30 days); a miss sends it back to tomorrow. Sessions show up to 10 due cards, at most 3 of them coding challenges, mixed across lessons. The schedule is saved in the progress document's `review` field. "Practice anyway" never changes the schedule.
 - **Pretest** (`src/game/pretest.ts`, `src/components/PretestView.tsx`): each unit with unfinished lessons has a "Take the pretest" button. It asks 2 core quizzes and 1 coding challenge (when the lesson has them) from each unfinished lesson. Every question right (quizzes on the first try, challenges on any run) tests out of that lesson: it counts as complete on the map and drops out of "Up next", but earns no XP or trophies until its core steps are actually done. "I don't know this yet" counts as a miss. Each lesson's latest result is saved in the progress document's `pretest` field (`lessonId -> { date, missed }`); resetting a lesson clears it.
