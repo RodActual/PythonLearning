@@ -5,7 +5,7 @@ from catalog.config import Settings
 
 
 def test_defaults(monkeypatch):
-    monkeypatch.delenv("CATALOG_DATABASE_URL", raising=False)
+    monkeypatch.delenv("CATALOG_SEARCH_BACKEND", raising=False)
     assert Settings(_env_file=None).search_backend == "memory"
 
 

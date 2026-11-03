@@ -31,7 +31,8 @@ class ItemCreate(BaseModel):
     @field_validator("tags")
     @classmethod
     def normalize_tags(cls, tags: list[str]) -> list[str]:
-        # Lowercase, trim, drop duplicates, keep first-seen order.
+        # Lowercase, trim, drop duplicates. Tags are a set, so return them sorted:
+        # the same order the database gives back.
         cleaned: list[str] = []
         for tag in tags:
             tag = tag.strip().lower()
@@ -41,7 +42,7 @@ class ItemCreate(BaseModel):
                 raise ValueError(f"tag too long: {tag[:20]}...")
             if tag not in cleaned:
                 cleaned.append(tag)
-        return cleaned
+        return sorted(cleaned)
 
     # Module 1 exercise: add a validator that rejects metadata keys that are not snake_case.
 

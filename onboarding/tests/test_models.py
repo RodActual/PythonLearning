@@ -6,7 +6,7 @@ from catalog.models import ItemCreate
 
 def test_tags_are_normalized(make_item):
     item = make_item(tags=["  Sales", "sales", "ERP "])
-    assert item.tags == ["sales", "erp"]
+    assert item.tags == ["erp", "sales"]
 
 
 @pytest.mark.parametrize(

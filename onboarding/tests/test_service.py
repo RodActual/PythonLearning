@@ -34,3 +34,15 @@ def test_search_skips_ids_missing_from_database(repo, make_item):
 def test_get_missing_raises(repo):
     with pytest.raises(ItemNotFoundError):
         CatalogService(repo, MagicMock()).get(1)
+
+
+def test_delete_survives_search_outage(repo, make_item, caplog):
+    item = repo.add(make_item())
+    search = MagicMock()
+    search.remove.side_effect = ConnectionError("search is down")
+
+    with caplog.at_level(logging.ERROR):
+        CatalogService(repo, search).delete(item.id)
+
+    assert repo.get(item.id) is None
+    assert f"removing item {item.id} from search failed" in caplog.text

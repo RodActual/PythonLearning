@@ -40,3 +40,33 @@ def test_delete(repo, make_item):
     assert repo.delete(item.id) is True
     assert repo.get(item.id) is None
     assert repo.delete(item.id) is False
+
+
+def test_get_many_keeps_order_and_skips_missing(repo, make_item):
+    a = repo.add(make_item(name="A"))
+    b = repo.add(make_item(name="B"))
+    assert [i.name for i in repo.get_many([b.id, 999, a.id])] == ["B", "A"]
+
+
+def test_tag_clash_is_not_reported_as_duplicate_name(repo, make_item, session):
+    from sqlalchemy.exc import IntegrityError
+
+    from catalog.db import TagRow
+
+    # Simulate another request inserting the same new tag first.
+    original = repo._get_or_create_tags
+    repo._get_or_create_tags = lambda names: [TagRow(name=n) for n in names]
+    repo.add(make_item(name="A", tags=["sales"]))
+    with pytest.raises(IntegrityError):
+        repo.add(make_item(name="B", tags=["sales"]))
+    repo._get_or_create_tags = original
+
+
+def test_created_at_loads_timezone_aware(repo, make_item, session):
+    from sqlalchemy import select
+
+    from catalog.db import ItemRow
+
+    repo.add(make_item())
+    session.expire_all()
+    assert session.scalar(select(ItemRow.created_at)).tzinfo is not None

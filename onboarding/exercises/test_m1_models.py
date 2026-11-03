@@ -39,7 +39,7 @@ def test_load_legacy_export():
     items, errors = load_legacy_export(FIXTURE)
     assert [i.name for i in items] == ["Sales orders", "Billing API", "Onboarding guide", "Payroll"]
     assert [i.kind for i in items] == ["dataset", "service", "document", "dataset"]
-    assert items[0].tags == ["sales", "erp"]
+    assert items[0].tags == ["erp", "sales"]
     assert items[0].metadata["source"] == {"system": "erp", "table": "orders"}
     assert items[1].description == ""
     assert items[2].tags == []

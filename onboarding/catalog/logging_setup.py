@@ -6,4 +6,7 @@ LOG_FORMAT = "%(asctime)s %(levelname)-7s %(name)s: %(message)s"
 
 
 def configure_logging(level: str = "INFO") -> None:
-    logging.basicConfig(level=level, format=LOG_FORMAT, force=True)
+    # basicConfig adds a handler only if the root logger has none, so handlers set up by
+    # pytest or a host app are kept. The level is applied either way.
+    logging.basicConfig(format=LOG_FORMAT)
+    logging.getLogger().setLevel(level)

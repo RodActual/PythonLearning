@@ -1,7 +1,5 @@
 """Database access. The rest of the app talks to ItemRepository, never to SQLAlchemy directly."""
 
-from datetime import UTC
-
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
@@ -15,10 +13,6 @@ class DuplicateItemError(Exception):
 
 
 def to_item(row: ItemRow) -> Item:
-    created_at = row.created_at
-    if created_at.tzinfo is None:
-        # SQLite stores no timezone, so values come back naive. They were written in UTC.
-        created_at = created_at.replace(tzinfo=UTC)
     return Item(
         id=row.id,
         name=row.name,
@@ -27,7 +21,7 @@ def to_item(row: ItemRow) -> Item:
         description=row.description,
         tags=sorted(tag.name for tag in row.tags),
         metadata=row.meta,
-        created_at=created_at,
+        created_at=row.created_at,
     )
 
 
@@ -61,12 +55,20 @@ class ItemRepository:
             self.session.commit()
         except IntegrityError as exc:
             self.session.rollback()
-            raise DuplicateItemError(f"an item named {data.name!r} already exists") from exc
+            # Only a clash on the item name is a duplicate; anything else (e.g. a tag race) is a real error.
+            if self.session.scalar(select(ItemRow.id).where(ItemRow.name == data.name)) is not None:
+                raise DuplicateItemError(f"an item named {data.name!r} already exists") from exc
+            raise
         return to_item(row)
 
     def get(self, item_id: int) -> Item | None:
         row = self.session.get(ItemRow, item_id)
         return to_item(row) if row else None
+
+    def get_many(self, item_ids: list[int]) -> list[Item]:
+        """Load items in one query, in the order of item_ids. Missing ids are skipped."""
+        rows = {row.id: row for row in self.session.scalars(select(ItemRow).where(ItemRow.id.in_(item_ids)))}
+        return [to_item(rows[i]) for i in item_ids if i in rows]
 
     def list_items(self, tag: str | None = None, limit: int = 50, offset: int = 0) -> list[Item]:
         stmt = select(ItemRow).order_by(ItemRow.id).limit(limit).offset(offset)

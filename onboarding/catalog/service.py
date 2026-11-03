@@ -42,10 +42,14 @@ class CatalogService:
     def delete(self, item_id: int) -> None:
         if not self.repo.delete(item_id):
             raise ItemNotFoundError(item_id)
-        self.search_backend.remove(item_id)
+        try:
+            self.search_backend.remove(item_id)
+        except Exception:
+            # The row is gone; a stale index entry is skipped by search() until the index is rebuilt.
+            log.exception("removing item %s from search failed", item_id)
         log.info("deleted item %s", item_id)
 
     def search(self, text: str, tag: str | None = None, limit: int = 10) -> list[Item]:
         ids = self.search_backend.search(text, tag=tag, limit=limit)
         # The index can lag behind the database; skip ids that no longer exist.
-        return [item for item_id in ids if (item := self.repo.get(item_id)) is not None]
+        return self.repo.get_many(ids)
