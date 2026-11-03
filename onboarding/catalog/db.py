@@ -20,9 +20,12 @@ class UTCDateTime(TypeDecorator):
     cache_ok = True
 
     def process_bind_param(self, value: datetime | None, dialect) -> datetime | None:
-        if value is not None and value.tzinfo is None:
-            raise ValueError("naive datetime; pass a timezone-aware value")
-        return value.astimezone(UTC) if value is not None else None
+        if value is None:
+            return None
+        if value.tzinfo is None:
+            # Treat naive values as UTC. Pass datetime.now(UTC), not datetime.now(), to be exact.
+            return value
+        return value.astimezone(UTC)
 
     def process_result_value(self, value: datetime | None, dialect) -> datetime | None:
         if value is not None and value.tzinfo is None:

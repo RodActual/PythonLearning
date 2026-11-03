@@ -50,6 +50,14 @@ class CatalogService:
         log.info("deleted item %s", item_id)
 
     def search(self, text: str, tag: str | None = None, limit: int = 10) -> list[Item]:
-        ids = self.search_backend.search(text, tag=tag, limit=limit)
-        # The index can lag behind the database; skip ids that no longer exist.
-        return self.repo.get_many(ids)
+        # The index can lag behind the database (e.g. a remove failed during an outage).
+        # Over-fetch so stale ids don't shrink the page, and drop stale ids from the index.
+        ids = self.search_backend.search(text, tag=tag, limit=limit * 2)
+        items = self.repo.get_many(ids)
+        found = {item.id for item in items}
+        for stale_id in (i for i in ids if i not in found):
+            try:
+                self.search_backend.remove(stale_id)
+            except Exception:
+                log.exception("removing stale item %s from search failed", stale_id)
+        return items[:limit]

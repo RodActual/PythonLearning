@@ -46,3 +46,16 @@ def test_delete_survives_search_outage(repo, make_item, caplog):
 
     assert repo.get(item.id) is None
     assert f"removing item {item.id} from search failed" in caplog.text
+
+
+def test_search_overfetches_and_drops_stale_ids(repo, make_item):
+    items = [repo.add(make_item(name=f"item {i}")) for i in range(3)]
+    search = MagicMock()
+    search.search.return_value = [998, items[0].id, 999, items[1].id, items[2].id]
+
+    found = CatalogService(repo, search).search("item", limit=2)
+
+    assert [i.id for i in found] == [items[0].id, items[1].id]
+    assert search.search.call_args.kwargs["limit"] == 4
+    search.remove.assert_any_call(998)
+    search.remove.assert_any_call(999)

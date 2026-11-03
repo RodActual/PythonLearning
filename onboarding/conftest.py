@@ -1,5 +1,6 @@
 """Fixtures shared by tests/ and exercises/. pytest loads this file automatically."""
 
+import logging
 from collections.abc import Iterator
 
 import pytest
@@ -12,6 +13,15 @@ from catalog.db import init_db, make_engine, make_session_factory
 from catalog.models import ItemCreate
 from catalog.repository import ItemRepository
 from catalog.search import InMemorySearch
+
+
+@pytest.fixture(autouse=True)
+def _restore_log_level():
+    """create_app sets the catalog logger's level; put it back so tests don't affect each other."""
+    logger = logging.getLogger("catalog")
+    level = logger.level
+    yield
+    logger.setLevel(level)
 
 
 @pytest.fixture

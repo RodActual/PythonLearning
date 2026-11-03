@@ -27,4 +27,4 @@ def test_log_level_rejects_unknown(monkeypatch):
 
 def test_app_applies_log_level():
     create_app(Settings(_env_file=None, database_url="sqlite://", log_level="WARNING"))
-    assert logging.getLogger().level == logging.WARNING
+    assert logging.getLogger("catalog").level == logging.WARNING

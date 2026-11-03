@@ -10,8 +10,10 @@ services:
     ports:
       - "9200:9200"
     healthcheck:
-      # Plain bash, so the check doesn't depend on curl being in the image.
-      test: ["CMD", "bash", "-c", "exec 3<>/dev/tcp/127.0.0.1/9200 && printf 'GET /_cluster/health HTTP/1.0\\r\\n\\r\\n' >&3 && grep -qE '\"status\":\"(green|yellow)\"' <&3"]
+      # Plain bash, so the check doesn't depend on curl being in the image. ?pretty puts
+      # "status" on its own line, so grep -q exits on the match without waiting for the
+      # socket to close; timeout covers a server that answers nothing.
+      test: ["CMD", "bash", "-c", "exec 3<>/dev/tcp/127.0.0.1/9200 && printf 'GET /_cluster/health?pretty HTTP/1.0\\r\\nConnection: close\\r\\n\\r\\n' >&3 && timeout 5 grep -qE '\"status\" *: *\"(green|yellow)\"' <&3"]
       interval: 10s
       retries: 12
 

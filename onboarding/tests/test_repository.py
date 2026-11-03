@@ -48,18 +48,23 @@ def test_get_many_keeps_order_and_skips_missing(repo, make_item):
     assert [i.name for i in repo.get_many([b.id, 999, a.id])] == ["B", "A"]
 
 
-def test_tag_clash_is_not_reported_as_duplicate_name(repo, make_item, session):
-    from sqlalchemy.exc import IntegrityError
-
+def test_tag_race_is_retried(repo, make_item, monkeypatch):
     from catalog.db import TagRow
 
-    # Simulate another request inserting the same new tag first.
-    original = repo._get_or_create_tags
-    repo._get_or_create_tags = lambda names: [TagRow(name=n) for n in names]
     repo.add(make_item(name="A", tags=["sales"]))
-    with pytest.raises(IntegrityError):
-        repo.add(make_item(name="B", tags=["sales"]))
-    repo._get_or_create_tags = original
+
+    # First lookup misses the tag, as if another request inserted it in the meantime.
+    real_lookup = repo._get_or_create_tags
+    calls = []
+
+    def racy_lookup(names):
+        calls.append(names)
+        return [TagRow(name=n) for n in names] if len(calls) == 1 else real_lookup(names)
+
+    monkeypatch.setattr(repo, "_get_or_create_tags", racy_lookup)
+    item = repo.add(make_item(name="B", tags=["sales"]))
+    assert item.tags == ["sales"]
+    assert len(calls) == 2
 
 
 def test_created_at_loads_timezone_aware(repo, make_item, session):

@@ -42,24 +42,28 @@ class ItemRepository:
         return rows
 
     def add(self, data: ItemCreate) -> Item:
-        row = ItemRow(
-            name=data.name,
-            kind=data.kind,
-            owner=data.owner,
-            description=data.description,
-            meta=data.metadata,
-            tags=self._get_or_create_tags(data.tags),
-        )
-        self.session.add(row)
-        try:
-            self.session.commit()
-        except IntegrityError as exc:
-            self.session.rollback()
-            # Only a clash on the item name is a duplicate; anything else (e.g. a tag race) is a real error.
-            if self.session.scalar(select(ItemRow.id).where(ItemRow.name == data.name)) is not None:
-                raise DuplicateItemError(f"an item named {data.name!r} already exists") from exc
-            raise
-        return to_item(row)
+        # Two attempts: if another request inserted one of our new tags between our lookup
+        # and our commit, the retry finds that tag and reuses it.
+        for attempt in range(2):
+            row = ItemRow(
+                name=data.name,
+                kind=data.kind,
+                owner=data.owner,
+                description=data.description,
+                meta=data.metadata,
+                tags=self._get_or_create_tags(data.tags),
+            )
+            self.session.add(row)
+            try:
+                self.session.commit()
+                return to_item(row)
+            except IntegrityError as exc:
+                self.session.rollback()
+                if self.session.scalar(select(ItemRow.id).where(ItemRow.name == data.name)) is not None:
+                    raise DuplicateItemError(f"an item named {data.name!r} already exists") from exc
+                if attempt == 1:
+                    raise
+        raise AssertionError("unreachable")
 
     def get(self, item_id: int) -> Item | None:
         row = self.session.get(ItemRow, item_id)
@@ -67,6 +71,8 @@ class ItemRepository:
 
     def get_many(self, item_ids: list[int]) -> list[Item]:
         """Load items in one query, in the order of item_ids. Missing ids are skipped."""
+        if not item_ids:
+            return []
         rows = {row.id: row for row in self.session.scalars(select(ItemRow).where(ItemRow.id.in_(item_ids)))}
         return [to_item(rows[i]) for i in item_ids if i in rows]
 

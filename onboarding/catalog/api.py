@@ -46,6 +46,11 @@ def create_app(settings: Settings | None = None, search: SearchBackend | None = 
     def duplicate(_: Request, exc: DuplicateItemError) -> JSONResponse:
         return JSONResponse(status_code=409, content={"detail": str(exc)})
 
+    @app.exception_handler(NotImplementedError)
+    def not_implemented(_: Request, exc: NotImplementedError) -> JSONResponse:
+        # Unsolved exercise stubs answer 501 with their module name instead of a bare 500.
+        return JSONResponse(status_code=501, content={"detail": str(exc) or "not implemented yet"})
+
     # Module 2 exercise: add a RequestValidationError handler here.
 
     @app.get("/health", tags=["ops"])
