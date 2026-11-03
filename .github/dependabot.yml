@@ -18,6 +18,13 @@ updates:
     directory: /onboarding
     schedule:
       interval: monthly
+    groups:
+      # constraints.txt pins the whole set, and many pins must move together
+      # (e.g. pydantic and pydantic-core), so routine bumps come in one PR.
+      # Major versions stay separate so one breaking bump can't hold back patches.
+      onboarding-minor-and-patch:
+        patterns: ["*"]
+        update-types: [minor, patch]
   - package-ecosystem: github-actions
     directory: /
     schedule:

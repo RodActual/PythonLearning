@@ -1,3 +1,4 @@
 -r requirements.txt
-pytest==8.3.5
-httpx==0.28.1
+pytest==9.0.3
+# Starlette 1.x's TestClient (used by FastAPI's) deprecates httpx in favour of httpx2.
+httpx2==2.15.1

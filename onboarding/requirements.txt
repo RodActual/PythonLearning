@@ -1,7 +1,7 @@
 # Runtime dependencies. constraints.txt pins these and everything they pull in,
 # so every install (yours, Docker, CI) gets the same versions.
 -c constraints.txt
-fastapi==0.115.14
+fastapi==0.156.4
 uvicorn[standard]==0.32.1
 pydantic==2.12.5
 pydantic-settings==2.6.1

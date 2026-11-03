@@ -26,7 +26,7 @@ You made one in the README's setup: the `.venv` folder. It holds this project's 
 `requirements.txt` lists every library the service needs, with an exact version:
 
 ```
-fastapi==0.115.14
+fastapi==0.156.4
 ```
 
 `==` means exactly this version. `requirements-dev.txt` adds the tools only developers need (like `pytest`) and includes the main list with its first line, `-r requirements.txt`.
