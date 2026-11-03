@@ -99,7 +99,11 @@ function UnitPath({ lessons, allLessons, progress, recommendedId, onOpenLesson, 
             >
               <button type="button" className="node-button" onClick={() => onOpenLesson(lesson.id)}>
                 <span className="node-circle" aria-hidden="true">
-                  <ProgressRing fraction={testedOutOnly ? 1 : reached / lesson.steps.length} />
+                  {/* In progress, the ring matches "Step N of M": steps done out of order (e.g. from a
+                      needs-work link) would otherwise fill it while the learner resumes at step 1. */}
+                  <ProgressRing
+                    fraction={testedOutOnly ? 1 : (state === 'in-progress' ? resumeAt : reached) / lesson.steps.length}
+                  />
                   <span className="node-number">{state === 'completed' ? '✓' : number}</span>
                 </span>
                 <span className="node-label">

@@ -39,7 +39,7 @@ const Hud = ({ summary, totalLessons, onOpenTrophies }: HudProps) => {
           <dd>{xp}</dd>
         </div>
         <div>
-          <dt>Lessons</dt>
+          <dt>Lessons done</dt>
           <dd>{lessonsCompleted} / {totalLessons}</dd>
         </div>
       </dl>
