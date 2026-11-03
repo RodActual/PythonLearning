@@ -8,7 +8,8 @@ services:
       DISABLE_INSTALL_DEMO_CONFIG: "true"
       OPENSEARCH_JAVA_OPTS: -Xms512m -Xmx512m
     ports:
-      - "9200:9200"
+      # 127.0.0.1 only: security is off, so never expose this beyond your own computer.
+      - "127.0.0.1:9200:9200"
     healthcheck:
       # Plain bash, so the check doesn't depend on curl being in the image. ?pretty puts
       # "status" on its own line, so grep -q exits on the match without waiting for the
@@ -23,7 +24,8 @@ services:
       CATALOG_SEARCH_BACKEND: opensearch
       CATALOG_OPENSEARCH_URL: http://opensearch:9200
     ports:
-      - "8000:8000"
+      # 127.0.0.1 only: the API has no sign-in, so keep it off your local network.
+      - "127.0.0.1:8000:8000"
     volumes:
       - catalog-data:/data
     depends_on:

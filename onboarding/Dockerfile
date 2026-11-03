@@ -5,8 +5,8 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /app
 
-# Install dependencies first so this layer is cached until requirements.txt changes.
-COPY requirements.txt .
+# Install dependencies first so this layer is cached until the requirement files change.
+COPY requirements.txt constraints.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY catalog ./catalog

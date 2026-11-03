@@ -1,7 +1,9 @@
-# Runtime dependencies, pinned so Docker and CI install the same versions.
+# Runtime dependencies. constraints.txt pins these and everything they pull in,
+# so every install (yours, Docker, CI) gets the same versions.
+-c constraints.txt
 fastapi==0.115.14
 uvicorn[standard]==0.32.1
-pydantic==2.10.6
+pydantic==2.12.5
 pydantic-settings==2.6.1
 SQLAlchemy==2.0.55
 opensearch-py==2.7.1

@@ -29,7 +29,9 @@ You made one in the README's setup: the `.venv` folder. It holds this project's 
 fastapi==0.115.14
 ```
 
-`==` means exactly this version. Anyone who runs `pip install -r requirements.txt` gets the same versions you have, today or in a year. `requirements-dev.txt` adds the tools only developers need (like `pytest`) and includes the main list with its first line, `-r requirements.txt`.
+`==` means exactly this version. `requirements-dev.txt` adds the tools only developers need (like `pytest`) and includes the main list with its first line, `-r requirements.txt`.
+
+Those libraries depend on other libraries in turn, and those would otherwise float to whatever is newest on the day you install. So `constraints.txt` pins *everything* that ends up installed, and `requirements.txt` applies it with the line `-c constraints.txt`. The result: anyone who installs gets exactly the same set you have, today or in a year. This course learned that the hard way: an unpinned library that had no ready-made install for Python 3.14 broke setup on a new computer.
 
 ### Settings come from outside the code
 
@@ -179,10 +181,10 @@ In `catalog/api.py`, inside `create_app`:
 2. Start a container from it, with debug logging:
 
    ```bash
-   docker run --rm -p 8000:8000 -e CATALOG_LOG_LEVEL=debug catalog
+   docker run --rm -p 127.0.0.1:8000:8000 -e CATALOG_LOG_LEVEL=debug catalog
    ```
 
-   `-p 8000:8000` connects your computer's port 8000 to the container's, and `-e` sets an environment variable. You should see `Uvicorn running on http://0.0.0.0:8000`.
+   `-p 127.0.0.1:8000:8000` connects port 8000 on your computer to the container's, and only for your computer: other machines on your network can't reach it. That matters because this API has no sign-in. `-e` sets an environment variable. You should see `Uvicorn running on http://0.0.0.0:8000`.
 
 3. Open http://localhost:8000/docs and add an item.
 4. Stop the container with **Control + C**. Run the `docker run` command again, open the docs page, and try **GET /items**. The item is gone. Why? (See question b in section 2.)
