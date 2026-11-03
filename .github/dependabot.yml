@@ -18,6 +18,11 @@ updates:
     directory: /onboarding
     schedule:
       interval: monthly
+    groups:
+      # constraints.txt pins the whole set, and many pins must move together
+      # (e.g. pydantic and pydantic-core), so update them in one PR.
+      onboarding:
+        patterns: ["*"]
   - package-ecosystem: github-actions
     directory: /
     schedule:
