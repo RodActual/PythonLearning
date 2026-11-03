@@ -204,13 +204,15 @@ There are seven lessons. Do them in order, except lesson 6, which you can do any
 
 ### How each lesson works
 
-Each lesson file has five parts:
+Each lesson file has the same parts:
 
-1. **Learn**: the main ideas, with links to official guides if you want more.
-2. **Read**: parts of the Catalog Service to look at, with questions to answer as you read.
-3. **Do**: exercises where you change or add code.
-4. **Done when**: the command that tells you the exercises are finished.
+1. **The ideas, in plain words**: what the lesson is about, with small examples and links to official guides if you want more.
+2. **Look around the code**: which files to open and what to look for, with questions to answer as you read.
+3. **Exercises**: step-by-step changes to make, each naming the exact file and spot to change.
+4. **Finished?**: the commands that confirm you're done, and what they should print.
 5. **Check yourself**: questions to answer without looking back.
+
+Questions and exercises have grey **Answer**, **Hint** and **Show the answer** lines. Click one to open it. Try each exercise on your own first, open the hint if you're stuck, and open the answer only as a last resort; you'll learn far more from the first two.
 
 To open the code files, use a code editor. [Visual Studio Code](https://code.visualstudio.com/) is free. Install it, open it, choose **File > Open Folder**, and pick the `onboarding` folder.
 
@@ -261,7 +263,10 @@ The service is already running in another terminal window. Go to that window and
 The service isn't running. Do [Step 10](#step-10-start-the-catalog-service-and-look-at-it) and leave that terminal window open while you use the page.
 
 **Stuck on an exercise?**
-Look in the `tests` folder for the file with the matching name (for example, `tests/test_models.py` for lesson 1). Those working examples are usually one step away from the answer.
+Open the exercise's **Hint**. If that isn't enough, look in the `tests` folder for the file with the matching name (for example, `tests/test_models.py` for lesson 1); those working examples are usually one step away. Each exercise also has a **Show the answer** with the exact code and where it goes.
+
+**`IndentationError` after pasting code**
+Python uses the spaces at the start of each line to group code. Make the pasted lines start at the same position as the code they replace. VS Code's faint vertical guide lines help you line them up.
 
 ---
 

@@ -59,7 +59,12 @@ def test_openapi_spec_lists_routes(client):
     assert {"/items", "/items/{item_id}", "/search"} <= paths.keys()
 
 
-def test_unsolved_exercise_is_501(client):
+def test_unsolved_exercise_is_501(client, search, monkeypatch):
+    # Stand in for an unsolved exercise, so this passes before and after Module 5.
+    def unsolved(*args, **kwargs):
+        raise NotImplementedError("Module 5 exercise: filter by tag")
+
+    monkeypatch.setattr(search, "search", unsolved)
     resp = client.get("/search", params={"q": "sales", "tag": "erp"})
     assert resp.status_code == 501
     assert "Module 5" in resp.json()["detail"]
