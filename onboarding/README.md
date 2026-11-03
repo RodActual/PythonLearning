@@ -264,6 +264,9 @@ pip couldn't find a ready-made copy of a library for your Python, so it tried to
 - **If the second number is between 11 and 14,** your copy of the lessons is probably older than the current one. Download it again ([Step 4](#step-4-download-the-lessons)), then delete the `.venv` folder and redo Steps 5 to 8 in the new folder.
 - **If it's higher than 14,** your Python is newer than this course supports. Install Python 3.14 as in [Step 1](#step-1-install-python), then delete the `.venv` folder and redo Steps 6 to 8.
 
+**Step 9 shows "passed" but also a number of warnings**
+Your `.venv` still has tools from an older copy of the lessons. Turn the workspace on ([Step 7](#step-7-turn-the-workspace-on)) and run [Step 8](#step-8-install-the-projects-tools) again; it updates them to the versions this copy expects. Then run Step 9 again.
+
 **"No such file or directory" or "Cannot find path"**
 The terminal is in the wrong folder. Do [Step 5](#step-5-go-to-the-onboarding-folder-in-the-terminal) again.
 

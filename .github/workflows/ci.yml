@@ -113,7 +113,25 @@ jobs:
         with:
           python-version: ${{ matrix.python }}
           cache: pip
-          cache-dependency-path: onboarding/requirements-dev.txt
+          cache-dependency-path: |
+            onboarding/requirements-dev.txt
+            onboarding/constraints.txt
       - run: pip install -r requirements-dev.txt
       # Reference tests only; exercises/ fails until the learner solves it.
       - run: pytest
+
+  onboarding-docker:
+    name: Backend onboarding track (Docker image)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: onboarding
+    steps:
+      - uses: actions/checkout@v4
+      # Lesson 7 builds this image on Python 3.12; check the pins install there too.
+      - run: docker build -t catalog .
+      - name: Container starts and answers
+        run: |
+          docker run -d --name catalog -p 127.0.0.1:8000:8000 catalog
+          for i in $(seq 30); do curl -sf http://127.0.0.1:8000/health && exit 0; sleep 1; done
+          docker logs catalog; exit 1
