@@ -33,24 +33,6 @@ test('optional questions can be skipped without being saved as done', async ({ p
   expect(saved.done['lesson-01']).not.toContain(steps[firstDeep + 1].id);
 });
 
-test("an in-progress lesson's ring fills to the step it resumes at", async ({ page }) => {
-  const ring = page.locator('.map-node').first().locator('.ring-fill');
-  const filled = async () => {
-    const c = Number(await ring.getAttribute('stroke-dasharray'));
-    return 1 - Number(await ring.getAttribute('stroke-dashoffset')) / c;
-  };
-  // Steps done out of order (everything but step 1): the label says step 1, so the ring is empty.
-  await seedProgress(page, { version: 2, done: { 'lesson-01': steps.slice(1).map((s) => s.id) }, first_try_ids: {} });
-  await page.goto('/');
-  await expect(page.locator('.map-node').first().locator('.node-status')).toContainText(`Step 1 of ${steps.length}`);
-  expect(await filled()).toBeCloseTo(0);
-
-  await seedProgress(page, { version: 2, done: { 'lesson-01': steps.slice(0, 5).map((s) => s.id) }, first_try_ids: {} });
-  await page.goto('/');
-  await expect(page.locator('.map-node').first().locator('.node-status')).toContainText(`Step 6 of ${steps.length}`);
-  expect(await filled()).toBeCloseTo(5 / steps.length);
-});
-
 test('core questions cannot be skipped', async ({ page }) => {
   await seedProgress(page, { version: 2, done: { 'lesson-01': ['s01'] }, first_try_ids: {} });
   await page.goto('/');

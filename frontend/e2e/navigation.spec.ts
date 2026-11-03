@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { allIds, course, expectAccessible, lesson, seedProgress } from './helpers';
+import { allIds, coreIds, course, expectAccessible, lesson, seedProgress } from './helpers';
 
 const foundations = course.lessons.filter((l) => l.unit === 'foundations');
 const foundationsDone = { version: 2, done: Object.fromEntries(foundations.map((l) => [l.id, allIds(l.id)])), first_try_ids: {} };
@@ -109,4 +109,39 @@ test('the Learning path tab returns to the top of the map', async ({ page }) => 
   await page.locator('.main-nav').getByRole('link', { name: /Learning path/ }).click();
   await expect(page).toHaveURL(/#\/$/);
   expect(await page.evaluate(() => window.scrollY)).toBe(0);
+});
+
+test('a lesson ring shows core steps done, in any order, and stays full once tested out', async ({ page }) => {
+  const steps = lesson('lesson-01').steps;
+  const core = coreIds('lesson-01');
+  const node = page.locator('.map-node').first();
+  const filled = async () => {
+    const ring = node.locator('.ring-fill');
+    const c = Number(await ring.getAttribute('stroke-dasharray'));
+    return 1 - Number(await ring.getAttribute('stroke-dashoffset')) / c;
+  };
+  const show = async (data: unknown) => {
+    await seedProgress(page, { version: 2, first_try_ids: {}, ...(data as object) });
+    await page.goto('/');
+    await expect(node.locator('.node-status')).not.toBeEmpty();
+  };
+
+  // Out of order: every core step but the first. It resumes at step 1, and the ring shows the work done.
+  await show({ done: { 'lesson-01': core.slice(1) } });
+  await expect(node.locator('.node-status')).toContainText(`Step 1 of ${steps.length} · ${core.length - 1} of ${core.length} core steps done`);
+  expect(await filled()).toBeCloseTo((core.length - 1) / core.length);
+
+  // Optional steps don't count toward an in-progress ring.
+  await show({ done: { 'lesson-01': [core[0], ...steps.filter((s) => s.track).map((s) => s.id)] } });
+  expect(await filled()).toBeCloseTo(1 / core.length);
+
+  // Completed: the ring shows all steps, so the deep dive's share is visible.
+  await show({ done: { 'lesson-01': core } });
+  await expect(node).toHaveClass(/state-completed/);
+  expect(await filled()).toBeCloseTo(core.length / steps.length);
+
+  // Tested out without working the core: shown full.
+  await show({ done: {}, pretest: { 'lesson-01': { date: '2026-11-01', missed: [] } } });
+  await expect(node.locator('.node-status')).toContainText('Tested out');
+  expect(await filled()).toBeCloseTo(1);
 });

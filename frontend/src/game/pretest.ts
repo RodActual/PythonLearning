@@ -1,5 +1,5 @@
 import type { Lesson, PretestResult, Unit, UserProgress } from '../types/lesson';
-import { coreSteps, isLessonComplete, isTestedOut } from './progress';
+import { coreDoneCount, coreSteps, isLessonComplete, isTestedOut } from './progress';
 import { isReviewable, shuffle, stepLabel, type ReviewStep } from './review';
 
 /**
@@ -73,13 +73,12 @@ export function needsWork(units: Unit[], lessons: Lesson[], progress: UserProgre
       .filter((l) => !isLessonComplete(progress, l))
       .map((lesson) => {
         const missedIds = new Set(progress.pretest[lesson.id]?.missed ?? []);
-        const core = coreSteps(lesson);
         const done = new Set(progress.done[lesson.id] ?? []);
         return {
           lesson,
           missed: pretestQuestions(lesson).filter((s) => missedIds.has(s.id) && !done.has(s.id)),
-          coreDone: core.filter((s) => done.has(s.id)).length,
-          coreTotal: core.length,
+          coreDone: coreDoneCount(progress, lesson),
+          coreTotal: coreSteps(lesson).length,
         };
       });
     return { unit, items, testedOut: inUnit.filter((l) => isTestedOut(progress, l.id)).length };
