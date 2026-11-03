@@ -725,7 +725,7 @@
           "type": "code",
           "track": "mastery",
           "heading": "Classic: temperature converter",
-          "instruction": "Convert 100 degrees Celsius to Fahrenheit and print the result. The formula is F = C × 9 / 5 + 32.",
+          "instruction": "Convert 100 degrees Celsius to Fahrenheit and print the result. The formula is F = C × 9 / 5 + 32. Use `/` for the division, so the result is a float: 212.0",
           "initial_code": "# Convert 100 Celsius to Fahrenheit\n",
           "expected_output": "212.0",
           "hint": "Turn the formula into Python with the Celsius value in place of C:\nprint(100 * 9 / 5 + 32)",
