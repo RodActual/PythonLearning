@@ -9,10 +9,13 @@
 - Every explanation with example code says how the syntax works and what it's used
   for, and every exercise (except demos) has 1-2 check-in support tiers whose
   examples run without errors and don't give away the reference solution.
+- A coding task whose answer is a whole-number float (85.0) shows that format,
+  if swapping `/` for `//` would print the same number as an int (85).
 
 Run from the frontend folder:  python scripts/check_lessons.py
 """
 import json
+import re
 import subprocess
 import sys
 import tempfile
@@ -48,6 +51,29 @@ def passes(step, code) -> bool:
     if step.get("expected_error"):
         return raised(err) == step["expected_error"]
     return not err and norm(out) == norm(step["expected_output"])
+
+
+NUMBER = re.compile(r"-?\d+(?:\.\d+)?")
+
+
+def floor_division_trap(step, solution):
+    """Run the solution with the learner's `/` swapped for `//`. If that prints the same
+    numbers in a different format (85 vs 85.0) and the task text and starter don't show
+    the expected format, a correct answer would fail. Returns the floor-division output."""
+    if step.get("expected_error"):
+        return ""
+    starter = {line.strip() for line in step["initial_code"].split("\n")}
+    swapped = "\n".join(line if line.strip() in starter else re.sub(r"(?<![/*])/(?![/=])", "//", line)
+                        for line in solution.split("\n"))
+    if swapped == solution:
+        return ""
+    out, err = run(swapped)
+    got, want = norm(out), norm(step["expected_output"])
+    if err or got == want or NUMBER.sub(lambda m: repr(float(m.group())), got) != NUMBER.sub(lambda m: repr(float(m.group())), want):
+        return ""
+    shown = step["instruction"] + "\n" + step["initial_code"]
+    missing = [n for n in NUMBER.findall(want) if "." in n and n not in shown]
+    return repr(got) if missing else ""
 
 
 problems = []
@@ -126,6 +152,9 @@ for lesson in COURSE["lessons"]:
                 problems.append(f"{where}: reference solution does not pass")
             if step["initial_code"] != solution and passes(step, step["initial_code"]):
                 problems.append(f"{where}: starter code already passes")
+            unstated = floor_division_trap(step, solution)
+            if unstated:
+                problems.append(f"{where}: `//` instead of `/` prints {unstated} unless the task shows the expected output")
             demo = step["initial_code"] == solution
             tiers = step.get("support")
             if demo:

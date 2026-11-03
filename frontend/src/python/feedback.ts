@@ -331,8 +331,13 @@ export function compareOutput(stdout: string, expectedOutput: string, code = '')
     if (/^<__main__\.\w+ object at 0x[0-9a-f]+>$/.test(a)) return ` That's Python's default text for an object. Add a ${quote('__str__')} method to control what print() shows.`;
     if (noneInPlaceOf(a, b)) return ` ${quote('None')} is printed where a value should be. ${NO_RETURN} So does ${quote('.get()')} for a missing key.`;
     const isNum = (x: string) => x.trim() !== '' && !Number.isNaN(Number(x));
-    if (isNum(a) && isNum(b))
-      return Number(a) === Number(b) ? ` The number is right but formatted differently (for example ${quote('4')} vs ${quote('4.0')}, or missing decimal places).` : '';
+    if (isNum(a) && isNum(b)) {
+      if (Number(a) !== Number(b)) return '';
+      // An int where a whole-number float is expected usually means // was used instead of /.
+      if (!a.includes('.') && /\.0+$/.test(b) && /^[^#\n]*\/\//m.test(code))
+        return ` The number is right, but ${quote('//')} drops the decimal part and gives a whole number. Use ${quote('/')}, which always gives a float.`;
+      return ` The number is right but formatted differently (for example ${quote('4')} vs ${quote('4.0')}, or missing decimal places).`;
+    }
     if (a.length >= 3 && (b.startsWith(a) || b.endsWith(a))) return ' Part of the expected text is missing.';
     if (b.length >= 3 && (a.startsWith(b) || a.endsWith(b))) return ' There is extra text.';
     let c = 0;
