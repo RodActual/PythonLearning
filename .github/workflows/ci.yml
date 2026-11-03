@@ -95,11 +95,14 @@ jobs:
       - run: npm test
 
   onboarding:
-    name: Backend onboarding track (reference tests, Python ${{ matrix.python }})
-    runs-on: ubuntu-latest
+    name: Backend onboarding track (reference tests, ${{ matrix.os }}, Python ${{ matrix.python }})
+    runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
-        # Oldest and newest Python versions the onboarding README supports.
+        # Linux and Windows (the owner's machine), on the oldest and newest Python versions
+        # the onboarding README supports.
+        os: [ubuntu-latest, windows-latest]
         python: ['3.11', '3.14']
     defaults:
       run:

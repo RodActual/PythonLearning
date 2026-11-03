@@ -29,7 +29,9 @@ You made one in the README's setup: the `.venv` folder. It holds this project's 
 fastapi==0.115.14
 ```
 
-`==` means exactly this version. Anyone who runs `pip install -r requirements.txt` gets the same versions you have, today or in a year. `requirements-dev.txt` adds the tools only developers need (like `pytest`) and includes the main list with its first line, `-r requirements.txt`.
+`==` means exactly this version. `requirements-dev.txt` adds the tools only developers need (like `pytest`) and includes the main list with its first line, `-r requirements.txt`.
+
+Those libraries depend on other libraries in turn, and those would otherwise float to whatever is newest on the day you install. So `constraints.txt` pins *everything* that ends up installed, and `requirements.txt` applies it with the line `-c constraints.txt`. The result: anyone who installs gets exactly the same set you have, today or in a year. This course learned that the hard way: an unpinned library that had no ready-made install for Python 3.14 broke setup on a new computer.
 
 ### Settings come from outside the code
 

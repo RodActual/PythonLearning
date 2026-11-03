@@ -33,13 +33,13 @@ Do these steps in order. Each step says what you should see when it worked.
 **On a Mac**
 
 1. Open https://www.python.org/downloads/ in your web browser.
-2. Click the yellow **Download Python** button.
+2. Look at the yellow button. If it says **Download Python 3.14** (followed by more numbers, like 3.14.7), click it. If it shows a higher version, such as 3.15, don't use it: scroll down to **Looking for a specific release?**, click the newest version that starts with **Python 3.14**, and download the installer for your computer from that page. This course supports Python 3.11 to 3.14.
 3. Open the file you downloaded (it ends in `.pkg`) and click **Continue** through the installer until it says the installation was successful.
 
 **On Windows**
 
 1. Open https://www.python.org/downloads/ in your web browser.
-2. Click the yellow **Download Python** button.
+2. Look at the yellow button. If it says **Download Python 3.14** (followed by more numbers, like 3.14.7), click it. If it shows a higher version, such as 3.15, don't use it: scroll down to **Looking for a specific release?**, click the newest version that starts with **Python 3.14**, and download the installer for your computer from that page. This course supports Python 3.11 to 3.14.
 3. Open the file you downloaded (it ends in `.exe`).
 4. On the first screen, tick the box **Add python.exe to PATH**. This box is easy to miss, and later steps won't work without it.
 5. Click **Install Now** and wait until it says **Setup was successful**.
@@ -137,7 +137,7 @@ You'll know it worked when `(.venv)` appears at the start of the line in the ter
 
 ### Step 8: Install the project's tools
 
-Check first that the line in the terminal starts with `(.venv)`. If it doesn't, do [Step 7](#step-7-turn-the-workspace-on) now; otherwise the tools are installed outside the workspace and later steps won't find them.
+Check first that the line in the terminal starts with `(.venv)`. If it doesn't, do [Step 7](#step-7-turn-the-workspace-on) first. Installing without it puts the tools outside the workspace, and later steps won't find them.
 
 This downloads the libraries the Catalog Service needs. It takes a minute or two.
 
@@ -259,7 +259,10 @@ Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
 The workspace isn't turned on, or Step 8 ran before it was. Do [Step 7](#step-7-turn-the-workspace-on), check that `(.venv)` appears, then run [Step 8](#step-8-install-the-projects-tools) again.
 
 **Step 8 fails with "Failed building wheel" or "Failed to build installable wheels"**
-Your Python is newer than this course supports, so pip is trying to build a library from scratch. Check [Step 3](#step-3-check-that-python-is-installed): the second number must be between 11 and 14. If it's higher, install Python 3.14 from https://www.python.org/downloads/ (scroll to "Looking for a specific release?"), then delete the `.venv` folder and redo Steps 6 to 8.
+pip couldn't find a ready-made copy of a library for your Python, so it tried to build one from scratch. Check [Step 3](#step-3-check-that-python-is-installed):
+
+- **If the second number is between 11 and 14,** your copy of the lessons is probably older than the current one. Download it again ([Step 4](#step-4-download-the-lessons)), then delete the `.venv` folder and redo Steps 5 to 8 in the new folder.
+- **If it's higher than 14,** your Python is newer than this course supports. Install Python 3.14 as in [Step 1](#step-1-install-python), then delete the `.venv` folder and redo Steps 6 to 8.
 
 **"No such file or directory" or "Cannot find path"**
 The terminal is in the wrong folder. Do [Step 5](#step-5-go-to-the-onboarding-folder-in-the-terminal) again.
@@ -288,7 +291,7 @@ Python uses the spaces at the start of each line to group code. Make the pasted 
 | `modules/` | The seven lessons. |
 | `bughunt/` | A small program with planted bugs, for lesson 6. |
 | `fixtures/` | Sample data, for lesson 1. |
-| `requirements.txt`, `requirements-dev.txt` | The list of tools Step 8 installs. |
+| `requirements.txt`, `requirements-dev.txt`, `constraints.txt` | The list of tools Step 8 installs, and their exact versions. |
 | `Dockerfile`, `docker-compose.yml` | Instructions for Docker, for lessons 5 and 7. |
 
 ---
