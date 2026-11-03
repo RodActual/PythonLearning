@@ -179,7 +179,16 @@ OPENSEARCH_INTEGRATION=1 pytest tests/test_search.py
 $env:OPENSEARCH_INTEGRATION=1; pytest tests/test_search.py
 ```
 
-You should see `5 passed` with nothing skipped. If you get a connection error, wait 30 seconds and try again.
+You should see `5 passed` with nothing skipped.
+
+- If you get a connection error, OpenSearch isn't ready yet. Wait 30 seconds and try again.
+- If a check fails for another reason, run `docker compose logs opensearch` and look near the end for lines containing `ERROR`. Copy the failing check's message and that log when asking for help.
+
+On Windows, switch the setting off again straight away, so later `pytest` runs in this window don't try to reach OpenSearch:
+
+```powershell
+Remove-Item Env:OPENSEARCH_INTEGRATION
+```
 
 **Step 3.** Start the service using the real engine.
 
@@ -208,7 +217,13 @@ On the docs page (http://localhost:8000/docs), add two or three items with diffe
 docker compose down
 ```
 
-On Windows, if you used `$env:` lines, close that terminal window afterwards so the settings don't carry over.
+On Windows, also switch off the search setting from Step 3, so the next time you start the service in this window it uses the stand-in again:
+
+```powershell
+Remove-Item Env:CATALOG_SEARCH_BACKEND
+```
+
+(On a Mac, the `NAME=value command` form only applies to that one command, so there's nothing to undo.)
 
 ---
 
@@ -222,7 +237,7 @@ pytest exercises/test_m5_search.py
 pytest
 ```
 
-The first should show `3 passed`, and the second `38 passed, 1 skipped`. You should also have seen your items come back from the real engine in section 4.
+The first should show `3 passed`, and the second the same result as [setup Step 9](../README.md#step-9-run-the-checks-to-confirm-everything-works): everything passed and 1 skipped. You should also have seen your items come back from the real engine in section 4.
 
 ---
 

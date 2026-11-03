@@ -23,6 +23,8 @@ Traceback (most recent call last):
 KeyError: 'ms'
 ```
 
+(If you've already changed that file, your line numbers may differ a little. That's fine; the file and function names are what matter.)
+
 Read it from the **bottom**:
 
 1. The last line is the error type and message: `KeyError: 'ms'`. A `KeyError` means the code asked a dictionary for a key it doesn't have.

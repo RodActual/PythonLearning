@@ -154,7 +154,7 @@ pytest
 After a few seconds you should see a line like:
 
 ```
-38 passed, 1 skipped
+39 passed, 1 skipped
 ```
 
 **Passed** means a check ran and the program did the right thing. The one **skipped** check needs the search engine from lesson 5, so it's switched off for now. If you see the word **failed** or **error** here, go to [Problems and fixes](#problems-and-fixes).
@@ -242,6 +242,9 @@ After each exercise, also run plain `pytest` (as in [Step 9](#step-9-run-the-che
 
 **"command not found: python3" (Mac) or "py is not recognized" (Windows)**
 Python isn't installed, or the terminal was open before you installed it. Close the terminal, open a new one, and try again. On Windows, if it still fails, run the Python installer again, choose **Modify**, and make sure **Add Python to environment variables** is ticked.
+
+**The version in Step 3 is 3.10 or lower (often `Python 3.9.6` on a Mac)**
+Some computers come with an older Python already installed, and an open terminal may still be using it. Close the terminal, open a new one, and run Step 3 again. On a Mac, if it still shows the old version, try `python3.12 --version` (use the version number you downloaded); if that works, type `python3.12` wherever this guide says `python3`. On Windows, `py --version` uses the newest Python installed, so if it's still old, run the installer from Step 1 again.
 
 **"running scripts is disabled on this system" (Windows, Step 7)**
 Windows blocks this step by default. Run this once, type `Y` and press Enter when asked, then repeat Step 7:

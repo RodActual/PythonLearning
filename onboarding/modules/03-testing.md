@@ -87,7 +87,7 @@ Open `conftest.py`, then `tests/test_service.py`, then `tests/test_search.py`.
 
 <details><summary>Answer</summary>
 
-The `settings` fixture uses the database address `sqlite://`, which means "a new database in memory". Each test gets new fixtures, so each gets its own empty database that disappears afterwards.
+Both fixtures that reach a database use the address `sqlite://`, which means "a new database in memory": `client` gets it through the `settings` fixture, and `repo` through the `session` fixture. Each test gets new fixtures, so each gets its own empty database that disappears afterwards.
 </details>
 
 **b. `test_register_survives_search_outage` uses `side_effect`. What is it checking?**
@@ -264,7 +264,7 @@ It should show `6 passed` (Exercise 2 counts as three).
 | Exercise 3 | Delete `, ignore=[404]` | `catalog/search.py`, in `OpenSearchSearch.remove` |
 | Exercise 4 | Delete the line `log.info("deleted item %s", item_id)` | `catalog/service.py`, in `delete` |
 
-When you're done, run `pytest` to make sure everything is back: `38 passed, 1 skipped`.
+When you're done, run `pytest` to make sure everything is back: it should give the same result as [setup Step 9](../README.md#step-9-run-the-checks-to-confirm-everything-works).
 
 ---
 

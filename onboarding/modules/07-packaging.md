@@ -233,7 +233,7 @@ pytest exercises/test_m7_config.py
 pytest
 ```
 
-The first should show `4 passed`, and the second `38 passed, 1 skipped`. You should also have run the service from `docker compose up`.
+The first should show `4 passed`, and the second the same result as [setup Step 9](../README.md#step-9-run-the-checks-to-confirm-everything-works): everything passed and 1 skipped. You should also have run the service from `docker compose up`.
 
 ---
 

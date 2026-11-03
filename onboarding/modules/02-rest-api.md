@@ -201,7 +201,7 @@ pytest exercises/test_m2_api.py
 pytest
 ```
 
-The first should show `5 passed`, and the second `38 passed, 1 skipped`. Also check that **DELETE /items/{item_id}** shows on the docs page with its 204 and 404 replies.
+The first should show `5 passed`, and the second the same result as [setup Step 9](../README.md#step-9-run-the-checks-to-confirm-everything-works): everything passed and 1 skipped. Also check that **DELETE /items/{item_id}** shows on the docs page with its 204 and 404 replies.
 
 ---
 

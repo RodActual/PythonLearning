@@ -264,7 +264,7 @@ pytest exercises/test_m4_database.py
 pytest
 ```
 
-The first should show `5 passed`, and the second `38 passed, 1 skipped`. On the docs page, try **GET /tags** and **GET /items** with an owner.
+The first should show `5 passed`, and the second the same result as [setup Step 9](../README.md#step-9-run-the-checks-to-confirm-everything-works): everything passed and 1 skipped. On the docs page, try **GET /tags** and **GET /items** with an owner.
 
 ---
 

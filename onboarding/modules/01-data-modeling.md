@@ -260,7 +260,7 @@ pytest exercises/test_m1_models.py
 pytest
 ```
 
-The first should show `5 passed`, and the second `38 passed, 1 skipped`. If the second one now shows a failure, one of your changes broke something that used to work; the failure message names the file and line.
+The first should show `5 passed`, and the second the same result as [setup Step 9](../README.md#step-9-run-the-checks-to-confirm-everything-works): everything passed and 1 skipped. If the second one now shows a failure, one of your changes broke something that used to work; the failure message names the file and line.
 
 ---
 
