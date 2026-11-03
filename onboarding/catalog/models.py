@@ -7,12 +7,24 @@ server-assigned id and timestamp added.
 from datetime import datetime
 from typing import Any, Literal
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 Kind = Literal["dataset", "service", "document"]
 
+EXAMPLE_ITEM = {
+    "name": "Sales orders",
+    "kind": "dataset",
+    "owner": "data-team",
+    "description": "Daily sales orders from the ERP",
+    "tags": ["sales", "erp"],
+    "metadata": {"row_count": 1200, "source": "erp"},
+}
+
 
 class ItemCreate(BaseModel):
+    # Pre-fills "Try it out" on the /docs page with data that passes every rule in the course.
+    model_config = ConfigDict(json_schema_extra={"examples": [EXAMPLE_ITEM]})
+
     name: str = Field(min_length=1, max_length=200)
     kind: Kind
     owner: str = Field(min_length=1, max_length=100)
@@ -48,6 +60,8 @@ class ItemCreate(BaseModel):
 
 
 class Item(ItemCreate):
+    model_config = ConfigDict(json_schema_extra=None)  # the example above has no id or created_at
+
     id: int
     created_at: datetime
 
