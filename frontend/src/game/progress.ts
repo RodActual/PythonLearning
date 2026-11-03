@@ -120,6 +120,12 @@ export const isMasteryChallenge = (s: Lesson['steps'][number]): s is CodeStep =>
 /** The steps that count toward finishing a lesson (deep-dive and mastery steps are optional). */
 export const coreSteps = (lesson: Lesson) => lesson.steps.filter((s) => !s.track);
 
+/** How many core steps are done, in any order. */
+export const coreDoneCount = (p: UserProgress, lesson: Lesson) => {
+  const done = new Set(p.done[lesson.id] ?? []);
+  return coreSteps(lesson).filter((s) => done.has(s.id)).length;
+};
+
 /** Every core step was actually worked through (what the lesson-complete XP bonus needs). */
 export const isCoreDone = (p: UserProgress, lesson: Lesson) => {
   const core = coreSteps(lesson);

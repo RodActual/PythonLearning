@@ -5,7 +5,7 @@ import CourseAbout from './CourseAbout';
 import { pretestLessons } from '../game/pretest';
 import { lessonState, recommendedLessonIndex, type LessonState } from '../game/summary';
 import { lessonXp } from '../game/xp';
-import { doneCount, isCoreDone, isStepDone, isTestedOut, resumeIndex } from '../game/progress';
+import { coreDoneCount, coreSteps, doneCount, isCoreDone, isStepDone, isTestedOut, resumeIndex } from '../game/progress';
 import { useDocumentTitle, useFocusOnMount } from '../a11y/hooks';
 
 interface SkillMapProps {
@@ -90,6 +90,12 @@ function UnitPath({ lessons, allLessons, progress, recommendedId, onOpenLesson, 
           const isNext = lesson.id === recommendedId;
           const number = allLessons.indexOf(lesson) + 1;
           const xp = lessonXp(lesson, progress);
+          // In progress, the ring and the label both show core steps done (in any order), which is
+          // what finishing the lesson needs. Completed lessons show all steps, so the deep dive's share shows.
+          const coreDone = coreDoneCount(progress, lesson);
+          const coreTotal = coreSteps(lesson).length;
+          const ringFraction =
+            state === 'in-progress' ? coreDone / coreTotal : testedOutOnly ? 1 : reached / lesson.steps.length;
           return (
             <li
               key={lesson.id}
@@ -99,7 +105,7 @@ function UnitPath({ lessons, allLessons, progress, recommendedId, onOpenLesson, 
             >
               <button type="button" className="node-button" onClick={() => onOpenLesson(lesson.id)}>
                 <span className="node-circle" aria-hidden="true">
-                  <ProgressRing fraction={testedOutOnly ? 1 : reached / lesson.steps.length} />
+                  <ProgressRing fraction={ringFraction} />
                   <span className="node-number">{state === 'completed' ? '✓' : number}</span>
                 </span>
                 <span className="node-label">
@@ -107,7 +113,7 @@ function UnitPath({ lessons, allLessons, progress, recommendedId, onOpenLesson, 
                   <span className="node-status">
                     {isNext && <span className="chip chip-next">Up next</span>}
                     {state === 'in-progress'
-                      ? `Step ${resumeAt + 1} of ${lesson.steps.length}`
+                      ? `Step ${resumeAt + 1} of ${lesson.steps.length} · ${coreDone} of ${coreTotal} core steps done`
                       : testedOutOnly
                         ? 'Tested out'
                         : STATE_LABEL[state]}
